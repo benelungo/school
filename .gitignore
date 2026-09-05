@@ -19,7 +19,7 @@
 !/README.md
 !/.gitignore
 !/.nojekyll
-!/tools/*.py
+!/tools/build_index.py
 !/.github/workflows/*.yml
 
 # 4. Повертаємо презентації для учнів — і тільки їх.

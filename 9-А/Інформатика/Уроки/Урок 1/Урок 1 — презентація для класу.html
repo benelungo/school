@@ -242,15 +242,48 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
 <section class="slide on" data-t="Вітання">
   <p class="eyebrow">Інформатика · 9-А · Урок 1</p>
   <h1>Мови програмування.<br>Знайомимось<br>з Python</h1>
-  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">Сьогодні ви напишете свою першу справжню програму.</p>
+  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">У нас із вами є мета на весь рік. Сьогодні я її покажу.</p>
   <div class="row c3" style="margin-top:clamp(16px,2.6vw,34px)">
     <div class="box note"><h3>Потрібно</h3><p style="margin:0"><b>Зошит і ручка</b>.<br>Комп'ютер — лише наприкінці, і то за бажанням</p></div>
-    <div class="box"><h3>Дізнаєшся</h3><p style="margin:0">навіщо людям <b>сотні</b><br>різних мов програмування</p></div>
+    <div class="box"><h3>Дізнаєшся</h3><p style="margin:0">навіщо людям <b>сотні</b><br>мов програмування</p></div>
     <div class="box play"><h3>Навчишся</h3><p style="margin:0">читати код на <b>Python</b><br>і знаходити в ньому помилки</p></div>
   </div>
 </section>
 
 <!-- 2 -->
+<section class="slide" data-t="Куди ми йдемо">
+  <p class="eyebrow">Мета всього курсу</p>
+  <h2>До кінця року ви напишете програму,<br>яка читає текст із фотографії</h2>
+  <div class="row c21">
+    <div>
+      <p class="py"><span class="kw">from</span> PIL <span class="kw">import</span> Image
+<span class="kw">import</span> pytesseract
+
+photo = Image.<span class="fn">open</span>(<span class="st">"сторінка.jpg"</span>)
+text  = pytesseract.<span class="fn">image_to_string</span>(photo, lang=<span class="st">"ukr"</span>)
+<span class="fn">print</span>(text)</p>
+      <p class="arrow">↓</p>
+      <p class="out">Сьогодні на уроці ми почали
+вивчати мову програмування Python…</p>
+    </div>
+    <div>
+      <div class="box ok">
+        <h3>Що вона робить</h3>
+        <p class="big" style="margin:0">Ви фотографуєте сторінку книжки — програма <b>повертає її текст</b>, який можна шукати, копіювати, перекладати.</p>
+      </div>
+      <div class="box play" style="margin-top:clamp(10px,1.4vw,16px)">
+        <h3>Шість рядків</h3>
+        <p class="big" style="margin:0">Стільки в ній коду. Наприкінці курсу ви напишете їх самі й розумітимете <b>кожне слово</b>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="box pen hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Подивіться на <b>останній рядок</b>: <span class="num">print(text)</span>.
+    Це єдина команда, яку ми повністю розберемо <b>вже сьогодні</b>. Одна шоста програми — за один урок.</p>
+  </div>
+</section>
+
+<!-- 3 -->
 <section class="slide" data-t="Технічна перевірка">
   <p class="eyebrow">Поки не почали</p>
   <h2>Чи всі мене чують?</h2>
@@ -263,7 +296,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
     <div class="box play">
       <h3>Крок 2</h3>
       <p style="margin:0">Приготуй <b>зошит</b></p>
-      <p style="margin-top:12px">Пів уроку ми пишемо код рукою. Так він краще запам'ятовується, ніж набраний на клавіатурі.</p>
+      <p style="margin-top:12px">Пів уроку ми пишемо код рукою. Так він запам'ятовується краще, ніж набраний на клавіатурі.</p>
     </div>
     <div class="box warn">
       <h3>Крок 3</h3>
@@ -276,7 +309,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 3 -->
+<!-- 4 -->
 <section class="slide" data-t="Як ми відповідаємо">
   <p class="eyebrow">Домовляємось</p>
   <h2>Чотири способи відповісти</h2>
@@ -300,7 +333,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 4 -->
+<!-- 5 -->
 <section class="slide" data-t="Записуємо тему" data-timer="90">
   <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode away"><span class="dot"></span>Від екрана</span></div>
   <h2>Записуємо</h2>
@@ -316,7 +349,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   <div class="timerslot"></div>
 </section>
 
-<!-- 5 -->
+<!-- 6 -->
 <section class="slide" data-t="Розминка: команди для робота" data-timer="150">
   <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Потім у чат</span></div>
   <p class="eyebrow">Розминка</p>
@@ -344,10 +377,10 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 6 -->
+<!-- 7 -->
 <section class="slide" data-t="Чому не українською">
   <p class="eyebrow">Головне питання</p>
-  <h2>Чому не можна просто сказати «намалюй квадрат»?</h2>
+  <h2>Чому не можна просто сказати «прочитай текст із фото»?</h2>
   <div class="box warn">
     <p class="big" style="margin:0">Бо людська мова <b>багатозначна</b>. Ми домовляємось про зміст на ходу, за здогадкою й контекстом.
     Машина здогадуватись не вміє.</p>
@@ -355,7 +388,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   <div class="row c3" style="margin-top:clamp(12px,1.8vw,22px)">
     <div class="box"><h3>Одне слово — різні речі</h3><p style="margin:0"><b>Замок</b> — на дверях чи на горі?<br><b>Коса</b> — дівоча, річкова чи для трави?</p></div>
     <div class="box"><h3>Одне речення — два змісти</h3><p style="margin:0">«Я бачив хлопця з телескопом.»<br><span style="color:var(--soft)">Телескоп у мене чи в нього?</span></p></div>
-    <div class="box"><h3>Пропущені кроки</h3><p style="margin:0">«Намалюй квадрат.»<br><span style="color:var(--soft)">Якого розміру? Де? Чим? Заповнити?</span></p></div>
+    <div class="box"><h3>Пропущені кроки</h3><p style="margin:0">«Прочитай текст із фото.»<br><span style="color:var(--soft)">З якого файлу? Якою мовою? Куди подіти результат?</span></p></div>
   </div>
   <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
     <p class="big" style="margin:0">Тому й придумали <b>штучні мови</b>: у них кожен запис має рівно один зміст.
@@ -363,7 +396,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 7 -->
+<!-- 8 -->
 <section class="slide" data-t="Що розуміє процесор">
   <p class="eyebrow">Спускаємось на найнижчий рівень</p>
   <h2>А що процесор розуміє насправді?</h2>
@@ -375,7 +408,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
     <div class="box warn">
       <h3>Це одна команда</h3>
-      <p class="big" style="margin:0">Найпростіша програма — це <b>мільйони</b> таких рядків.</p>
+      <p class="big" style="margin:0">Наша програма розпізнавання — це <b>мільйони</b> таких рядків.</p>
       <p class="big" style="margin-top:12px">Перші програмісти писали саме так. Помилка в одній цифрі — і все ламалося.</p>
     </div>
     <div class="box ok">
@@ -386,7 +419,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 8 -->
+<!-- 9 -->
 <section class="slide" data-t="Означення">
   <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо означення</span></div>
   <h2>Мова програмування</h2>
@@ -404,7 +437,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 9 -->
+<!-- 10 -->
 <section class="slide" data-t="Транслятор">
   <h2>Хто ж перекладає код у нулі й одиниці</h2>
   <p class="lede" style="margin-bottom:clamp(12px,1.8vw,20px)">Програма-перекладач називається <b>транслятор</b>. Їх два види.</p>
@@ -428,27 +461,6 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 10 -->
-<section class="slide" data-t="Коротка історія">
-  <p class="eyebrow">Як до цього дійшли</p>
-  <h2>Вісімдесят років за один слайд</h2>
-  <div class="tbl">
-    <table>
-      <tr><th style="width:16%">Коли</th><th style="width:30%">Що з'явилося</th><th>Чим це було важливо</th></tr>
-      <tr><td class="n">1843</td><td><b>Перший алгоритм</b></td><td><b>Ада Лавлейс</b> записала алгоритм для машини, якої ще не існувало. Її вважають першою програмісткою</td></tr>
-      <tr><td class="n">1940-і</td><td><b>Машинний код</b></td><td>Програму набирали нулями й одиницями вручну</td></tr>
-      <tr><td class="n">1950-і</td><td><b>Асемблер</b></td><td>Замість чисел — короткі слова. Але все ще одна команда = одна дія процесора</td></tr>
-      <tr><td class="n">1952</td><td><b>Перший транслятор</b></td><td><b>Грейс Гоппер</b> довела, що комп'ютер може сам перекладати слова в машинний код</td></tr>
-      <tr><td class="n">1957</td><td><b>Fortran</b></td><td>Перша широко вживана мова високого рівня: один рядок — багато машинних команд</td></tr>
-      <tr><td class="n">1991</td><td><b>Python</b></td><td><b>Гвідо ван Россум</b> зробив мову, яку легко читати. Саме її ми вивчатимемо</td></tr>
-    </table>
-  </div>
-  <div class="box note hide" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p class="big" style="margin:0">Загальний напрям простий: <b>кожне наступне покоління мов ближче до людини й далі від заліза</b>.
-    Комп'ютер усередині не змінився — просто перекладач став розумнішим.</p>
-  </div>
-</section>
-
 <!-- 11 -->
 <section class="slide" data-t="Мов багато">
   <div class="modes"><span class="mode chat"><span class="dot"></span>У чат: які мови ти вже чув?</span></div>
@@ -461,12 +473,12 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
       <tr><td><b>JavaScript</b></td><td>Усе, що «оживає» на сайті просто у вашому браузері</td></tr>
       <tr><td><b>C#</b></td><td>Ігри (зокрема на рушії Unity), програми для Windows</td></tr>
       <tr><td><b>SQL</b></td><td>Запити до баз даних: знайти, додати, змінити записи</td></tr>
-      <tr><td><b>Python</b></td><td>Штучний інтелект, аналіз даних, автоматизація рутини, навчання</td></tr>
+      <tr><td><b>Python</b></td><td>Штучний інтелект, робота із зображеннями, аналіз даних, автоматизація</td></tr>
     </table>
   </div>
   <div class="box ok hide" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p class="big" style="margin:0">Мова — це <b>інструмент</b>, а не релігія. Ніхто не забиває цвях викруткою й не крутить шурупи молотком.
-    Той, хто знає одну мову добре, вивчає другу за кілька тижнів: <b>алгоритми в них однакові</b>.</p>
+    <p class="big" style="margin:0">Мова — це <b>інструмент</b>, а не релігія. Ніхто не забиває цвях викруткою.
+    Наше завдання — <b>картинки й розпізнавання</b>, а для нього найбільше готових інструментів саме в Python.</p>
   </div>
 </section>
 
@@ -498,13 +510,41 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
     </div>
   </div>
   <div class="box note hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Роблять усі три однакове. Але щоб пояснити перші два приклади, довелося б витратити ще три уроки
-    на слова <span class="num">class</span>, <span class="num">static</span>, <span class="num">void</span>.
-    <b>Тому починаємо з Python: менше зайвого — швидше до суті.</b></p>
+    <p class="big" style="margin:0">Мову створив <b>Гвідо ван Россум</b> 1991 року — саме щоб код було <b>легко читати</b>.
+    Щоб пояснити перші два приклади, довелося б витратити ще три уроки на слова
+    <span class="num">class</span>, <span class="num">static</span>, <span class="num">void</span>. До нашої мети ми б так не дійшли.</p>
   </div>
 </section>
 
 <!-- 13 -->
+<section class="slide" data-t="Бібліотеки">
+  <p class="eyebrow">Головна причина, чому мета досяжна</p>
+  <h2>Ви не писатимете розпізнавання з нуля</h2>
+  <div class="box warn">
+    <p class="big" style="margin:0">Навчити комп'ютер відрізняти «а» від «о» на фотографії — це роки роботи <b>сотень людей</b>.
+    За один навчальний рік це не пишеться. І не треба.</p>
+  </div>
+  <div class="row c21" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box ok">
+      <h3>Бібліотека</h3>
+      <p class="big" style="margin:0">Це <b>чужий готовий код</b>, який можна підключити до своєї програми одним рядком і користуватися.</p>
+      <p class="py big" style="margin-top:14px"><span class="kw">import</span> pytesseract</p>
+      <p class="big" style="margin-top:14px">Слово <span class="num">import</span> означає «підключити». Далі всі можливості цієї бібліотеки — ваші.</p>
+    </div>
+    <div class="box note">
+      <h3>Ті, що знадобляться нам</h3>
+      <p style="margin:0"><b>Pillow</b> — відкрити фото й трохи його підправити</p>
+      <p style="margin-top:10px"><b>pytesseract</b> — місток до Tesseract, безкоштовної програми розпізнавання тексту з відкритим кодом</p>
+      <p style="margin-top:10px"><b>OpenCV</b> — якщо встигнемо: пошук облич на фото</p>
+    </div>
+  </div>
+  <div class="box pen hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Щоб поїхати, не треба конструювати двигун — треба навчитися <b>кермувати</b>.
+    Наш рік — про те, як зібрати робочу програму з готових частин і <b>розуміти, що вона робить</b>.</p>
+  </div>
+</section>
+
+<!-- 14 -->
 <section class="slide" data-t="Пауза для очей" data-timer="60">
   <div class="modes"><span class="mode away"><span class="dot"></span>Відводимо очі від екрана</span></div>
   <h2>Пауза</h2>
@@ -530,10 +570,10 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   <div class="timerslot"></div>
 </section>
 
-<!-- 14 -->
+<!-- 15 -->
 <section class="slide" data-t="Перша програма">
   <div class="modes"><span class="mode book"><span class="dot"></span>Переписуємо в зошит</span></div>
-  <p class="eyebrow">Найважливіший слайд уроку</p>
+  <p class="eyebrow">Той самий останній рядок нашої майбутньої програми</p>
   <h2>Ваша перша програма</h2>
   <p class="py big"><span class="fn">print</span>(<span class="st">"Привіт, 9-А!"</span>)</p>
   <p class="arrow">↓ що побачимо на екрані</p>
@@ -545,7 +585,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 15 -->
+<!-- 16 -->
 <section class="slide" data-t="Лапки все змінюють">
   <p class="eyebrow">Пастка, у яку потрапляють усі</p>
   <h2>Дві лапки змінюють зміст повністю</h2>
@@ -564,13 +604,13 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
     </div>
   </div>
   <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Запам'ятайте</h3>
-    <p class="big" style="margin:0">Для Python <b>число 2 і текст «2» — різні речі</b>, як цифра на дверях квартири й кількість квартир.
-    Лапки — це і є перемикач між ними.</p>
+    <h3>Чому це важливо саме для нас</h3>
+    <p class="big" style="margin:0">Розпізнаний зі сторінки <b>номер будинку «12» — це текст, а не число</b>.
+    Поки ми не скажемо Python перетворити його на число, він не зможе його додати. Лапки — перемикач між цими двома світами.</p>
   </div>
 </section>
 
-<!-- 16 -->
+<!-- 17 -->
 <section class="slide" data-t="Що виведе програма" data-timer="180">
   <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Відповіді — у чат, коли скажу</span></div>
   <h2>Що виведе кожна програма?</h2>
@@ -591,7 +631,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
 </section>
 
-<!-- 17 -->
+<!-- 18 -->
 <section class="slide" data-t="Знайди помилку" data-timer="180">
   <div class="modes"><span class="mode book"><span class="dot"></span>У зошит: випиши правильний варіант</span></div>
   <h2>Знайди помилку в коді</h2>
@@ -617,38 +657,58 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   <div class="box note hide" style="margin-top:clamp(12px,1.7vw,20px)">
     <p class="big" style="margin:0">Такі помилки називають <b>синтаксичними</b> — порушено правила запису.
     Це <b>найлегший</b> вид помилок: Python сам покаже рядок і скаже, що не так. Значно гірші ті, коли програма
-    працює, але рахує неправильно. До них ми ще дійдемо.</p>
-  </div>
-</section>
-
-<!-- 18 -->
-<section class="slide" data-t="Де писати код">
-  <p class="eyebrow">До наступного уроку</p>
-  <h2>Де насправді запускати програми</h2>
-  <div class="row c3">
-    <div class="box pen">
-      <h3>Найпростіше · онлайн</h3>
-      <p style="margin:0">Сайт <b>python.org</b> → кнопка <b>Launch Interactive Shell</b>.</p>
-      <p style="margin-top:10px;color:var(--soft)">Нічого не встановлюєш, працює навіть із телефона.</p>
-    </div>
-    <div class="box ok">
-      <h3>Зручно · на комп'ютері</h3>
-      <p style="margin:0">Програма <b>Thonny</b> — сайт <b>thonny.org</b>. Створена спеціально для тих, хто починає.</p>
-      <p style="margin-top:10px;color:var(--soft)">Встановлюється за одну хвилину.</p>
-    </div>
-    <div class="box note">
-      <h3>Якщо є Google-акаунт</h3>
-      <p style="margin:0"><b>Google Colab</b> — Python прямо у вкладці браузера, код зберігається на диску.</p>
-      <p style="margin-top:10px;color:var(--soft)">Нічим не поступається дорослим інструментам.</p>
-    </div>
-  </div>
-  <div class="box play" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Вибирайте <b>будь-який один</b> — вони всі виконують той самий Python.
-    Кому важко встановити, напишіть мені: розберемося разом до наступного уроку.</p>
+    працює, але робить не те. До них ми ще дійдемо.</p>
   </div>
 </section>
 
 <!-- 19 -->
+<section class="slide" data-t="Карта курсу">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Можна сфотографувати цей слайд</span></div>
+  <p class="eyebrow">Наш маршрут</p>
+  <h2>Від <span class="num">print</span> до розпізнавання тексту</h2>
+  <div class="tbl">
+    <table>
+      <tr><th style="width:34%">Що вивчимо</th><th>Навіщо це нашій програмі</th></tr>
+      <tr><td><b>1 · print</b> <span style="color:var(--check)">← сьогодні</span></td><td>Показати людині те, що програма прочитала</td></tr>
+      <tr><td><b>2 · Змінні</b></td><td>Запам'ятати розпізнаний текст, щоб працювати з ним далі</td></tr>
+      <tr><td><b>3 · input</b></td><td>Спитати користувача, яке саме фото відкривати</td></tr>
+      <tr><td><b>4 · Умови (if)</b></td><td>«Якщо на фото нічого не знайшлося — попередити про це»</td></tr>
+      <tr><td><b>5 · Цикли</b></td><td>Обробити не одне фото, а цілу папку — сто сторінок підряд</td></tr>
+      <tr><td><b>6 · Файли</b></td><td>Зберегти результат у документ, а не лише показати на екрані</td></tr>
+      <tr><td><b>7 · Бібліотеки</b></td><td>Підключити Pillow і pytesseract — саме тут з'явиться розпізнавання</td></tr>
+      <tr><td><b>8 · Проєкт</b></td><td><b>Готовий застосунок: фото → текст</b></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-t="Де писати код">
+  <p class="eyebrow">До наступного уроку</p>
+  <h2>Де ми працюватимемо</h2>
+  <div class="row c3">
+    <div class="box ok">
+      <h3>Головне · Google Colab</h3>
+      <p style="margin:0">Python прямо у вкладці браузера, код зберігається на Google-диску.</p>
+      <p style="margin-top:10px;color:var(--soft)">Саме тут наприкінці курсу запрацює розпізнавання: усе потрібне ставиться однією командою, нічого качати на свій комп'ютер не треба.</p>
+    </div>
+    <div class="box pen">
+      <h3>Найпростіше · онлайн</h3>
+      <p style="margin:0">Сайт <b>python.org</b> → кнопка <b>Launch Interactive Shell</b>.</p>
+      <p style="margin-top:10px;color:var(--soft)">Нічого не встановлюєш, працює навіть із телефона. Для перших уроків вистачить.</p>
+    </div>
+    <div class="box note">
+      <h3>Якщо хочеться на комп'ютері</h3>
+      <p style="margin:0">Програма <b>Thonny</b> — сайт <b>thonny.org</b>. Створена спеціально для тих, хто починає.</p>
+      <p style="margin-top:10px;color:var(--soft)">Встановлюється за хвилину.</p>
+    </div>
+  </div>
+  <div class="box play" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Поки що вибирайте <b>будь-який</b> — вони всі виконують той самий Python.
+    Кому важко, напишіть мені: розберемося до наступного уроку.</p>
+  </div>
+</section>
+
+<!-- 21 -->
 <section class="slide" data-t="Підсумок">
   <div class="modes"><span class="mode cam"><span class="dot"></span>Великий палець: угору — знаю, вниз — ні</span></div>
   <h2>Перевіримо, що запам'ятали</h2>
@@ -658,8 +718,8 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
       <p class="big ans hide" style="margin-top:12px">Процесор розуміє лише нулі й одиниці, а людина ними писати не може. Мова — посередник</p>
     </div>
     <div class="box">
-      <p class="big" style="margin:0"><b>2.</b> Чим компілятор відрізняється від інтерпретатора?</p>
-      <p class="big ans hide" style="margin-top:12px">Компілятор перекладає всю програму одразу, інтерпретатор — рядок за рядком під час виконання</p>
+      <p class="big" style="margin:0"><b>2.</b> Що таке бібліотека і навіщо вона нам?</p>
+      <p class="big ans hide" style="margin-top:12px">Чужий готовий код. Завдяки їй розпізнавання не треба писати з нуля</p>
     </div>
     <div class="box">
       <p class="big" style="margin:0"><b>3.</b> Що виведе <span class="num">print("5" + "5")</span>?</p>
@@ -667,12 +727,12 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
     </div>
   </div>
   <div class="box ok" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">За один урок ви пройшли шлях від нулів і одиниць до робочої програми на Python.
-    <b>Далі буде тільки цікавіше</b> — з наступного уроку програми почнуть з вами розмовляти.</p>
+    <p class="big" style="margin:0">За один урок ви пройшли шлях від нулів і одиниць до робочої програми
+    й <b>уже вмієте останній рядок</b> тієї програми, яку ми пишемо цілий рік.</p>
   </div>
 </section>
 
-<!-- 20 -->
+<!-- 22 -->
 <section class="slide" data-t="Домашнє завдання">
   <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо в щоденник</span></div>
   <h2>Домашнє завдання</h2>
@@ -686,7 +746,8 @@ print("малюю")</p>
     </div>
     <div class="box note">
       <h3>2 · Усім</h3>
-      <p style="margin:0">Знайди мову програмування, якої <b>не було</b> на нашому слайді (Kotlin, Swift, Go, Rust, PHP…), і запиши <b>двома реченнями</b>, для чого її використовують.</p>
+      <p style="margin:0">Придумай і запиши <b>три ситуації</b>, де людині знадобилося б розпізнавання тексту з фотографії.</p>
+      <p style="margin-top:10px;color:var(--soft)">Підказка: конспект однокласника, стара родинна листівка, цінник, табличка іноземною…</p>
     </div>
     <div class="box play">
       <h3>3 · Хто хоче</h3>
@@ -699,8 +760,8 @@ print("малюю")</p>
   </div>
 </section>
 
-<!-- 21 -->
-<section class="slide" data-t="Чому Python">
+<!-- 23 -->
+<section class="slide" data-t="До зустрічі">
   <p class="eyebrow">І останнє на сьогодні</p>
   <h2>На честь кого назвали Python?</h2>
   <div class="row c21">
@@ -712,24 +773,13 @@ print("малюю")</p>
     </div>
     <div class="box note">
       <h3>Чому це не дрібниця</h3>
-      <p class="big" style="margin:0">Ця мова від самого початку робилася так, щоб з нею було <b>легко й приємно</b> —
-      а не так, щоб вражати складністю.</p>
-      <p class="big" style="margin-top:12px">Саме тому нею сьогодні пишуть і школярі на першому уроці, і команди, що створюють штучний інтелект.</p>
+      <p class="big" style="margin:0">Ця мова від початку робилася так, щоб з нею було <b>легко й приємно</b> — а не щоб вражати складністю.</p>
+      <p class="big" style="margin-top:12px">Саме тому нею пишуть і дев'ятикласники на першому уроці, і команди, що створюють штучний інтелект.</p>
     </div>
   </div>
-</section>
-
-<!-- 22 -->
-<section class="slide" data-t="До зустрічі">
-  <h1>Дякую за урок!</h1>
-  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">До зустрічі на наступному уроці — почнемо писати програми, які ставлять запитання.</p>
-  <div class="box ok" style="margin-top:clamp(16px,2.6vw,34px)">
-    <p class="big" style="margin:0">Це посилання працює й після уроку — можеш відкрити його вдома
-    й повторити все, що ми робили, разом із відповідями.</p>
-  </div>
-  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Щось лишилося незрозумілим — <b>напиши мені</b> або спитай на початку наступного уроку.
-    Питати — нормально. Програмісти питають щодня.</p>
+  <div class="box play" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0"><b>Дякую за урок!</b> Наступного разу вчимо змінні — те, у чому програма зберігатиме
+    розпізнаний текст. Це посилання працює й після уроку: удома можна все повторити разом із відповідями.</p>
   </div>
 </section>
 </div>
@@ -741,7 +791,7 @@ print("малюю")</p>
   </div>
   <div id="rail" aria-hidden="true"></div>
   <div id="tip">пробіл — показати відповідь</div>
-  <div id="count">1 / 22</div>
+  <div id="count">1 / 23</div>
   <button id="fs" type="button" aria-label="На весь екран">⛶</button>
 </div>
 </div>
