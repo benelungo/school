@@ -31,7 +31,9 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BUILD = ROOT / "tools" / "build_index.py"
+
+sys.path.insert(0, str(ROOT / "tools"))
+import build_index  # noqa: E402
 
 LABEL = "com.school.autopublish"
 PLIST = Path.home() / "Library" / "LaunchAgents" / (LABEL + ".plist")
@@ -154,17 +156,23 @@ def describe(items):
 # ───────────────────────── публікація ─────────────────────────
 
 def rebuild_index():
-    r = subprocess.run([sys.executable, str(BUILD)],
-                       cwd=str(ROOT), capture_output=True, text=True)
-    if r.returncode != 0:
-        say("!  build_index.py впав:", (r.stderr or r.stdout).strip())
-        return False
-    return True
+    """
+    Перебудовує index.html. Викликається ЩОЦИКЛА, а не лише коли git бачить
+    зміни: учительські файли ігноруються git'ом, тож поява очного уроку
+    інакше лишилася б непоміченою. index.html перезаписується лише тоді,
+    коли список справді змінився.
+    """
+    try:
+        return build_index.write_index(build_index.collect())
+    except SystemExit as e:
+        say("!  build_index:", e)
+    except Exception as e:
+        say("!  build_index:", e)
+    return False
 
 
 def commit():
     """Повертає True, якщо коміт справді зроблено."""
-    rebuild_index()
     items = changes()
     if not items:
         return False
@@ -231,6 +239,8 @@ def preflight():
 def once():
     if not preflight():
         return 1
+    if rebuild_index():
+        say("→  список уроків оновлено")
     did = commit()
     if not has_remote():
         say("Нема remote 'origin' — коміт зроблено локально.")
@@ -259,6 +269,8 @@ def watch(interval):
     while True:
         try:
             if not busy():
+                if rebuild_index():
+                    say("→  список уроків оновлено")
                 now = changes()
                 if now and now == prev:      # два однакові заміри поспіль — файл дозбережено
                     if commit():
