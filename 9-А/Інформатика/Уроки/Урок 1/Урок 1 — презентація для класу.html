@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Мови програмування · Python</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
+  --ink:#1B2430; --soft:#5B6879;
+  --pen:#2C4BC9; --pen-soft:#E7ECFC;
+  --check:#1B7F4B; --check-soft:#E4F3EA;
+  --marker:#D7263D; --marker-soft:#FCEAEC;
+  --sun:#B57C00; --sun-soft:#FDF3DC;
+  --note:#6B4FA8; --note-soft:#EFEAFA;
+  --edge:#DDE4EC;
+  --cell:30px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121821; --card:#1A222D; --grid:#26374A;
+    --ink:#EAF0F6; --soft:#9AAABC;
+    --pen:#8DA9FF; --pen-soft:#1E2A47;
+    --check:#5FD394; --check-soft:#163024;
+    --marker:#FF7B8A; --marker-soft:#371D22;
+    --sun:#FFC93C; --sun-soft:#332813;
+    --note:#C0A8F5; --note-soft:#251E3A;
+    --edge:#2C3948;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121821; --card:#1A222D; --grid:#26374A;
+  --ink:#EAF0F6; --soft:#9AAABC;
+  --pen:#8DA9FF; --pen-soft:#1E2A47;
+  --check:#5FD394; --check-soft:#163024;
+  --marker:#FF7B8A; --marker-soft:#371D22;
+  --sun:#FFC93C; --sun-soft:#332813;
+  --note:#C0A8F5; --note-soft:#251E3A;
+  --edge:#2C3948;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:var(--cell) var(--cell);
+  background-position:center top;
+  -webkit-text-size-adjust:100%;
+}
+
+#stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vw,40px) clamp(14px,4vw,56px) 96px}
+.slide{display:none;width:100%;max-width:1180px}
+.slide.on{display:block;animation:in .3s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(29px,5.2vw,64px);line-height:1.06;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(23px,3.7vw,44px);line-height:1.14;letter-spacing:-.015em;margin:0 0 clamp(14px,2vw,26px);text-wrap:balance}
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,1.15vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 12px}
+p{margin:0 0 14px;font-size:clamp(16px,1.95vw,26px);line-height:1.5}
+p:last-child{margin-bottom:0}
+.lede{font-size:clamp(18px,2.4vw,31px);color:var(--soft);line-height:1.4}
+b,strong{font-weight:800}
+ul,ol{margin:0;padding-left:1.3em;font-size:clamp(16px,1.95vw,26px);line-height:1.45}
+li{margin:.5em 0}
+li::marker{color:var(--pen)}
+
+.row{display:grid;gap:clamp(12px,1.7vw,22px)}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c21{grid-template-columns:1.15fr .85fr}
+@media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
+
+.box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(14px,2vw,26px);box-shadow:0 1px 0 var(--edge)}
+.box.pen{border-color:var(--pen);background:var(--pen-soft)}
+.box.ok{border-color:var(--check);background:var(--check-soft)}
+.box.warn{border-color:var(--marker);background:var(--marker-soft)}
+.box.play{border-color:var(--sun);background:var(--sun-soft)}
+.box.note{border-color:var(--note);background:var(--note-soft)}
+.box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(12px,1.25vw,16px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 10px}
+.box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
+.box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
+
+/* ---------- смужка «як відповідаємо» ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(12px,1.7vw,20px)}
+.mode{display:inline-flex;align-items:center;gap:8px;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(11px,1.15vw,15px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:8px 12px;background:var(--card);white-space:nowrap}
+.mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
+.mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+.mode.voice{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.mode.book{color:var(--note);border-color:var(--note);background:var(--note-soft)}
+.mode.away{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+
+/* ---------- таймер ---------- */
+.timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(10px,1.3vw,16px) clamp(12px,1.6vw,20px);margin:clamp(12px,1.7vw,20px) 0 0}
+.timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(26px,3.6vw,48px);line-height:1;min-width:3.6ch}
+.timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
+.timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
+.timer .lab{font-size:clamp(13px,1.35vw,17px);color:var(--soft);white-space:nowrap}
+.timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
+.timer.over{border-color:var(--marker);background:var(--marker-soft)}
+.timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
+
+/* ---------- лампочки й біти ---------- */
+.lamps{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.lamp{text-align:center;min-width:clamp(52px,6.4vw,86px)}
+.lamp .b{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1.2;
+  font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.9vw,12px) 0}
+.lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.lamp .w{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
+.cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
+.cw .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(18px,2.5vw,32px);letter-spacing:.08em}
+.cw .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(22px,3vw,40px);color:var(--check);margin-top:6px}
+
+/* ---------- цифри ---------- */
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(22px,3.3vw,42px);line-height:1.45}
+.huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+      font-size:clamp(32px,5.8vw,80px);line-height:1.1;letter-spacing:-.02em}
+.ans{color:var(--check);font-weight:800}
+.tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
+      border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
+.tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
+         font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .lab{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.4vw,20px)}
+.klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,1.15vw,15px);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--soft);text-align:center;margin-bottom:8px}
+
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(14px,1.8vw,24px)}
+th,td{border:2px solid var(--edge);padding:clamp(8px,1.05vw,15px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(11px,1.15vw,15px);
+   letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+
+.code{display:flex;flex-wrap:wrap;gap:clamp(8px,1.1vw,14px)}
+.code div{flex:1 1 auto;min-width:clamp(86px,10.5vw,146px);text-align:center;
+  border:2px solid var(--sun);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 8px}
+.code .v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.6vw,33px);font-variant-numeric:tabular-nums}
+.code .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(19px,2.6vw,33px);color:var(--sun);margin-top:4px}
+.word{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(32px,6.6vw,88px);letter-spacing:.14em;color:var(--check);line-height:1.1}
+
+.hide{opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+span.hide{display:inline-block}
+.hide.on{opacity:1;pointer-events:auto;transform:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+  padding:10px clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:2px solid var(--edge)}
+#rail{flex:1;display:flex;gap:3px;min-width:0;overflow:hidden}
+#rail i{flex:1 1 0;height:14px;border:1.5px solid var(--edge);border-radius:2px;background:transparent;
+  transition:background .2s ease,border-color .2s ease}
+#rail i.done{background:var(--grid);border-color:var(--grid)}
+#rail i.cur{background:var(--pen);border-color:var(--pen)}
+#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
+  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nav{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:4px;padding:10px 16px;font-weight:800;font-size:17px;line-height:1;
+  transition:background .15s,border-color .15s}
+button:hover{border-color:var(--pen);background:var(--pen-soft)}
+button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(13px,1.35vw,17px);white-space:nowrap}
+#tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
+#tip.on{opacity:1}
+@media(max-width:760px){
+  #count,#tip{display:none}
+  button{padding:12px 14px;font-size:16px}
+  .timer{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ---------- код на Python ---------- */
+.py{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:700;
+  background:var(--card);border:2px solid var(--edge);border-radius:6px;
+  padding:clamp(10px,1.5vw,20px) clamp(12px,1.7vw,22px);
+  font-size:clamp(13px,1.75vw,25px);line-height:1.5;
+  white-space:pre-wrap;overflow-x:auto;margin:0}
+.py.big{font-size:clamp(18px,3vw,42px);text-align:center}
+.py .kw{color:var(--note)}
+.py .st{color:var(--check)}
+.py .nu{color:var(--marker)}
+.py .cm{color:var(--soft);font-weight:400}
+.py .fn{color:var(--pen)}
+.out{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:700;
+  font-size:clamp(18px,2.8vw,38px);line-height:1.4;text-align:center;
+  background:var(--check-soft);border:2px solid var(--check);border-radius:6px;
+  padding:clamp(10px,1.4vw,18px) clamp(12px,1.7vw,22px);
+  white-space:pre-wrap;overflow-x:auto;margin:0;color:var(--check)}
+.arrow{text-align:center;font-size:clamp(18px,2.6vw,34px);color:var(--soft);
+  margin:clamp(6px,1vw,14px) 0;line-height:1}
+.parts{display:grid;gap:clamp(8px,1.1vw,14px)}
+.part{display:grid;grid-template-columns:minmax(110px,auto) 1fr;gap:clamp(10px,1.5vw,20px);align-items:center;
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);
+  padding:clamp(9px,1.2vw,16px) clamp(10px,1.5vw,18px)}
+.part .k{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.5vw,34px);color:var(--pen);text-align:center}
+.part .d{font-size:clamp(14px,1.75vw,24px);line-height:1.4}
+@media(max-width:640px){.part{grid-template-columns:1fr;gap:6px}.part .k{text-align:left}}
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="sheet">
+
+<!-- 1 -->
+<section class="slide on" data-t="Вітання">
+  <p class="eyebrow">Інформатика · 9-А · Урок 1</p>
+  <h1>Мови програмування.<br>Знайомимось<br>з Python</h1>
+  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">Сьогодні ви напишете свою першу справжню програму.</p>
+  <div class="row c3" style="margin-top:clamp(16px,2.6vw,34px)">
+    <div class="box note"><h3>Потрібно</h3><p style="margin:0"><b>Зошит і ручка</b>.<br>Комп'ютер — лише наприкінці, і то за бажанням</p></div>
+    <div class="box"><h3>Дізнаєшся</h3><p style="margin:0">навіщо людям <b>сотні</b><br>різних мов програмування</p></div>
+    <div class="box play"><h3>Навчишся</h3><p style="margin:0">читати код на <b>Python</b><br>і знаходити в ньому помилки</p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Технічна перевірка">
+  <p class="eyebrow">Поки не почали</p>
+  <h2>Чи всі мене чують?</h2>
+  <div class="row c3">
+    <div class="box pen">
+      <h3>Крок 1</h3>
+      <p style="margin:0">Напиши в чат <b>плюс</b></p>
+      <p class="huge" style="margin:12px 0 0;color:var(--pen)">+</p>
+    </div>
+    <div class="box play">
+      <h3>Крок 2</h3>
+      <p style="margin:0">Приготуй <b>зошит</b></p>
+      <p style="margin-top:12px">Пів уроку ми пишемо код рукою. Так він краще запам'ятовується, ніж набраний на клавіатурі.</p>
+    </div>
+    <div class="box warn">
+      <h3>Крок 3</h3>
+      <p style="margin:0"><b>Мікрофон вимкни</b></p>
+      <p style="margin-top:12px">Вмикаєш, коли я назву твоє ім'я або коли сам піднімеш руку.</p>
+    </div>
+  </div>
+  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Погано видно код на екрані? — <b>напиши в чат просто зараз</b>, я збільшу.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-t="Як ми відповідаємо">
+  <p class="eyebrow">Домовляємось</p>
+  <h2>Чотири способи відповісти</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <span class="mode chat"><span class="dot"></span>У чат</span>
+      <p style="margin-top:12px">Пишеш відповідь, але <b>не надсилаєш</b>, поки я не скажу. Так усі встигають подумати самі.</p>
+    </div>
+    <div class="box note">
+      <span class="mode book"><span class="dot"></span>У зошит</span>
+      <p style="margin-top:12px">Код пишемо <b>рукою</b>, а не в чат. Потім показуєш сторінку в камеру.</p>
+    </div>
+    <div class="box warn">
+      <span class="mode voice"><span class="dot"></span>Вголос</span>
+      <p style="margin-top:12px">Я називаю ім'я — вмикаєш мікрофон. Хочеш сам — <b>підніми руку</b>.</p>
+    </div>
+    <div class="box play">
+      <span class="mode cam"><span class="dot"></span>На камеру</span>
+      <p style="margin-top:12px">Швидка відповідь «так / ні» — <b>великий палець</b> угору або вниз.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Записуємо тему" data-timer="90">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode away"><span class="dot"></span>Від екрана</span></div>
+  <h2>Записуємо</h2>
+  <div class="box">
+    <p class="huge" style="text-align:center;margin:0">Дата</p>
+    <p class="huge" style="text-align:center;margin:clamp(6px,1vw,14px) 0 0">Класна робота</p>
+    <p class="big" style="text-align:center;margin:clamp(14px,2.2vw,26px) 0 0;color:var(--pen)"><b>Мови програмування.<br>Мова програмування Python</b></p>
+  </div>
+  <div class="box note" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p class="big" style="margin:0">Головне питання уроку: <b>чому не можна просто сказати комп'ютеру українською, що робити?</b>
+    До кінця уроку ви знатимете відповідь — і вона не «бо він дурний».</p>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="Розминка: команди для робота" data-timer="150">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Потім у чат</span></div>
+  <p class="eyebrow">Розминка</p>
+  <h2>Робот розуміє лише три команди</h2>
+  <div class="row c21">
+    <div class="box pen">
+      <h3>Уся його мова</h3>
+      <p class="big" style="margin:0"><b>КРОК</b> — пройти одну клітинку вперед<br>
+      <b>ПОВОРОТ</b> — повернутися праворуч на 90°<br>
+      <b>ПОВТОРИ n</b> — зробити наступне n разів</p>
+    </div>
+    <div class="box play">
+      <h3>Завдання</h3>
+      <p class="big" style="margin:0">Напиши програму, щоб робот обійшов <b>квадрат зі стороною 3 клітинки</b> й повернувся туди, звідки почав.</p>
+    </div>
+  </div>
+  <div class="timerslot"></div>
+  <div class="box ok hide" style="margin-top:clamp(12px,1.7vw,20px)">
+    <h3>Відповідь</h3>
+    <p class="num big" style="margin:0">ПОВТОРИ 4:<br>&nbsp;&nbsp;&nbsp;КРОК<br>&nbsp;&nbsp;&nbsp;КРОК<br>&nbsp;&nbsp;&nbsp;КРОК<br>&nbsp;&nbsp;&nbsp;ПОВОРОТ</p>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p class="big" style="margin:0">Ви щойно <b>написали програму</b>. Три слова, сувора форма запису, жодного зайвого — і робот зрозуміє однозначно.
+    Це і є мова програмування, тільки дуже маленька.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="Чому не українською">
+  <p class="eyebrow">Головне питання</p>
+  <h2>Чому не можна просто сказати «намалюй квадрат»?</h2>
+  <div class="box warn">
+    <p class="big" style="margin:0">Бо людська мова <b>багатозначна</b>. Ми домовляємось про зміст на ходу, за здогадкою й контекстом.
+    Машина здогадуватись не вміє.</p>
+  </div>
+  <div class="row c3" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box"><h3>Одне слово — різні речі</h3><p style="margin:0"><b>Замок</b> — на дверях чи на горі?<br><b>Коса</b> — дівоча, річкова чи для трави?</p></div>
+    <div class="box"><h3>Одне речення — два змісти</h3><p style="margin:0">«Я бачив хлопця з телескопом.»<br><span style="color:var(--soft)">Телескоп у мене чи в нього?</span></p></div>
+    <div class="box"><h3>Пропущені кроки</h3><p style="margin:0">«Намалюй квадрат.»<br><span style="color:var(--soft)">Якого розміру? Де? Чим? Заповнити?</span></p></div>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Тому й придумали <b>штучні мови</b>: у них кожен запис має рівно один зміст.
+    Слів мало, правила суворі — зате <b>двох тлумачень не буває ніколи</b>.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="Що розуміє процесор">
+  <p class="eyebrow">Спускаємось на найнижчий рівень</p>
+  <h2>А що процесор розуміє насправді?</h2>
+  <div class="box pen">
+    <p class="big" style="margin:0">Тільки <b>машинний код</b> — числа, записані нулями й одиницями. Ніяких слів. Взагалі.</p>
+    <p class="big" style="margin-top:12px">Наприклад, команда «поклади число 1 у комірку процесора» на процесорах Intel — це п'ять байтів:</p>
+    <p class="num big" style="margin-top:12px;text-align:center"><b>10111000&nbsp; 00000001&nbsp; 00000000&nbsp; 00000000&nbsp; 00000000</b></p>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box warn">
+      <h3>Це одна команда</h3>
+      <p class="big" style="margin:0">Найпростіша програма — це <b>мільйони</b> таких рядків.</p>
+      <p class="big" style="margin-top:12px">Перші програмісти писали саме так. Помилка в одній цифрі — і все ламалося.</p>
+    </div>
+    <div class="box ok">
+      <h3>Висновок</h3>
+      <p class="big" style="margin:0">Потрібен був <b>посередник</b>: людина пише зрозумілими словами, а хтось перекладає це в нулі й одиниці.</p>
+      <p class="big" style="margin-top:12px">Цей посередник і є <b>мова програмування</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="Означення">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо означення</span></div>
+  <h2>Мова програмування</h2>
+  <div class="box pen">
+    <p class="big" style="margin:0"><b>Мова програмування</b> — штучна мова для запису алгоритмів, зрозуміла і людині, і (після перекладу) комп'ютеру.</p>
+  </div>
+  <div class="row c3" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box"><h3>Алфавіт</h3><p style="margin:0">Які символи взагалі можна використовувати</p></div>
+    <div class="box"><h3>Синтаксис</h3><p style="margin:0">Правила запису: де дужки, де лапки, де відступ</p></div>
+    <div class="box"><h3>Семантика</h3><p style="margin:0">Що кожен запис <b>означає</b>, тобто що комп'ютер зробить</p></div>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Порівняйте з українською: алфавіт — 33 букви, синтаксис — правила побудови речень, семантика — значення слів.
+    Різниця одна: <b>за порушення синтаксису українська пробачає, а мова програмування — ні</b>. Забув дужку — програма не запуститься.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="Транслятор">
+  <h2>Хто ж перекладає код у нулі й одиниці</h2>
+  <p class="lede" style="margin-bottom:clamp(12px,1.8vw,20px)">Програма-перекладач називається <b>транслятор</b>. Їх два види.</p>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>Компілятор</h3>
+      <p class="big" style="margin:0">Перекладає <b>всю програму одразу</b> й складає готовий файл. Далі його запускають без перекладача.</p>
+      <p style="margin-top:12px;color:var(--soft)">Як письмовий переклад книжки: довго, зате потім читаєш скільки хочеш.</p>
+      <p class="big" style="margin-top:12px">Так працюють <b>C, C++</b></p>
+    </div>
+    <div class="box ok">
+      <h3>Інтерпретатор</h3>
+      <p class="big" style="margin:0">Перекладає й одразу виконує <b>рядок за рядком</b>, щоразу заново.</p>
+      <p style="margin-top:12px;color:var(--soft)">Як усний перекладач поруч: почав говорити — переклад уже йде.</p>
+      <p class="big" style="margin-top:12px">Так працює <b>Python</b></p>
+    </div>
+  </div>
+  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Саме тому Python зручний для навчання: написав рядок — <b>одразу бачиш результат</b>, чекати нічого не треба.
+    Плата за це — програма працює повільніше за скомпільовану.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="Коротка історія">
+  <p class="eyebrow">Як до цього дійшли</p>
+  <h2>Вісімдесят років за один слайд</h2>
+  <div class="tbl">
+    <table>
+      <tr><th style="width:16%">Коли</th><th style="width:30%">Що з'явилося</th><th>Чим це було важливо</th></tr>
+      <tr><td class="n">1843</td><td><b>Перший алгоритм</b></td><td><b>Ада Лавлейс</b> записала алгоритм для машини, якої ще не існувало. Її вважають першою програмісткою</td></tr>
+      <tr><td class="n">1940-і</td><td><b>Машинний код</b></td><td>Програму набирали нулями й одиницями вручну</td></tr>
+      <tr><td class="n">1950-і</td><td><b>Асемблер</b></td><td>Замість чисел — короткі слова. Але все ще одна команда = одна дія процесора</td></tr>
+      <tr><td class="n">1952</td><td><b>Перший транслятор</b></td><td><b>Грейс Гоппер</b> довела, що комп'ютер може сам перекладати слова в машинний код</td></tr>
+      <tr><td class="n">1957</td><td><b>Fortran</b></td><td>Перша широко вживана мова високого рівня: один рядок — багато машинних команд</td></tr>
+      <tr><td class="n">1991</td><td><b>Python</b></td><td><b>Гвідо ван Россум</b> зробив мову, яку легко читати. Саме її ми вивчатимемо</td></tr>
+    </table>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p class="big" style="margin:0">Загальний напрям простий: <b>кожне наступне покоління мов ближче до людини й далі від заліза</b>.
+    Комп'ютер усередині не змінився — просто перекладач став розумнішим.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="Мов багато">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат: які мови ти вже чув?</span></div>
+  <h2>Мов сотні. Чому не одна?</h2>
+  <div class="tbl">
+    <table>
+      <tr><th style="width:22%">Мова</th><th>Для чого її беруть найчастіше</th></tr>
+      <tr><td><b>C</b></td><td>Операційні системи, програми для мікроконтролерів — там, де важлива швидкість</td></tr>
+      <tr><td><b>Java</b></td><td>Застосунки для Android, великі банківські системи</td></tr>
+      <tr><td><b>JavaScript</b></td><td>Усе, що «оживає» на сайті просто у вашому браузері</td></tr>
+      <tr><td><b>C#</b></td><td>Ігри (зокрема на рушії Unity), програми для Windows</td></tr>
+      <tr><td><b>SQL</b></td><td>Запити до баз даних: знайти, додати, змінити записи</td></tr>
+      <tr><td><b>Python</b></td><td>Штучний інтелект, аналіз даних, автоматизація рутини, навчання</td></tr>
+    </table>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p class="big" style="margin:0">Мова — це <b>інструмент</b>, а не релігія. Ніхто не забиває цвях викруткою й не крутить шурупи молотком.
+    Той, хто знає одну мову добре, вивчає другу за кілька тижнів: <b>алгоритми в них однакові</b>.</p>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="Чому саме Python">
+  <p class="eyebrow">Порівняймо</p>
+  <h2>Одне й те саме завдання: вивести на екран слово</h2>
+  <div class="row c3">
+    <div class="box">
+      <h3>Мовою C</h3>
+      <p class="py"><span class="cm">#include &lt;stdio.h&gt;</span>
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+  <span class="fn">printf</span>(<span class="st">"Привіт\n"</span>);
+  <span class="kw">return</span> <span class="nu">0</span>;
+}</p>
+    </div>
+    <div class="box">
+      <h3>Мовою Java</h3>
+      <p class="py"><span class="kw">public class</span> Main {
+ <span class="kw">public static void</span> <span class="fn">main</span>(String[] a){
+  System.out.<span class="fn">println</span>(<span class="st">"Привіт"</span>);
+ }
+}</p>
+    </div>
+    <div class="box ok">
+      <h3>Мовою Python</h3>
+      <p class="py"><span class="fn">print</span>(<span class="st">"Привіт"</span>)</p>
+      <p class="big" style="margin-top:14px"><b>Один рядок.</b><br>І він читається майже як англійське речення.</p>
+    </div>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Роблять усі три однакове. Але щоб пояснити перші два приклади, довелося б витратити ще три уроки
+    на слова <span class="num">class</span>, <span class="num">static</span>, <span class="num">void</span>.
+    <b>Тому починаємо з Python: менше зайвого — швидше до суті.</b></p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <div class="modes"><span class="mode away"><span class="dot"></span>Відводимо очі від екрана</span></div>
+  <h2>Пауза</h2>
+  <div class="row c2">
+    <div class="box ok">
+      <h3>Очі</h3>
+      <ul>
+        <li>Подивись у <b>вікно</b>, на щось далеке — порахуй до десяти</li>
+        <li><b>Поморгай</b> швидко-швидко</li>
+        <li>Заплющ очі й порахуй до п'яти</li>
+      </ul>
+    </div>
+    <div class="box play">
+      <h3>Спина й руки</h3>
+      <ul>
+        <li>Сядь <b>рівно</b>, відсунься від екрана</li>
+        <li>Розправ плечі, покрути головою</li>
+        <li>Стисни й розтисни кулаки десять разів</li>
+      </ul>
+      <p style="margin-top:12px;color:var(--soft)">Далі — найцікавіше: пишемо код.</p>
+    </div>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="Перша програма">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Переписуємо в зошит</span></div>
+  <p class="eyebrow">Найважливіший слайд уроку</p>
+  <h2>Ваша перша програма</h2>
+  <p class="py big"><span class="fn">print</span>(<span class="st">"Привіт, 9-А!"</span>)</p>
+  <p class="arrow">↓ що побачимо на екрані</p>
+  <p class="out">Привіт, 9-А!</p>
+  <div class="parts" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="part"><div class="k">print</div><div class="d"><b>Команда</b> «виведи на екран». Англійською «друкуй». Пишеться <b>тільки маленькими</b> літерами</div></div>
+    <div class="part"><div class="k">( )</div><div class="d"><b>Дужки</b> — усередині них те, що треба вивести. Без дужок Python не зрозуміє, що це команда</div></div>
+    <div class="part"><div class="k">" "</div><div class="d"><b>Лапки</b> — означають «це просто текст, не рахуй його, а виведи як є»</div></div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="Лапки все змінюють">
+  <p class="eyebrow">Пастка, у яку потрапляють усі</p>
+  <h2>Дві лапки змінюють зміст повністю</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <p class="py big"><span class="fn">print</span>(<span class="nu">2</span> + <span class="nu">2</span>)</p>
+      <p class="arrow">↓</p>
+      <p class="out hide">4</p>
+      <p class="big hide" style="margin-top:12px">Без лапок — це <b>числа</b>. Python їх <b>додає</b>.</p>
+    </div>
+    <div class="box note">
+      <p class="py big"><span class="fn">print</span>(<span class="st">"2 + 2"</span>)</p>
+      <p class="arrow">↓</p>
+      <p class="out hide">2 + 2</p>
+      <p class="big hide" style="margin-top:12px">У лапках — це <b>текст</b>. Python нічого не рахує, а виводить символ у символ.</p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <h3>Запам'ятайте</h3>
+    <p class="big" style="margin:0">Для Python <b>число 2 і текст «2» — різні речі</b>, як цифра на дверях квартири й кількість квартир.
+    Лапки — це і є перемикач між ними.</p>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="Що виведе програма" data-timer="180">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Відповіді — у чат, коли скажу</span></div>
+  <h2>Що виведе кожна програма?</h2>
+  <div class="tbl">
+    <table>
+      <tr><th style="width:52%">Код</th><th>На екрані буде</th></tr>
+      <tr><td class="n">print(10 + 5)</td><td class="n"><span class="hide ans">15</span></td></tr>
+      <tr><td class="n">print("10 + 5")</td><td class="n"><span class="hide ans">10 + 5</span></td></tr>
+      <tr><td class="n">print("10" + "5")</td><td class="n"><span class="hide ans">105 &nbsp;— тексти не додаються, а склеюються</span></td></tr>
+      <tr><td class="n">print("Привіт", "9-А")</td><td class="n"><span class="hide ans">Привіт 9-А &nbsp;— кома ставить пробіл</span></td></tr>
+      <tr><td class="n">print(3 * 4)</td><td class="n"><span class="hide ans">12 &nbsp;— зірочка означає «помножити»</span></td></tr>
+    </table>
+  </div>
+  <div class="timerslot"></div>
+  <div class="box ok hide" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p class="big" style="margin:0">Найважливіший рядок тут — третій. <b>Плюс для чисел — це додавання, а для текстів — склеювання.</b>
+    Один і той самий знак, дві різні дії. Python дивиться не на знак, а на те, <b>що</b> ним з'єднують.</p>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-t="Знайди помилку" data-timer="180">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит: випиши правильний варіант</span></div>
+  <h2>Знайди помилку в коді</h2>
+  <p class="lede" style="margin-bottom:clamp(12px,1.8vw,20px)">Усі три програми мали вивести слово <b>Привіт</b>. Жодна не запуститься.</p>
+  <div class="row c3">
+    <div class="box warn">
+      <h3>№ 1</h3>
+      <p class="py"><span class="fn">print</span>(<span class="st">"Привіт</span>)</p>
+      <p class="big ans hide" style="margin-top:12px">Не закрита лапка. Треба: print("Привіт")</p>
+    </div>
+    <div class="box warn">
+      <h3>№ 2</h3>
+      <p class="py"><span class="fn">Print</span>(<span class="st">"Привіт"</span>)</p>
+      <p class="big ans hide" style="margin-top:12px">Велика літера P. Python розрізняє великі й малі: print і Print — різні слова</p>
+    </div>
+    <div class="box warn">
+      <h3>№ 3</h3>
+      <p class="py"><span class="fn">print</span> <span class="st">"Привіт"</span></p>
+      <p class="big ans hide" style="margin-top:12px">Немає дужок. Треба: print("Привіт")</p>
+    </div>
+  </div>
+  <div class="timerslot"></div>
+  <div class="box note hide" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p class="big" style="margin:0">Такі помилки називають <b>синтаксичними</b> — порушено правила запису.
+    Це <b>найлегший</b> вид помилок: Python сам покаже рядок і скаже, що не так. Значно гірші ті, коли програма
+    працює, але рахує неправильно. До них ми ще дійдемо.</p>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-t="Де писати код">
+  <p class="eyebrow">До наступного уроку</p>
+  <h2>Де насправді запускати програми</h2>
+  <div class="row c3">
+    <div class="box pen">
+      <h3>Найпростіше · онлайн</h3>
+      <p style="margin:0">Сайт <b>python.org</b> → кнопка <b>Launch Interactive Shell</b>.</p>
+      <p style="margin-top:10px;color:var(--soft)">Нічого не встановлюєш, працює навіть із телефона.</p>
+    </div>
+    <div class="box ok">
+      <h3>Зручно · на комп'ютері</h3>
+      <p style="margin:0">Програма <b>Thonny</b> — сайт <b>thonny.org</b>. Створена спеціально для тих, хто починає.</p>
+      <p style="margin-top:10px;color:var(--soft)">Встановлюється за одну хвилину.</p>
+    </div>
+    <div class="box note">
+      <h3>Якщо є Google-акаунт</h3>
+      <p style="margin:0"><b>Google Colab</b> — Python прямо у вкладці браузера, код зберігається на диску.</p>
+      <p style="margin-top:10px;color:var(--soft)">Нічим не поступається дорослим інструментам.</p>
+    </div>
+  </div>
+  <div class="box play" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Вибирайте <b>будь-який один</b> — вони всі виконують той самий Python.
+    Кому важко встановити, напишіть мені: розберемося разом до наступного уроку.</p>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-t="Підсумок">
+  <div class="modes"><span class="mode cam"><span class="dot"></span>Великий палець: угору — знаю, вниз — ні</span></div>
+  <h2>Перевіримо, що запам'ятали</h2>
+  <div class="row c3">
+    <div class="box">
+      <p class="big" style="margin:0"><b>1.</b> Навіщо взагалі потрібні мови програмування?</p>
+      <p class="big ans hide" style="margin-top:12px">Процесор розуміє лише нулі й одиниці, а людина ними писати не може. Мова — посередник</p>
+    </div>
+    <div class="box">
+      <p class="big" style="margin:0"><b>2.</b> Чим компілятор відрізняється від інтерпретатора?</p>
+      <p class="big ans hide" style="margin-top:12px">Компілятор перекладає всю програму одразу, інтерпретатор — рядок за рядком під час виконання</p>
+    </div>
+    <div class="box">
+      <p class="big" style="margin:0"><b>3.</b> Що виведе <span class="num">print("5" + "5")</span>?</p>
+      <p class="big ans hide" style="margin-top:12px">55. Це текст, а не числа — він склеюється</p>
+    </div>
+  </div>
+  <div class="box ok" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">За один урок ви пройшли шлях від нулів і одиниць до робочої програми на Python.
+    <b>Далі буде тільки цікавіше</b> — з наступного уроку програми почнуть з вами розмовляти.</p>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-t="Домашнє завдання">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо в щоденник</span></div>
+  <h2>Домашнє завдання</h2>
+  <div class="row c3">
+    <div class="box pen">
+      <h3>1 · Усім</h3>
+      <p style="margin:0">Напиши в зошиті програму з <b>трьох рядків</b> print: ім'я, клас, улюблена справа.</p>
+      <p class="py" style="margin-top:10px;font-size:clamp(13px,1.5vw,20px)">print("Олена")
+print("9-А")
+print("малюю")</p>
+    </div>
+    <div class="box note">
+      <h3>2 · Усім</h3>
+      <p style="margin:0">Знайди мову програмування, якої <b>не було</b> на нашому слайді (Kotlin, Swift, Go, Rust, PHP…), і запиши <b>двома реченнями</b>, для чого її використовують.</p>
+    </div>
+    <div class="box play">
+      <h3>3 · Хто хоче</h3>
+      <p style="margin:0">Відкрий будь-яке середовище зі слайда, <b>запусти свою програму</b> й надішли мені знімок екрана.</p>
+      <p style="margin-top:10px;color:var(--soft)">Якщо вискочить помилка — надсилай і її теж. Розберемо на уроці, це корисно всім.</p>
+    </div>
+  </div>
+  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0"><b>Сфотографуй сторінку зошита</b> й надішли до початку наступного уроку.</p>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-t="Чому Python">
+  <p class="eyebrow">І останнє на сьогодні</p>
+  <h2>На честь кого назвали Python?</h2>
+  <div class="row c21">
+    <div class="box ok">
+      <p class="big" style="margin:0">Майже всі впевнені, що на честь <b>змії-пітона</b>. Логотип зі зміями цю думку тільки підкріплює.</p>
+      <p class="huge hide" style="margin-top:14px">Насправді — ні.</p>
+      <p class="big hide" style="margin-top:14px">Гвідо ван Россум назвав мову на честь британського комедійного шоу
+      <b>«Monty Python's Flying Circus»</b>, яке дуже любив. Він хотів коротку, трохи загадкову й <b>несерйозну</b> назву.</p>
+    </div>
+    <div class="box note">
+      <h3>Чому це не дрібниця</h3>
+      <p class="big" style="margin:0">Ця мова від самого початку робилася так, щоб з нею було <b>легко й приємно</b> —
+      а не так, щоб вражати складністю.</p>
+      <p class="big" style="margin-top:12px">Саме тому нею сьогодні пишуть і школярі на першому уроці, і команди, що створюють штучний інтелект.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-t="До зустрічі">
+  <h1>Дякую за урок!</h1>
+  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">До зустрічі на наступному уроці — почнемо писати програми, які ставлять запитання.</p>
+  <div class="box ok" style="margin-top:clamp(16px,2.6vw,34px)">
+    <p class="big" style="margin:0">Це посилання працює й після уроку — можеш відкрити його вдома
+    й повторити все, що ми робили, разом із відповідями.</p>
+  </div>
+  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Щось лишилося незрозумілим — <b>напиши мені</b> або спитай на початку наступного уроку.
+    Питати — нормально. Програмісти питають щодня.</p>
+  </div>
+</section>
+</div>
+
+<div id="bar">
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Попередній слайд">←</button>
+    <button id="next" type="button" aria-label="Далі">→</button>
+  </div>
+  <div id="rail" aria-hidden="true"></div>
+  <div id="tip">пробіл — показати відповідь</div>
+  <div id="count">1 / 22</div>
+  <button id="fs" type="button" aria-label="На весь екран">⛶</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('rail');
+  var count = document.getElementById('count');
+  var tip = document.getElementById('tip');
+  var cur = 0, tick = null;
+
+  slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
+  var cells = [].slice.call(rail.children);
+
+  /* ---- таймер завдання ---- */
+  slides.forEach(function(s){
+    var slot = s.querySelector('.timerslot');
+    if(!slot || !s.dataset.timer) return;
+    var total = parseInt(s.dataset.timer, 10);
+    var box = document.createElement('div');
+    box.className = 'timer';
+    box.innerHTML =
+      '<div class="clock"></div>' +
+      '<div class="track"><div class="fill"></div></div>' +
+      '<div class="lab"></div>' +
+      '<button type="button" class="go"></button>';
+    slot.appendChild(box);
+    box.dataset.total = total;
+    box.dataset.left = total;
+    box.dataset.run = '0';
+  });
+
+  function fmt(sec){
+    sec = Math.max(0, sec);
+    return Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2);
+  }
+
+  function drawTimer(box){
+    var total = +box.dataset.total, left = +box.dataset.left, run = box.dataset.run === '1';
+    box.querySelector('.clock').textContent = fmt(left);
+    box.querySelector('.fill').style.width = (100 * left / total) + '%';
+    box.classList.toggle('warn', left > 0 && left <= 30);
+    box.classList.toggle('over', left === 0);
+    box.querySelector('.lab').textContent =
+      left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
+    box.querySelector('.go').textContent =
+      left === 0 ? 'Ще раз' : (run ? 'Пауза' : 'Почати');
+  }
+
+  function stopTick(){ if(tick){ clearInterval(tick); tick = null; } }
+
+  function toggleTimer(box){
+    if(box.dataset.run === '1'){
+      box.dataset.run = '0'; stopTick(); drawTimer(box); return;
+    }
+    if(+box.dataset.left === 0){ box.dataset.left = box.dataset.total; }
+    box.dataset.run = '1';
+    stopTick();
+    tick = setInterval(function(){
+      var left = +box.dataset.left - 1;
+      box.dataset.left = Math.max(0, left);
+      if(left <= 0){ box.dataset.run = '0'; stopTick(); }
+      drawTimer(box);
+    }, 1000);
+    drawTimer(box);
+  }
+
+  function resetTimer(s){
+    var box = s.querySelector('.timer');
+    if(!box) return;
+    box.dataset.left = box.dataset.total;
+    box.dataset.run = '0';
+    drawTimer(box);
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.timer .go') : null;
+    if(!b) return;
+    e.stopPropagation();
+    toggleTimer(b.parentNode);
+  }, true);
+
+  /* ---- показ відповідей і навігація ---- */
+  function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
+  function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
+
+  function paint(){
+    cells.forEach(function(c, i){
+      c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
+    });
+    count.textContent = (cur + 1) + ' / ' + slides.length;
+    tip.classList.toggle('on', hidden(cur).length > 0);
+  }
+
+  function go(i, revealAll){
+    if(i < 0 || i >= slides.length) return;
+    stopTick();
+    resetTimer(slides[cur]);
+    slides[cur].classList.remove('on');
+    cur = i;
+    var s = slides[cur];
+    s.classList.add('on');
+    [].slice.call(s.querySelectorAll('.hide')).forEach(function(el){
+      el.classList.toggle('on', !!revealAll);
+    });
+    resetTimer(s);
+    window.scrollTo(0, 0);
+    paint();
+  }
+
+  function next(){
+    var h = hidden(cur);
+    if(h.length){ h[0].classList.add('on'); paint(); return; }
+    go(cur + 1, false);
+  }
+
+  function prev(){
+    var s = shown(cur);
+    if(s.length){ s[s.length - 1].classList.remove('on'); paint(); return; }
+    go(cur - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else { document.documentElement.requestFullscreen(); }
+  });
+
+  document.getElementById('sheet').addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('button')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'ArrowRight' || e.code === 'Space' || e.code === 'PageDown' || e.code === 'Enter'){
+      e.preventDefault(); next();
+    } else if(e.code === 'ArrowLeft' || e.code === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(e.code === 'Home'){ go(0, false); }
+    else if(e.code === 'End'){ go(slides.length - 1, true); }
+    else if(e.code === 'KeyT'){
+      var box = slides[cur].querySelector('.timer');
+      if(box){ e.preventDefault(); toggleTimer(box); }
+    }
+    else if(e.code === 'KeyF'){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  slides.forEach(resetTimer);
+  paint();
+})();
+</script>
+
+</body>
+</html>
