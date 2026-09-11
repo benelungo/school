@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Вимірювання відрізків</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
+  --ink:#1B2430; --soft:#5B6879;
+  --pen:#2C4BC9; --pen-soft:#E7ECFC;
+  --check:#1B7F4B; --check-soft:#E4F3EA;
+  --marker:#D7263D; --marker-soft:#FCEAEC;
+  --sun:#B57C00; --sun-soft:#FDF3DC;
+  --note:#6B4FA8; --note-soft:#EFEAFA;
+  --edge:#DDE4EC;
+  --cell:30px;
+  --u:min(1vw,1.55vh);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121821; --card:#1A222D; --grid:#26374A;
+    --ink:#EAF0F6; --soft:#9AAABC;
+    --pen:#8DA9FF; --pen-soft:#1E2A47;
+    --check:#5FD394; --check-soft:#163024;
+    --marker:#FF7B8A; --marker-soft:#371D22;
+    --sun:#FFC93C; --sun-soft:#332813;
+    --note:#C0A8F5; --note-soft:#251E3A;
+    --edge:#2C3948;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121821; --card:#1A222D; --grid:#26374A;
+  --ink:#EAF0F6; --soft:#9AAABC;
+  --pen:#8DA9FF; --pen-soft:#1E2A47;
+  --check:#5FD394; --check-soft:#163024;
+  --marker:#FF7B8A; --marker-soft:#371D22;
+  --sun:#FFC93C; --sun-soft:#332813;
+  --note:#C0A8F5; --note-soft:#251E3A;
+  --edge:#2C3948;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:var(--cell) var(--cell);
+  background-position:center top;
+  -webkit-text-size-adjust:100%;
+}
+
+#stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(10px,1.7vh,26px) clamp(14px,4vw,56px) 84px}
+.slide{display:none;width:100%;max-width:1180px}
+.slide.on{display:block;animation:in .3s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(24px,calc(4.3*var(--u)),46px);line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(20px,calc(3.1*var(--u)),33px);line-height:1.16;letter-spacing:-.015em;margin:0 0 clamp(9px,1.4vw,16px);text-wrap:balance}
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 8px}
+p{margin:0 0 10px;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.45}
+p:last-child{margin-bottom:0}
+.lede{font-size:clamp(16px,calc(2.05*var(--u)),24px);color:var(--soft);line-height:1.4}
+b,strong{font-weight:800}
+ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.4}
+li{margin:.34em 0}
+li::marker{color:var(--pen)}
+
+.row{display:grid;gap:clamp(9px,1.3vw,16px)}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c21{grid-template-columns:1.15fr .85fr}
+@media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
+
+.box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(11px,1.5vw,18px);box-shadow:0 1px 0 var(--edge)}
+.box.pen{border-color:var(--pen);background:var(--pen-soft)}
+.box.ok{border-color:var(--check);background:var(--check-soft)}
+.box.warn{border-color:var(--marker);background:var(--marker-soft)}
+.box.play{border-color:var(--sun);background:var(--sun-soft)}
+.box.note{border-color:var(--note);background:var(--note-soft)}
+.box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,calc(1.1*var(--u)),14px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 7px}
+.box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
+.box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
+
+/* ---------- смужка «як відповідаємо» ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 clamp(8px,1.2vw,14px)}
+.mode{display:inline-flex;align-items:center;gap:8px;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:6px 10px;background:var(--card);white-space:nowrap}
+.mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
+.mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+.mode.voice{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.mode.book{color:var(--note);border-color:var(--note);background:var(--note-soft)}
+.mode.away{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+
+/* ---------- таймер ---------- */
+.timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(8px,1vw,12px) clamp(10px,1.3vw,16px);margin:clamp(9px,1.3vw,15px) 0}
+.timerslot:empty{display:none}
+.timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(21px,calc(2.9*var(--u)),35px);line-height:1;min-width:3.6ch}
+.timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
+.timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
+.timer .lab{font-size:clamp(12px,calc(1.2*var(--u)),15px);color:var(--soft);white-space:nowrap}
+.timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
+.timer.over{border-color:var(--marker);background:var(--marker-soft)}
+.timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
+
+/* ---------- лампочки й біти ---------- */
+.lamps{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.lamp{text-align:center;min-width:clamp(52px,6.4vw,86px)}
+.lamp .b{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1.2;
+  font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.9vw,12px) 0}
+.lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.lamp .w{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
+.cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
+.cw .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(18px,2.5vw,32px);letter-spacing:.08em}
+.cw .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(22px,3vw,40px);color:var(--check);margin-top:6px}
+
+/* ---------- цифри ---------- */
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(17px,calc(2.35*var(--u)),27px);line-height:1.4}
+.huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+      font-size:clamp(23px,calc(4*var(--u)),44px);line-height:1.12;letter-spacing:-.02em}
+.ans{color:var(--check);font-weight:800}
+.tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
+      border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
+.tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
+         font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .lab{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.1vw,15px)}
+.klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--soft);text-align:center;margin-bottom:8px}
+
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(13px,calc(1.55*var(--u)),19px)}
+th,td{border:2px solid var(--edge);padding:clamp(6px,.85vw,11px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(10px,calc(1.02*var(--u)),13px);
+   letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+
+.code{display:flex;flex-wrap:wrap;gap:clamp(8px,1.1vw,14px)}
+.code div{flex:1 1 auto;min-width:clamp(86px,10.5vw,146px);text-align:center;
+  border:2px solid var(--sun);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 8px}
+.code .v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.6vw,33px);font-variant-numeric:tabular-nums}
+.code .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(19px,2.6vw,33px);color:var(--sun);margin-top:4px}
+.word{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(32px,6.6vw,88px);letter-spacing:.14em;color:var(--check);line-height:1.1}
+
+.hide{opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+span.hide{display:inline-block}
+.hide.on{opacity:1;pointer-events:auto;transform:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+  padding:10px clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:2px solid var(--edge)}
+#rail{flex:1;display:flex;gap:3px;min-width:0;overflow:hidden}
+#rail i{flex:1 1 0;height:14px;border:1.5px solid var(--edge);border-radius:2px;background:transparent;
+  transition:background .2s ease,border-color .2s ease}
+#rail i.done{background:var(--grid);border-color:var(--grid)}
+#rail i.cur{background:var(--pen);border-color:var(--pen)}
+#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
+  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nav{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:4px;padding:10px 16px;font-weight:800;font-size:17px;line-height:1;
+  transition:background .15s,border-color .15s}
+button:hover{border-color:var(--pen);background:var(--pen-soft)}
+button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(12px,calc(1.2*var(--u)),15px);white-space:nowrap}
+#tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
+#tip.on{opacity:1}
+@media(max-width:760px){
+  #count,#tip{display:none}
+  button{padding:12px 14px;font-size:16px}
+  .timer{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ---------- тема уроку — завжди вгорі ---------- */
+#topic{position:sticky;top:0;z-index:6;
+  display:flex;align-items:baseline;gap:clamp(10px,1.6vw,22px);
+  padding:clamp(6px,.9vw,11px) clamp(14px,4vw,56px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 90%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--edge)}
+#topic .k{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--pen);white-space:nowrap;flex:none}
+#topic .t{flex:1;min-width:0;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.01em;text-wrap:balance}
+@media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
+
+/* ---------- математика ---------- */
+.eqn{font-family:"JetBrains Mono",monospace;font-weight:700;
+     font-size:clamp(16px,calc(2.3*var(--u)),26px);line-height:1.65;font-variant-numeric:tabular-nums}
+.step{font-size:clamp(15px,calc(1.85*var(--u)),23px);line-height:1.75}
+.stolb{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:pre;
+       font-size:clamp(15px,calc(2.05*var(--u)),25px);line-height:1.45;letter-spacing:.06em;
+       font-variant-numeric:tabular-nums;margin:0}
+.pair{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.pair span{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(14px,calc(1.75*var(--u)),22px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(5px,.7vw,9px) clamp(7px,1vw,13px)}
+
+/* ---------- дроби ---------- */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;
+    margin:0 .16em;line-height:1.08;font-variant-numeric:tabular-nums}
+.fr .n{border-bottom:.09em solid currentColor;padding:0 .2em}
+.fr .d{padding:0 .2em}
+.mix{display:inline-flex;align-items:center;gap:.1em;vertical-align:middle}
+
+/* ---------- креслення ---------- */
+.fig{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(8px,1.1vw,14px) clamp(10px,1.3vw,16px)}
+.fig svg{display:block;width:100%;height:auto;color:var(--ink)}
+.fig .cap{text-align:center;color:var(--soft);font-size:clamp(11px,calc(1.15*var(--u)),15px);margin-top:6px}
+svg line,svg path,svg circle{stroke:currentColor;stroke-width:2.4;fill:none;vector-effect:non-scaling-stroke}
+svg circle.pt{fill:currentColor}
+svg text{font:italic 22px "Charter",Georgia,serif;fill:currentColor;stroke:none}
+svg text.n{font-style:normal;font-weight:700;font-size:19px}
+.fig.mark svg line.m{stroke:var(--marker)}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<div id="topic">
+  <span class="k">Геометрія · 7-І · Урок 3</span>
+  <span class="t">Відрізок. Вимірювання відрізків. Відстань між двома точками</span>
+</div>
+
+<div id="sheet">
+
+<!-- 1 -->
+<section class="slide on" data-t="Вітання">
+  <p class="eyebrow">Геометрія · 7-І · Урок 3 · онлайн</p>
+  <h1>Вимірюємо відрізки</h1>
+  <p class="lede" style="margin-top:16px">Другий урок теми. Сьогодні майже весь час — <b>задачі</b>.<br>
+  Підручник: § 2, вправи ст. 16–17.</p>
+  <div class="row c3" style="margin-top:22px">
+    <div class="box pen"><h3>Знадобиться</h3><p>Підручник, зошит, лінійка, олівець</p></div>
+    <div class="box ok"><h3>Повторимо</h3><p>Основну властивість вимірювання відрізків</p></div>
+    <div class="box play"><h3>Навчимось</h3><p>Розбирати задачі, де відповідей <b>дві</b></p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Технічна перевірка">
+  <p class="eyebrow">Перед початком</p>
+  <h2>Перевірка звʼязку</h2>
+  <div class="row c3">
+    <div class="box pen">
+      <h3>Крок 1</h3>
+      <p style="margin:0">Напиши в чат <b>плюс</b></p>
+      <p class="huge" style="margin:10px 0 0;color:var(--pen)">+</p>
+    </div>
+    <div class="box play">
+      <h3>Крок 2</h3>
+      <p style="margin:0">Поклади поруч <b>лінійку</b>, відкрий підручник на <b>ст. 16</b></p>
+    </div>
+    <div class="box warn">
+      <h3>Крок 3</h3>
+      <p style="margin:0"><b>Мікрофон вимкни</b></p>
+      <p style="margin-top:10px">Вмикаєш, коли я назву твоє імʼя.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-t="Як відповідаємо">
+  <p class="eyebrow">Домовляємось</p>
+  <h2>Як ми сьогодні відповідаємо</h2>
+  <div class="row c4">
+    <div class="box pen"><h3>У чат</h3><p style="margin:0">Число або «так/ні»</p></div>
+    <div class="box play"><h3>На камеру</h3><p style="margin:0">Показуєш креслення в зошиті</p></div>
+    <div class="box warn"><h3>Вголос</h3><p style="margin:0">Пояснюєш <b>чому</b>, а не тільки відповідь</p></div>
+    <div class="box note"><h3>У зошит</h3><p style="margin:0">Пишемо мовчки, поки йде таймер</p></div>
+  </div>
+  <div class="box ok" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">У геометрії відповідь «17» без пояснення — <b>не відповідь</b>. Завжди кажемо, з якої властивості вона взялася.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Перевіряємо ДЗ" data-timer="180">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Домашнє завдання</p>
+  <h2>Звіряємо відповіді</h2>
+  <div class="row c2">
+    <div class="box">
+      <h3>№ 22 (ст. 16)</h3>
+      <p class="eqn" style="margin:0">1) PK = 3 дм, KQ = 7 дм</p>
+      <p class="eqn hide" style="margin:4px 0 0">PQ = 3 + 7 = <span class="ans">10 дм</span></p>
+      <p class="eqn" style="margin:10px 0 0">2) PQ = 8 см, KQ = 6 см</p>
+      <p class="eqn hide" style="margin:4px 0 0">PK = 8 − 6 = <span class="ans">2 см</span></p>
+    </div>
+    <div class="box">
+      <h3>№ 26 (ст. 17)</h3>
+      <p style="margin:0">AB = 12 см, BC = 1,5 дм, AC = 40 мм. Чи лежать точки на одній прямій?</p>
+      <p class="step hide" style="margin:8px 0 0">Спочатку <b>однакові одиниці</b>: 12 см, <b>15 см</b>, <b>4 см</b>.</p>
+      <p class="eqn hide" style="margin:4px 0 0">12 + 4 = 16 ≠ 15</p>
+      <p class="eqn hide" style="margin:4px 0 0">12 + 15 = 27 ≠ 4</p>
+      <p class="eqn hide" style="margin:4px 0 0">15 + 4 = 19 ≠ 12</p>
+      <p class="big hide" style="margin:8px 0 0"><span class="ans">Ні, не лежать</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="Записуємо тему" data-timer="90">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <h2>Записуємо</h2>
+  <div class="box">
+    <p class="huge" style="text-align:center;margin:0">Дата</p>
+    <p class="huge" style="text-align:center;margin:clamp(5px,.9vw,12px) 0 0">Класна робота</p>
+    <p class="big" style="text-align:center;margin:clamp(12px,2vw,22px) 0 0;color:var(--pen)">
+      <b>Відрізок. Вимірювання відрізків.<br>Відстань між двома точками</b></p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="Головна властивість">
+  <p class="eyebrow">Інструмент, яким сьогодні працюємо</p>
+  <h2>Основна властивість вимірювання відрізків</h2>
+  <div class="box pen">
+    <p class="big" style="margin:0">Якщо точка <b>C</b> лежить <b>між</b> точками A і B, то</p>
+    <p class="huge" style="margin:10px 0 0;text-align:center">AC + CB = AB</p>
+  </div>
+  <div class="fig" style="margin-top:clamp(10px,1.5vw,18px)">
+    <svg viewBox="0 0 600 80" role="img" aria-label="Точка C між точками A і B">
+      <line x1="40" y1="55" x2="560" y2="55"></line>
+      <circle class="pt" cx="60" cy="55" r="5"></circle>
+      <circle class="pt" cx="330" cy="55" r="5"></circle>
+      <circle class="pt" cx="540" cy="55" r="5"></circle>
+      <text x="52" y="38">A</text>
+      <text x="322" y="38">C</text>
+      <text x="532" y="38">B</text>
+    </svg>
+  </div>
+  <div class="row c2" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="box ok"><h3>Пряма дія</h3><p class="eqn" style="margin:0">AB = AC + CB</p></div>
+    <div class="box play"><h3>Обернена дія</h3><p class="eqn" style="margin:0">CB = AB − AC</p></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="Одиниці довжини" data-timer="120">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Розминка</p>
+  <h2>Переводимо в міліметри</h2>
+  <div class="row c4">
+    <div class="box"><p class="eqn" style="margin:0">3 см 2 мм</p><p class="eqn hide" style="margin:6px 0 0"><span class="ans">32 мм</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">0,74 дм</p><p class="eqn hide" style="margin:6px 0 0"><span class="ans">74 мм</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">1,5 дм</p><p class="eqn hide" style="margin:6px 0 0"><span class="ans">150 мм</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">4 см</p><p class="eqn hide" style="margin:6px 0 0"><span class="ans">40 мм</span></p></div>
+  </div>
+  <div class="box warn" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Правило на весь урок</h3>
+    <p class="big" style="margin:0">Поки одиниці різні — <b>задачу не розвʼязуємо</b>. Спершу все зводимо до однієї одиниці.</p>
+    <p class="eqn" style="margin:8px 0 0">1 дм = 10 см = 100 мм</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="№ 24 — на одній прямій" data-timer="180">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <p class="eyebrow">Ст. 17</p>
+  <h2>№ 24. Чи лежать точки A, B і C на одній прямій?</h2>
+  <div class="row c2">
+    <div class="box">
+      <p class="eqn" style="margin:0">1) AB = 7, BC = 3, AC = 9</p>
+      <p class="eqn hide" style="margin:6px 0 0">7 + 3 = 10 ≠ 9</p>
+      <p class="eqn hide" style="margin:4px 0 0">7 + 9 = 16 ≠ 3</p>
+      <p class="eqn hide" style="margin:4px 0 0">3 + 9 = 12 ≠ 7</p>
+      <p class="big hide" style="margin:8px 0 0"><span class="ans">Ні</span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0">2) AB = 5, BC = 2, AC = 7</p>
+      <p class="eqn hide" style="margin:6px 0 0">5 + 2 = 7 = AC</p>
+      <p class="big hide" style="margin:8px 0 0"><span class="ans">Так, B лежить між A і C</span></p>
+    </div>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Як міркуємо</h3>
+    <p class="big" style="margin:0">Точки лежать на одній прямій тоді, коли <b>сума двох менших довжин дорівнює найбільшій</b>.
+    Та точка, якої немає в найбільшому відрізку, і лежить <b>між</b> двома іншими.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="№ 25 — різні одиниці" data-timer="180">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос</span></div>
+  <p class="eyebrow">Ст. 17 · рівень 3</p>
+  <h2>№ 25. Яка точка лежить між двома іншими?</h2>
+  <div class="box">
+    <p class="big" style="margin:0">На прямій позначено точки P, L і M, причому
+    <b>PL = 42 мм</b>, <b>PM = 3 см 2 мм</b>, <b>LM = 0,74 дм</b>.</p>
+  </div>
+  <div class="box pen hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Крок 1. Одні одиниці</h3>
+    <p class="eqn" style="margin:0">PL = 42 мм &nbsp; PM = 32 мм &nbsp; LM = 74 мм</p>
+  </div>
+  <div class="box play hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Крок 2. Шукаємо рівність</h3>
+    <p class="eqn" style="margin:0">32 + 42 = 74 &nbsp; ⟹ &nbsp; PM + PL = LM</p>
+    <p class="big" style="margin:8px 0 0"><span class="ans">Між точками M і L лежить точка P</span></p>
+  </div>
+  <div class="fig hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <svg viewBox="0 0 600 80" role="img" aria-label="Точка P між точками M і L">
+      <line x1="40" y1="55" x2="560" y2="55"></line>
+      <circle class="pt" cx="60" cy="55" r="5"></circle>
+      <circle class="pt" cx="285" cy="55" r="5"></circle>
+      <circle class="pt" cx="540" cy="55" r="5"></circle>
+      <text x="52" y="38">M</text>
+      <text x="277" y="38">P</text>
+      <text x="533" y="38">L</text>
+      <text class="n" x="150" y="80">32 мм</text>
+      <text class="n" x="380" y="80">42 мм</text>
+    </svg>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="№ 27 — обґрунтування" data-timer="180">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос</span></div>
+  <p class="eyebrow">Ст. 17</p>
+  <h2>№ 27. Доведіть, що AC = BD</h2>
+  <div class="fig">
+    <svg viewBox="0 0 600 70" role="img" aria-label="Точки A, B, C, D на одній прямій">
+      <line x1="40" y1="45" x2="560" y2="45"></line>
+      <circle class="pt" cx="80" cy="45" r="5"></circle>
+      <circle class="pt" cx="180" cy="45" r="5"></circle>
+      <circle class="pt" cx="420" cy="45" r="5"></circle>
+      <circle class="pt" cx="520" cy="45" r="5"></circle>
+      <text x="72" y="28">A</text>
+      <text x="172" y="28">B</text>
+      <text x="412" y="28">C</text>
+      <text x="512" y="28">D</text>
+    </svg>
+    <div class="cap">Мал. 2.15 · відомо, що AB = CD</div>
+  </div>
+  <div class="box pen hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="eqn" style="margin:0">AC = AB + BC</p>
+    <p class="eqn" style="margin:4px 0 0">BD = BC + CD</p>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Відрізок <b>BC</b> входить в обидві суми. За умовою <b>AB = CD</b>,
+    отже, доданки однакові попарно — <span class="ans">AC = BD</span>.</p>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Тут <b>жодного числа</b>. Це перше на уроці <b>доведення</b>: міркуємо буквами й посилаємось на властивість.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <div class="modes"><span class="mode away"><span class="dot"></span>Від екрана</span></div>
+  <h2>Пауза для очей</h2>
+  <div class="row c3">
+    <div class="box play"><h3>1</h3><p style="margin:0">Подивись у вікно на щось <b>далеке</b> — 20 секунд</p></div>
+    <div class="box ok"><h3>2</h3><p style="margin:0">Поводь очима <b>вгору-вниз</b>, не рухаючи головою</p></div>
+    <div class="box pen"><h3>3</h3><p style="margin:0">Міцно <b>заплющ</b> очі на 5 секунд і розплющ</p></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="№ 29 — відрізок усередині" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode cam"><span class="dot"></span>На камеру</span></div>
+  <p class="eyebrow">Ст. 17</p>
+  <h2>№ 29. Знайдіть довжину відрізка CD</h2>
+  <div class="box">
+    <p class="big" style="margin:0">Точки C і D належать відрізку AB. <b>AB = 40 см</b>, <b>AC = 25 см</b>, <b>BD = 32 см</b>.</p>
+  </div>
+  <div class="fig" style="margin-top:clamp(10px,1.5vw,18px)">
+    <svg viewBox="0 0 600 90" role="img" aria-label="Точки C і D на відрізку AB">
+      <line x1="60" y1="50" x2="540" y2="50"></line>
+      <circle class="pt" cx="60" cy="50" r="5"></circle>
+      <circle class="pt" cx="240" cy="50" r="5"></circle>
+      <circle class="pt" cx="360" cy="50" r="5"></circle>
+      <circle class="pt" cx="540" cy="50" r="5"></circle>
+      <text x="52" y="33">A</text>
+      <text x="232" y="33">D</text>
+      <text x="352" y="33">C</text>
+      <text x="532" y="33">B</text>
+      <text class="n" x="120" y="82">AC = 25</text>
+      <text class="n" x="390" y="82">BD = 32</text>
+    </svg>
+  </div>
+  <div class="box pen hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Ключ до задачі</h3>
+    <p class="big" style="margin:0">Разом AC і BD <b>накривають AB</b>, і ділянку <b>CD</b> вони накривають <b>двічі</b>.</p>
+    <p class="eqn" style="margin:8px 0 0">AC + BD = AB + CD</p>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="eqn" style="margin:0">CD = 25 + 32 − 40 = <span class="ans">17 см</span></p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="№ 31 — два випадки" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <p class="eyebrow">Ст. 17 · рівень 4</p>
+  <h2>№ 31. Скільки розвʼязків має задача?</h2>
+  <div class="box">
+    <p class="big" style="margin:0">Точки C, D і M лежать на одній прямій. <b>CM = 5,2 см</b>, <b>DM = 4,9 см</b>. Знайдіть <b>CD</b>.</p>
+  </div>
+  <div class="row c2 hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="box pen">
+      <h3>Випадок 1. M між C і D</h3>
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 400 70" role="img" aria-label="Точка M між C і D">
+          <line x1="30" y1="45" x2="370" y2="45"></line>
+          <circle class="pt" cx="50" cy="45" r="5"></circle>
+          <circle class="pt" cx="210" cy="45" r="5"></circle>
+          <circle class="pt" cx="350" cy="45" r="5"></circle>
+          <text x="42" y="28">C</text>
+          <text x="202" y="28">M</text>
+          <text x="342" y="28">D</text>
+        </svg>
+      </div>
+      <p class="eqn" style="margin:6px 0 0">CD = 5,2 + 4,9 = <span class="ans">10,1 см</span></p>
+    </div>
+    <div class="box play">
+      <h3>Випадок 2. D між C і M</h3>
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 400 70" role="img" aria-label="Точка D між C і M">
+          <line x1="30" y1="45" x2="370" y2="45"></line>
+          <circle class="pt" cx="50" cy="45" r="5"></circle>
+          <circle class="pt" cx="90" cy="45" r="5"></circle>
+          <circle class="pt" cx="350" cy="45" r="5"></circle>
+          <text x="42" y="28">C</text>
+          <text x="82" y="28">D</text>
+          <text x="342" y="28">M</text>
+        </svg>
+      </div>
+      <p class="eqn" style="margin:6px 0 0">CD = 5,2 − 4,9 = <span class="ans">0,3 см</span></p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">В умові <b>не сказано</b>, яка точка між якими. Тому розвʼязків <b>два</b> —
+    і обидва треба записати. Це і є вся хитрість задачі.</p>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="№ 33 — перша столиця" data-timer="300">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Слово — у чат</span></div>
+  <p class="eyebrow">Ст. 17 · задача-шифр</p>
+  <h2>№ 33. Прочитайте назву першої столиці України</h2>
+  <div class="box">
+    <p class="big" style="margin:0">Точка C належить відрізку AB завдовжки <b>14 дм</b>. Знайдіть AC і BC, якщо:</p>
+  </div>
+  <table style="margin-top:clamp(8px,1.2vw,14px)">
+    <tr><th>Умова</th><th>AC</th><th>BC</th></tr>
+    <tr><td>AC втричі менший від BC</td><td>В <span class="ans hide">= 3,5</span></td><td>Х <span class="ans hide">= 10,5</span></td></tr>
+    <tr><td>AC більший за BC на 1,8 дм</td><td>Р <span class="ans hide">= 7,9</span></td><td>К <span class="ans hide">= 6,1</span></td></tr>
+    <tr><td>AC : BC = 3 : 2</td><td>А <span class="ans hide">= 8,4</span></td><td>І <span class="ans hide">= 5,6</span></td></tr>
+  </table>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Розставляємо букви за зростанням підказки</h3>
+    <div class="pair">
+      <span>10,5 — Х</span><span>8,4 — А</span><span>7,9 — Р</span><span>6,1 — К</span><span>5,6 — І</span><span>3,5 — В</span>
+    </div>
+    <p class="huge hide" style="margin:12px 0 0;text-align:center;color:var(--check)">ХАРКІВ</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="Підсумок">
+  <p class="eyebrow">Що забираємо з уроку</p>
+  <h2>Підсумок</h2>
+  <div class="row c2">
+    <div class="box pen"><h3>Головна властивість</h3><p class="big" style="margin:0">C між A і B ⟹ <b>AC + CB = AB</b></p></div>
+    <div class="box ok"><h3>На одній прямій чи ні</h3><p style="margin:0">Сума двох менших дорівнює найбільшій — тоді лежать на одній прямій</p></div>
+    <div class="box play"><h3>Одиниці</h3><p style="margin:0">Мм, см, дм — <b>звести до однієї</b> ще до обчислень</p></div>
+    <div class="box warn"><h3>Два випадки</h3><p style="margin:0">Якщо порядок точок не заданий — відповідей <b>дві</b></p></div>
+  </div>
+  <div class="box" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Напиши в чат <b>одне число</b>: наскільки зрозуміло було сьогодні — від <b>1</b> до <b>5</b>.</p>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="Домашнє завдання">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Записати в щоденник</span></div>
+  <p class="eyebrow">На наступний урок</p>
+  <h2>Домашнє завдання</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>№ 28 (ст. 17)</h3>
+      <p style="margin:0">На малюнку 2.15 довжини відрізків <b>AC</b> і <b>BD</b> однакові. Обґрунтуйте, чому <b>AB = CD</b>.</p>
+      <p style="margin:10px 0 0">Це № 27 <b>навпаки</b> — той самий малюнок, ті самі дві рівності.</p>
+    </div>
+    <div class="box play">
+      <h3>№ 32 (ст. 17)</h3>
+      <p style="margin:0">На прямій позначено A, M і N, причому <b>AM = 7,2 см</b>, <b>MN = 2,5 см</b>.
+      Знайдіть <b>AN</b>. Скільки розвʼязків має задача?</p>
+      <p style="margin:10px 0 0">Зразок — № 31: <b>два креслення</b>, дві відповіді.</p>
+    </div>
+  </div>
+  <div class="box ok" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Наступний урок — <b>кут, вимірювання кутів, бісектриса</b> (§ 3). Приготуй <b>транспортир</b>.</p>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-t="До зустрічі">
+  <h1>Дякую за урок</h1>
+  <p class="lede" style="margin-top:16px">Хто не встиг дописати — сфотографуй слайди з таймером і доведи розвʼязання вдома.</p>
+  <div class="box pen" style="margin-top:22px">
+    <p class="big" style="margin:0">У домашньому обовʼязково <b>малюємо креслення</b>. Задача без малюнка в геометрії не зарахована.</p>
+  </div>
+</section>
+
+</div>
+
+<div id="bar">
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Попередній слайд">←</button>
+    <button id="next" type="button" aria-label="Далі">→</button>
+  </div>
+  <div id="rail" aria-hidden="true"></div>
+  <div id="tip">пробіл — показати відповідь</div>
+  <div id="count">1 / 17</div>
+  <button id="fs" type="button" aria-label="На весь екран">⛶</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('rail');
+  var count = document.getElementById('count');
+  var tip = document.getElementById('tip');
+  var cur = 0, tick = null;
+
+  slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
+  var cells = [].slice.call(rail.children);
+
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
+    var slot = s.querySelector('.timerslot');
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
+    var total = parseInt(s.dataset.timer, 10);
+    var box = document.createElement('div');
+    box.className = 'timer';
+    box.innerHTML =
+      '<div class="clock"></div>' +
+      '<div class="track"><div class="fill"></div></div>' +
+      '<div class="lab"></div>' +
+      '<button type="button" class="go"></button>';
+    slot.appendChild(box);
+    box.dataset.total = total;
+    box.dataset.left = total;
+    box.dataset.run = '0';
+  });
+
+  function fmt(sec){
+    sec = Math.max(0, sec);
+    return Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2);
+  }
+
+  function drawTimer(box){
+    var total = +box.dataset.total, left = +box.dataset.left, run = box.dataset.run === '1';
+    box.querySelector('.clock').textContent = fmt(left);
+    box.querySelector('.fill').style.width = (100 * left / total) + '%';
+    box.classList.toggle('warn', left > 0 && left <= 30);
+    box.classList.toggle('over', left === 0);
+    box.querySelector('.lab').textContent =
+      left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
+    box.querySelector('.go').textContent =
+      left === 0 ? 'Ще раз' : (run ? 'Пауза' : 'Почати');
+  }
+
+  function stopTick(){ if(tick){ clearInterval(tick); tick = null; } }
+
+  function toggleTimer(box){
+    if(box.dataset.run === '1'){
+      box.dataset.run = '0'; stopTick(); drawTimer(box); return;
+    }
+    if(+box.dataset.left === 0){ box.dataset.left = box.dataset.total; }
+    box.dataset.run = '1';
+    stopTick();
+    tick = setInterval(function(){
+      var left = +box.dataset.left - 1;
+      box.dataset.left = Math.max(0, left);
+      if(left <= 0){ box.dataset.run = '0'; stopTick(); }
+      drawTimer(box);
+    }, 1000);
+    drawTimer(box);
+  }
+
+  function resetTimer(s){
+    var box = s.querySelector('.timer');
+    if(!box) return;
+    box.dataset.left = box.dataset.total;
+    box.dataset.run = '0';
+    drawTimer(box);
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.timer .go') : null;
+    if(!b) return;
+    e.stopPropagation();
+    toggleTimer(b.parentNode);
+  }, true);
+
+  /* ---- показ відповідей і навігація ---- */
+  function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
+  function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
+
+  var sheet = document.getElementById('sheet');
+  function fit(){
+    var s = slides[cur];
+    s.style.zoom = '';
+    var cs = getComputedStyle(sheet);
+    var avail = sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var h = s.scrollHeight;
+    if(avail > 0 && h > avail){
+      s.style.zoom = Math.max(0.5, Math.floor(100 * avail / h) / 100);
+    }
+  }
+
+  function paint(){
+    cells.forEach(function(c, i){
+      c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
+    });
+    count.textContent = (cur + 1) + ' / ' + slides.length;
+    tip.classList.toggle('on', hidden(cur).length > 0);
+    fit();
+  }
+
+  var rt = null;
+  window.addEventListener('resize', function(){
+    if(rt) clearTimeout(rt);
+    rt = setTimeout(fit, 120);
+  });
+
+  function go(i, revealAll){
+    if(i < 0 || i >= slides.length) return;
+    stopTick();
+    resetTimer(slides[cur]);
+    slides[cur].classList.remove('on');
+    cur = i;
+    var s = slides[cur];
+    s.classList.add('on');
+    [].slice.call(s.querySelectorAll('.hide')).forEach(function(el){
+      el.classList.toggle('on', !!revealAll);
+    });
+    resetTimer(s);
+    window.scrollTo(0, 0);
+    paint();
+  }
+
+  function next(){
+    var h = hidden(cur);
+    if(h.length){ h[0].classList.add('on'); paint(); return; }
+    go(cur + 1, false);
+  }
+
+  function prev(){
+    var s = shown(cur);
+    if(s.length){ s[s.length - 1].classList.remove('on'); paint(); return; }
+    go(cur - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else { document.documentElement.requestFullscreen(); }
+  });
+
+  document.getElementById('sheet').addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('button')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'ArrowRight' || e.code === 'Space' || e.code === 'PageDown' || e.code === 'Enter'){
+      e.preventDefault(); next();
+    } else if(e.code === 'ArrowLeft' || e.code === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(e.code === 'Home'){ go(0, false); }
+    else if(e.code === 'End'){ go(slides.length - 1, true); }
+    else if(e.code === 'KeyT'){
+      var box = slides[cur].querySelector('.timer');
+      if(box){ e.preventDefault(); toggleTimer(box); }
+    }
+    else if(e.code === 'KeyF'){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  slides.forEach(resetTimer);
+  paint();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Дроби: десяткові та звичайні</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
+  --ink:#1B2430; --soft:#5B6879;
+  --pen:#2C4BC9; --pen-soft:#E7ECFC;
+  --check:#1B7F4B; --check-soft:#E4F3EA;
+  --marker:#D7263D; --marker-soft:#FCEAEC;
+  --sun:#B57C00; --sun-soft:#FDF3DC;
+  --note:#6B4FA8; --note-soft:#EFEAFA;
+  --edge:#DDE4EC;
+  --cell:30px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121821; --card:#1A222D; --grid:#26374A;
+    --ink:#EAF0F6; --soft:#9AAABC;
+    --pen:#8DA9FF; --pen-soft:#1E2A47;
+    --check:#5FD394; --check-soft:#163024;
+    --marker:#FF7B8A; --marker-soft:#371D22;
+    --sun:#FFC93C; --sun-soft:#332813;
+    --note:#C0A8F5; --note-soft:#251E3A;
+    --edge:#2C3948;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121821; --card:#1A222D; --grid:#26374A;
+  --ink:#EAF0F6; --soft:#9AAABC;
+  --pen:#8DA9FF; --pen-soft:#1E2A47;
+  --check:#5FD394; --check-soft:#163024;
+  --marker:#FF7B8A; --marker-soft:#371D22;
+  --sun:#FFC93C; --sun-soft:#332813;
+  --note:#C0A8F5; --note-soft:#251E3A;
+  --edge:#2C3948;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:var(--cell) var(--cell);
+  background-position:center top;
+  -webkit-text-size-adjust:100%;
+}
+
+#stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vw,40px) clamp(14px,4vw,56px) 96px}
+.slide{display:none;width:100%;max-width:1180px}
+.slide.on{display:block;animation:in .3s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(29px,5.2vw,64px);line-height:1.06;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(23px,3.7vw,44px);line-height:1.14;letter-spacing:-.015em;margin:0 0 clamp(14px,2vw,26px);text-wrap:balance}
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,1.15vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 12px}
+p{margin:0 0 14px;font-size:clamp(16px,1.95vw,26px);line-height:1.5}
+p:last-child{margin-bottom:0}
+.lede{font-size:clamp(18px,2.4vw,31px);color:var(--soft);line-height:1.4}
+b,strong{font-weight:800}
+ul,ol{margin:0;padding-left:1.3em;font-size:clamp(16px,1.95vw,26px);line-height:1.45}
+li{margin:.5em 0}
+li::marker{color:var(--pen)}
+
+.row{display:grid;gap:clamp(12px,1.7vw,22px)}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c21{grid-template-columns:1.15fr .85fr}
+@media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
+
+.box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(14px,2vw,26px);box-shadow:0 1px 0 var(--edge)}
+.box.pen{border-color:var(--pen);background:var(--pen-soft)}
+.box.ok{border-color:var(--check);background:var(--check-soft)}
+.box.warn{border-color:var(--marker);background:var(--marker-soft)}
+.box.play{border-color:var(--sun);background:var(--sun-soft)}
+.box.note{border-color:var(--note);background:var(--note-soft)}
+.box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(12px,1.25vw,16px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 10px}
+.box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
+.box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
+
+/* ---------- смужка «як відповідаємо» ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(12px,1.7vw,20px)}
+.mode{display:inline-flex;align-items:center;gap:8px;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(11px,1.15vw,15px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:8px 12px;background:var(--card);white-space:nowrap}
+.mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
+.mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+.mode.voice{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.mode.book{color:var(--note);border-color:var(--note);background:var(--note-soft)}
+.mode.away{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+
+/* ---------- таймер ---------- */
+.timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(10px,1.3vw,16px) clamp(12px,1.6vw,20px);margin:clamp(12px,1.7vw,20px) 0}
+.timerslot:empty{display:none}
+.timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(26px,3.6vw,48px);line-height:1;min-width:3.6ch}
+.timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
+.timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
+.timer .lab{font-size:clamp(13px,1.35vw,17px);color:var(--soft);white-space:nowrap}
+.timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
+.timer.over{border-color:var(--marker);background:var(--marker-soft)}
+.timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
+
+/* ---------- лампочки й біти ---------- */
+.lamps{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.lamp{text-align:center;min-width:clamp(52px,6.4vw,86px)}
+.lamp .b{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1.2;
+  font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.9vw,12px) 0}
+.lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.lamp .w{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
+.cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
+.cw .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(18px,2.5vw,32px);letter-spacing:.08em}
+.cw .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(22px,3vw,40px);color:var(--check);margin-top:6px}
+
+/* ---------- цифри ---------- */
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(22px,3.3vw,42px);line-height:1.45}
+.huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+      font-size:clamp(32px,5.8vw,80px);line-height:1.1;letter-spacing:-.02em}
+.ans{color:var(--check);font-weight:800}
+.tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
+      border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
+.tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
+         font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .lab{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.4vw,20px)}
+.klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,1.15vw,15px);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--soft);text-align:center;margin-bottom:8px}
+
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(14px,1.8vw,24px)}
+th,td{border:2px solid var(--edge);padding:clamp(8px,1.05vw,15px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(11px,1.15vw,15px);
+   letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+
+.code{display:flex;flex-wrap:wrap;gap:clamp(8px,1.1vw,14px)}
+.code div{flex:1 1 auto;min-width:clamp(86px,10.5vw,146px);text-align:center;
+  border:2px solid var(--sun);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 8px}
+.code .v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.6vw,33px);font-variant-numeric:tabular-nums}
+.code .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(19px,2.6vw,33px);color:var(--sun);margin-top:4px}
+.word{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(32px,6.6vw,88px);letter-spacing:.14em;color:var(--check);line-height:1.1}
+
+.hide{opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+span.hide{display:inline-block}
+.hide.on{opacity:1;pointer-events:auto;transform:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+  padding:10px clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:2px solid var(--edge)}
+#rail{flex:1;display:flex;gap:3px;min-width:0;overflow:hidden}
+#rail i{flex:1 1 0;height:14px;border:1.5px solid var(--edge);border-radius:2px;background:transparent;
+  transition:background .2s ease,border-color .2s ease}
+#rail i.done{background:var(--grid);border-color:var(--grid)}
+#rail i.cur{background:var(--pen);border-color:var(--pen)}
+#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
+  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nav{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:4px;padding:10px 16px;font-weight:800;font-size:17px;line-height:1;
+  transition:background .15s,border-color .15s}
+button:hover{border-color:var(--pen);background:var(--pen-soft)}
+button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(13px,1.35vw,17px);white-space:nowrap}
+#tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
+#tip.on{opacity:1}
+@media(max-width:760px){
+  #count,#tip{display:none}
+  button{padding:12px 14px;font-size:16px}
+  .timer{flex-wrap:wrap}
+}
+
+/* ---------- математика ---------- */
+.eqn{font-family:"JetBrains Mono",monospace;font-weight:700;
+     font-size:clamp(19px,2.7vw,36px);line-height:1.7;font-variant-numeric:tabular-nums}
+.step{font-size:clamp(17px,2.1vw,28px);line-height:1.8}
+.stolb{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:pre;
+       font-size:clamp(18px,2.5vw,34px);line-height:1.45;letter-spacing:.06em;
+       font-variant-numeric:tabular-nums;margin:0}
+.pair{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.pair span{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(16px,2.1vw,28px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.8vw,11px) clamp(8px,1.1vw,15px)}
+</style>
+<style>
+/* ---------- дроби ---------- */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;
+    margin:0 .16em;line-height:1.08;font-variant-numeric:tabular-nums}
+.fr .n{border-bottom:.09em solid currentColor;padding:0 .2em}
+.fr .d{padding:0 .2em}
+.mix{display:inline-flex;align-items:center;gap:.1em;vertical-align:middle}
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="sheet">
+
+<!-- 1 -->
+<section class="slide on" data-t="Вітання">
+  <p class="eyebrow">Алгебра · 7-І · Урок 2</p>
+  <h1>Дроби: десяткові<br>та звичайні. Відсотки</h1>
+  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">Сьогодні великий урок: два види дробів і відсотки — за одне заняття.</p>
+  <div class="row c3" style="margin-top:clamp(16px,2.6vw,34px)">
+    <div class="box"><h3>Потрібно</h3><p style="margin:0">зошит з <b>алгебри</b>,<br>ручка, олівець, підручник</p></div>
+    <div class="box warn"><h3>Не потрібно</h3><p style="margin:0"><b>Калькулятор</b><br>і сьогодні рахуємо самі</p></div>
+    <div class="box pen"><h3>Підручник</h3><p style="margin:0">Істер, «Алгебра. 7 клас»<br>сторінки <b>7–10</b></p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Технічна перевірка">
+  <p class="eyebrow">Поки не почали</p>
+  <h2>Три швидкі кроки</h2>
+  <div class="row c3">
+    <div class="box pen">
+      <h3>Крок 1</h3>
+      <p style="margin:0">Напиши в чат <b>плюс</b></p>
+      <p class="huge" style="margin:12px 0 0;color:var(--pen)">+</p>
+    </div>
+    <div class="box play">
+      <h3>Крок 2</h3>
+      <p style="margin:0">Відкрий <b>зошит з алгебри</b> і підручник на <b>ст. 7</b></p>
+    </div>
+    <div class="box warn">
+      <h3>Крок 3</h3>
+      <p style="margin:0"><b>Мікрофон вимкни</b></p>
+      <p style="margin-top:12px">Вмикаєш, коли я назву твоє імʼя.</p>
+    </div>
+  </div>
+  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Урок сьогодні щільний — <b>устигаємо, якщо не відволікаємось</b>. Домовились?</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-t="Записуємо тему" data-timer="90">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <h2>Записуємо</h2>
+  <div class="box">
+    <p class="huge" style="text-align:center;margin:0">Дата</p>
+    <p class="huge" style="text-align:center;margin:clamp(6px,1vw,14px) 0 0">Класна робота</p>
+    <p class="big" style="text-align:center;margin:clamp(14px,2.2vw,26px) 0 0;color:var(--pen)">
+      <b>Десяткові та звичайні дроби.<br>Арифметичні дії з дробами. Відсотки</b></p>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Дві мови одного числа">
+  <p class="eyebrow">Про що весь урок</p>
+  <h2>Одне число — два записи</h2>
+  <div class="row c3">
+    <div class="box pen">
+      <h3>Десятковий дріб</h3>
+      <p class="huge" style="margin:0;text-align:center">0,75</p>
+      <p style="margin-top:12px">Зручно <b>рахувати в стовпчик</b> і порівнювати.</p>
+    </div>
+    <div class="box note">
+      <h3>Звичайний дріб</h3>
+      <p class="huge" style="margin:0;text-align:center"><span class="fr"><span class="n">3</span><span class="d">4</span></span></p>
+      <p style="margin-top:12px">Зручно <b>скорочувати</b> й ділити без остачі.</p>
+    </div>
+    <div class="box play">
+      <h3>Відсоток</h3>
+      <p class="huge" style="margin:0;text-align:center">75 %</p>
+      <p style="margin-top:12px">Зручно <b>порівнювати частки</b> різних величин.</p>
+    </div>
+  </div>
+  <div class="box ok" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Це <b>одне й те саме число</b>, записане трьома способами. Уміти переходити між ними —
+    головна навичка сьогоднішнього уроку.</p>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <h3>Навіщо це в алгебрі</h3>
+    <p class="big" style="margin:0">Далі ми розвʼязуватимемо рівняння. У рівнянні коефіцієнт може бути будь-яким:
+    <b>0,4</b>, <span class="fr"><span class="n">2</span><span class="d">7</span></span> або <b>15 %</b>.
+    Якщо дроби «гальмують» — гальмує все рівняння.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="№ 17 — усно" data-timer="150">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Розминка · усно</p>
+  <h2>№ 17 (ст. 7). Обчисліть</h2>
+  <div class="row c2">
+    <div class="box">
+      <p class="eqn" style="margin:0">1) 4 + 2,7 &nbsp;<span class="ans hide">= 6,7</span></p>
+      <p class="eqn" style="margin:8px 0 0">2) 1,8 + 3,2 &nbsp;<span class="ans hide">= 5</span></p>
+      <p class="eqn" style="margin:8px 0 0">3) 4,5 − 1,2 &nbsp;<span class="ans hide">= 3,3</span></p>
+      <p class="eqn" style="margin:8px 0 0">4) 7,2 − 4,5 &nbsp;<span class="ans hide">= 2,7</span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0">5) 10 · 5,2 &nbsp;<span class="ans hide">= 52</span></p>
+      <p class="eqn" style="margin:8px 0 0">6) 4,3 · 0,01 &nbsp;<span class="ans hide">= 0,043</span></p>
+      <p class="eqn" style="margin:8px 0 0">7) 3,6 : 3 &nbsp;<span class="ans hide">= 1,2</span></p>
+      <p class="eqn" style="margin:8px 0 0">8) 2,8 : 0,1 &nbsp;<span class="ans hide">= 28</span></p>
+    </div>
+  </div>
+  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <h3>Найцікавіші тут — 5, 6 і 8</h3>
+    <p class="big" style="margin:0">Множення й ділення на <b>10, 100, 0,1, 0,01</b> — це не обчислення,
+    а просто <b>переїзд коми</b>.</p>
+    <p style="margin-top:10px">Множимо на 10 — кома вправо на один крок. Ділимо на 0,1 — це те саме, що
+    <b>помножити на 10</b>, тому число більшає: 2,8 → 28.</p>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="Три правила з комою">
+  <p class="eyebrow">Пригадуємо техніку</p>
+  <h2>Кома в кожній дії поводиться по-різному</h2>
+  <div class="row c3">
+    <div class="box pen">
+      <h3>+ і − : кома під комою</h3>
+      <p class="stolb" style="font-size:clamp(14px,1.9vw,26px)">  4,920
++ 5,713
+  ─────
+ 10,633</p>
+      <p style="margin:12px 0 0">Зрівнюємо кількість цифр після коми <b>нулями</b> — і додаємо як звичайні числа.</p>
+    </div>
+    <div class="box note">
+      <h3>× : рахуємо цифри після коми</h3>
+      <p class="eqn" style="margin:0">3,5 · 2,14</p>
+      <p class="step" style="margin:6px 0 0">35 · 214 = 7490</p>
+      <p class="step" style="margin:0">1 + 2 = <b>3</b> цифри після коми</p>
+      <p class="eqn ans" style="margin:6px 0 0">= 7,490 = 7,49</p>
+      <p style="margin:12px 0 0">Множимо <b>без коми</b>, а кому ставимо в кінці.</p>
+    </div>
+    <div class="box play">
+      <h3>: — прибираємо кому в дільнику</h3>
+      <p class="eqn" style="margin:0">8,55 : 2,5</p>
+      <p class="step" style="margin:6px 0 0">переносимо кому <b>в обох</b> на 1:</p>
+      <p class="eqn" style="margin:0">85,5 : 25</p>
+      <p class="eqn ans" style="margin:6px 0 0">= 3,42</p>
+      <p style="margin:12px 0 0">Дільник має стати <b>цілим</b> — інакше ділити не можна.</p>
+    </div>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box ok">
+      <h3>Округлення — знадобиться в ДЗ (№ 23)</h3>
+      <p class="big" style="margin:0">Дивимось на <b>першу відкинуту цифру</b>. Якщо вона 5 і більше — попередню
+      збільшуємо на 1; якщо менша за 5 — лишаємо як є.</p>
+      <p class="eqn hide" style="margin:10px 0 0;color:var(--check)">7,25 ≈ 7,3 &nbsp;·&nbsp; 3,739 ≈ 3,7 &nbsp;·&nbsp; 9,05 ≈ 9,1</p>
+    </div>
+    <div class="box warn">
+      <h3>Найчастіша помилка уроку</h3>
+      <p class="big" style="margin:0">У множенні зрівнюють цифри після коми, як у додаванні.
+      <b>Так не можна</b>: у додаванні кома під комою, а в множенні комі до цього немає діла —
+      її ставлять <b>тільки в кінці</b>, порахувавши знаки.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="№ 18 — у зошит" data-timer="300">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит, у стовпчик</span></div>
+  <h2>№ 18 (ст. 7). Виконайте дію</h2>
+  <div class="row c2">
+    <div class="box">
+      <p class="eqn" style="margin:0">1) 4,92 + 5,713</p>
+      <p class="eqn" style="margin:8px 0 0">2) 12,38 − 4,113</p>
+      <p class="eqn" style="margin:8px 0 0">3) 3,5 · 2,14</p>
+      <p class="eqn" style="margin:8px 0 0">4) 2,6²</p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0">5) 5,9 · 4,03</p>
+      <p class="eqn" style="margin:8px 0 0">6) 41,04 : 12</p>
+      <p class="eqn" style="margin:8px 0 0">7) 8,55 : 2,5</p>
+      <p class="eqn" style="margin:8px 0 0">8) 0,7³</p>
+    </div>
+  </div>
+  <div class="tbl hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <table>
+      <tr><th>№</th><th>Відповідь</th><th>№</th><th>Відповідь</th></tr>
+      <tr><td class="n">1</td><td class="n">10,633</td><td class="n">5</td><td class="n">23,777</td></tr>
+      <tr><td class="n">2</td><td class="n">8,267</td><td class="n">6</td><td class="n">3,42</td></tr>
+      <tr><td class="n">3</td><td class="n">7,49</td><td class="n">7</td><td class="n">3,42</td></tr>
+      <tr><td class="n">4</td><td class="n">6,76</td><td class="n">8</td><td class="n">0,343</td></tr>
+    </table>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box warn hide">
+      <h3>Пункти 4 і 8 — там, де найбільше помилок</h3>
+      <p class="big" style="margin:0">2,6² = 2,6 · 2,6 = <b>6,76</b> — дві цифри після коми, а не одна.<br>
+      0,7³ = 0,7 · 0,7 · 0,7 = <b>0,343</b> — три цифри після коми, а не одна.</p>
+      <p style="margin-top:10px">Показник степеня каже, <b>скільки разів множити</b> — і рівно стільки разів
+      додаються знаки після коми.</p>
+    </div>
+    <div class="box ok hide">
+      <h3>Помітили збіг?</h3>
+      <p class="big" style="margin:0">У пунктах <b>6 і 7</b> вийшла та сама відповідь — <b>3,42</b>.
+      Це не помилка й не випадковість.</p>
+      <p class="eqn" style="margin:10px 0 0">41,04 : 12 = 3,42<br>8,55 : 2,5 = 3,42</p>
+      <p style="margin-top:10px">Просто автор підручника так підібрав числа — <b>перевір себе</b>, якщо в тебе
+      два різні результати.</p>
+    </div>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="Звичайні дроби — що памʼятати">
+  <p class="eyebrow">Переходимо до звичайних дробів</p>
+  <h2>Чотири дії — чотири різні правила</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>+ і − : спочатку спільний знаменник</h3>
+      <p class="eqn" style="margin:0">
+        <span class="fr"><span class="n">4</span><span class="d">9</span></span> +
+        <span class="fr"><span class="n">1</span><span class="d">6</span></span> =
+        <span class="fr"><span class="n">8</span><span class="d">18</span></span> +
+        <span class="fr"><span class="n">3</span><span class="d">18</span></span> =
+        <span class="fr"><span class="n">11</span><span class="d">18</span></span></p>
+      <p style="margin:12px 0 0">Спільний знаменник — це <b>НСК</b> знаменників (учора шукали!): НСК(9; 6) = 18.</p>
+    </div>
+    <div class="box note">
+      <h3>× : чисельник на чисельник</h3>
+      <p class="eqn" style="margin:0">
+        <span class="fr"><span class="n">5</span><span class="d">8</span></span> ·
+        <span class="fr"><span class="n">7</span><span class="d">15</span></span> =
+        <span class="fr"><span class="n">5 · 7</span><span class="d">8 · 15</span></span> =
+        <span class="fr"><span class="n">7</span><span class="d">24</span></span></p>
+      <p style="margin:12px 0 0">Спільний знаменник <b>не потрібен</b>. Скорочуємо <b>до</b> множення — рахувати легше.</p>
+    </div>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box play">
+      <h3>: — множимо на обернений</h3>
+      <p class="eqn" style="margin:0">
+        <span class="fr"><span class="n">2</span><span class="d">9</span></span> :
+        <span class="fr"><span class="n">7</span><span class="d">18</span></span> =
+        <span class="fr"><span class="n">2</span><span class="d">9</span></span> ·
+        <span class="fr"><span class="n">18</span><span class="d">7</span></span> =
+        <span class="fr"><span class="n">4</span><span class="d">7</span></span></p>
+      <p style="margin:12px 0 0">Другий дріб <b>перевертаємо</b> — і ділення стає множенням.</p>
+    </div>
+    <div class="box warn">
+      <h3>Мішані числа</h3>
+      <p class="big" style="margin:0">Для <b>× і :</b> мішане число спершу роблять <b>неправильним дробом</b>:</p>
+      <p class="eqn" style="margin:8px 0 0"><span class="mix">3<span class="fr"><span class="n">1</span><span class="d">3</span></span></span>
+        = <span class="fr"><span class="n">10</span><span class="d">3</span></span></p>
+      <p style="margin-top:10px">Множити «цілі окремо, дроби окремо» — <b>не можна</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="№ 28 — усно" data-timer="150">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Розминка · усно</p>
+  <h2>№ 28 (ст. 8). Обчисліть</h2>
+  <div class="row c4">
+    <div class="box">
+      <p class="eqn" style="margin:0;text-align:center"><span class="fr"><span class="n">4</span><span class="d">9</span></span> + <span class="fr"><span class="n">2</span><span class="d">9</span></span></p>
+      <p class="eqn ans hide" style="margin:10px 0 0;text-align:center">= <span class="fr"><span class="n">6</span><span class="d">9</span></span> = <span class="fr"><span class="n">2</span><span class="d">3</span></span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0;text-align:center"><span class="fr"><span class="n">7</span><span class="d">8</span></span> − <span class="fr"><span class="n">1</span><span class="d">8</span></span></p>
+      <p class="eqn ans hide" style="margin:10px 0 0;text-align:center">= <span class="fr"><span class="n">6</span><span class="d">8</span></span> = <span class="fr"><span class="n">3</span><span class="d">4</span></span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0;text-align:center"><span class="fr"><span class="n">4</span><span class="d">5</span></span> · 10</p>
+      <p class="eqn ans hide" style="margin:10px 0 0;text-align:center">= 8</p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0;text-align:center">(<span class="fr"><span class="n">2</span><span class="d">9</span></span>)²</p>
+      <p class="eqn ans hide" style="margin:10px 0 0;text-align:center">= <span class="fr"><span class="n">4</span><span class="d">81</span></span></p>
+    </div>
+  </div>
+  <div class="row c4" style="margin-top:clamp(10px,1.4vw,18px)">
+    <div class="box">
+      <p class="eqn" style="margin:0;text-align:center"><span class="mix">4<span class="fr"><span class="n">1</span><span class="d">7</span></span></span> + <span class="mix">2<span class="fr"><span class="n">5</span><span class="d">7</span></span></span></p>
+      <p class="eqn ans hide" style="margin:10px 0 0;text-align:center">= <span class="mix">6<span class="fr"><span class="n">6</span><span class="d">7</span></span></span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0;text-align:center"><span class="mix">5<span class="fr"><span class="n">7</span><span class="d">9</span></span></span> − <span class="mix">4<span class="fr"><span class="n">6</span><span class="d">9</span></span></span></p>
+      <p class="eqn ans hide" style="margin:10px 0 0;text-align:center">= <span class="mix">1<span class="fr"><span class="n">1</span><span class="d">9</span></span></span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0;text-align:center"><span class="fr"><span class="n">3</span><span class="d">5</span></span> : 15</p>
+      <p class="eqn ans hide" style="margin:10px 0 0;text-align:center">= <span class="fr"><span class="n">1</span><span class="d">25</span></span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0;text-align:center">(<span class="fr"><span class="n">1</span><span class="d">3</span></span>)³</p>
+      <p class="eqn ans hide" style="margin:10px 0 0;text-align:center">= <span class="fr"><span class="n">1</span><span class="d">27</span></span></p>
+    </div>
+  </div>
+  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <h3>Три місця, де тут спотикаються</h3>
+    <p class="big" style="margin:0"><b>3)</b> множення на ціле: множимо <b>тільки чисельник</b>: 4 · 10 = 40, і <span class="fr"><span class="n">40</span><span class="d">5</span></span> = 8.<br>
+    <b>7)</b> ділення на ціле: ділити треба <b>навпаки</b> — знаменник більшає: <span class="fr"><span class="n">3</span><span class="d">5</span></span> · <span class="fr"><span class="n">1</span><span class="d">15</span></span> = <span class="fr"><span class="n">1</span><span class="d">25</span></span>.<br>
+    <b>4) і 8)</b> степінь дробу: підносимо <b>і чисельник, і знаменник</b>.</p>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="№ 30 — у зошит" data-timer="300">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <h2>№ 30 (ст. 8). Виконайте дію</h2>
+  <div class="row c4">
+    <div class="box"><p class="eqn" style="margin:0;text-align:center">1) <span class="fr"><span class="n">4</span><span class="d">9</span></span> + <span class="fr"><span class="n">1</span><span class="d">6</span></span></p></div>
+    <div class="box"><p class="eqn" style="margin:0;text-align:center">2) <span class="fr"><span class="n">5</span><span class="d">12</span></span> − <span class="fr"><span class="n">3</span><span class="d">8</span></span></p></div>
+    <div class="box"><p class="eqn" style="margin:0;text-align:center">3) <span class="mix">3<span class="fr"><span class="n">1</span><span class="d">3</span></span></span> + <span class="fr"><span class="n">1</span><span class="d">15</span></span></p></div>
+    <div class="box"><p class="eqn" style="margin:0;text-align:center">4) <span class="mix">4<span class="fr"><span class="n">9</span><span class="d">10</span></span></span> − <span class="fr"><span class="n">1</span><span class="d">2</span></span></p></div>
+  </div>
+  <div class="row c4" style="margin-top:clamp(10px,1.4vw,18px)">
+    <div class="box"><p class="eqn" style="margin:0;text-align:center">5) <span class="fr"><span class="n">5</span><span class="d">8</span></span> · <span class="fr"><span class="n">7</span><span class="d">15</span></span></p></div>
+    <div class="box"><p class="eqn" style="margin:0;text-align:center">6) <span class="fr"><span class="n">8</span><span class="d">17</span></span> · <span class="fr"><span class="n">51</span><span class="d">80</span></span></p></div>
+    <div class="box"><p class="eqn" style="margin:0;text-align:center">7) <span class="fr"><span class="n">2</span><span class="d">9</span></span> : <span class="fr"><span class="n">7</span><span class="d">18</span></span></p></div>
+    <div class="box"><p class="eqn" style="margin:0;text-align:center">8) <span class="fr"><span class="n">7</span><span class="d">9</span></span> : <span class="fr"><span class="n">14</span><span class="d">45</span></span></p></div>
+  </div>
+  <div class="tbl hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <table>
+      <tr><th>№</th><th>Спільний знаменник / скорочення</th><th>Відповідь</th></tr>
+      <tr><td class="n">1</td><td>НСК(9; 6) = 18</td><td class="n"><span class="fr"><span class="n">11</span><span class="d">18</span></span></td></tr>
+      <tr><td class="n">2</td><td>НСК(12; 8) = 24</td><td class="n"><span class="fr"><span class="n">1</span><span class="d">24</span></span></td></tr>
+      <tr><td class="n">3</td><td>НСК(3; 15) = 15</td><td class="n"><span class="mix">3<span class="fr"><span class="n">2</span><span class="d">5</span></span></span></td></tr>
+      <tr><td class="n">4</td><td>НСК(10; 2) = 10</td><td class="n"><span class="mix">4<span class="fr"><span class="n">2</span><span class="d">5</span></span></span></td></tr>
+      <tr><td class="n">5</td><td>скорочуємо на 5</td><td class="n"><span class="fr"><span class="n">7</span><span class="d">24</span></span></td></tr>
+      <tr><td class="n">6</td><td>скорочуємо на 17 і на 8</td><td class="n"><span class="fr"><span class="n">3</span><span class="d">10</span></span></td></tr>
+      <tr><td class="n">7</td><td>перевертаємо другий дріб</td><td class="n"><span class="fr"><span class="n">4</span><span class="d">7</span></span></td></tr>
+      <tr><td class="n">8</td><td>перевертаємо другий дріб</td><td class="n"><span class="mix">2<span class="fr"><span class="n">1</span><span class="d">2</span></span></span></td></tr>
+    </table>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box ok hide">
+      <h3>Найкрасивіший тут — № 6</h3>
+      <p class="eqn" style="margin:0"><span class="fr"><span class="n">8</span><span class="d">17</span></span> · <span class="fr"><span class="n">51</span><span class="d">80</span></span>
+        = <span class="fr"><span class="n">8 · 51</span><span class="d">17 · 80</span></span>
+        = <span class="fr"><span class="n">3</span><span class="d">10</span></span></p>
+      <p style="margin-top:10px">51 : 17 = 3, а 80 : 8 = 10. Хто помножив «як є» — рахував 408 : 1360 замість двох дій в умі.</p>
+    </div>
+    <div class="box warn hide">
+      <h3>Пастка в № 3 і № 4</h3>
+      <p class="big" style="margin:0">Це <b>додавання й віднімання</b>, тому мішане число <b>перетворювати не треба</b>:
+      цілі лишаються цілими, дії — тільки з дробовими частинами.</p>
+      <p style="margin-top:10px">А от у № 7 і № 8 нічого не «перевертають наполовину»: перевертається
+      <b>тільки другий</b> дріб, перший лишається на місці.</p>
+    </div>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <p class="eyebrow">Хвилина відпочинку</p>
+  <h2>Відводимо очі від екрана</h2>
+  <div class="row c3">
+    <div class="box play"><h3>1</h3><p style="margin:0">Подивись у <b>вікно</b> — на найдальшу точку, яку бачиш. Порахуй до десяти.</p></div>
+    <div class="box play"><h3>2</h3><p style="margin:0">Міцно <b>заплющ очі</b> на пʼять секунд, потім широко розплющ. Тричі.</p></div>
+    <div class="box play"><h3>3</h3><p style="margin:0">Розімни <b>плечі й шию</b>: повільно вгору-вниз, вліво-вправо.</p></div>
+  </div>
+  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Далі — <b>відсотки</b>. Це друга половина уроку, і найважливіша.</p>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="Відсотки — три задачі">
+  <p class="eyebrow">Відсотки</p>
+  <h2>Відсоток — це сота частина</h2>
+  <div class="box pen">
+    <p class="eqn" style="text-align:center;margin:0">1 % = <span class="fr"><span class="n">1</span><span class="d">100</span></span> = 0,01 &nbsp;&nbsp;·&nbsp;&nbsp;
+      40 % = <span class="fr"><span class="n">40</span><span class="d">100</span></span> = 0,4 &nbsp;&nbsp;·&nbsp;&nbsp;
+      100 % = 1</p>
+  </div>
+  <div class="row c3" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box">
+      <h3>Задача 1 · знайти відсоток від числа</h3>
+      <p class="big" style="margin:0">10 % від 150</p>
+      <p class="eqn hide" style="margin:8px 0 0;color:var(--check)">150 · 0,1 = 15</p>
+      <p style="margin-top:10px"><b>Множимо.</b> Ціле відоме — шукаємо частину.</p>
+    </div>
+    <div class="box">
+      <h3>Задача 2 · знайти число за його відсотком</h3>
+      <p class="big" style="margin:0">40 % числа — це 364</p>
+      <p class="eqn hide" style="margin:8px 0 0;color:var(--check)">364 : 0,4 = 910</p>
+      <p style="margin-top:10px"><b>Ділимо.</b> Частина відома — шукаємо ціле.</p>
+    </div>
+    <div class="box">
+      <h3>Задача 3 · скільки відсотків становить</h3>
+      <p class="big" style="margin:0">15 від 150</p>
+      <p class="eqn hide" style="margin:8px 0 0;color:var(--check)">15 : 150 = 0,1 = 10 %</p>
+      <p style="margin-top:10px"><b>Ділимо частину на ціле</b> і множимо на 100.</p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <h3>Одне питання розвʼязує всі три</h3>
+    <p class="big" style="margin:0"><b>Що тут прийнято за 100 %?</b> Якщо відповіла на це — далі
+    множення або ділення обирається саме собою.</p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="№ 33 — ціна дзвінка" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <h2>№ 33 (ст. 9). Дзвінок коштує 150 грн. Скільки коштуватиме після…</h2>
+  <div class="row c4">
+    <div class="box">
+      <p class="big" style="margin:0;text-align:center">зниження<br>на <b>10 %</b></p>
+      <p class="eqn hide" style="margin:10px 0 0;text-align:center">150 · 0,9</p>
+      <p class="huge ans hide" style="margin:6px 0 0;text-align:center">135</p>
+    </div>
+    <div class="box">
+      <p class="big" style="margin:0;text-align:center">зниження<br>на <b>16 %</b></p>
+      <p class="eqn hide" style="margin:10px 0 0;text-align:center">150 · 0,84</p>
+      <p class="huge ans hide" style="margin:6px 0 0;text-align:center">126</p>
+    </div>
+    <div class="box">
+      <p class="big" style="margin:0;text-align:center">підвищення<br>на <b>8 %</b></p>
+      <p class="eqn hide" style="margin:10px 0 0;text-align:center">150 · 1,08</p>
+      <p class="huge ans hide" style="margin:6px 0 0;text-align:center">162</p>
+    </div>
+    <div class="box">
+      <p class="big" style="margin:0;text-align:center">підвищення<br>на <b>20 %</b></p>
+      <p class="eqn hide" style="margin:10px 0 0;text-align:center">150 · 1,2</p>
+      <p class="huge ans hide" style="margin:6px 0 0;text-align:center">180</p>
+    </div>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box ok">
+      <h3>Спосіб на одну дію</h3>
+      <p class="big" style="margin:0">Стара ціна — це <b>100 %</b>.<br>
+      Знизили на 10 % — лишилось <b>90 % = 0,9</b>.<br>
+      Підвищили на 8 % — стало <b>108 % = 1,08</b>.</p>
+      <p style="margin-top:10px">Одразу множимо на це число — і відповідь готова.</p>
+    </div>
+    <div class="box warn">
+      <h3>Спосіб на дві дії — теж правильний</h3>
+      <p class="eqn" style="margin:0">150 · 0,1 = 15<br>150 − 15 = 135</p>
+      <p style="margin-top:10px">Але тут легко <b>зупинитись на 15</b> і записати це у відповідь.
+      Питання було про <b>ціну</b>, а не про знижку.</p>
+    </div>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="№ 37 — Київ і Бухарест" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <h2>№ 37 (ст. 9)</h2>
+  <div class="box pen">
+    <p class="big" style="margin:0">Автомобіль за перший день подорожі з <b>Києва до Бухареста</b> подолав
+    <b>364 км</b>, що становить <b>40 %</b> відстані між цими містами. Скільки кілометрів йому
+    <b>залишилося</b> подолати?</p>
+  </div>
+  <div class="row c3" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box hide">
+      <h3>Крок 1 · що тут 100 %</h3>
+      <p class="big" style="margin:0"><b>Уся відстань</b> Київ — Бухарест. Це її ми не знаємо.</p>
+    </div>
+    <div class="box hide">
+      <h3>Крок 2 · знаходимо ціле</h3>
+      <p class="eqn" style="margin:0">364 : 0,4 = <b>910</b> км</p>
+      <p style="margin-top:10px">Частина відома — отже, <b>ділимо</b>.</p>
+    </div>
+    <div class="box hide">
+      <h3>Крок 3 · відповідаємо на питання</h3>
+      <p class="eqn" style="margin:0">910 − 364 = <b>546</b> км</p>
+    </div>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box warn">
+      <h3>Пастка, у яку потрапляє половина класу</h3>
+      <p class="big" style="margin:0">Записують у відповідь <b>910</b> — і задача «розвʼязана неправильно»,
+      хоча всі обчислення правильні.</p>
+      <p style="margin-top:10px">Питали не про всю відстань, а про <b>залишок</b>. Перечитай питання ще раз,
+      перш ніж писати «Відповідь».</p>
+    </div>
+    <div class="box ok hide">
+      <h3>Другий спосіб — коротший</h3>
+      <p class="big" style="margin:0">Проїхав 40 % — отже, лишилось <b>60 %</b>.</p>
+      <p class="eqn" style="margin:8px 0 0">364 : 0,4 · 0,6 = 546</p>
+      <p style="margin-top:10px">Або ще простіше: 40 % — це 364 км, тоді 20 % — це 182 км,
+      а 60 % — це <b>182 · 3 = 546</b> км.</p>
+    </div>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="№ 39 — двома способами">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Місток між двома половинами уроку</p>
+  <h2>№ 39 (1), ст. 9. Обчисліть двома способами</h2>
+  <div class="box">
+    <p class="eqn" style="text-align:center;margin:0">13,75 + <span class="mix">4<span class="fr"><span class="n">1</span><span class="d">20</span></span></span></p>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box pen">
+      <h3>Спосіб 1 · усе в десяткові</h3>
+      <p class="eqn hide" style="margin:0"><span class="fr"><span class="n">1</span><span class="d">20</span></span> = <span class="fr"><span class="n">5</span><span class="d">100</span></span> = 0,05</p>
+      <p class="eqn hide" style="margin:8px 0 0">13,75 + 4,05 = <span class="ans">17,8</span></p>
+      <p style="margin:12px 0 0">Знаменник 20 легко доводиться до <b>100</b> — множимо на 5.</p>
+    </div>
+    <div class="box note">
+      <h3>Спосіб 2 · усе у звичайні</h3>
+      <p class="eqn hide" style="margin:0">13,75 = <span class="mix">13<span class="fr"><span class="n">75</span><span class="d">100</span></span></span> = <span class="mix">13<span class="fr"><span class="n">3</span><span class="d">4</span></span></span></p>
+      <p class="eqn hide" style="margin:8px 0 0"><span class="mix">13<span class="fr"><span class="n">15</span><span class="d">20</span></span></span> + <span class="mix">4<span class="fr"><span class="n">1</span><span class="d">20</span></span></span> = <span class="mix ans">17<span class="fr"><span class="n">16</span><span class="d">20</span></span></span> = <span class="mix ans">17<span class="fr"><span class="n">4</span><span class="d">5</span></span></span></p>
+      <p style="margin:12px 0 0">Спільний знаменник — <b>20</b>.</p>
+    </div>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">17,8 і <span class="mix">17<span class="fr"><span class="n">4</span><span class="d">5</span></span></span> — це <b>одне й те саме число</b>.
+    Способи різні, відповідь одна.</p>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
+    <h3>Коли який спосіб обирати</h3>
+    <p class="big" style="margin:0">Знаменник — <b>2, 4, 5, 8, 10, 20, 25, 50</b> → переводь у десятковий, буде швидше.<br>
+    Знаменник — <b>3, 6, 7, 9, 11</b> → десяткового не вийде (дріб нескінченний), рахуй у звичайних.</p>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="Підсумок">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос</span></div>
+  <p class="eyebrow">Підсумок</p>
+  <h2>Пʼять питань — закриваємо зошити</h2>
+  <div class="row c2">
+    <div class="box">
+      <p class="big" style="margin:0">1. Куди дінеться кома, якщо <b>поділити на 0,1</b>?</p>
+      <p class="hide" style="margin:6px 0 0;color:var(--check)"><b>Вправо на один крок — число збільшиться в 10 разів.</b></p>
+      <p class="big" style="margin:16px 0 0">2. Чи потрібен <b>спільний знаменник</b> для множення дробів?</p>
+      <p class="hide" style="margin:6px 0 0;color:var(--check)"><b>Ні. Тільки для додавання й віднімання.</b></p>
+      <p class="big" style="margin:16px 0 0">3. Як поділити на дріб?</p>
+      <p class="hide" style="margin:6px 0 0;color:var(--check)"><b>Помножити на обернений — перевернути другий дріб.</b></p>
+    </div>
+    <div class="box">
+      <p class="big" style="margin:0">4. Ціну знизили на <b>25 %</b>. На скільки множимо стару ціну?</p>
+      <p class="hide" style="margin:6px 0 0;color:var(--check)"><b>На 0,75.</b></p>
+      <p class="big" style="margin:16px 0 0">5. Відомо, що <b>30 % числа = 60</b>. Множимо чи ділимо?</p>
+      <p class="hide" style="margin:6px 0 0;color:var(--check)"><b>Ділимо: 60 : 0,3 = 200.</b></p>
+    </div>
+  </div>
+  <div class="box note" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">Головне правило відсотків на все життя: <b>спершу знайди, що взято за 100 %</b>.
+    Відома частина — ділимо. Відоме ціле — множимо.</p>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-t="Домашнє завдання">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У щоденник</span></div>
+  <h2>Домашнє завдання</h2>
+  <div class="box">
+    <p class="huge" style="text-align:center;margin:0">№ 23, № 25 — ст. 8</p>
+    <p class="huge" style="text-align:center;margin:clamp(6px,1vw,14px) 0 0;color:var(--pen)">№ 36 — ст. 9 &nbsp;·&nbsp; № 42 — ст. 10</p>
+  </div>
+  <div class="row c4" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box pen">
+      <h3>№ 23 — округлення</h3>
+      <p style="margin:0">Уважно читай, <b>до якого розряду</b> округлюють у кожному пункті: десятих, сотих, одиниць.</p>
+    </div>
+    <div class="box note">
+      <h3>№ 25 — порядок дій</h3>
+      <p style="margin:0">Спершу <b>пронумеруй дії олівцем</b>, як робили вчора. Кожну — у стовпчик збоку.</p>
+    </div>
+    <div class="box play">
+      <h3>№ 36 — рівняння</h3>
+      <p style="margin:0">Тут дроби <b>обох видів</b> в одному рівнянні. Обери одну «мову» — і переведи в неї все.</p>
+    </div>
+    <div class="box warn">
+      <h3>№ 42 — найважче</h3>
+      <p style="margin:0">Яблука втрачають <b>82 %</b> маси. Питання: <b>що тут 100 %</b> — свіжі яблука чи сушені?</p>
+    </div>
+  </div>
+  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
+    <p class="big" style="margin:0">У № 42 не поспішай множити. Якщо втратили 82 % — <b>лишилось 18 %</b>,
+    і ці 18 % дорівнюють 9 кг. Далі — задача другого типу.</p>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-t="До зустрічі">
+  <p class="eyebrow">Урок завершено</p>
+  <h1>Дякую за роботу</h1>
+  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">Наступного разу — відношення і пропорції.</p>
+  <div class="box ok" style="margin-top:clamp(16px,2.6vw,34px)">
+    <p class="big" style="margin:0">Сьогодні ми пройшли <b>два уроки за один</b> — тому вдома важливо не пропустити ДЗ:
+    саме воно закріпить те, що ми встигли лише проговорити.</p>
+  </div>
+</section>
+
+</div>
+
+<div id="bar">
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Попередній слайд">←</button>
+    <button id="next" type="button" aria-label="Далі">→</button>
+  </div>
+  <div id="rail" aria-hidden="true"></div>
+  <div id="tip">пробіл — показати відповідь</div>
+  <div id="count">1 / 18</div>
+  <button id="fs" type="button" aria-label="На весь екран">⛶</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('rail');
+  var count = document.getElementById('count');
+  var tip = document.getElementById('tip');
+  var cur = 0, tick = null;
+
+  slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
+  var cells = [].slice.call(rail.children);
+
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
+    var slot = s.querySelector('.timerslot');
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
+    var total = parseInt(s.dataset.timer, 10);
+    var box = document.createElement('div');
+    box.className = 'timer';
+    box.innerHTML =
+      '<div class="clock"></div>' +
+      '<div class="track"><div class="fill"></div></div>' +
+      '<div class="lab"></div>' +
+      '<button type="button" class="go"></button>';
+    slot.appendChild(box);
+    box.dataset.total = total;
+    box.dataset.left = total;
+    box.dataset.run = '0';
+  });
+
+  function fmt(sec){
+    sec = Math.max(0, sec);
+    return Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2);
+  }
+
+  function drawTimer(box){
+    var total = +box.dataset.total, left = +box.dataset.left, run = box.dataset.run === '1';
+    box.querySelector('.clock').textContent = fmt(left);
+    box.querySelector('.fill').style.width = (100 * left / total) + '%';
+    box.classList.toggle('warn', left > 0 && left <= 30);
+    box.classList.toggle('over', left === 0);
+    box.querySelector('.lab').textContent =
+      left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
+    box.querySelector('.go').textContent =
+      left === 0 ? 'Ще раз' : (run ? 'Пауза' : 'Почати');
+  }
+
+  function stopTick(){ if(tick){ clearInterval(tick); tick = null; } }
+
+  function toggleTimer(box){
+    if(box.dataset.run === '1'){
+      box.dataset.run = '0'; stopTick(); drawTimer(box); return;
+    }
+    if(+box.dataset.left === 0){ box.dataset.left = box.dataset.total; }
+    box.dataset.run = '1';
+    stopTick();
+    tick = setInterval(function(){
+      var left = +box.dataset.left - 1;
+      box.dataset.left = Math.max(0, left);
+      if(left <= 0){ box.dataset.run = '0'; stopTick(); }
+      drawTimer(box);
+    }, 1000);
+    drawTimer(box);
+  }
+
+  function resetTimer(s){
+    var box = s.querySelector('.timer');
+    if(!box) return;
+    box.dataset.left = box.dataset.total;
+    box.dataset.run = '0';
+    drawTimer(box);
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.timer .go') : null;
+    if(!b) return;
+    e.stopPropagation();
+    toggleTimer(b.parentNode);
+  }, true);
+
+  /* ---- показ відповідей і навігація ---- */
+  function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
+  function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
+
+  function paint(){
+    cells.forEach(function(c, i){
+      c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
+    });
+    count.textContent = (cur + 1) + ' / ' + slides.length;
+    tip.classList.toggle('on', hidden(cur).length > 0);
+  }
+
+  function go(i, revealAll){
+    if(i < 0 || i >= slides.length) return;
+    stopTick();
+    resetTimer(slides[cur]);
+    slides[cur].classList.remove('on');
+    cur = i;
+    var s = slides[cur];
+    s.classList.add('on');
+    [].slice.call(s.querySelectorAll('.hide')).forEach(function(el){
+      el.classList.toggle('on', !!revealAll);
+    });
+    resetTimer(s);
+    window.scrollTo(0, 0);
+    paint();
+  }
+
+  function next(){
+    var h = hidden(cur);
+    if(h.length){ h[0].classList.add('on'); paint(); return; }
+    go(cur + 1, false);
+  }
+
+  function prev(){
+    var s = shown(cur);
+    if(s.length){ s[s.length - 1].classList.remove('on'); paint(); return; }
+    go(cur - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else { document.documentElement.requestFullscreen(); }
+  });
+
+  document.getElementById('sheet').addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('button')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'ArrowRight' || e.code === 'Space' || e.code === 'PageDown' || e.code === 'Enter'){
+      e.preventDefault(); next();
+    } else if(e.code === 'ArrowLeft' || e.code === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(e.code === 'Home'){ go(0, false); }
+    else if(e.code === 'End'){ go(slides.length - 1, true); }
+    else if(e.code === 'KeyT'){
+      var box = slides[cur].querySelector('.timer');
+      if(box){ e.preventDefault(); toggleTimer(box); }
+    }
+    else if(e.code === 'KeyF'){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  slides.forEach(resetTimer);
+  paint();
+})();
+</script>
+
+</body>
+</html>

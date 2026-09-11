@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Відношення і пропорції</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
+  --ink:#1B2430; --soft:#5B6879;
+  --pen:#2C4BC9; --pen-soft:#E7ECFC;
+  --check:#1B7F4B; --check-soft:#E4F3EA;
+  --marker:#D7263D; --marker-soft:#FCEAEC;
+  --sun:#B57C00; --sun-soft:#FDF3DC;
+  --note:#6B4FA8; --note-soft:#EFEAFA;
+  --edge:#DDE4EC;
+  --cell:30px;
+  --u:min(1vw,1.55vh);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121821; --card:#1A222D; --grid:#26374A;
+    --ink:#EAF0F6; --soft:#9AAABC;
+    --pen:#8DA9FF; --pen-soft:#1E2A47;
+    --check:#5FD394; --check-soft:#163024;
+    --marker:#FF7B8A; --marker-soft:#371D22;
+    --sun:#FFC93C; --sun-soft:#332813;
+    --note:#C0A8F5; --note-soft:#251E3A;
+    --edge:#2C3948;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121821; --card:#1A222D; --grid:#26374A;
+  --ink:#EAF0F6; --soft:#9AAABC;
+  --pen:#8DA9FF; --pen-soft:#1E2A47;
+  --check:#5FD394; --check-soft:#163024;
+  --marker:#FF7B8A; --marker-soft:#371D22;
+  --sun:#FFC93C; --sun-soft:#332813;
+  --note:#C0A8F5; --note-soft:#251E3A;
+  --edge:#2C3948;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:var(--cell) var(--cell);
+  background-position:center top;
+  -webkit-text-size-adjust:100%;
+}
+
+#stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(10px,1.7vh,26px) clamp(14px,4vw,56px) 84px}
+.slide{display:none;width:100%;max-width:1180px}
+.slide.on{display:block;animation:in .3s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(24px,calc(4.3*var(--u)),46px);line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(20px,calc(3.1*var(--u)),33px);line-height:1.16;letter-spacing:-.015em;margin:0 0 clamp(9px,1.4vw,16px);text-wrap:balance}
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 8px}
+p{margin:0 0 10px;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.45}
+p:last-child{margin-bottom:0}
+.lede{font-size:clamp(16px,calc(2.05*var(--u)),24px);color:var(--soft);line-height:1.4}
+b,strong{font-weight:800}
+ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.4}
+li{margin:.34em 0}
+li::marker{color:var(--pen)}
+
+.row{display:grid;gap:clamp(9px,1.3vw,16px)}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c21{grid-template-columns:1.15fr .85fr}
+@media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
+
+.box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(11px,1.5vw,18px);box-shadow:0 1px 0 var(--edge)}
+.box.pen{border-color:var(--pen);background:var(--pen-soft)}
+.box.ok{border-color:var(--check);background:var(--check-soft)}
+.box.warn{border-color:var(--marker);background:var(--marker-soft)}
+.box.play{border-color:var(--sun);background:var(--sun-soft)}
+.box.note{border-color:var(--note);background:var(--note-soft)}
+.box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,calc(1.1*var(--u)),14px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 7px}
+.box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
+.box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
+
+/* ---------- смужка «як відповідаємо» ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 clamp(8px,1.2vw,14px)}
+.mode{display:inline-flex;align-items:center;gap:8px;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:6px 10px;background:var(--card);white-space:nowrap}
+.mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
+.mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+.mode.voice{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.mode.book{color:var(--note);border-color:var(--note);background:var(--note-soft)}
+.mode.away{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+
+/* ---------- таймер ---------- */
+.timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(8px,1vw,12px) clamp(10px,1.3vw,16px);margin:clamp(9px,1.3vw,15px) 0}
+.timerslot:empty{display:none}
+.timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(21px,calc(2.9*var(--u)),35px);line-height:1;min-width:3.6ch}
+.timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
+.timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
+.timer .lab{font-size:clamp(12px,calc(1.2*var(--u)),15px);color:var(--soft);white-space:nowrap}
+.timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
+.timer.over{border-color:var(--marker);background:var(--marker-soft)}
+.timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
+
+/* ---------- лампочки й біти ---------- */
+.lamps{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.lamp{text-align:center;min-width:clamp(52px,6.4vw,86px)}
+.lamp .b{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1.2;
+  font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.9vw,12px) 0}
+.lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.lamp .w{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
+.cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
+.cw .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(18px,2.5vw,32px);letter-spacing:.08em}
+.cw .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(22px,3vw,40px);color:var(--check);margin-top:6px}
+
+/* ---------- цифри ---------- */
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(17px,calc(2.35*var(--u)),27px);line-height:1.4}
+.huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+      font-size:clamp(23px,calc(4*var(--u)),44px);line-height:1.12;letter-spacing:-.02em}
+.ans{color:var(--check);font-weight:800}
+.tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
+      border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
+.tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
+         font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .lab{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.1vw,15px)}
+.klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--soft);text-align:center;margin-bottom:8px}
+
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(13px,calc(1.55*var(--u)),19px)}
+th,td{border:2px solid var(--edge);padding:clamp(6px,.85vw,11px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(10px,calc(1.02*var(--u)),13px);
+   letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+
+.code{display:flex;flex-wrap:wrap;gap:clamp(8px,1.1vw,14px)}
+.code div{flex:1 1 auto;min-width:clamp(86px,10.5vw,146px);text-align:center;
+  border:2px solid var(--sun);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 8px}
+.code .v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.6vw,33px);font-variant-numeric:tabular-nums}
+.code .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(19px,2.6vw,33px);color:var(--sun);margin-top:4px}
+.word{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(32px,6.6vw,88px);letter-spacing:.14em;color:var(--check);line-height:1.1}
+
+.hide{opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+span.hide{display:inline-block}
+.hide.on{opacity:1;pointer-events:auto;transform:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+  padding:10px clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:2px solid var(--edge)}
+#rail{flex:1;display:flex;gap:3px;min-width:0;overflow:hidden}
+#rail i{flex:1 1 0;height:14px;border:1.5px solid var(--edge);border-radius:2px;background:transparent;
+  transition:background .2s ease,border-color .2s ease}
+#rail i.done{background:var(--grid);border-color:var(--grid)}
+#rail i.cur{background:var(--pen);border-color:var(--pen)}
+#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
+  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nav{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:4px;padding:10px 16px;font-weight:800;font-size:17px;line-height:1;
+  transition:background .15s,border-color .15s}
+button:hover{border-color:var(--pen);background:var(--pen-soft)}
+button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(12px,calc(1.2*var(--u)),15px);white-space:nowrap}
+#tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
+#tip.on{opacity:1}
+@media(max-width:760px){
+  #count,#tip{display:none}
+  button{padding:12px 14px;font-size:16px}
+  .timer{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ---------- тема уроку — завжди вгорі ---------- */
+#topic{position:sticky;top:0;z-index:6;
+  display:flex;align-items:baseline;gap:clamp(10px,1.6vw,22px);
+  padding:clamp(6px,.9vw,11px) clamp(14px,4vw,56px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 90%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--edge)}
+#topic .k{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--pen);white-space:nowrap;flex:none}
+#topic .t{flex:1;min-width:0;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.01em;text-wrap:balance}
+@media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
+
+/* ---------- математика ---------- */
+.eqn{font-family:"JetBrains Mono",monospace;font-weight:700;
+     font-size:clamp(16px,calc(2.3*var(--u)),26px);line-height:1.65;font-variant-numeric:tabular-nums}
+.step{font-size:clamp(15px,calc(1.85*var(--u)),23px);line-height:1.75}
+.stolb{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:pre;
+       font-size:clamp(15px,calc(2.05*var(--u)),25px);line-height:1.45;letter-spacing:.06em;
+       font-variant-numeric:tabular-nums;margin:0}
+.pair{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.pair span{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(14px,calc(1.75*var(--u)),22px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(5px,.7vw,9px) clamp(7px,1vw,13px)}
+
+/* ---------- дроби ---------- */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;
+    margin:0 .16em;line-height:1.08;font-variant-numeric:tabular-nums}
+.fr .n{border-bottom:.09em solid currentColor;padding:0 .2em}
+.fr .d{padding:0 .2em}
+.mix{display:inline-flex;align-items:center;gap:.1em;vertical-align:middle}
+
+/* ---------- креслення ---------- */
+.fig{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(8px,1.1vw,14px) clamp(10px,1.3vw,16px)}
+.fig svg{display:block;width:100%;height:auto;color:var(--ink)}
+.fig .cap{text-align:center;color:var(--soft);font-size:clamp(11px,calc(1.15*var(--u)),15px);margin-top:6px}
+svg line,svg path,svg circle{stroke:currentColor;stroke-width:2.4;fill:none;vector-effect:non-scaling-stroke}
+svg circle.pt{fill:currentColor}
+svg text{font:italic 22px "Charter",Georgia,serif;fill:currentColor;stroke:none}
+svg text.n{font-style:normal;font-weight:700;font-size:19px}
+.fig.mark svg line.m{stroke:var(--marker)}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<div id="topic">
+  <span class="k">Алгебра · 7-І · Урок 3</span>
+  <span class="t">Відношення і пропорції</span>
+</div>
+
+<div id="sheet">
+
+<!-- 1 -->
+<section class="slide on" data-t="Вітання">
+  <p class="eyebrow">Алгебра · 7-І · Урок 3 · онлайн</p>
+  <h1>Відношення і пропорції</h1>
+  <p class="lede" style="margin-top:16px">Повторюємо математику за 5–6 класи.<br>
+  Підручник: сторінки 10–11, № 45–58.</p>
+  <div class="row c3" style="margin-top:22px">
+    <div class="box pen"><h3>Знадобиться</h3><p>Підручник, зошит, ручка</p></div>
+    <div class="box ok"><h3>Пригадаємо</h3><p>Що таке відношення і пропорція</p></div>
+    <div class="box play"><h3>Навчимось</h3><p>Знаходити невідомий член пропорції</p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Технічна перевірка">
+  <p class="eyebrow">Перед початком</p>
+  <h2>Перевірка звʼязку</h2>
+  <div class="row c3">
+    <div class="box pen">
+      <h3>Крок 1</h3>
+      <p style="margin:0">Напиши в чат <b>плюс</b></p>
+      <p class="huge" style="margin:10px 0 0;color:var(--pen)">+</p>
+    </div>
+    <div class="box play">
+      <h3>Крок 2</h3>
+      <p style="margin:0">Відкрий <b>зошит з алгебри</b> і підручник на <b>ст. 10</b></p>
+    </div>
+    <div class="box warn">
+      <h3>Крок 3</h3>
+      <p style="margin:0"><b>Мікрофон вимкни</b></p>
+      <p style="margin-top:10px">Вмикаєш, коли я назву твоє імʼя.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-t="Як відповідаємо">
+  <p class="eyebrow">Домовляємось</p>
+  <h2>Як ми сьогодні відповідаємо</h2>
+  <div class="row c4">
+    <div class="box pen"><h3>У чат</h3><p style="margin:0">Коротка відповідь — число або «так/ні»</p></div>
+    <div class="box play"><h3>На камеру</h3><p style="margin:0">Показуєш зошит із розвʼязанням</p></div>
+    <div class="box warn"><h3>Вголос</h3><p style="margin:0">Пояснюєш, коли я назву імʼя</p></div>
+    <div class="box note"><h3>У зошит</h3><p style="margin:0">Пишемо мовчки, поки йде таймер</p></div>
+  </div>
+  <div class="box ok" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Смужка вгорі кожного завдання показує, <b>який спосіб зараз</b>.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Перевіряємо ДЗ" data-timer="180">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Домашнє завдання</p>
+  <h2>Звіряємо відповіді</h2>
+  <div class="row c2">
+    <div class="box">
+      <h3>№ 36 (ст. 9)</h3>
+      <p class="eqn" style="margin:0">2) 0,8 + x = <span class="fr"><span class="n">13</span><span class="d">15</span></span> &nbsp;<span class="ans hide">x = <span class="fr"><span class="n">1</span><span class="d">15</span></span></span></p>
+      <p class="eqn" style="margin:6px 0 0">4) 3,2 : x = <span class="fr"><span class="n">4</span><span class="d">5</span></span> &nbsp;<span class="ans hide">x = 4</span></p>
+      <p class="eqn" style="margin:6px 0 0">5) 1,5x = <span class="fr"><span class="n">15</span><span class="d">16</span></span> &nbsp;<span class="ans hide">x = <span class="fr"><span class="n">5</span><span class="d">8</span></span></span></p>
+    </div>
+    <div class="box">
+      <h3>№ 42 (ст. 10)</h3>
+      <p style="margin:0">Яблука втрачають <b>82 %</b> маси. Скільки свіжих потрібно на <b>9 кг</b> сушених?</p>
+      <p class="step hide" style="margin:10px 0 0">Сушене — це <b>100 % − 82 % = 18 %</b> від свіжого.</p>
+      <p class="eqn hide" style="margin:6px 0 0">9 : 0,18 = <span class="ans">50 кг</span></p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Типова помилка в № 42: узяти <b>18 % від 9</b>. Але 9 кг — це <b>не ціле</b>, а вже частина. Тому <b>ділимо</b>, а не множимо.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="Записуємо тему" data-timer="90">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <h2>Записуємо</h2>
+  <div class="box">
+    <p class="huge" style="text-align:center;margin:0">Дата</p>
+    <p class="huge" style="text-align:center;margin:clamp(5px,.9vw,12px) 0 0">Класна робота</p>
+    <p class="big" style="text-align:center;margin:clamp(12px,2vw,22px) 0 0;color:var(--pen)">
+      <b>Відношення і пропорції</b></p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="Що таке відношення">
+  <p class="eyebrow">Пригадуємо</p>
+  <h2>Відношення — це частка</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>Запис</h3>
+      <p class="eqn" style="margin:0">a : b &nbsp;=&nbsp; <span class="fr"><span class="n">a</span><span class="d">b</span></span></p>
+      <p style="margin-top:10px">Читаємо: «відношення <b>a</b> до <b>b</b>». Тут <b>b ≠ 0</b>.</p>
+    </div>
+    <div class="box ok">
+      <h3>Що воно показує</h3>
+      <p class="big" style="margin:0">У <b>скільки разів</b> a більше за b — або <b>яку частину</b> a становить від b.</p>
+    </div>
+  </div>
+  <div class="box play" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Приклад</h3>
+    <p class="big" style="margin:0">У класі 12 дівчат і 8 хлопців. Відношення <b>12 : 8 = 3 : 2</b> —
+    дівчат у <b>1,5 раза</b> більше.</p>
+    <p style="margin-top:8px">Відношення, як і дріб, <b>можна скорочувати</b> — від цього воно не змінюється.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="№ 45 — пропорція" data-timer="90">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос</span></div>
+  <p class="eyebrow">Усно · ст. 10</p>
+  <h2>№ 45. Чому це пропорція?</h2>
+  <div class="box">
+    <p class="eqn" style="margin:0;text-align:center">
+      <span class="fr"><span class="n">2</span><span class="d">5</span></span> = <span class="fr"><span class="n">6</span><span class="d">15</span></span></p>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Означення</h3>
+    <p class="big" style="margin:0"><b>Пропорція</b> — це рівність двох відношень: <b>a : b = c : d</b>.</p>
+  </div>
+  <div class="row c2 hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="box pen"><h3>Крайні члени</h3><p class="huge" style="margin:0;text-align:center">2 і 15</p></div>
+    <div class="box note"><h3>Середні члени</h3><p class="huge" style="margin:0;text-align:center">5 і 6</p></div>
+  </div>
+  <p class="step hide" style="margin-top:10px">Це справді пропорція, бо <b>2 · 15 = 5 · 6 = 30</b>.</p>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="Основна властивість">
+  <p class="eyebrow">Головне правило уроку</p>
+  <h2>Основна властивість пропорції</h2>
+  <div class="box pen">
+    <p class="huge" style="margin:0;text-align:center">a · d = b · c</p>
+    <p style="margin:10px 0 0;text-align:center">Добуток <b>крайніх</b> членів дорівнює добутку <b>середніх</b>.</p>
+  </div>
+  <div class="row c2" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="box ok">
+      <h3>Навіщо</h3>
+      <p style="margin:0">Ця властивість <b>прибирає дроби</b>: пропорція перетворюється на звичайне рівняння.</p>
+    </div>
+    <div class="box play">
+      <h3>Як це виглядає</h3>
+      <p class="eqn" style="margin:0"><span class="fr"><span class="n">x</span><span class="d">4</span></span> = <span class="fr"><span class="n">9</span><span class="d">6</span></span></p>
+      <p class="eqn" style="margin:6px 0 0">6x = 36 &nbsp; <span class="ans">x = 6</span></p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Хрест-навхрест множимо <b>тільки в пропорції</b> — там, де стоїть <b>знак «=»</b> між двома дробами.
+    В одному виразі так робити не можна.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="№ 47 — невідомий член" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode cam"><span class="dot"></span>На камеру</span></div>
+  <p class="eyebrow">Ст. 10</p>
+  <h2>№ 47. Знайдіть невідомий член пропорції</h2>
+  <div class="row c3">
+    <div class="box">
+      <p class="eqn" style="margin:0">1) x : 6 = 5 : 3</p>
+      <p class="eqn hide" style="margin:6px 0 0">3x = 30</p>
+      <p class="eqn hide" style="margin:6px 0 0"><span class="ans">x = 10</span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0">2) <span class="fr"><span class="n">5</span><span class="d">x</span></span> = <span class="fr"><span class="n">20</span><span class="d">7</span></span></p>
+      <p class="eqn hide" style="margin:6px 0 0">20x = 35</p>
+      <p class="eqn hide" style="margin:6px 0 0"><span class="ans">x = 1,75</span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0">3) x : 12 = <span class="fr"><span class="n">13</span><span class="d">24</span></span></p>
+      <p class="eqn hide" style="margin:6px 0 0">24x = 156</p>
+      <p class="eqn hide" style="margin:6px 0 0"><span class="ans">x = 6,5</span></p>
+    </div>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Порядок дій той самий тричі: <b>перемножили навхрест → розвʼязали лінійне рівняння</b>.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="№ 46 — масштаб" data-timer="120">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Усно · ст. 10</p>
+  <h2>№ 46. Скільком кілометрам відповідає 1 см на карті?</h2>
+  <div class="row c3">
+    <div class="box"><p class="eqn" style="margin:0">1) 1 : 100 000</p><p class="huge hide" style="margin:8px 0 0;text-align:center"><span class="ans">1 км</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">2) 1 : 700 000</p><p class="huge hide" style="margin:8px 0 0;text-align:center"><span class="ans">7 км</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">3) 1 : 5 000 000</p><p class="huge hide" style="margin:8px 0 0;text-align:center"><span class="ans">50 км</span></p></div>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Ланцюжок переведення</h3>
+    <p class="eqn" style="margin:0">100 000 см = 1 000 м = 1 км</p>
+    <p style="margin-top:8px">Масштаб — це теж <b>відношення</b>: у скільки разів карта менша за місцевість.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="Пряма пропорційність" data-timer="150">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <p class="eyebrow">Задача 1</p>
+  <h2>Пряма пропорційна залежність</h2>
+  <div class="box">
+    <p class="big" style="margin:0">5 однакових зошитів коштують <b>60 грн</b>. Скільки коштують <b>8</b> таких зошитів?</p>
+  </div>
+  <div class="box pen hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Більше зошитів — більша ціна. Стрілки в один бік</h3>
+    <p class="eqn" style="margin:0"><span class="fr"><span class="n">5</span><span class="d">8</span></span> = <span class="fr"><span class="n">60</span><span class="d">x</span></span></p>
+    <p class="eqn hide" style="margin:6px 0 0">5x = 480 &nbsp; <span class="ans">x = 96 грн</span></p>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">У <b>прямій</b> залежності обидві величини змінюються <b>однаково</b>: більше — більше.
+    Пропорцію складаємо «в тому самому порядку».</p>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="Обернена пропорційність" data-timer="150">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <p class="eyebrow">Задача 2</p>
+  <h2>Обернена пропорційна залежність</h2>
+  <div class="box">
+    <p class="big" style="margin:0">6 робітників виконують роботу за <b>8 днів</b>. За скільки днів ту саму роботу виконають <b>4</b> робітники?</p>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Менше робітників — більше днів. Стрілки в різні боки</h3>
+    <p class="eqn" style="margin:0"><span class="fr"><span class="n">6</span><span class="d">4</span></span> = <span class="fr"><span class="n">x</span><span class="d">8</span></span></p>
+    <p class="eqn hide" style="margin:6px 0 0">4x = 48 &nbsp; <span class="ans">x = 12 днів</span></p>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">У <b>оберненій</b> залежності одне відношення <b>перевертаємо</b>.
+    Перевірка здоровим глуздом: робітників стало менше — днів має стати <b>більше</b>. 12 &gt; 8 ✓</p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <div class="modes"><span class="mode away"><span class="dot"></span>Від екрана</span></div>
+  <h2>Пауза для очей</h2>
+  <div class="row c3">
+    <div class="box play"><h3>1</h3><p style="margin:0">Подивись у вікно на щось <b>далеке</b> — 20 секунд</p></div>
+    <div class="box ok"><h3>2</h3><p style="margin:0">Поводь очима <b>вліво-вправо</b>, не рухаючи головою</p></div>
+    <div class="box pen"><h3>3</h3><p style="margin:0">Міцно <b>заплющ</b> очі на 5 секунд і розплющ</p></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="№ 51 — поділити число" data-timer="180">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <p class="eyebrow">Ст. 10</p>
+  <h2>№ 51. Поділіть число</h2>
+  <div class="row c2">
+    <div class="box">
+      <p class="big" style="margin:0">1) <b>28</b> на дві частини у відношенні <b>5 : 2</b></p>
+      <p class="step hide" style="margin:8px 0 0">Разом частин: 5 + 2 = <b>7</b>. Одна частина: 28 : 7 = <b>4</b>.</p>
+      <p class="eqn hide" style="margin:6px 0 0"><span class="ans">20 і 8</span></p>
+    </div>
+    <div class="box">
+      <p class="big" style="margin:0">2) <b>36</b> на три частини у відношенні <b>1 : 3 : 5</b></p>
+      <p class="step hide" style="margin:8px 0 0">Разом частин: 1 + 3 + 5 = <b>9</b>. Одна частина: 36 : 9 = <b>4</b>.</p>
+      <p class="eqn hide" style="margin:6px 0 0"><span class="ans">4, 12 і 20</span></p>
+    </div>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Перевірка обовʼязкова: <b>20 + 8 = 28</b> ✓ &nbsp;&nbsp; <b>4 + 12 + 20 = 36</b> ✓</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="№ 49 — відсотки" data-timer="150">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Ст. 10</p>
+  <h2>№ 49. Скільки відсотків становить</h2>
+  <div class="row c4">
+    <div class="box"><p class="eqn" style="margin:0">1) 2 від 5</p><p class="big hide" style="margin:8px 0 0"><span class="ans">40 %</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">2) 18 від 12</p><p class="big hide" style="margin:8px 0 0"><span class="ans">150 %</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">3) 3,5 від 17,5</p><p class="big hide" style="margin:8px 0 0"><span class="ans">20 %</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">4) <span class="fr"><span class="n">1</span><span class="d">7</span></span> від <span class="fr"><span class="n">1</span><span class="d">14</span></span></p><p class="big hide" style="margin:8px 0 0"><span class="ans">200 %</span></p></div>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Одне правило на всі чотири</h3>
+    <p class="eqn" style="margin:0">(частина : ціле) · 100 %</p>
+    <p style="margin-top:8px">У пунктах 2 і 4 вийшло <b>більше 100 %</b> — і це нормально: перше число більше за друге.</p>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="№ 53 — рівняння" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode cam"><span class="dot"></span>На камеру</span></div>
+  <p class="eyebrow">Ст. 11 · рівень 3</p>
+  <h2>№ 53. Розвʼяжіть рівняння</h2>
+  <div class="row c2">
+    <div class="box">
+      <p class="eqn" style="margin:0">1) <span class="fr"><span class="n">2x − 7</span><span class="d">4</span></span> = <span class="fr"><span class="n">5</span><span class="d">8</span></span></p>
+      <p class="eqn hide" style="margin:6px 0 0">8(2x − 7) = 4 · 5</p>
+      <p class="eqn hide" style="margin:6px 0 0">16x − 56 = 20</p>
+      <p class="eqn hide" style="margin:6px 0 0">16x = 76 &nbsp; <span class="ans">x = 4,75</span></p>
+    </div>
+    <div class="box">
+      <p class="eqn" style="margin:0">2) <span class="fr"><span class="n">3x + 1</span><span class="d">7</span></span> = <span class="fr"><span class="n">3 − 4x</span><span class="d">14</span></span></p>
+      <p class="eqn hide" style="margin:6px 0 0">14(3x + 1) = 7(3 − 4x)</p>
+      <p class="eqn hide" style="margin:6px 0 0">42x + 14 = 21 − 28x</p>
+      <p class="eqn hide" style="margin:6px 0 0">70x = 7 &nbsp; <span class="ans">x = 0,1</span></p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Найчастіша помилка — <b>забути дужки</b>: множимо на весь чисельник, а не на перший доданок.</p>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-t="№ 55 — продуктивність" data-timer="180">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос</span></div>
+  <p class="eyebrow">Ст. 11</p>
+  <h2>№ 55. На скільки відсотків змінилась продуктивність?</h2>
+  <div class="row c2">
+    <div class="box">
+      <p class="big" style="margin:0">1) Було <b>24</b> девайси, стало <b>30</b>. На скільки % <b>зросла</b>?</p>
+      <p class="eqn hide" style="margin:8px 0 0">(30 − 24) : 24 = 0,25</p>
+      <p class="big hide" style="margin:6px 0 0"><span class="ans">на 25 %</span></p>
+    </div>
+    <div class="box">
+      <p class="big" style="margin:0">2) Було <b>30</b> девайсів, стало <b>24</b>. На скільки % <b>знизилась</b>?</p>
+      <p class="eqn hide" style="margin:8px 0 0">(30 − 24) : 30 = 0,2</p>
+      <p class="big hide" style="margin:6px 0 0"><span class="ans">на 20 %</span></p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Чому 25 %, а не 20 %?</h3>
+    <p class="big" style="margin:0">Різниця однакова — <b>6</b>. Але ділимо завжди на те, що було <b>спочатку</b>:
+    у першому випадку на 24, у другому на 30. Тому й відсотки різні.</p>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-t="Підсумок">
+  <p class="eyebrow">Що забираємо з уроку</p>
+  <h2>Підсумок</h2>
+  <div class="row c2">
+    <div class="box pen"><h3>Основна властивість</h3><p class="big" style="margin:0">У пропорції <b>a : b = c : d</b> завжди <b>ad = bc</b></p></div>
+    <div class="box ok"><h3>Пряма чи обернена</h3><p style="margin:0">Більше — більше: пишемо «як є». Більше — менше: <b>перевертаємо</b> одне відношення</p></div>
+    <div class="box play"><h3>Поділ у відношенні</h3><p style="margin:0">Спершу <b>сума частин</b>, потім одна частина</p></div>
+    <div class="box note"><h3>Відсотки</h3><p style="margin:0">Ділимо на те, що було <b>спочатку</b></p></div>
+  </div>
+  <div class="box" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Напиши в чат <b>одне число</b>: наскільки зрозуміло було сьогодні — від <b>1</b> до <b>5</b>.</p>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-t="Домашнє завдання">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Записати в щоденник</span></div>
+  <p class="eyebrow">На наступний урок</p>
+  <h2>Домашнє завдання</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>№ 54 (ст. 11)</h3>
+      <p class="eqn" style="margin:0">1) <span class="fr"><span class="n">2x + 3</span><span class="d">5</span></span> = <span class="fr"><span class="n">7</span><span class="d">10</span></span></p>
+      <p class="eqn" style="margin:6px 0 0">2) <span class="fr"><span class="n">2x − 1</span><span class="d">4</span></span> = <span class="fr"><span class="n">5 − 4x</span><span class="d">12</span></span></p>
+      <p style="margin:10px 0 0">Зразок — № 53 з уроку.</p>
+    </div>
+    <div class="box play">
+      <h3>№ 56 (ст. 11)</h3>
+      <p style="margin:0">Товар коштував <b>80 грн</b>. На скільки % змінилася ціна, якщо став коштувати:</p>
+      <p class="eqn" style="margin:8px 0 0">1) 72 грн &nbsp;&nbsp; 2) 84 грн?</p>
+      <p style="margin:10px 0 0">Зразок — № 55 з уроку.</p>
+    </div>
+  </div>
+  <div class="box ok" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Наступний урок — <b>раціональні числа і дії з ними</b>, ст. 11–13. Це остання тема повторення перед самостійною.</p>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-t="До зустрічі">
+  <h1>Дякую за урок</h1>
+  <p class="lede" style="margin-top:16px">Хто не встиг дописати — сфотографуй слайди з таймером і дороби вдома.</p>
+  <div class="box pen" style="margin-top:22px">
+    <p class="big" style="margin:0">Питання по домашньому — пишіть у чат класу <b>до вечора</b>, а не за 10 хвилин до уроку.</p>
+  </div>
+</section>
+
+</div>
+
+<div id="bar">
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Попередній слайд">←</button>
+    <button id="next" type="button" aria-label="Далі">→</button>
+  </div>
+  <div id="rail" aria-hidden="true"></div>
+  <div id="tip">пробіл — показати відповідь</div>
+  <div id="count">1 / 20</div>
+  <button id="fs" type="button" aria-label="На весь екран">⛶</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('rail');
+  var count = document.getElementById('count');
+  var tip = document.getElementById('tip');
+  var cur = 0, tick = null;
+
+  slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
+  var cells = [].slice.call(rail.children);
+
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
+    var slot = s.querySelector('.timerslot');
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
+    var total = parseInt(s.dataset.timer, 10);
+    var box = document.createElement('div');
+    box.className = 'timer';
+    box.innerHTML =
+      '<div class="clock"></div>' +
+      '<div class="track"><div class="fill"></div></div>' +
+      '<div class="lab"></div>' +
+      '<button type="button" class="go"></button>';
+    slot.appendChild(box);
+    box.dataset.total = total;
+    box.dataset.left = total;
+    box.dataset.run = '0';
+  });
+
+  function fmt(sec){
+    sec = Math.max(0, sec);
+    return Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2);
+  }
+
+  function drawTimer(box){
+    var total = +box.dataset.total, left = +box.dataset.left, run = box.dataset.run === '1';
+    box.querySelector('.clock').textContent = fmt(left);
+    box.querySelector('.fill').style.width = (100 * left / total) + '%';
+    box.classList.toggle('warn', left > 0 && left <= 30);
+    box.classList.toggle('over', left === 0);
+    box.querySelector('.lab').textContent =
+      left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
+    box.querySelector('.go').textContent =
+      left === 0 ? 'Ще раз' : (run ? 'Пауза' : 'Почати');
+  }
+
+  function stopTick(){ if(tick){ clearInterval(tick); tick = null; } }
+
+  function toggleTimer(box){
+    if(box.dataset.run === '1'){
+      box.dataset.run = '0'; stopTick(); drawTimer(box); return;
+    }
+    if(+box.dataset.left === 0){ box.dataset.left = box.dataset.total; }
+    box.dataset.run = '1';
+    stopTick();
+    tick = setInterval(function(){
+      var left = +box.dataset.left - 1;
+      box.dataset.left = Math.max(0, left);
+      if(left <= 0){ box.dataset.run = '0'; stopTick(); }
+      drawTimer(box);
+    }, 1000);
+    drawTimer(box);
+  }
+
+  function resetTimer(s){
+    var box = s.querySelector('.timer');
+    if(!box) return;
+    box.dataset.left = box.dataset.total;
+    box.dataset.run = '0';
+    drawTimer(box);
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.timer .go') : null;
+    if(!b) return;
+    e.stopPropagation();
+    toggleTimer(b.parentNode);
+  }, true);
+
+  /* ---- показ відповідей і навігація ---- */
+  function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
+  function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
+
+  var sheet = document.getElementById('sheet');
+  function fit(){
+    var s = slides[cur];
+    s.style.zoom = '';
+    var cs = getComputedStyle(sheet);
+    var avail = sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var h = s.scrollHeight;
+    if(avail > 0 && h > avail){
+      s.style.zoom = Math.max(0.5, Math.floor(100 * avail / h) / 100);
+    }
+  }
+
+  function paint(){
+    cells.forEach(function(c, i){
+      c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
+    });
+    count.textContent = (cur + 1) + ' / ' + slides.length;
+    tip.classList.toggle('on', hidden(cur).length > 0);
+    fit();
+  }
+
+  var rt = null;
+  window.addEventListener('resize', function(){
+    if(rt) clearTimeout(rt);
+    rt = setTimeout(fit, 120);
+  });
+
+  function go(i, revealAll){
+    if(i < 0 || i >= slides.length) return;
+    stopTick();
+    resetTimer(slides[cur]);
+    slides[cur].classList.remove('on');
+    cur = i;
+    var s = slides[cur];
+    s.classList.add('on');
+    [].slice.call(s.querySelectorAll('.hide')).forEach(function(el){
+      el.classList.toggle('on', !!revealAll);
+    });
+    resetTimer(s);
+    window.scrollTo(0, 0);
+    paint();
+  }
+
+  function next(){
+    var h = hidden(cur);
+    if(h.length){ h[0].classList.add('on'); paint(); return; }
+    go(cur + 1, false);
+  }
+
+  function prev(){
+    var s = shown(cur);
+    if(s.length){ s[s.length - 1].classList.remove('on'); paint(); return; }
+    go(cur - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else { document.documentElement.requestFullscreen(); }
+  });
+
+  document.getElementById('sheet').addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('button')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'ArrowRight' || e.code === 'Space' || e.code === 'PageDown' || e.code === 'Enter'){
+      e.preventDefault(); next();
+    } else if(e.code === 'ArrowLeft' || e.code === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(e.code === 'Home'){ go(0, false); }
+    else if(e.code === 'End'){ go(slides.length - 1, true); }
+    else if(e.code === 'KeyT'){
+      var box = slides[cur].querySelector('.timer');
+      if(box){ e.preventDefault(); toggleTimer(box); }
+    }
+    else if(e.code === 'KeyF'){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  slides.forEach(resetTimer);
+  paint();
+})();
+</script>
+
+</body>
+</html>

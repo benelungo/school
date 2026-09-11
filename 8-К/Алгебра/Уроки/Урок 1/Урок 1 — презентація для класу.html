@@ -108,7 +108,8 @@ li::marker{color:var(--pen)}
 /* ---------- таймер ---------- */
 .timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
   border:2px solid var(--edge);border-radius:6px;background:var(--card);
-  padding:clamp(10px,1.3vw,16px) clamp(12px,1.6vw,20px);margin:clamp(12px,1.7vw,20px) 0 0}
+  padding:clamp(10px,1.3vw,16px) clamp(12px,1.6vw,20px);margin:clamp(12px,1.7vw,20px) 0}
+.timerslot:empty{display:none}
 .timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
   font-size:clamp(26px,3.6vw,48px);line-height:1;min-width:3.6ch}
 .timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
@@ -833,10 +834,33 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
   var cells = [].slice.call(rail.children);
 
-  /* ---- таймер завдання ---- */
-  slides.forEach(function(s){
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
     var slot = s.querySelector('.timerslot');
-    if(!slot || !s.dataset.timer) return;
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
     var total = parseInt(s.dataset.timer, 10);
     var box = document.createElement('div');
     box.className = 'timer';

@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Кут. Вимірювання кутів. Бісектриса</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
+  --ink:#1B2430; --soft:#5B6879;
+  --pen:#2C4BC9; --pen-soft:#E7ECFC;
+  --check:#1B7F4B; --check-soft:#E4F3EA;
+  --marker:#D7263D; --marker-soft:#FCEAEC;
+  --sun:#B57C00; --sun-soft:#FDF3DC;
+  --note:#6B4FA8; --note-soft:#EFEAFA;
+  --edge:#DDE4EC;
+  --cell:30px;
+  --u:min(1vw,1.55vh);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121821; --card:#1A222D; --grid:#26374A;
+    --ink:#EAF0F6; --soft:#9AAABC;
+    --pen:#8DA9FF; --pen-soft:#1E2A47;
+    --check:#5FD394; --check-soft:#163024;
+    --marker:#FF7B8A; --marker-soft:#371D22;
+    --sun:#FFC93C; --sun-soft:#332813;
+    --note:#C0A8F5; --note-soft:#251E3A;
+    --edge:#2C3948;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121821; --card:#1A222D; --grid:#26374A;
+  --ink:#EAF0F6; --soft:#9AAABC;
+  --pen:#8DA9FF; --pen-soft:#1E2A47;
+  --check:#5FD394; --check-soft:#163024;
+  --marker:#FF7B8A; --marker-soft:#371D22;
+  --sun:#FFC93C; --sun-soft:#332813;
+  --note:#C0A8F5; --note-soft:#251E3A;
+  --edge:#2C3948;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:var(--cell) var(--cell);
+  background-position:center top;
+  -webkit-text-size-adjust:100%;
+}
+
+#stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(10px,1.7vh,26px) clamp(14px,4vw,56px) 84px}
+.slide{display:none;width:100%;max-width:1180px}
+.slide.on{display:block;animation:in .3s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(24px,calc(4.3*var(--u)),46px);line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(20px,calc(3.1*var(--u)),33px);line-height:1.16;letter-spacing:-.015em;margin:0 0 clamp(9px,1.4vw,16px);text-wrap:balance}
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 8px}
+p{margin:0 0 10px;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.45}
+p:last-child{margin-bottom:0}
+.lede{font-size:clamp(16px,calc(2.05*var(--u)),24px);color:var(--soft);line-height:1.4}
+b,strong{font-weight:800}
+ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.4}
+li{margin:.34em 0}
+li::marker{color:var(--pen)}
+
+.row{display:grid;gap:clamp(9px,1.3vw,16px)}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c21{grid-template-columns:1.15fr .85fr}
+@media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
+
+.box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(11px,1.5vw,18px);box-shadow:0 1px 0 var(--edge)}
+.box.pen{border-color:var(--pen);background:var(--pen-soft)}
+.box.ok{border-color:var(--check);background:var(--check-soft)}
+.box.warn{border-color:var(--marker);background:var(--marker-soft)}
+.box.play{border-color:var(--sun);background:var(--sun-soft)}
+.box.note{border-color:var(--note);background:var(--note-soft)}
+.box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,calc(1.1*var(--u)),14px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 7px}
+.box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
+.box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
+
+/* ---------- смужка «як відповідаємо» ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 clamp(8px,1.2vw,14px)}
+.mode{display:inline-flex;align-items:center;gap:8px;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:6px 10px;background:var(--card);white-space:nowrap}
+.mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
+.mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+.mode.voice{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.mode.book{color:var(--note);border-color:var(--note);background:var(--note-soft)}
+.mode.away{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+
+/* ---------- таймер ---------- */
+.timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(8px,1vw,12px) clamp(10px,1.3vw,16px);margin:clamp(9px,1.3vw,15px) 0}
+.timerslot:empty{display:none}
+.timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(21px,calc(2.9*var(--u)),35px);line-height:1;min-width:3.6ch}
+.timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
+.timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
+.timer .lab{font-size:clamp(12px,calc(1.2*var(--u)),15px);color:var(--soft);white-space:nowrap}
+.timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
+.timer.over{border-color:var(--marker);background:var(--marker-soft)}
+.timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
+
+/* ---------- лампочки й біти ---------- */
+.lamps{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.lamp{text-align:center;min-width:clamp(52px,6.4vw,86px)}
+.lamp .b{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1.2;
+  font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.9vw,12px) 0}
+.lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.lamp .w{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
+.cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
+.cw .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(18px,2.5vw,32px);letter-spacing:.08em}
+.cw .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(22px,3vw,40px);color:var(--check);margin-top:6px}
+
+/* ---------- цифри ---------- */
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(17px,calc(2.35*var(--u)),27px);line-height:1.4}
+.huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+      font-size:clamp(23px,calc(4*var(--u)),44px);line-height:1.12;letter-spacing:-.02em}
+.ans{color:var(--check);font-weight:800}
+.tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
+      border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
+.tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
+         font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .lab{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.1vw,15px)}
+.klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--soft);text-align:center;margin-bottom:8px}
+
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(13px,calc(1.55*var(--u)),19px)}
+th,td{border:2px solid var(--edge);padding:clamp(6px,.85vw,11px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(10px,calc(1.02*var(--u)),13px);
+   letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+
+.code{display:flex;flex-wrap:wrap;gap:clamp(8px,1.1vw,14px)}
+.code div{flex:1 1 auto;min-width:clamp(86px,10.5vw,146px);text-align:center;
+  border:2px solid var(--sun);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 8px}
+.code .v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.6vw,33px);font-variant-numeric:tabular-nums}
+.code .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(19px,2.6vw,33px);color:var(--sun);margin-top:4px}
+.word{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(32px,6.6vw,88px);letter-spacing:.14em;color:var(--check);line-height:1.1}
+
+.hide{opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+span.hide{display:inline-block}
+.hide.on{opacity:1;pointer-events:auto;transform:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+  padding:10px clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:2px solid var(--edge)}
+#rail{flex:1;display:flex;gap:3px;min-width:0;overflow:hidden}
+#rail i{flex:1 1 0;height:14px;border:1.5px solid var(--edge);border-radius:2px;background:transparent;
+  transition:background .2s ease,border-color .2s ease}
+#rail i.done{background:var(--grid);border-color:var(--grid)}
+#rail i.cur{background:var(--pen);border-color:var(--pen)}
+#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
+  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nav{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:4px;padding:10px 16px;font-weight:800;font-size:17px;line-height:1;
+  transition:background .15s,border-color .15s}
+button:hover{border-color:var(--pen);background:var(--pen-soft)}
+button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(12px,calc(1.2*var(--u)),15px);white-space:nowrap}
+#tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
+#tip.on{opacity:1}
+@media(max-width:760px){
+  #count,#tip{display:none}
+  button{padding:12px 14px;font-size:16px}
+  .timer{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ---------- тема уроку — завжди вгорі ---------- */
+#topic{position:sticky;top:0;z-index:6;
+  display:flex;align-items:baseline;gap:clamp(10px,1.6vw,22px);
+  padding:clamp(6px,.9vw,11px) clamp(14px,4vw,56px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 90%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--edge)}
+#topic .k{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--pen);white-space:nowrap;flex:none}
+#topic .t{flex:1;min-width:0;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.01em;text-wrap:balance}
+@media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
+
+/* ---------- математика ---------- */
+.eqn{font-family:"JetBrains Mono",monospace;font-weight:700;
+     font-size:clamp(16px,calc(2.3*var(--u)),26px);line-height:1.65;font-variant-numeric:tabular-nums}
+.step{font-size:clamp(15px,calc(1.85*var(--u)),23px);line-height:1.75}
+.stolb{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:pre;
+       font-size:clamp(15px,calc(2.05*var(--u)),25px);line-height:1.45;letter-spacing:.06em;
+       font-variant-numeric:tabular-nums;margin:0}
+.pair{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.pair span{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(14px,calc(1.75*var(--u)),22px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(5px,.7vw,9px) clamp(7px,1vw,13px)}
+
+/* ---------- дроби ---------- */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;
+    margin:0 .16em;line-height:1.08;font-variant-numeric:tabular-nums}
+.fr .n{border-bottom:.09em solid currentColor;padding:0 .2em}
+.fr .d{padding:0 .2em}
+.mix{display:inline-flex;align-items:center;gap:.1em;vertical-align:middle}
+
+/* ---------- креслення ---------- */
+.fig{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(8px,1.1vw,14px) clamp(10px,1.3vw,16px)}
+.fig svg{display:block;width:100%;height:auto;color:var(--ink)}
+.fig .cap{text-align:center;color:var(--soft);font-size:clamp(11px,calc(1.15*var(--u)),15px);margin-top:6px}
+svg line,svg path,svg circle{stroke:currentColor;stroke-width:2.4;fill:none;vector-effect:non-scaling-stroke}
+svg circle.pt{fill:currentColor}
+svg text{font:italic 22px "Charter",Georgia,serif;fill:currentColor;stroke:none}
+svg text.n{font-style:normal;font-weight:700;font-size:19px}
+.fig.mark svg line.m{stroke:var(--marker)}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<div id="topic">
+  <span class="k">Геометрія · 7-І · Урок 4</span>
+  <span class="t">Кут. Вимірювання кутів. Бісектриса кута</span>
+</div>
+
+<div id="sheet">
+
+<!-- 1 -->
+<section class="slide on" data-t="Вітання">
+  <p class="eyebrow">Геометрія · 7-І · Урок 4</p>
+  <h1>Кут. Вимірювання кутів. Бісектриса кута</h1>
+  <p class="lede" style="margin-top:16px">§ 3, ст. 19–23. Відрізки ми вже вміємо міряти — сьогодні беремося за кути.</p>
+  <div class="row c3" style="margin-top:clamp(12px,1.8vw,22px)">
+    <div class="box pen"><h3>Дізнаємось</h3><p style="margin:0">Що таке кут, вершина, сторони; як кут позначають і записують</p></div>
+    <div class="box ok"><h3>Навчимось</h3><p style="margin:0">Міряти кути транспортиром і додавати їхні градусні міри</p></div>
+    <div class="box play"><h3>Введемо</h3><p style="margin:0">Види кутів і <b>бісектрису</b> — промінь, що ділить кут навпіл</p></div>
+  </div>
+  <div class="box warn" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Транспортир на парту <b>зараз</b>. Без нього половину уроку не зробиш.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Технічна перевірка">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Перед стартом</p>
+  <h2>Технічна перевірка</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>Від вас зараз</h3>
+      <p class="big" style="margin:0">Напишіть у чат <b>+</b>, якщо видно екран і чути мене.</p>
+    </div>
+    <div class="box">
+      <h3>Правила зʼєднання</h3>
+      <ul>
+        <li>Мікрофон <b>вимкнений</b>, поки не запитали</li>
+        <li>Хочеш сказати — <b>«руку»</b> або «?» у чат</li>
+        <li>Камера — коли показуєш креслення</li>
+      </ul>
+    </div>
+  </div>
+  <div class="box play" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">На парті: <b>зошит, олівець, лінійка, транспортир</b> і підручник, <b>ст. 19–25</b>.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-t="Як відповідаємо">
+  <p class="eyebrow">Домовляємось</p>
+  <h2>Як сьогодні відповідаємо</h2>
+  <div class="row c4">
+    <div class="box pen"><h3>У чат</h3><p style="margin:0">Коротка відповідь — <b>число з градусами</b></p></div>
+    <div class="box play"><h3>На камеру</h3><p style="margin:0">Показуєш <b>креслення</b> в зошиті</p></div>
+    <div class="box warn"><h3>Вголос</h3><p style="margin:0">Пояснюєш <b>чому</b>, з посиланням на властивість</p></div>
+    <div class="box note"><h3>У зошит</h3><p style="margin:0">Креслимо й записуємо <b>всі</b></p></div>
+  </div>
+  <div class="box" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">У геометрії задача <b>без малюнка</b> не зарахована. Малюємо завжди, навіть коли здається очевидним.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Перевіряємо ДЗ" data-timer="240">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос</span></div>
+  <p class="eyebrow">Домашнє з уроку 3</p>
+  <h2>№ 28 і № 32 — звіряємо</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>№ 28 (ст. 17) · відомо AC = BD</h3>
+      <p class="eqn" style="margin:0">AB = AC − BC</p>
+      <p class="eqn" style="margin:4px 0 0">CD = BD − BC</p>
+      <p class="big hide" style="margin:10px 0 0">Відрізок <b>BC</b> віднімається в обох рівностях, а AC = BD за умовою — отже, <span class="ans">AB = CD</span>.</p>
+    </div>
+    <div class="box play">
+      <h3>№ 32 (ст. 17) · AM = 7,2 см, MN = 2,5 см</h3>
+      <p class="hide" style="margin:0"><b>Випадок 1.</b> M між A і N:</p>
+      <p class="eqn hide" style="margin:4px 0 0">AN = 7,2 + 2,5 = <span class="ans">9,7 см</span></p>
+      <p class="hide" style="margin:10px 0 0"><b>Випадок 2.</b> N між A і M:</p>
+      <p class="eqn hide" style="margin:4px 0 0">AN = 7,2 − 2,5 = <span class="ans">4,7 см</span></p>
+      <p class="hide" style="margin:10px 0 0">Задача має <b>два розвʼязки</b>.</p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Хто написав одну відповідь — половина роботи. Якщо в умові <b>не сказано, у якому порядку</b> лежать точки, випадків завжди два.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="Записуємо тему" data-timer="90">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <p class="eyebrow">Число і тема</p>
+  <h2>Записуємо в зошит</h2>
+  <div class="box pen">
+    <p class="huge" style="margin:0">Кут. Вимірювання кутів. Бісектриса кута</p>
+  </div>
+  <div class="row c2" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="box"><h3>Підручник</h3><p style="margin:0">§ 3, <b>ст. 19–23</b></p></div>
+    <div class="box play"><h3>Навіщо</h3><p style="margin:0">З кутів складається <b>вся</b> решта геометрії: суміжні, вертикальні, трикутники. Це фундамент на весь рік.</p></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="Що таке кут">
+  <p class="eyebrow">Означення</p>
+  <h2>Кут</h2>
+  <div class="box pen">
+    <p class="big" style="margin:0"><b>Кут</b> — це фігура з <b>двох променів</b>, які виходять з однієї точки.
+    Промені — <b>сторони</b> кута, спільний початок — <b>вершина</b> кута.</p>
+  </div>
+  <div class="row c21" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="fig">
+      <svg viewBox="0 0 560 230" role="img" aria-label="Кут AOB з вершиною O">
+          <line x1="90" y1="190" x2="470" y2="190"></line><line x1="90" y1="190" x2="311.2" y2="35.1"></line><path d="M 152 190 A 62 62 0 0 0 140.8 154.4"></path><circle class="pt" cx="90" cy="190" r="6"></circle><circle class="pt" cx="470" cy="190" r="6"></circle><circle class="pt" cx="311.2" cy="35.1" r="6"></circle><text text-anchor="middle" x="86" y="218">O</text><text text-anchor="middle" x="488" y="198">A</text><text text-anchor="middle" x="327" y="26">B</text>
+        </svg>
+      <div class="cap">O — вершина, OA і OB — сторони</div>
+    </div>
+    <div class="box">
+      <h3>Як записують</h3>
+      <p class="eqn" style="margin:0">∠O, &nbsp; ∠AOB, &nbsp; ∠BOA</p>
+      <p style="margin:10px 0 0">Букву <b>вершини</b> завжди ставлять <b>посередині</b> з трьох.</p>
+      <p class="big hide" style="margin:10px 0 0">Якщо з вершини виходить <b>кілька</b> променів, писати «∠O» вже не можна — незрозуміло, який саме кут.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="Види кутів">
+  <p class="eyebrow">Класифікація</p>
+  <h2>Види кутів</h2>
+  <div class="row c4">
+    <div class="box">
+      <h3>Гострий</h3>
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 200 110" role="img" aria-label="Гострий кут">
+          <line x1="24" y1="90" x2="180" y2="90"></line><line x1="24" y1="90" x2="149.9" y2="20.2"></line><path d="M 60 90 A 36 36 0 0 0 55.5 72.5"></path>
+        </svg>
+      </div>
+      <p class="eqn" style="margin:6px 0 0">менший за 90°</p>
+    </div>
+    <div class="box pen">
+      <h3>Прямий</h3>
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 200 110" role="img" aria-label="Прямий кут">
+          <line x1="40" y1="90" x2="180" y2="90"></line>
+          <line x1="40" y1="90" x2="40" y2="14"></line>
+          <path d="M 40 68 L 62 68 L 62 90"></path>
+        </svg>
+      </div>
+      <p class="eqn" style="margin:6px 0 0">дорівнює 90°</p>
+    </div>
+    <div class="box play">
+      <h3>Тупий</h3>
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 200 110" role="img" aria-label="Тупий кут">
+          <line x1="80" y1="90" x2="190" y2="90"></line>
+          <line x1="80" y1="90" x2="14" y2="24"></line>
+          <path d="M 120 90 A 40 40 0 0 0 52 62"></path>
+        </svg>
+      </div>
+      <p class="eqn" style="margin:6px 0 0">від 90° до 180°</p>
+    </div>
+    <div class="box note">
+      <h3>Розгорнутий</h3>
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 200 110" role="img" aria-label="Розгорнутий кут">
+          <line x1="14" y1="72" x2="190" y2="72"></line>
+          <path d="M 150 72 A 48 48 0 0 0 54 72"></path>
+          <circle class="pt" cx="102" cy="72" r="6"></circle>
+        </svg>
+      </div>
+      <p class="eqn" style="margin:6px 0 0">дорівнює 180°</p>
+    </div>
+  </div>
+  <div class="box hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">У <b>розгорнутого</b> кута сторони — доповняльні промені: разом вони утворюють пряму.
+    Будь-який кут ділить площину на <b>внутрішню</b> та <b>зовнішню</b> області.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="Вимірювання кутів">
+  <p class="eyebrow">Одиниці</p>
+  <h2>Як міряють кути</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>Градус</h3>
+      <p class="big" style="margin:0"><b>Градус</b> — це <span class="fr"><span class="n">1</span><span class="d">180</span></span> розгорнутого кута. Позначають знаком <b>°</b>.</p>
+      <p class="big" style="margin:10px 0 0">Інструмент — <b>транспортир</b>; на місцевості — <b>астролябія</b>.</p>
+      <p class="big" style="margin:10px 0 0">Кожен кут має градусну міру, <b>більшу за нуль</b>. Розгорнутий = 180°.</p>
+    </div>
+    <div class="box play">
+      <h3>Дрібніші одиниці</h3>
+      <p class="big" style="margin:0"><b>Мінута</b> — <span class="fr"><span class="n">1</span><span class="d">60</span></span> градуса, знак <b>′</b></p>
+      <p class="big" style="margin:8px 0 0"><b>Секунда</b> — <span class="fr"><span class="n">1</span><span class="d">60</span></span> мінути, знак <b>″</b></p>
+      <p class="eqn" style="margin:12px 0 0">1° = 60′ &nbsp;&nbsp; 1′ = 60″</p>
+      <p class="eqn" style="margin:4px 0 0">1° = 3600″</p>
+    </div>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Мінути й секунди тут <b>не про час</b>. Це просто дрібніші частки градуса — та сама шістдесяткова система, що прийшла з давнього Вавилону.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="Основна властивість">
+  <p class="eyebrow">Головне правило уроку</p>
+  <h2>Основна властивість вимірювання кутів</h2>
+  <div class="box pen">
+    <p class="big" style="margin:0">Градусна міра кута дорівнює <b>сумі</b> градусних мір кутів, на які він розбивається
+    будь-яким променем, що проходить <b>між його сторонами</b>.</p>
+  </div>
+  <div class="row c21" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="fig">
+      <svg viewBox="0 0 560 230" role="img" aria-label="Промінь OM усередині кута AOB">
+          <line x1="300" y1="190" x2="470" y2="190"></line><line x1="300" y1="190" x2="329.5" y2="22.6"></line><line x1="300" y1="190" x2="215" y2="42.8"></line><path d="M 358 190 A 58 58 0 0 0 310.1 132.9"></path><path d="M 315.3 103.3 A 88 88 0 0 0 256 113.8"></path><circle class="pt" cx="300" cy="190" r="6"></circle><text text-anchor="middle" x="300" y="216">O</text><text text-anchor="middle" x="486" y="198">A</text><text text-anchor="middle" x="333.5" y="14.6">M</text><text text-anchor="middle" x="201" y="36.8">B</text><text class="n" text-anchor="middle" x="365.9" y="141.7">80°</text><text class="n" text-anchor="middle" x="279.5" y="80.8">40°</text>
+        </svg>
+      <div class="cap">∠BOM = 40°, ∠MOA = 80°</div>
+    </div>
+    <div class="box ok">
+      <p class="eqn" style="margin:0">∠AOB = ∠BOM + ∠MOA</p>
+      <p class="eqn" style="margin:6px 0 0">∠AOB = 40° + 80° = <span class="ans">120°</span></p>
+      <p class="big" style="margin:12px 0 0">Це той самий закон, що й для відрізків (AC + CB = AB), тільки в градусах.</p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Слова <b>«проходить між сторонами»</b> — не прикраса. Якщо промінь у зовнішній області, додавати не можна. Перевірка проста: частина завжди <b>менша</b> за ціле.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="№ 52 — сума кутів" data-timer="180">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode cam"><span class="dot"></span>На камеру</span></div>
+  <p class="eyebrow">Ст. 24</p>
+  <h2>№ 52. Промінь OK проходить між сторонами кута BOC</h2>
+  <div class="box">
+    <p class="big" style="margin:0">Відомо: <b>∠BOK = 38°</b>, <b>∠KOC = 42°</b>. Знайти <b>∠BOC</b>. Виконати малюнок.</p>
+  </div>
+  <div class="box pen hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="eqn" style="margin:0">∠BOC = ∠BOK + ∠KOC</p>
+    <p class="eqn" style="margin:6px 0 0">∠BOC = 38° + 42° = <span class="ans">80°</span></p>
+  </div>
+  <div class="box ok hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">80° &lt; 90° — отже, кут BOC <b>гострий</b>. Завжди корисно назвати вид кута: це безкоштовна перевірка малюнка.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="№ 41 — вид кута" data-timer="180">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Ст. 23</p>
+  <h2>№ 41. Який кут гострий, прямий, тупий, розгорнутий</h2>
+  <div class="row c3">
+    <div class="box"><p class="eqn" style="margin:0">1) ∠A = 39°</p><p class="hide" style="margin:2px 0 0"><span class="ans">гострий</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">2) ∠B = 90°</p><p class="hide" style="margin:2px 0 0"><span class="ans">прямий</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">3) ∠C = 91°</p><p class="hide" style="margin:2px 0 0"><span class="ans">тупий</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">4) ∠D = 170°</p><p class="hide" style="margin:2px 0 0"><span class="ans">тупий</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">5) ∠M = 180°</p><p class="hide" style="margin:2px 0 0"><span class="ans">розгорнутий</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">6) ∠Q = 79°</p><p class="hide" style="margin:2px 0 0"><span class="ans">гострий</span></p></div>
+    <div class="box warn"><p class="eqn" style="margin:0">7) ∠P = 1°3′</p><p class="hide" style="margin:2px 0 0"><span class="ans">гострий</span></p></div>
+    <div class="box warn"><p class="eqn" style="margin:0">8) ∠F = 173°12′</p><p class="hide" style="margin:2px 0 0"><span class="ans">тупий</span></p></div>
+    <div class="box warn"><p class="eqn" style="margin:0">9) ∠K = 89°30′</p><p class="hide" style="margin:2px 0 0"><span class="ans">гострий</span></p></div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Пастка — № 9: <b>89°30′</b> це 89,5°, тобто <b>менше</b> за 90°. Мінути не роблять кут прямим.</p>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="№ 50 і № 51 — градуси й мінути" data-timer="300">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <p class="eyebrow">Ст. 24</p>
+  <h2>№ 50, № 51. Дії з градусами й мінутами</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>№ 50. Виконайте дії</h3>
+      <p class="eqn" style="margin:0">1) 7°13′ + 12°49′</p>
+      <p class="eqn hide" style="margin:6px 0 0">= 19°62′ = <span class="ans">20°2′</span></p>
+      <p class="eqn" style="margin:12px 0 0">2) 52°17′ − 45°27′</p>
+      <p class="eqn hide" style="margin:6px 0 0">= 51°77′ − 45°27′ = <span class="ans">6°50′</span></p>
+    </div>
+    <div class="box play">
+      <h3>№ 51. Виразіть</h3>
+      <p class="eqn" style="margin:0">у мінутах: 4° &nbsp;·&nbsp; 2°15′</p>
+      <p class="eqn hide" style="margin:6px 0 0"><span class="ans">240′</span> &nbsp;·&nbsp; <span class="ans">135′</span></p>
+      <p class="eqn" style="margin:12px 0 0">у секундах: 5′ &nbsp;·&nbsp; 2° &nbsp;·&nbsp; 1°3′</p>
+      <p class="eqn hide" style="margin:6px 0 0"><span class="ans">300″</span> &nbsp;·&nbsp; <span class="ans">7200″</span> &nbsp;·&nbsp; <span class="ans">3780″</span></p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Це <b>не десятковий</b> запис. 19°62′ ще треба «переодягти»: 62′ = 1°2′. А при відніманні позичаємо <b>60</b>, а не 10: 52°17′ = 51°77′.</p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <div class="modes"><span class="mode away"><span class="dot"></span>Від екрана</span></div>
+  <h2>Пауза для очей</h2>
+  <div class="row c3">
+    <div class="box play"><h3>1</h3><p style="margin:0">Подивись у вікно на щось <b>далеке</b> — 20 секунд</p></div>
+    <div class="box ok"><h3>2</h3><p style="margin:0">Поводь очима <b>вгору-вниз</b>, не рухаючи головою</p></div>
+    <div class="box pen"><h3>3</h3><p style="margin:0">Міцно <b>заплющ</b> очі на 5 секунд і розплющ</p></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="Бісектриса">
+  <p class="eyebrow">Означення</p>
+  <h2>Бісектриса кута</h2>
+  <div class="box pen">
+    <p class="big" style="margin:0"><b>Бісектриса кута</b> — це промінь, який виходить з його <b>вершини</b> і ділить кут <b>навпіл</b>.</p>
+  </div>
+  <div class="row c21" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="fig">
+      <svg viewBox="0 0 560 230" role="img" aria-label="Промінь OP — бісектриса кута AOB">
+          <line x1="70" y1="195" x2="490" y2="195"></line><line x1="70" y1="195" x2="347.1" y2="35"></line><line x1="70" y1="195" x2="160" y2="39.1"></line><path d="M 165 195 A 95 95 0 0 0 152.3 147.5"></path><line x1="153.1" y1="172.7" x2="170.5" y2="168.1"></line><path d="M 152.3 147.5 A 95 95 0 0 0 117.5 112.7"></path><line x1="130.8" y1="134.2" x2="143.5" y2="121.5"></line><circle class="pt" cx="70" cy="195" r="6"></circle><text text-anchor="middle" x="48" y="219">O</text><text text-anchor="middle" x="508" y="203">B</text><text text-anchor="middle" x="365.1" y="51">P</text><text text-anchor="middle" x="144" y="37.1">A</text>
+        </svg>
+      <div class="cap">Мал. 3.8 · OP — бісектриса кута AOB</div>
+    </div>
+    <div class="box ok">
+      <p class="eqn" style="margin:0">∠AOP = ∠POB = <span class="fr"><span class="n">∠AOB</span><span class="d">2</span></span></p>
+      <p class="big" style="margin:12px 0 0">Дві умови <b>одночасно</b>:</p>
+      <ul style="margin-top:6px">
+        <li>виходить з <b>вершини</b>;</li>
+        <li>проходить <b>між сторонами</b> й ділить кут на дві <b>рівні</b> частини.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="№ 43 — чи бісектриса" data-timer="180">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос</span></div>
+  <p class="eyebrow">Ст. 23 · усно</p>
+  <h2>№ 43. Чи є промінь OK бісектрисою кута AOB?</h2>
+  <div class="row c3">
+    <div class="box">
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 220 150" role="img" aria-label="Мал. 3.10">
+          <line x1="30" y1="125" x2="200" y2="125"></line><line x1="30" y1="125" x2="159.9" y2="50"></line><line x1="30" y1="125" x2="50" y2="11.7"></line><circle class="pt" cx="30" cy="125" r="5"></circle><text text-anchor="middle" x="16" y="145">O</text><text text-anchor="middle" x="194" y="145">B</text><text text-anchor="middle" x="169.9" y="46">K</text><text text-anchor="middle" x="40" y="9.7">A</text><text class="n" text-anchor="middle" x="74.7" y="68.1">50°</text><text class="n" text-anchor="middle" x="124.7" y="106.6">30°</text>
+        </svg>
+      </div>
+      <p class="hide" style="margin:6px 0 0"><span class="ans">Ні:</span> 50° ≠ 30°</p>
+    </div>
+    <div class="box ok">
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 220 150" role="img" aria-label="Мал. 3.11">
+          <line x1="130" y1="125" x2="14" y2="125"></line><line x1="130" y1="125" x2="72.5" y2="25.4"></line><line x1="130" y1="125" x2="189" y2="22.8"></line><circle class="pt" cx="130" cy="125" r="5"></circle><text text-anchor="middle" x="130" y="147">O</text><text text-anchor="middle" x="12" y="145">A</text><text text-anchor="middle" x="60.5" y="21.4">K</text><text text-anchor="middle" x="201" y="18.8">B</text><text class="n" text-anchor="middle" x="65.9" y="95">60°</text><text class="n" text-anchor="middle" x="130" y="62">60°</text>
+        </svg>
+      </div>
+      <p class="hide" style="margin:6px 0 0"><span class="ans">Так:</span> 60° = 60°, промінь між сторонами</p>
+    </div>
+    <div class="box warn">
+      <div class="fig" style="border:none;padding:0;background:none">
+        <svg viewBox="0 0 220 150" role="img" aria-label="Мал. 3.12">
+          <line x1="120" y1="72" x2="205" y2="72"></line><line x1="120" y1="72" x2="86" y2="13.1"></line><line x1="120" y1="72" x2="86" y2="130.9"></line><circle class="pt" cx="120" cy="72" r="5"></circle><text class="n" text-anchor="end" x="112" y="68">O</text><text text-anchor="middle" x="213" y="68">K</text><text text-anchor="middle" x="72" y="11.1">A</text><text text-anchor="middle" x="72" y="146.9">B</text><text class="n" text-anchor="middle" x="146" y="34">120°</text><text class="n" text-anchor="middle" x="146" y="124">120°</text>
+        </svg>
+      </div>
+      <p class="hide" style="margin:6px 0 0"><span class="ans">Ні:</span> OK у <b>зовнішній</b> області</p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Третій випадок — найцікавіший. Частини рівні (120° = 120°), <b>але</b> 120° + 120° = 240°, а сам кут AOB дорівнює 360° − 240° = <b>120°</b>. Промінь OK не проходить між сторонами кута AOB, тому бісектрисою <b>не</b> є.</p>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="№ 57 — частина кута" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Відповідь у чат</span></div>
+  <p class="eyebrow">Ст. 24</p>
+  <h2>№ 57. Промінь OC ділить кут AOB на два кути</h2>
+  <div class="box">
+    <p class="big" style="margin:0">Відомо: <b>∠AOB = 60°</b> і <b>∠AOC = <span class="fr"><span class="n">2</span><span class="d">3</span></span> ∠AOB</b>. Знайти <b>∠BOC</b>.</p>
+  </div>
+  <div class="box pen hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="eqn" style="margin:0">1) ∠AOC = <span class="fr"><span class="n">2</span><span class="d">3</span></span> · 60° = 40°</p>
+  </div>
+  <div class="box ok hide" style="margin-top:8px">
+    <p class="eqn" style="margin:0">2) ∠BOC = ∠AOB − ∠AOC = 60° − 40° = <span class="ans">20°</span></p>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Перевірка: 40° + 20° = 60° — сходиться з умовою. Робіть цю перевірку <b>завжди</b>, вона займає 3 секунди.</p>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-t="Дві бісектриси" data-timer="300">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode cam"><span class="dot"></span>На камеру</span></div>
+  <p class="eyebrow">Приклад 2, ст. 22 · задача на «зірочку»</p>
+  <h2>Дві бісектриси поспіль</h2>
+  <div class="row c21">
+    <div class="box">
+      <p class="big" style="margin:0">∠ABC = 100°. <b>BK</b> — бісектриса кута ABC, <b>BL</b> — бісектриса кута KBC. Знайти <b>∠ABL</b>.</p>
+    </div>
+    <div class="fig">
+      <svg viewBox="0 0 400 190" role="img" aria-label="Кут ABC із бісектрисами BK і BL">
+          <line x1="60" y1="160" x2="360" y2="160"></line><line x1="60" y1="160" x2="34.8" y2="17.2"></line><line x1="60" y1="160" x2="175.7" y2="22.1"></line><line x1="60" y1="160" x2="286.6" y2="54.3"></line><circle class="pt" cx="60" cy="160" r="6"></circle><text text-anchor="middle" x="42" y="184">B</text><text text-anchor="middle" x="372" y="180">C</text><text text-anchor="middle" x="20.8" y="15.2">A</text><text text-anchor="middle" x="183.7" y="18.1">K</text><text text-anchor="middle" x="298.6" y="50.3">L</text>
+        </svg>
+    </div>
+  </div>
+  <div class="row c2" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="box pen hide">
+      <p class="eqn" style="margin:0">1) ∠KBC = <span class="fr"><span class="n">∠ABC</span><span class="d">2</span></span> = <span class="fr"><span class="n">100°</span><span class="d">2</span></span> = 50°</p>
+    </div>
+    <div class="box pen hide">
+      <p class="eqn" style="margin:0">2) ∠LBC = <span class="fr"><span class="n">∠KBC</span><span class="d">2</span></span> = <span class="fr"><span class="n">50°</span><span class="d">2</span></span> = 25°</p>
+    </div>
+  </div>
+  <div class="box ok hide" style="margin-top:8px">
+    <p class="eqn" style="margin:0">3) ∠ABL = ∠ABC − ∠LBC = 100° − 25° = <span class="ans">75°</span></p>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Найчастіша помилка — ділити <b>100° на 4</b> і писати 25° як відповідь. 25° — це ∠LBC, а не ∠ABL. Дивись на малюнок, який саме кут просять.</p>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-t="№ 55 — годинник" data-timer="240">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
+  <p class="eyebrow">Ст. 24 · життєва задача</p>
+  <h2>№ 55. Кут між стрілками годинника</h2>
+  <div class="box note">
+    <p class="big" style="margin:0">Циферблат — це 360°, поділені на <b>12</b> частин. Одна година = <b>30°</b>.</p>
+  </div>
+  <div class="row c4" style="margin-top:clamp(10px,1.5vw,18px)">
+    <div class="box"><p class="eqn" style="margin:0">1) о 18 год</p><p class="hide" style="margin:4px 0 0">6 · 30° = <span class="ans">180°</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">2) о 3 год</p><p class="hide" style="margin:4px 0 0">3 · 30° = <span class="ans">90°</span></p></div>
+    <div class="box"><p class="eqn" style="margin:0">3) о 1 год</p><p class="hide" style="margin:4px 0 0">1 · 30° = <span class="ans">30°</span></p></div>
+    <div class="box warn"><p class="eqn" style="margin:0">4) о 20 год</p><p class="hide" style="margin:4px 0 0">8 · 30° = 240°, беремо менший: <span class="ans">120°</span></p></div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">18 і 20 годин — це <b>6</b> і <b>8</b> на циферблаті. І кут беремо <b>той, що не більший за 180°</b>: 360° − 240° = 120°.</p>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-t="Підсумок">
+  <p class="eyebrow">Що забираємо з уроку</p>
+  <h2>Підсумок</h2>
+  <div class="row c2">
+    <div class="box pen"><h3>Основна властивість</h3><p class="big" style="margin:0">Промінь між сторонами ⟹ <b>∠AOM + ∠MOB = ∠AOB</b></p></div>
+    <div class="box ok"><h3>Види кутів</h3><p style="margin:0">Гострий &lt; 90° = прямий &lt; тупий &lt; 180° = розгорнутий</p></div>
+    <div class="box play"><h3>Бісектриса</h3><p style="margin:0">З <b>вершини</b>, <b>між сторонами</b>, ділить кут <b>навпіл</b></p></div>
+    <div class="box warn"><h3>Мінути</h3><p style="margin:0">1° = 60′, 1′ = 60″. Позичаємо <b>60</b>, а не 10</p></div>
+  </div>
+  <div class="box" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Напиши в чат <b>одне число</b>: наскільки зрозуміло було сьогодні — від <b>1</b> до <b>5</b>.</p>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-t="Домашнє завдання">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Записати в щоденник</span></div>
+  <p class="eyebrow">На наступний урок</p>
+  <h2>Домашнє завдання</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>№ 53 (ст. 24)</h3>
+      <p style="margin:0">Промінь <b>PC</b> проходить між сторонами кута <b>APB</b>. Знайдіть градусну міру кута <b>CPB</b>,
+      якщо <b>∠APB = 108°</b>, <b>∠APC = 68°</b>. Виконайте малюнок.</p>
+      <p style="margin:10px 0 0">Зразок — № 52 з уроку, тільки навпаки: тут шукаємо <b>частину</b>, а не ціле.</p>
+    </div>
+    <div class="box play">
+      <h3>№ 56 (ст. 24)</h3>
+      <p style="margin:0">Знайдіть кут між годинною та хвилинною стрілками:</p>
+      <p class="eqn" style="margin:8px 0 0">1) о 21 год &nbsp; 2) о 6 год &nbsp; 3) о 19 год &nbsp; 4) о 2 год</p>
+      <p style="margin:10px 0 0">Зразок — № 55. Спершу переведи час у число на циферблаті, потім множ на 30°.</p>
+    </div>
+  </div>
+  <div class="box ok" style="margin-top:clamp(10px,1.5vw,18px)">
+    <p class="big" style="margin:0">Наступний урок — <b>розвʼязування задач на вимірювання кутів і бісектрису</b>. Транспортир знову беремо.</p>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-t="До зустрічі">
+  <h1>Дякую за урок</h1>
+  <p class="lede" style="margin-top:16px">Хто не встиг дописати — сфотографуй слайди з таймером і доведи розвʼязання вдома.</p>
+  <div class="box pen" style="margin-top:22px">
+    <p class="big" style="margin:0">Домашня вправа на 2 хвилини: накресли транспортиром кут <b>140°</b> і проведи його бісектрису (№ 48, ст. 24). Перевір: обидві частини мають вийти по <b>70°</b>.</p>
+  </div>
+</section>
+</div>
+
+<div id="bar">
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Попередній слайд">←</button>
+    <button id="next" type="button" aria-label="Далі">→</button>
+  </div>
+  <div id="rail" aria-hidden="true"></div>
+  <div id="tip">пробіл — показати відповідь</div>
+  <div id="count">1 / 21</div>
+  <button id="fs" type="button" aria-label="На весь екран">⛶</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('rail');
+  var count = document.getElementById('count');
+  var tip = document.getElementById('tip');
+  var cur = 0, tick = null;
+
+  slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
+  var cells = [].slice.call(rail.children);
+
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
+    var slot = s.querySelector('.timerslot');
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
+    var total = parseInt(s.dataset.timer, 10);
+    var box = document.createElement('div');
+    box.className = 'timer';
+    box.innerHTML =
+      '<div class="clock"></div>' +
+      '<div class="track"><div class="fill"></div></div>' +
+      '<div class="lab"></div>' +
+      '<button type="button" class="go"></button>';
+    slot.appendChild(box);
+    box.dataset.total = total;
+    box.dataset.left = total;
+    box.dataset.run = '0';
+  });
+
+  function fmt(sec){
+    sec = Math.max(0, sec);
+    return Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2);
+  }
+
+  function drawTimer(box){
+    var total = +box.dataset.total, left = +box.dataset.left, run = box.dataset.run === '1';
+    box.querySelector('.clock').textContent = fmt(left);
+    box.querySelector('.fill').style.width = (100 * left / total) + '%';
+    box.classList.toggle('warn', left > 0 && left <= 30);
+    box.classList.toggle('over', left === 0);
+    box.querySelector('.lab').textContent =
+      left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
+    box.querySelector('.go').textContent =
+      left === 0 ? 'Ще раз' : (run ? 'Пауза' : 'Почати');
+  }
+
+  function stopTick(){ if(tick){ clearInterval(tick); tick = null; } }
+
+  function toggleTimer(box){
+    if(box.dataset.run === '1'){
+      box.dataset.run = '0'; stopTick(); drawTimer(box); return;
+    }
+    if(+box.dataset.left === 0){ box.dataset.left = box.dataset.total; }
+    box.dataset.run = '1';
+    stopTick();
+    tick = setInterval(function(){
+      var left = +box.dataset.left - 1;
+      box.dataset.left = Math.max(0, left);
+      if(left <= 0){ box.dataset.run = '0'; stopTick(); }
+      drawTimer(box);
+    }, 1000);
+    drawTimer(box);
+  }
+
+  function resetTimer(s){
+    var box = s.querySelector('.timer');
+    if(!box) return;
+    box.dataset.left = box.dataset.total;
+    box.dataset.run = '0';
+    drawTimer(box);
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.timer .go') : null;
+    if(!b) return;
+    e.stopPropagation();
+    toggleTimer(b.parentNode);
+  }, true);
+
+  /* ---- показ відповідей і навігація ---- */
+  function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
+  function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
+
+  var sheet = document.getElementById('sheet');
+  function fit(){
+    var s = slides[cur];
+    s.style.zoom = '';
+    var cs = getComputedStyle(sheet);
+    var avail = sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var h = s.scrollHeight;
+    if(avail > 0 && h > avail){
+      s.style.zoom = Math.max(0.5, Math.floor(100 * avail / h) / 100);
+    }
+  }
+
+  function paint(){
+    cells.forEach(function(c, i){
+      c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
+    });
+    count.textContent = (cur + 1) + ' / ' + slides.length;
+    tip.classList.toggle('on', hidden(cur).length > 0);
+    fit();
+  }
+
+  var rt = null;
+  window.addEventListener('resize', function(){
+    if(rt) clearTimeout(rt);
+    rt = setTimeout(fit, 120);
+  });
+
+  function go(i, revealAll){
+    if(i < 0 || i >= slides.length) return;
+    stopTick();
+    resetTimer(slides[cur]);
+    slides[cur].classList.remove('on');
+    cur = i;
+    var s = slides[cur];
+    s.classList.add('on');
+    [].slice.call(s.querySelectorAll('.hide')).forEach(function(el){
+      el.classList.toggle('on', !!revealAll);
+    });
+    resetTimer(s);
+    window.scrollTo(0, 0);
+    paint();
+  }
+
+  function next(){
+    var h = hidden(cur);
+    if(h.length){ h[0].classList.add('on'); paint(); return; }
+    go(cur + 1, false);
+  }
+
+  function prev(){
+    var s = shown(cur);
+    if(s.length){ s[s.length - 1].classList.remove('on'); paint(); return; }
+    go(cur - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else { document.documentElement.requestFullscreen(); }
+  });
+
+  document.getElementById('sheet').addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('button')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'ArrowRight' || e.code === 'Space' || e.code === 'PageDown' || e.code === 'Enter'){
+      e.preventDefault(); next();
+    } else if(e.code === 'ArrowLeft' || e.code === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(e.code === 'Home'){ go(0, false); }
+    else if(e.code === 'End'){ go(slides.length - 1, true); }
+    else if(e.code === 'KeyT'){
+      var box = slides[cur].querySelector('.timer');
+      if(box){ e.preventDefault(); toggleTimer(box); }
+    }
+    else if(e.code === 'KeyF'){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  slides.forEach(resetTimer);
+  paint();
+})();
+</script>
+
+</body>
+</html>

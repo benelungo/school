@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Як компʼютер бачить світ</title>
+<title>Інформація та повідомлення</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>
 :root{
@@ -17,6 +17,7 @@
   --note:#6B4FA8; --note-soft:#EFEAFA;
   --edge:#DDE4EC;
   --cell:30px;
+  --u:min(1vw,1.55vh);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -54,26 +55,26 @@ body{
 }
 
 #stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
-#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vw,40px) clamp(14px,4vw,56px) 96px}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(10px,1.7vh,26px) clamp(14px,4vw,56px) 84px}
 .slide{display:none;width:100%;max-width:1180px}
 .slide.on{display:block;animation:in .3s ease-out both}
 @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
 h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-   font-size:clamp(29px,5.2vw,64px);line-height:1.06;letter-spacing:-.02em;margin:0;text-wrap:balance}
+   font-size:clamp(24px,calc(4.3*var(--u)),46px);line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
 h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(23px,3.7vw,44px);line-height:1.14;letter-spacing:-.015em;margin:0 0 clamp(14px,2vw,26px);text-wrap:balance}
+   font-size:clamp(20px,calc(3.1*var(--u)),33px);line-height:1.16;letter-spacing:-.015em;margin:0 0 clamp(9px,1.4vw,16px);text-wrap:balance}
 .eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(11px,1.15vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 12px}
-p{margin:0 0 14px;font-size:clamp(16px,1.95vw,26px);line-height:1.5}
+   font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 8px}
+p{margin:0 0 10px;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.45}
 p:last-child{margin-bottom:0}
-.lede{font-size:clamp(18px,2.4vw,31px);color:var(--soft);line-height:1.4}
+.lede{font-size:clamp(16px,calc(2.05*var(--u)),24px);color:var(--soft);line-height:1.4}
 b,strong{font-weight:800}
-ul,ol{margin:0;padding-left:1.3em;font-size:clamp(16px,1.95vw,26px);line-height:1.45}
-li{margin:.5em 0}
+ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.4}
+li{margin:.34em 0}
 li::marker{color:var(--pen)}
 
-.row{display:grid;gap:clamp(12px,1.7vw,22px)}
+.row{display:grid;gap:clamp(9px,1.3vw,16px)}
 .c2{grid-template-columns:1fr 1fr}
 .c3{grid-template-columns:repeat(3,1fr)}
 .c4{grid-template-columns:repeat(4,1fr)}
@@ -81,23 +82,23 @@ li::marker{color:var(--pen)}
 @media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
 
 .box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
-     padding:clamp(14px,2vw,26px);box-shadow:0 1px 0 var(--edge)}
+     padding:clamp(11px,1.5vw,18px);box-shadow:0 1px 0 var(--edge)}
 .box.pen{border-color:var(--pen);background:var(--pen-soft)}
 .box.ok{border-color:var(--check);background:var(--check-soft)}
 .box.warn{border-color:var(--marker);background:var(--marker-soft)}
 .box.play{border-color:var(--sun);background:var(--sun-soft)}
 .box.note{border-color:var(--note);background:var(--note-soft)}
 .box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(12px,1.25vw,16px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 10px}
+   font-size:clamp(11px,calc(1.1*var(--u)),14px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 7px}
 .box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
 .box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
 
 /* ---------- смужка «як відповідаємо» ---------- */
-.modes{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(12px,1.7vw,20px)}
+.modes{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 clamp(8px,1.2vw,14px)}
 .mode{display:inline-flex;align-items:center;gap:8px;
   font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(11px,1.15vw,15px);letter-spacing:.08em;text-transform:uppercase;
-  border:2px solid;border-radius:4px;padding:8px 12px;background:var(--card);white-space:nowrap}
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:6px 10px;background:var(--card);white-space:nowrap}
 .mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
 .mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
 .mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
@@ -108,12 +109,13 @@ li::marker{color:var(--pen)}
 /* ---------- таймер ---------- */
 .timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
   border:2px solid var(--edge);border-radius:6px;background:var(--card);
-  padding:clamp(10px,1.3vw,16px) clamp(12px,1.6vw,20px);margin:clamp(12px,1.7vw,20px) 0 0}
+  padding:clamp(8px,1vw,12px) clamp(10px,1.3vw,16px);margin:clamp(9px,1.3vw,15px) 0}
+.timerslot:empty{display:none}
 .timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
-  font-size:clamp(26px,3.6vw,48px);line-height:1;min-width:3.6ch}
+  font-size:clamp(21px,calc(2.9*var(--u)),35px);line-height:1;min-width:3.6ch}
 .timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
 .timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
-.timer .lab{font-size:clamp(13px,1.35vw,17px);color:var(--soft);white-space:nowrap}
+.timer .lab{font-size:clamp(12px,calc(1.2*var(--u)),15px);color:var(--soft);white-space:nowrap}
 .timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
 .timer.over{border-color:var(--marker);background:var(--marker-soft)}
 .timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
@@ -125,7 +127,7 @@ li::marker{color:var(--pen)}
   font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
   background:var(--card);padding:clamp(6px,.9vw,12px) 0}
 .lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
-.lamp .w{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.lamp .w{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
 .cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
 .cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
   border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
@@ -136,26 +138,26 @@ li::marker{color:var(--pen)}
 
 /* ---------- цифри ---------- */
 .num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
-.big{font-size:clamp(22px,3.3vw,42px);line-height:1.45}
+.big{font-size:clamp(17px,calc(2.35*var(--u)),27px);line-height:1.4}
 .huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-      font-size:clamp(32px,5.8vw,80px);line-height:1.1;letter-spacing:-.02em}
+      font-size:clamp(23px,calc(4*var(--u)),44px);line-height:1.12;letter-spacing:-.02em}
 .ans{color:var(--check);font-weight:800}
 .tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
 .tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
       border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
 .tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
          font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
-.tile .lab{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile .lab{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
 .tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
-.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.4vw,20px)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.1vw,15px)}
 .klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(11px,1.15vw,15px);letter-spacing:.14em;text-transform:uppercase;
+   font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
    color:var(--soft);text-align:center;margin-bottom:8px}
 
 .tbl{width:100%;overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:clamp(14px,1.8vw,24px)}
-th,td{border:2px solid var(--edge);padding:clamp(8px,1.05vw,15px);text-align:left;background:var(--card)}
-th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(11px,1.15vw,15px);
+table{border-collapse:collapse;width:100%;font-size:clamp(13px,calc(1.55*var(--u)),19px)}
+th,td{border:2px solid var(--edge);padding:clamp(6px,.85vw,11px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(10px,calc(1.02*var(--u)),13px);
    letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
 td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
 
@@ -193,7 +195,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(-
   transition:background .15s,border-color .15s}
 button:hover{border-color:var(--pen);background:var(--pen-soft)}
 button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
-.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(13px,1.35vw,17px);white-space:nowrap}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(12px,calc(1.2*var(--u)),15px);white-space:nowrap}
 #tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
 #tip.on{opacity:1}
 @media(max-width:760px){
@@ -204,498 +206,468 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ---------- тема уроку — завжди вгорі ---------- */
+#topic{position:sticky;top:0;z-index:6;
+  display:flex;align-items:baseline;gap:clamp(10px,1.6vw,22px);
+  padding:clamp(6px,.9vw,11px) clamp(14px,4vw,56px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 90%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--edge)}
+#topic .k{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--pen);white-space:nowrap;flex:none}
+#topic .t{flex:1;min-width:0;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.01em;text-wrap:balance}
+@media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
 </style>
 </head>
 <body>
 <div id="stage">
+
+<div id="topic">
+  <span class="k">Інформатика · 5-З · Урок 1</span>
+  <span class="t">Інформація та повідомлення. Правила роботи за комп'ютером</span>
+</div>
+
 <div id="sheet">
 
 <!-- 1 -->
 <section class="slide on" data-t="Вітання">
-  <p class="eyebrow">Інформатика · 5-З · Урок 1</p>
-  <h1>Як комп'ютер<br>бачить світ<br>двома цифрами</h1>
-  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">У вас новий предмет. Сьогодні знайомимось.</p>
-  <div class="row c3" style="margin-top:clamp(16px,2.6vw,34px)">
-    <div class="box note"><h3>Сьогодні без комп'ютера</h3><p style="margin:0">Потрібні лише <b>зошит, ручка</b><br>і твої <b>дві руки</b></p></div>
-    <div class="box"><h3>Дізнаєшся</h3><p style="margin:0">чому в комп'ютера<br>лише <b>дві цифри</b></p></div>
-    <div class="box play"><h3>Навчишся</h3><p style="margin:0">рахувати на пальцях<br>до <b>31</b></p></div>
+  <p class="eyebrow">Інформатика · 5-З · Урок 1 · онлайн</p>
+  <h1>Інформація та повідомлення</h1>
+  <p class="lede" style="margin-top:18px">Перший урок нового предмета.<br>
+  Підручник: § 1, сторінки 9–13.</p>
+  <div class="row c3" style="margin-top:26px">
+    <div class="box pen"><h3>Знадобиться</h3><p>Підручник, зошит, ручка</p></div>
+    <div class="box ok"><h3>Дізнаємось</h3><p>Що таке інформація і повідомлення</p></div>
+    <div class="box play"><h3>Навчимось</h3><p>Правильно й безпечно працювати за комп'ютером</p></div>
   </div>
 </section>
 
 <!-- 2 -->
 <section class="slide" data-t="Технічна перевірка">
-  <p class="eyebrow">Поки не почали</p>
-  <h2>Чи всі мене чують?</h2>
-  <div class="row c3">
-    <div class="box pen">
-      <h3>Крок 1</h3>
-      <p style="margin:0">Напиши в чат <b>плюс</b></p>
-      <p class="huge" style="margin:12px 0 0;color:var(--pen)">+</p>
-    </div>
-    <div class="box play">
-      <h3>Крок 2</h3>
-      <p style="margin:0">Увімкни <b>камеру</b></p>
-      <p style="margin-top:12px">Сьогодні вона <b>справді знадобиться</b> — будемо показувати числа руками.</p>
+  <h2>Технічна перевірка</h2>
+  <div class="row c2">
+    <div class="box ok">
+      <h3>Зроби зараз</h3>
+      <ul>
+        <li>Постав <b>+</b> у чат — я бачу, що ти тут</li>
+        <li>Мікрофон — <b>вимкнено</b></li>
+        <li>Підручник відкрий на сторінці <b>9</b></li>
+        <li>Зошит і ручка — поруч</li>
+      </ul>
     </div>
     <div class="box warn">
-      <h3>Крок 3</h3>
-      <p style="margin:0"><b>Мікрофон вимкни</b></p>
-      <p style="margin-top:12px">Вмикаєш, тільки коли я назву твоє ім'я.</p>
+      <h3>Якщо щось не працює</h3>
+      <ul>
+        <li>Не чути — пиши в чат «не чую»</li>
+        <li>Немає підручника — теж напиши, я показуватиму сторінки на екрані</li>
+        <li>Вилетів зі зв'язку — заходь знову, нічого страшного</li>
+      </ul>
     </div>
-  </div>
-  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Не чути мене? Не видно екрана? — <b>напиши в чат просто зараз</b>.</p>
   </div>
 </section>
 
 <!-- 3 -->
 <section class="slide" data-t="Як ми відповідаємо">
-  <p class="eyebrow">Домовляємось</p>
-  <h2>Чотири способи відповісти</h2>
+  <h2>Як ми сьогодні відповідаємо</h2>
+  <div class="modes">
+    <span class="mode chat"><span class="dot"></span>у чат</span>
+    <span class="mode cam"><span class="dot"></span>на камеру</span>
+    <span class="mode voice"><span class="dot"></span>вголос</span>
+    <span class="mode book"><span class="dot"></span>у зошит</span>
+    <span class="mode away"><span class="dot"></span>відпочиваємо</span>
+  </div>
   <div class="row c2">
+    <div class="box">
+      <h3>Правило</h3>
+      <p>На кожному завданні вгорі буде така смужка. Вона показує, <b>як саме</b> відповідати.</p>
+      <p>Коли світиться <b>«вголос»</b> — вмикай мікрофон і говори. В інший час мікрофон вимкнений.</p>
+    </div>
     <div class="box pen">
-      <span class="mode chat"><span class="dot"></span>У чат</span>
-      <p style="margin-top:12px">Пишеш відповідь, але <b>не надсилаєш</b>, поки я не скажу. Так усі встигають подумати самі.</p>
-    </div>
-    <div class="box play">
-      <span class="mode cam"><span class="dot"></span>На камеру</span>
-      <p style="margin-top:12px">Показуєш <b>руками</b>. Сьогодні це головний спосіб — ми весь урок працюємо пальцями.</p>
-    </div>
-    <div class="box warn">
-      <span class="mode voice"><span class="dot"></span>Вголос</span>
-      <p style="margin-top:12px">Я називаю ім'я — вмикаєш мікрофон. Хочеш сам — <b>підніми руку</b>.</p>
-    </div>
-    <div class="box note">
-      <span class="mode book"><span class="dot"></span>У зошит</span>
-      <p style="margin-top:12px">Пишеш у зошиті, <b>дивишся в зошит, а не в екран</b>. Потім показуєш сторінку в камеру.</p>
+      <h3>Головне</h3>
+      <p>Помилятися <b>можна</b>. Мовчати, коли не зрозумів, — не можна.</p>
+      <p>Не зрозумів — напиши в чат <b>«?»</b>. Я поясню ще раз, без питань і без оцінки.</p>
     </div>
   </div>
 </section>
 
 <!-- 4 -->
-<section class="slide" data-t="Що таке інформатика">
-  <p class="eyebrow">Найголовніше про предмет</p>
-  <h2>Інформатика — це не «уроки за комп'ютером»</h2>
-  <div class="row c2">
-    <div class="box warn">
-      <h3>Чим вона не є</h3>
-      <p style="margin:0">Комп'ютер — це <b>інструмент</b>, як лінійка на математиці.</p>
-      <p style="margin-top:12px">Лінійка не є математикою. Комп'ютер не є інформатикою.</p>
+<section class="slide" data-t="Новий предмет">
+  <p class="eyebrow">§ 1 · с. 9</p>
+  <h2>Що таке інформатика</h2>
+  <div class="row c21">
+    <div class="box pen">
+      <h3>Означення з підручника</h3>
+      <p class="big"><b>Інформатика</b> — це наука про властивості <b>інформації</b> та методи її створення
+      й опрацювання з використанням комп'ютерів.</p>
     </div>
-    <div class="box ok">
-      <h3>Чим вона є</h3>
-      <p style="margin:0">Наука про <b>інформацію</b>: як її отримують, зберігають, передають і опрацьовують.</p>
-      <p style="margin-top:12px">Частина цієї науки з'явилася <b>задовго до</b> перших комп'ютерів.</p>
+    <div class="box">
+      <h3>Простими словами</h3>
+      <p>Інформатика — це <b>не</b> «уроки за комп'ютером».</p>
+      <p>Комп'ютер тут — інструмент. Як лінійка на математиці. Лінійка ж не є математикою.</p>
+      <p class="ans">Головне слово — <b>інформація</b>.</p>
     </div>
-  </div>
-  <div class="box note" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Доказ: сьогодні ми <b>жодного разу</b> не ввімкнемо комп'ютер —
-    і при цьому розберемося, як він улаштований усередині.</p>
   </div>
 </section>
 
 <!-- 5 -->
 <section class="slide" data-t="Записуємо тему" data-timer="90">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode away"><span class="dot"></span>Від екрана</span></div>
-  <h2>Записуємо</h2>
-  <div class="box">
-    <p class="huge" style="text-align:center;margin:0">Дата</p>
-    <p class="huge" style="text-align:center;margin:clamp(6px,1vw,14px) 0 0">Класна робота</p>
-    <p class="big" style="text-align:center;margin:clamp(14px,2.2vw,26px) 0 0;color:var(--pen)"><b>Інформація, дані й повідомлення.<br>Кодування інформації</b></p>
-  </div>
-  <div class="box note" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p class="big" style="margin:0">Три слова в темі схожі, і багато хто думає, що це одне й те саме:
-    <b>інформація</b>, <b>дані</b>, <b>повідомлення</b>. Зараз розберемося, чим вони різні.</p>
+  <h2>Записуємо в зошит</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box pen">
+    <p class="huge">Дата<br>Класна робота</p>
+    <p class="huge" style="margin-top:20px">Інформація та повідомлення.<br>Правила роботи за комп'ютером</p>
   </div>
   <div class="timerslot"></div>
 </section>
 
 <!-- 6 -->
-<section class="slide" data-t="Звідки ти дізнаєшся про світ">
-  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
-  <p class="eyebrow">Розминка</p>
-  <h2>Якими способами людина дізнається про те, що навколо?</h2>
-  <div class="row c3 hide">
-    <div class="box" style="text-align:center"><p class="big" style="margin:0"><b>Зір</b><br>бачу</p></div>
-    <div class="box" style="text-align:center"><p class="big" style="margin:0"><b>Слух</b><br>чую</p></div>
-    <div class="box" style="text-align:center"><p class="big" style="margin:0"><b>Дотик</b><br>відчуваю</p></div>
-    <div class="box" style="text-align:center"><p class="big" style="margin:0"><b>Смак</b><br>куштую</p></div>
-    <div class="box" style="text-align:center"><p class="big" style="margin:0"><b>Нюх</b><br>чую запах</p></div>
-    <div class="box play" style="text-align:center"><p class="big" style="margin:0">Найбільше —<br><b>очима</b></p></div>
-  </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">За різними оцінками, людина отримує <b>близько 80–90 % інформації через зір</b>.</p>
-    <p class="big" style="margin-top:12px">Саме тому дорожній знак — це <b>малюнок</b>, а не речення.
-    Водій не встигне прочитати речення на швидкості, а знак упізнає за мить.</p>
+<section class="slide" data-t="Чим ти сприймаєш світ">
+  <h2>Чим людина сприймає світ?</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат</span></div>
+  <p class="lede">Напиши в чат <b>скільки</b> способів, як ти думаєш. Потім перевіримо.</p>
+  <div class="hide">
+    <div class="row c4" style="margin-top:20px">
+      <div class="box ok" style="text-align:center"><p class="big"><b>Зір</b><br>бачу</p></div>
+      <div class="box ok" style="text-align:center"><p class="big"><b>Слух</b><br>чую</p></div>
+      <div class="box ok" style="text-align:center"><p class="big"><b>Нюх</b><br>відчуваю запах</p></div>
+      <div class="box ok" style="text-align:center"><p class="big"><b>Смак</b><br>куштую</p></div>
+    </div>
+    <div class="row c2" style="margin-top:14px">
+      <div class="box ok" style="text-align:center"><p class="big"><b>Дотик</b><br>торкаюся</p></div>
+      <div class="box pen" style="text-align:center"><p class="big">Це <b>п'ять органів чуття</b><br><small>рис. 1.2, с. 10</small></p></div>
+    </div>
   </div>
 </section>
 
 <!-- 7 -->
-<section class="slide" data-t="Повідомлення, дані, інформація">
-  <p class="eyebrow">Головне на сьогодні</p>
-  <h2>Три слова, які плутають</h2>
-  <div class="row c3">
-    <div class="box pen">
-      <h3>Повідомлення</h3>
-      <p style="margin:0"><b>Форма</b>, у якій щось передали: звук, текст, малюнок, жест.</p>
-      <p style="margin-top:10px;color:var(--soft)">Дзвінок на урок</p>
-    </div>
-    <div class="box note">
-      <h3>Дані</h3>
-      <p style="margin:0">Повідомлення, які <b>зафіксували</b>: записали, зберегли, сфотографували.</p>
-      <p style="margin-top:10px;color:var(--soft)">Розклад у щоденнику</p>
-    </div>
-    <div class="box ok">
-      <h3>Інформація</h3>
-      <p style="margin:0">Те, що ми з них <b>дізналися</b>. Зміст, сенс.</p>
-      <p style="margin-top:10px;color:var(--soft)">«Урок почався»</p>
-    </div>
+<section class="slide" data-t="Що таке інформація">
+  <p class="eyebrow">Означення 1 · § 1, с. 9</p>
+  <h2>Інформація</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box pen">
+    <p class="huge"><b>Інформація</b> — це відомості про об'єкти Всесвіту.</p>
   </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Найважливіше</h3>
-    <p class="big" style="margin:0">Дані існують <b>самі по собі</b>. Інформація з'являється тільки тоді,
-    коли є <b>той, хто розуміє</b>.</p>
-    <p class="big" style="margin-top:12px">Напис китайською на упаковці — це дані. Але для тебе це <b>не</b> інформація,
-    бо ти не читаєш китайською.</p>
+  <div class="row c3" style="margin-top:20px">
+    <div class="box"><h3>Об'єкт</h3><p>Предмет, процес або явище.<br>Парта. Дощ. Футбольний матч. Число 7.</p></div>
+    <div class="box"><h3>Відомості</h3><p>Те, що ми про об'єкт <b>знаємо</b>.<br>«Парта дерев'яна». «Надворі дощ».</p></div>
+    <div class="box ok"><h3>Головне</h3><p>Об'єкт можна <b>помацати</b>.<br>Інформацію про нього — <b>ні</b>.</p></div>
   </div>
 </section>
 
 <!-- 8 -->
-<section class="slide" data-t="П'ять інформаційних процесів">
-  <div class="modes"><span class="mode book"><span class="dot"></span>Запиши у стовпчик</span></div>
-  <h2>Що людина робить з інформацією</h2>
-  <div class="row c3">
-    <div class="box"><h3>1 · Отримує</h3><p style="margin:0">Побачив, почув, прочитав</p></div>
-    <div class="box"><h3>2 · Зберігає</h3><p style="margin:0">Запам'ятав або записав</p></div>
-    <div class="box"><h3>3 · Опрацьовує</h3><p style="margin:0">Порахував, порівняв, зробив висновок</p></div>
-    <div class="box"><h3>4 · Передає</h3><p style="margin:0">Розповів, надіслав, показав</p></div>
-    <div class="box"><h3>5 · Захищає</h3><p style="margin:0">Ховає від чужих: пароль, замок, шифр</p></div>
-    <div class="box ok"><h3>Комп'ютер</h3><p style="margin:0">робить <b>усі п'ять</b> — тільки швидше й без утоми</p></div>
-  </div>
-  <div class="box note hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Комп'ютер <b>не придумав жодної</b> з цих дій. Людина отримувала, зберігала
-    й передавала інформацію тисячі років до нього.</p>
+<section class="slide" data-t="Об'єкт чи інформація">
+  <h2>Об'єкт чи інформація?</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат</span></div>
+  <p class="lede">Пиши <b>О</b> — об'єкт, <b>І</b> — інформація.</p>
+  <div class="row c2" style="margin-top:18px">
+    <div class="box"><p class="big">1. Сніг за вікном</p><p class="ans hide">О — об'єкт (явище)</p></div>
+    <div class="box"><p class="big">2. «Сьогодні мінус три»</p><p class="ans hide">І — інформація</p></div>
+    <div class="box"><p class="big">3. Мій котик</p><p class="ans hide">О — об'єкт (предмет, істота)</p></div>
+    <div class="box"><p class="big">4. «Котика звати Мурчик, йому 2 роки»</p><p class="ans hide">І — інформація</p></div>
   </div>
 </section>
 
 <!-- 9 -->
-<section class="slide" data-t="Кодування">
-  <p class="eyebrow">Друга частина уроку</p>
-  <h2>Кодування — той самий зміст, інші знаки</h2>
-  <div class="row c21">
-    <div class="tbl">
-      <table>
-        <tr><th style="width:32%">Код</th><th>Чим записують</th></tr>
-        <tr><td><b>Азбука Морзе</b></td><td>крапки й тире — короткі й довгі сигнали</td></tr>
-        <tr><td><b>Шрифт Брайля</b></td><td>опуклі крапки, які читають пальцями</td></tr>
-        <tr><td><b>Прапорцева абетка</b></td><td>положення рук із прапорцями</td></tr>
-        <tr><td><b>Дорожні знаки</b></td><td>форма, колір і малюнок</td></tr>
-        <tr><td><b>Ноти</b></td><td>значки на п'яти лініях</td></tr>
-        <tr><td><b>Двійковий код</b></td><td>лише дві цифри: 0 і 1</td></tr>
-      </table>
-    </div>
-    <div>
-      <div class="box pen">
-        <h3>Три слова в зошит</h3>
-        <p style="margin:0"><b>Код</b> — правило заміни знаків.<br>
-        <b>Кодування</b> — записати за правилом.<br>
-        <b>Декодування</b> — прочитати назад.</p>
-      </div>
-      <div class="box" style="margin-top:clamp(10px,1.4vw,16px)">
-        <h3>Навіщо кодувати</h3>
-        <p style="margin:0">Щоб передати далеко · щоб прочитав той, хто не бачить · щоб зрозуміли без мови ·
-        щоб <b>не</b> зрозумів чужий · щоб зрозуміла машина</p>
-      </div>
-    </div>
+<section class="slide" data-t="Що таке повідомлення">
+  <p class="eyebrow">Означення 2 · § 1, с. 10</p>
+  <h2>Повідомлення</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box pen">
+    <p class="huge"><b>Повідомлення</b> — це форма подання інформації.</p>
+  </div>
+  <div class="box warn" style="margin-top:20px">
+    <h3>Запам'ятай фразу з підручника</h3>
+    <p class="big">Без повідомлень не можна сприйняти інформацію.</p>
   </div>
 </section>
 
 <!-- 10 -->
-<section class="slide" data-t="Шрифт Брайля">
-  <p class="eyebrow">Один код — окремо</p>
-  <h2>Шість крапок, які змінили все</h2>
-  <div class="row c21">
+<section class="slide" data-t="Зміст і обгортка">
+  <h2>Зміст і обгортка</h2>
+  <div class="row c2">
     <div class="box ok">
-      <p class="big" style="margin:0">Шрифт Брайля придумав <b>Луї Брайль</b>, який осліп у дитинстві.
-      Він почав створювати свій код <b>у 15 років</b>, 1824 року.</p>
-      <p class="big" style="margin-top:14px">У ньому лише <b>шість крапок</b>. Кожна може бути опуклою або ні.</p>
-      <p class="num huge hide" style="margin-top:14px;text-align:center">2·2·2·2·2·2 = 64</p>
-      <p class="big hide" style="margin-top:12px">Шістдесят чотири комбінації — вистачає на всі букви,
-      цифри й розділові знаки.</p>
+      <h3>Інформація = зміст</h3>
+      <p class="big"><b>Що</b> ми дізналися.</p>
+      <p class="big">«Завтра буде дощ»</p>
     </div>
-    <div class="box note">
-      <h3>Зверни увагу</h3>
-      <p style="margin:0">Кожна крапка має лише <b>два стани</b>: є або немає.</p>
-      <p style="margin-top:12px">Запам'ятай цю думку. Через п'ять хвилин виявиться, що комп'ютер
-      влаштований <b>точно так само</b> — тільки замість крапок у нього вимикачі.</p>
+    <div class="box play">
+      <h3>Повідомлення = обгортка</h3>
+      <p class="big"><b>Як</b> нам це подали.</p>
+      <p class="big">Голос диктора · значок хмарки · рядок у застосунку · мамине «візьми парасольку»</p>
     </div>
+  </div>
+  <div class="box" style="margin-top:20px">
+    <p class="big">Я зараз <b>говорю</b> — це звукове повідомлення.<br>
+    Я <b>пишу</b> на слайді — це текстове повідомлення.<br>
+    <span class="ans">Зміст той самий. Обгортка різна.</span></p>
   </div>
 </section>
 
 <!-- 11 -->
-<section class="slide" data-t="Чому 0 і 1">
-  <p class="eyebrow">Ось воно</p>
-  <h2>Чому комп'ютер знає лише 0 і 1</h2>
-  <div class="box pen">
-    <p class="big" style="margin:0">Усередині комп'ютера — мільярди крихітних вимикачів.
-    Кожен може бути тільки у двох станах: <b>струм іде</b> або <b>струм не йде</b>.</p>
-    <p class="big" style="margin-top:12px">Домовилися: увімкнено — <b>1</b>, вимкнено — <b>0</b>. Оце і весь «алфавіт» комп'ютера.</p>
-  </div>
-  <div class="row c3" style="margin-top:clamp(12px,1.8vw,22px)">
-    <div class="box" style="text-align:center">
-      <h3>Одна лампочка</h3>
-      <div class="lamps"><div class="lamp"><div class="b on">1</div></div></div>
-      <p class="big" style="margin-top:12px"><b>2</b> варіанти</p>
-    </div>
-    <div class="box" style="text-align:center">
-      <h3>Дві лампочки</h3>
-      <p class="num big" style="margin:0">00 · 01 · 10 · 11</p>
-      <p class="big" style="margin-top:12px"><b>4</b> варіанти</p>
-    </div>
-    <div class="box" style="text-align:center">
-      <h3>Три лампочки</h3>
-      <p class="big hide" style="margin:0"><b>8</b> варіантів</p>
-      <p class="big hide" style="margin-top:12px">Кожна нова лампочка <b>подвоює</b> кількість</p>
-    </div>
-  </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>А чому не десять станів, як у нас цифр?</h3>
-    <p class="big" style="margin:0">Бо <b>два стани неможливо переплутати</b>: струм є або його немає — видно завжди.
-    А відрізняти «трохи струму» від «трохи більше» мільярд разів на секунду й жодного разу не помилитися — не вийде.</p>
+<section class="slide" data-t="Одна інформація — багато форм" data-timer="120">
+  <h2>Одна інформація — багато повідомлень</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат</span></div>
+  <p class="lede">Інформація: <b>«Урок закінчено»</b>.<br>Напиши <b>три різні</b> повідомлення про це.</p>
+  <div class="timerslot"></div>
+  <div class="box ok hide" style="margin-top:20px">
+    <h3>Що могло бути</h3>
+    <p class="big">Дзвінок <i>(звукове)</i> · слова вчителя «урок закінчено» <i>(звукове)</i> ·
+    напис на дошці <i>(текстове)</i> · годинник, що показує 9:30 <i>(графічне)</i></p>
   </div>
 </section>
 
 <!-- 12 -->
-<section class="slide" data-t="Пауза для очей" data-timer="60">
-  <div class="modes"><span class="mode away"><span class="dot"></span>Відводимо очі від екрана</span></div>
-  <h2>Пауза</h2>
-  <div class="row c2">
-    <div class="box ok">
-      <h3>Очі</h3>
-      <ul>
-        <li>Подивись у <b>вікно</b>, на щось далеке — порахуй до десяти</li>
-        <li><b>Поморгай</b> швидко-швидко</li>
-        <li>Заплющ очі й порахуй до п'яти</li>
-      </ul>
-    </div>
-    <div class="box play">
-      <h3>Руки · зараз вони знадобляться</h3>
-      <ul>
-        <li>Стисни й розтисни кулаки <b>десять разів</b></li>
-        <li>Розчепір пальці якнайширше</li>
-        <li>Покрути кистями в обидва боки</li>
-      </ul>
-      <p style="margin-top:12px;color:var(--soft)">Далі вся робота — пальцями.</p>
-    </div>
+<section class="slide" data-t="Одне повідомлення — різна інформація">
+  <h2>А тепер навпаки</h2>
+  <div class="modes"><span class="mode voice"><span class="dot"></span>вголос</span></div>
+  <p class="lede">Повідомлення одне — <b>шкільний дзвінок</b>.<br>Що він означає для різних людей?</p>
+  <div class="row c2" style="margin-top:18px">
+    <div class="box"><p class="big">Учень на уроці</p><p class="ans hide">«Можна на перерву»</p></div>
+    <div class="box"><p class="big">Учень у коридорі</p><p class="ans hide">«Я запізнився, треба бігти в клас»</p></div>
+    <div class="box"><p class="big">Учителька</p><p class="ans hide">«Час закінчувати пояснення»</p></div>
+    <div class="box"><p class="big">Гість школи</p><p class="ans hide">Просто гучний звук. Жодної інформації</p></div>
   </div>
-  <div class="timerslot"></div>
+  <div class="box pen hide" style="margin-top:18px">
+    <p class="big">Підручник, с. 10: <b>одне й те саме повідомлення може нести різну інформацію</b>.</p>
+  </div>
 </section>
 
 <!-- 13 -->
-<section class="slide" data-t="Ціна кожного пальця">
-  <div class="modes"><span class="mode cam"><span class="dot"></span>Підніми руку долонею до себе</span></div>
-  <h2>Кожен палець має свою ціну</h2>
-  <div class="box">
-    <div class="lamps">
-      <div class="lamp"><div class="b on">1</div><div class="w">великий<br><b>16</b></div></div>
-      <div class="lamp"><div class="b on">1</div><div class="w">вказівний<br><b>8</b></div></div>
-      <div class="lamp"><div class="b on">1</div><div class="w">середній<br><b>4</b></div></div>
-      <div class="lamp"><div class="b on">1</div><div class="w">безіменний<br><b>2</b></div></div>
-      <div class="lamp"><div class="b on">1</div><div class="w">мізинець<br><b>1</b></div></div>
-    </div>
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <h2>Пауза для очей</h2>
+  <div class="modes"><span class="mode away"><span class="dot"></span>відпочиваємо</span></div>
+  <div class="row c3">
+    <div class="box ok"><h3>1</h3><p class="big">Відведи погляд від екрана. Дивись у вікно, у найдальшу точку — 15 секунд.</p></div>
+    <div class="box ok"><h3>2</h3><p class="big">Міцно заплющ очі на 5 секунд. Розплющ. Три рази.</p></div>
+    <div class="box ok"><h3>3</h3><p class="big">Розімни плечі й шию — 4 повільні кола.</p></div>
   </div>
-  <div class="row c2" style="margin-top:clamp(12px,1.8vw,22px)">
-    <div class="box pen">
-      <p class="big" style="margin:0">Палець <b>піднятий</b> — 1.<br>Палець <b>зігнутий</b> — 0.</p>
-      <p class="big" style="margin-top:12px">Щоб показати число — піднімаєш ті пальці, які <b>в сумі</b> його дають.</p>
-    </div>
-    <div class="box ok">
-      <p class="big" style="margin:0">Усі п'ять підняті:</p>
-      <p class="num huge" style="margin-top:10px">16+8+4+2+1 = 31</p>
-    </div>
-  </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Увага: тут важлива <b>не кількість</b> піднятих пальців, а <b>які саме</b> підняті.
-    Три пальці можуть означати 7, а можуть — 26.</p>
-  </div>
+  <div class="timerslot"></div>
 </section>
 
 <!-- 14 -->
-<section class="slide" data-t="Показуємо числа в камеру" data-timer="120">
-  <div class="modes"><span class="mode cam"><span class="dot"></span>Показуємо в камеру</span></div>
-  <h2>Покажи це число пальцями</h2>
-  <div class="tbl">
-    <table>
-      <tr><th>Число</th><th>Код &nbsp;16 8 4 2 1</th><th>Які пальці</th></tr>
-      <tr><td class="n">5</td><td class="n"><span class="hide ans">00101</span></td><td><span class="hide ans">середній і мізинець &nbsp;(4+1)</span></td></tr>
-      <tr><td class="n">12</td><td class="n"><span class="hide ans">01100</span></td><td><span class="hide ans">вказівний і середній &nbsp;(8+4)</span></td></tr>
-      <tr><td class="n">21</td><td class="n"><span class="hide ans">10101</span></td><td><span class="hide ans">великий, середній, мізинець &nbsp;(16+4+1)</span></td></tr>
-      <tr><td class="n">31</td><td class="n"><span class="hide ans">11111</span></td><td><span class="hide ans">усі п'ять</span></td></tr>
-    </table>
+<section class="slide" data-t="Види повідомлень">
+  <p class="eyebrow">Рис. 1.3 · с. 10</p>
+  <h2>Види повідомлень</h2>
+  <div class="klas">
+    <div>
+      <div class="cap">За способом сприйняття — чим сприйняв</div>
+      <div class="box pen">
+        <p class="big"><b>Візуальні</b> — очима<br>
+        <b>Аудіальні</b> — вухами<br>
+        <b>Нюхові</b> — носом<br>
+        <b>Смакові</b> — язиком<br>
+        <b>Тактильні</b> — шкірою</p>
+      </div>
+    </div>
+    <div>
+      <div class="cap">За способом подання — у якому вигляді</div>
+      <div class="box play">
+        <p class="big"><b>Текстові</b> — букви, слова<br>
+        <b>Графічні</b> — малюнки, схеми<br>
+        <b>Звукові</b> — музика, мова<br>
+        <b>Мультимедійні</b> — кілька разом</p>
+      </div>
+    </div>
   </div>
-  <div class="timerslot"></div>
-  <div class="box play" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p class="big" style="margin:0">Записуємо код так само, як показуємо: <b>зліва найдорожчий палець</b>, справа найдешевший.
-    Тому 16 · 8 · 4 · 2 · 1, а не навпаки.</p>
-  </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p class="big" style="margin:0">Двома руками так само можна дійти до <b>1023</b>.</p>
+  <div class="box ok" style="margin-top:20px">
+    <h3>Приклад одразу на обидві колонки</h3>
+    <p class="big">Відео в телефоні: за <b>сприйняттям</b> — візуальне й аудіальне;
+    за <b>поданням</b> — мультимедійне.</p>
   </div>
 </section>
 
 <!-- 15 -->
-<section class="slide" data-t="Букви двійковим кодом">
-  <p class="eyebrow">Розбираємо разом</p>
-  <h2>Слово <b>КОД</b> двійковим кодом</h2>
-  <p class="lede" style="margin-bottom:clamp(12px,1.8vw,20px)">Правило: кожна буква — це її <b>номер в українському алфавіті</b>, записаний п'ятьма цифрами</p>
+<section class="slide" data-t="Класифікація інформації">
+  <p class="eyebrow">Таблиця · с. 11</p>
+  <h2>Чотири ознаки інформації</h2>
   <div class="tbl">
-    <table>
-      <tr><th>Буква</th><th>Номер</th><th>Як розкласти</th><th>Код</th></tr>
-      <tr><td><b>К</b></td><td class="n">15</td><td class="n">8 + 4 + 2 + 1</td><td class="n"><b>01111</b></td></tr>
-      <tr><td><b>О</b></td><td class="n">19</td><td class="n">16 + 2 + 1</td><td class="n"><b>10011</b></td></tr>
-      <tr><td><b>Д</b></td><td class="n">6</td><td class="n">4 + 2</td><td class="n"><b>00110</b></td></tr>
-    </table>
+  <table>
+    <tr><th>Ознака</th><th>Види</th><th>Приклад</th></tr>
+    <tr><td><b>За сприйняттям</b></td><td>візуальна, аудіальна, нюхова, смакова, тактильна</td>
+      <td>Слухаєш учителя — інформація <b>аудіальна</b></td></tr>
+    <tr><td><b>За формою подання</b></td><td>текстова, числова, відео, звукова, графічна, комбінована</td>
+      <td>У підручнику — <b>текстова і графічна</b></td></tr>
+    <tr><td><b>За призначенням</b></td><td>масова, спеціальна, особиста, розважальна</td>
+      <td>Новини по телебаченню — <b>масова</b></td></tr>
+    <tr><td><b>За корисністю</b></td><td>корисна, непотрібна, шкідлива</td>
+      <td>Погода, щоб вибрати одяг, — <b>корисна</b></td></tr>
+  </table>
   </div>
-  <div class="box note" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Ціни розрядів <b>ті самі, що й на пальцях</b>: 16 · 8 · 4 · 2 · 1.
-    Тобто закодувати букву — це просто показати її номер рукою.</p>
+  <div class="box warn" style="margin-top:18px">
+    <p class="big">Не плутай перші два рядки! Рядок 1 — про <b>орган чуття</b>. Рядок 2 — про <b>вигляд запису</b>.</p>
   </div>
 </section>
 
 <!-- 16 -->
-<section class="slide" data-t="Розшифруй слово" data-timer="180">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Слово — в чат, коли скажу</span></div>
-  <h2>Розшифруй слово</h2>
-  <div class="cw">
-    <div><div class="v">00010</div><div class="l hide">Б</div></div>
-    <div><div class="v">00001</div><div class="l hide">А</div></div>
-    <div><div class="v">01110</div><div class="l hide">Й</div></div>
-    <div><div class="v">10111</div><div class="l hide">Т</div></div>
-  </div>
-  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Номери букв — підказка</h3>
-    <p class="num big" style="margin:0">а 1 · б 2 · в 3 · г 4 · ґ 5 · д 6 · е 7 · є 8 · ж 9 · з 10<br>
-    и 11 · і 12 · ї 13 · й 14 · к 15 · л 16 · м 17 · н 18 · о 19 · п 20<br>
-    р 21 · с 22 · т 23 · у 24 · ф 25</p>
-  </div>
+<section class="slide" data-t="Тренуємося" data-timer="180">
+  <h2>Визнач вид інформації</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат</span></div>
+  <p class="lede">Для кожного прикладу — <b>за сприйняттям</b> і <b>за поданням</b>.</p>
   <div class="timerslot"></div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p class="num big" style="margin:0">00010 = 2 = Б &nbsp;·&nbsp; 00001 = 1 = А &nbsp;·&nbsp;
-    01110 = 8+4+2 = 14 = Й &nbsp;·&nbsp; 10111 = 16+4+2+1 = 23 = Т</p>
+  <div class="tbl" style="margin-top:18px">
+  <table>
+    <tr><th style="width:52px">№</th><th>Приклад</th><th style="width:210px">За сприйняттям</th><th style="width:220px">За поданням</th></tr>
+    <tr><td class="n">1</td><td>Учителька диктує означення</td><td><span class="hide"><b class="ans">аудіальна</b></span></td><td><span class="hide"><b class="ans">звукова</b></span></td></tr>
+    <tr><td class="n">2</td><td>Схема на сторінці 10</td><td><span class="hide"><b class="ans">візуальна</b></span></td><td><span class="hide"><b class="ans">графічна</b></span></td></tr>
+    <tr><td class="n">3</td><td>Запах хліба з пекарні</td><td><span class="hide"><b class="ans">нюхова</b></span></td><td><span class="hide"><b class="ans">—</b></span></td></tr>
+    <tr><td class="n">4</td><td>Торкаєшся чашки й розумієш, що чай гарячий</td><td><span class="hide"><b class="ans">тактильна</b></span></td><td><span class="hide"><b class="ans">—</b></span></td></tr>
+    <tr><td class="n">5</td><td>Відеоурок з музикою й субтитрами</td><td><span class="hide"><b class="ans">візуальна + аудіальна</b></span></td><td><span class="hide"><b class="ans">комбінована</b></span></td></tr>
+    <tr><td class="n">6</td><td>Ціна 45 грн на ціннику</td><td><span class="hide"><b class="ans">візуальна</b></span></td><td><span class="hide"><b class="ans">числова</b></span></td></tr>
+  </table>
   </div>
-  <p class="word hide" style="margin-top:clamp(12px,1.7vw,20px);text-align:center">Б А Й Т</p>
+  <div class="box play hide" style="margin-top:16px">
+    <p class="big">Приклади 3 і 4 — з підступом. Запах і дотик <b>не мають</b> форми подання з нашої таблиці:
+    їх не запишеш ні текстом, ні числом. Прочерк — правильна відповідь.</p>
+  </div>
 </section>
 
 <!-- 17 -->
-<section class="slide" data-t="Біт і байт">
-  <h2>Біт і байт</h2>
+<section class="slide" data-t="Датчики й тварини">
+  <p class="eyebrow">Цікаво · с. 11</p>
+  <h2>У техніки й тварин — свої «органи чуття»</h2>
   <div class="row c2">
-    <div class="box pen">
-      <h3>Біт</h3>
-      <p class="big" style="margin:0">Одна цифра: <b>0 або 1</b>.<br>Один вимикач. Один палець.</p>
-      <p class="big" style="margin-top:12px">Найменша порція даних. Менше не буває.</p>
+    <div class="box play">
+      <h3>Датчики</h3>
+      <p class="big"><b>Датчик руху</b> у світильнику вмикає світло, тільки коли поруч хтось з'явився.
+      Так економлять електроенергію.</p>
+      <p class="big"><b>Датчик диму</b> з'єднаний із сигналізацією — і рятує від пожежі.</p>
     </div>
-    <div class="box ok">
-      <h3>Байт</h3>
-      <p class="big" style="margin:0"><b>8 бітів</b> разом.</p>
-      <p class="num big" style="margin-top:12px">128 · 64 · 32 · 16 · 8 · 4 · 2 · 1</p>
-      <p class="big" style="margin-top:12px">Дає <b>256</b> комбінацій — від 0 до 255.</p>
+    <div class="box note">
+      <h3>Тварини чують те, чого не чуємо ми</h3>
+      <p class="big"><b>Змії</b> — теплове (інфрачервоне) випромінювання.<br>
+      <b>Кити</b> — наднизькі звуки, інфразвуки.<br>
+      <b>Кажани</b> — надвисокі звуки, ультразвуки.</p>
     </div>
   </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Чому не п'ять цифр, як у нас на пальцях?</h3>
-    <p class="big" style="margin:0">П'ять дають лише <b>32</b> варіанти. А в українському алфавіті <b>33</b> букви —
-    на «ю» і «я» вже не вистачає. Комп'ютер бере одразу вісім, і місця стає з запасом.</p>
-  </div>
-  <div class="box note hide" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p class="big" style="margin:0">Звідси й «кілобайт», «мегабайт» — це просто дуже багато таких вісімок.
-    <b>1 кілобайт = 1024 байти.</b> Не 1000 — саме 1024, бо це теж степінь двійки.</p>
+  <div class="box" style="margin-top:18px">
+    <p class="big"><b>Датчик (сенсор)</b> — пристрій, який сприймає щось із зовнішнього світу
+    (рух, дим, тепло, світло) і перетворює це на сигнал для техніки.</p>
   </div>
 </section>
 
 <!-- 18 -->
-<section class="slide" data-t="Підсумок">
-  <div class="modes"><span class="mode cam"><span class="dot"></span>Великий палець: угору — знаю, вниз — ні</span></div>
-  <h2>Перевіримо, що запам'ятали</h2>
-  <div class="row c3">
-    <div class="box">
-      <p class="big" style="margin:0"><b>1.</b> Чим дані відрізняються від інформації?</p>
-      <p class="big ans hide" style="margin-top:12px">Дані просто зберігаються. Інформація з'являється, коли є той, хто розуміє</p>
-    </div>
-    <div class="box">
-      <p class="big" style="margin:0"><b>2.</b> Чому комп'ютер має лише дві цифри?</p>
-      <p class="big ans hide" style="margin-top:12px">Два стани неможливо переплутати: струм є або немає</p>
-    </div>
-    <div class="box">
-      <p class="big" style="margin:0"><b>3.</b> Скільки бітів у байті?</p>
-      <p class="big ans hide" style="margin-top:12px">Вісім. Це 256 комбінацій</p>
-    </div>
+<section class="slide" data-t="Правила комп'ютерного класу">
+  <p class="eyebrow">§ 1 · с. 12</p>
+  <h2>Правила в комп'ютерному класі</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="row c4">
+    <div class="box pen" style="text-align:center"><p class="big">Не нашкодь<br><b>собі</b></p></div>
+    <div class="box pen" style="text-align:center"><p class="big">Не нашкодь<br><b>іншим</b></p></div>
+    <div class="box pen" style="text-align:center"><p class="big">Не заважай<br><b>іншим</b></p></div>
+    <div class="box pen" style="text-align:center"><p class="big">Не псуй<br><b>обладнання</b></p></div>
   </div>
-  <div class="box ok" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Сьогодні ви <b>жодного разу не торкнулися комп'ютера</b> — і при цьому дізналися,
-    як він улаштований усередині. Оце і є інформатика.</p>
+  <div class="box warn" style="margin-top:20px">
+    <h3>Окреме правило — найважливіше</h3>
+    <p class="big">Побачив розбиту розетку або дріт з пошкодженою ізоляцією — <b>не чіпай</b>.
+    Не перевіряй, чи працює. Не показуй друзям. <b>Скажи дорослому.</b></p>
   </div>
 </section>
 
 <!-- 19 -->
-<section class="slide" data-t="Домашнє завдання">
-  <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо в щоденник</span></div>
-  <h2>Домашнє завдання</h2>
-  <p class="lede" style="margin-bottom:clamp(12px,1.8vw,20px)">Підручник не потрібен — усе робиться в зошиті</p>
-  <div class="row c3">
-    <div class="box pen">
-      <h3>1 · Усім</h3>
-      <p style="margin:0">Запиши <b>двійковим кодом перші три букви свого імені</b> — за номерами в алфавіті, по п'ять цифр.</p>
+<section class="slide" data-t="Як правильно сидіти">
+  <p class="eyebrow">Рис. 1.7 · с. 12</p>
+  <h2>Як правильно сидіти за комп'ютером</h2>
+  <div class="row c21">
+    <div class="box">
+      <svg viewBox="0 0 460 235" width="100%" height="auto" role="img"
+           aria-label="Порівняння правильної і неправильної пози за комп'ютером">
+        <g stroke="var(--check)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="18" y="52" width="88" height="60" rx="5" fill="var(--check-soft)"/>
+          <line x1="62" y1="112" x2="62" y2="126"/><line x1="42" y1="126" x2="82" y2="126"/>
+          <line x1="20" y1="144" x2="122" y2="144" stroke-width="4"/>
+          <circle cx="170" cy="52" r="15" fill="var(--card)"/>
+          <line x1="170" y1="67" x2="170" y2="122"/>
+          <line x1="170" y1="122" x2="124" y2="122"/>
+          <line x1="124" y1="122" x2="124" y2="172"/>
+          <line x1="170" y1="122" x2="170" y2="172"/>
+          <line x1="170" y1="172" x2="198" y2="172"/>
+          <line x1="170" y1="86" x2="132" y2="106"/>
+          <path d="M183 67 v56" stroke-width="7"/>
+        </g>
+        <line x1="106" y1="80" x2="155" y2="64" stroke="var(--pen)" stroke-width="2.5" stroke-dasharray="7 5"/>
+        <text x="66" y="168" font-family="Manrope,sans-serif" font-size="16" font-weight="800" fill="var(--check)">60–65 см</text>
+        <text x="52" y="200" font-family="Unbounded,Manrope,sans-serif" font-size="17" font-weight="800" fill="var(--check)">ПРАВИЛЬНО</text>
+        <g stroke="var(--marker)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="256" y="52" width="88" height="60" rx="5" fill="var(--marker-soft)"/>
+          <line x1="300" y1="112" x2="300" y2="126"/><line x1="280" y1="126" x2="320" y2="126"/>
+          <line x1="258" y1="144" x2="360" y2="144" stroke-width="4"/>
+          <circle cx="394" cy="80" r="15" fill="var(--card)"/>
+          <path d="M394 95 q-18 20 -10 36"/>
+          <line x1="384" y1="131" x2="352" y2="131"/>
+          <line x1="352" y1="131" x2="352" y2="180"/>
+          <line x1="384" y1="131" x2="384" y2="180"/>
+          <line x1="384" y1="180" x2="410" y2="180"/>
+          <line x1="390" y1="99" x2="358" y2="116"/>
+        </g>
+        <text x="278" y="205" font-family="Unbounded,Manrope,sans-serif" font-size="17" font-weight="800" fill="var(--marker)">НЕПРАВИЛЬНО</text>
+      </svg>
     </div>
-    <div class="box note">
-      <h3>2 · Усім</h3>
-      <p style="margin:0">Знайди й запиши <b>п'ять прикладів кодування</b>, які бачиш удома або дорогою до школи.</p>
-      <p style="margin-top:10px;color:var(--soft)">Знаки, значки на одязі, символи на пральній машині, номери маршруток…</p>
+    <div>
+      <div class="box ok">
+        <h3>Три вимоги</h3>
+        <ul>
+          <li>Спина має <b>опору</b></li>
+          <li>Погляд — <b>прямо на екран</b></li>
+          <li>Відстань до екрана — <b>на довжину руки</b>, це 60–65 см</li>
+        </ul>
+      </div>
+      <div class="box warn" style="margin-top:18px">
+        <h3>Головне число уроку</h3>
+        <p class="huge">20 хв</p>
+        <p class="big">Стільки можна працювати за комп'ютером <b>без перерви</b>. Потім — відпочинок або вправи для очей.</p>
+      </div>
     </div>
-    <div class="box play">
-      <h3>3 · Хто хоче</h3>
-      <p style="margin:0">Навчи когось удома рахувати на пальцях до 31 — і спитай, до якого числа дійде він <b>двома</b> руками.</p>
-      <p class="big ans hide" style="margin-top:10px">1023</p>
-    </div>
-  </div>
-  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0"><b>Сфотографуй сторінку зошита</b> й надішли мені до початку наступного уроку.
-    Почнемо з того, чиє ім'я вийшло найкоротшим у двійковому коді.</p>
   </div>
 </section>
 
 <!-- 20 -->
-<section class="slide" data-t="Перший комп'ютер зробили в Києві">
-  <p class="eyebrow">І останнє на сьогодні</p>
-  <h2>Де зробили перший комп'ютер континентальної Європи?</h2>
-  <div class="row c21">
-    <div class="box ok">
-      <p class="huge hide" style="margin:0">У Києві. 1951 рік</p>
-      <p class="big hide" style="margin-top:14px">Лабораторія в <b>Феофанії</b> під Києвом. Керував роботою
-      <b>Сергій Лебедєв</b>. Машина називалася <b>МЕОМ</b> — «мала електронна обчислювальна машина».</p>
-      <p class="big hide" style="margin-top:12px">«Мала» вона лише за назвою: займала цілий зал і важила кілька тонн.
-      Твій телефон потужніший за неї у мільйони разів.</p>
-    </div>
-    <div class="box note">
-      <h3>Але найголовніше</h3>
-      <p class="big" style="margin:0">Працювала вона <b>за тим самим правилом</b>, яке ми сьогодні розібрали:
-      нулі й одиниці.</p>
-      <p class="big" style="margin-top:12px">За сімдесят років змінилося все, крім цього.</p>
-    </div>
+<section class="slide" data-t="Підсумок">
+  <h2>Перевір себе</h2>
+  <div class="modes"><span class="mode voice"><span class="dot"></span>вголос</span></div>
+  <div class="row c2">
+    <div class="box"><p class="big">1. Що таке інформація?</p><p class="ans hide">Відомості про об'єкти Всесвіту</p></div>
+    <div class="box"><p class="big">2. Що таке повідомлення?</p><p class="ans hide">Форма подання інформації</p></div>
+    <div class="box"><p class="big">3. Скільки в людини органів чуття?</p><p class="ans hide">П'ять: зір, слух, нюх, смак, дотик</p></div>
+    <div class="box"><p class="big">4. Як правильно сидіти?</p><p class="ans hide">Спина з опорою, погляд прямо, відстань — на довжину руки</p></div>
+    <div class="box"><p class="big">5. Скільки хвилин можна працювати без перерви?</p><p class="ans hide">Не більше 20</p></div>
+    <div class="box"><p class="big">6. Побачив розбиту розетку. Що робиш?</p><p class="ans hide">Не чіпаю. Кажу дорослому</p></div>
   </div>
 </section>
 
 <!-- 21 -->
+<section class="slide" data-t="Домашнє завдання">
+  <h2>Домашнє завдання</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>Записуємо</h3>
+      <p class="big"><b>§ 1</b>, с. 9–13 — опрацювати.</p>
+      <p class="big">Питання для самоперевірки <b>1–5</b> (с. 13) — усно.</p>
+      <p class="big">Питання <b>6</b> — обговорити правила безпеки з батьками або старшими.</p>
+    </div>
+    <div class="box play">
+      <h3>Вправа 1 (с. 13), пункти 2–4</h3>
+      <ul>
+        <li>Відкрий графічний редактор (наприклад, <b>Paint</b>)</li>
+        <li>Намалюй комп'ютер, за яким ти працюєш удома</li>
+        <li>Познач на малюнку <b>місця, що можуть бути джерелом небезпеки</b></li>
+        <li>Збережи файл з назвою <b>Вправа 1</b></li>
+      </ul>
+      <p class="big">Покажеш малюнок на наступному уроці.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 22 -->
 <section class="slide" data-t="До зустрічі">
   <h1>Дякую за урок!</h1>
-  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">До зустрічі на наступному уроці.</p>
-  <div class="box ok" style="margin-top:clamp(16px,2.6vw,34px)">
-    <p class="big" style="margin:0">Це посилання працює й після уроку — можеш відкрити його вдома
-    й повторити все, що ми робили, разом з відповідями.</p>
-  </div>
-  <div class="box" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Щось лишилося незрозумілим — <b>напиши мені</b> або спитай на початку наступного уроку.
-    Питати — нормально.</p>
+  <p class="lede" style="margin-top:20px">Наступного разу — <b>інформаційні процеси</b>:
+  що саме людина й комп'ютер роблять з інформацією.</p>
+  <div class="box ok" style="margin-top:26px">
+    <p class="big">Не забудь: <b>20 хвилин</b> за комп'ютером — і перерва. Питати — нормально.</p>
   </div>
 </section>
 
@@ -708,7 +680,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
   <div id="rail" aria-hidden="true"></div>
   <div id="tip">пробіл — показати відповідь</div>
-  <div id="count">1 / 21</div>
+  <div id="count">1 / 22</div>
   <button id="fs" type="button" aria-label="На весь екран">⛶</button>
 </div>
 </div>
@@ -724,10 +696,33 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
   var cells = [].slice.call(rail.children);
 
-  /* ---- таймер завдання ---- */
-  slides.forEach(function(s){
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
     var slot = s.querySelector('.timerslot');
-    if(!slot || !s.dataset.timer) return;
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
     var total = parseInt(s.dataset.timer, 10);
     var box = document.createElement('div');
     box.className = 'timer';
@@ -796,13 +791,32 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
   function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
 
+  var sheet = document.getElementById('sheet');
+  function fit(){
+    var s = slides[cur];
+    s.style.zoom = '';
+    var cs = getComputedStyle(sheet);
+    var avail = sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var h = s.scrollHeight;
+    if(avail > 0 && h > avail){
+      s.style.zoom = Math.max(0.5, Math.floor(100 * avail / h) / 100);
+    }
+  }
+
   function paint(){
     cells.forEach(function(c, i){
       c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
     });
     count.textContent = (cur + 1) + ' / ' + slides.length;
     tip.classList.toggle('on', hidden(cur).length > 0);
+    fit();
   }
+
+  var rt = null;
+  window.addEventListener('resize', function(){
+    if(rt) clearTimeout(rt);
+    rt = setTimeout(fit, 120);
+  });
 
   function go(i, revealAll){
     if(i < 0 || i >= slides.length) return;

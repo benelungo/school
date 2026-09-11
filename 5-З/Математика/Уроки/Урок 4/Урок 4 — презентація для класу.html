@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Натуральні числа. Цифри. Число нуль</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
+  --ink:#1B2430; --soft:#5B6879;
+  --pen:#2C4BC9; --pen-soft:#E7ECFC;
+  --check:#1B7F4B; --check-soft:#E4F3EA;
+  --marker:#D7263D; --marker-soft:#FCEAEC;
+  --sun:#B57C00; --sun-soft:#FDF3DC;
+  --note:#6B4FA8; --note-soft:#EFEAFA;
+  --edge:#DDE4EC;
+  --cell:30px;
+  --u:min(1vw,1.55vh);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121821; --card:#1A222D; --grid:#26374A;
+    --ink:#EAF0F6; --soft:#9AAABC;
+    --pen:#8DA9FF; --pen-soft:#1E2A47;
+    --check:#5FD394; --check-soft:#163024;
+    --marker:#FF7B8A; --marker-soft:#371D22;
+    --sun:#FFC93C; --sun-soft:#332813;
+    --note:#C0A8F5; --note-soft:#251E3A;
+    --edge:#2C3948;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121821; --card:#1A222D; --grid:#26374A;
+  --ink:#EAF0F6; --soft:#9AAABC;
+  --pen:#8DA9FF; --pen-soft:#1E2A47;
+  --check:#5FD394; --check-soft:#163024;
+  --marker:#FF7B8A; --marker-soft:#371D22;
+  --sun:#FFC93C; --sun-soft:#332813;
+  --note:#C0A8F5; --note-soft:#251E3A;
+  --edge:#2C3948;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:var(--cell) var(--cell);
+  background-position:center top;
+  -webkit-text-size-adjust:100%;
+}
+
+#stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(10px,1.7vh,26px) clamp(14px,4vw,56px) 84px}
+.slide{display:none;width:100%;max-width:1180px}
+.slide.on{display:block;animation:in .3s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(24px,calc(4.3*var(--u)),46px);line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(20px,calc(3.1*var(--u)),33px);line-height:1.16;letter-spacing:-.015em;margin:0 0 clamp(9px,1.4vw,16px);text-wrap:balance}
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 8px}
+p{margin:0 0 10px;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.45}
+p:last-child{margin-bottom:0}
+.lede{font-size:clamp(16px,calc(2.05*var(--u)),24px);color:var(--soft);line-height:1.4}
+b,strong{font-weight:800}
+ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.4}
+li{margin:.34em 0}
+li::marker{color:var(--pen)}
+
+.row{display:grid;gap:clamp(9px,1.3vw,16px)}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c21{grid-template-columns:1.15fr .85fr}
+@media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
+
+.box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(11px,1.5vw,18px);box-shadow:0 1px 0 var(--edge)}
+.box.pen{border-color:var(--pen);background:var(--pen-soft)}
+.box.ok{border-color:var(--check);background:var(--check-soft)}
+.box.warn{border-color:var(--marker);background:var(--marker-soft)}
+.box.play{border-color:var(--sun);background:var(--sun-soft)}
+.box.note{border-color:var(--note);background:var(--note-soft)}
+.box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,calc(1.1*var(--u)),14px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 7px}
+.box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
+.box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
+
+/* ---------- смужка «як відповідаємо» ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 clamp(8px,1.2vw,14px)}
+.mode{display:inline-flex;align-items:center;gap:8px;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:6px 10px;background:var(--card);white-space:nowrap}
+.mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
+.mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+.mode.voice{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.mode.book{color:var(--note);border-color:var(--note);background:var(--note-soft)}
+.mode.away{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+
+/* ---------- таймер ---------- */
+.timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(8px,1vw,12px) clamp(10px,1.3vw,16px);margin:clamp(9px,1.3vw,15px) 0}
+.timerslot:empty{display:none}
+.timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(21px,calc(2.9*var(--u)),35px);line-height:1;min-width:3.6ch}
+.timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
+.timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
+.timer .lab{font-size:clamp(12px,calc(1.2*var(--u)),15px);color:var(--soft);white-space:nowrap}
+.timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
+.timer.over{border-color:var(--marker);background:var(--marker-soft)}
+.timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
+
+/* ---------- лампочки й біти ---------- */
+.lamps{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.lamp{text-align:center;min-width:clamp(52px,6.4vw,86px)}
+.lamp .b{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1.2;
+  font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.9vw,12px) 0}
+.lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.lamp .w{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
+.cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
+.cw .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(18px,2.5vw,32px);letter-spacing:.08em}
+.cw .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(22px,3vw,40px);color:var(--check);margin-top:6px}
+
+/* ---------- цифри ---------- */
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(17px,calc(2.35*var(--u)),27px);line-height:1.4}
+.huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+      font-size:clamp(23px,calc(4*var(--u)),44px);line-height:1.12;letter-spacing:-.02em}
+.ans{color:var(--check);font-weight:800}
+.tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
+      border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
+.tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
+         font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .lab{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.1vw,15px)}
+.klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--soft);text-align:center;margin-bottom:8px}
+
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(13px,calc(1.55*var(--u)),19px)}
+th,td{border:2px solid var(--edge);padding:clamp(6px,.85vw,11px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(10px,calc(1.02*var(--u)),13px);
+   letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+
+.code{display:flex;flex-wrap:wrap;gap:clamp(8px,1.1vw,14px)}
+.code div{flex:1 1 auto;min-width:clamp(86px,10.5vw,146px);text-align:center;
+  border:2px solid var(--sun);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 8px}
+.code .v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.6vw,33px);font-variant-numeric:tabular-nums}
+.code .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(19px,2.6vw,33px);color:var(--sun);margin-top:4px}
+.word{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(32px,6.6vw,88px);letter-spacing:.14em;color:var(--check);line-height:1.1}
+
+.hide{opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+span.hide{display:inline-block}
+.hide.on{opacity:1;pointer-events:auto;transform:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+  padding:10px clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:2px solid var(--edge)}
+#rail{flex:1;display:flex;gap:3px;min-width:0;overflow:hidden}
+#rail i{flex:1 1 0;height:14px;border:1.5px solid var(--edge);border-radius:2px;background:transparent;
+  transition:background .2s ease,border-color .2s ease}
+#rail i.done{background:var(--grid);border-color:var(--grid)}
+#rail i.cur{background:var(--pen);border-color:var(--pen)}
+#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
+  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nav{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:4px;padding:10px 16px;font-weight:800;font-size:17px;line-height:1;
+  transition:background .15s,border-color .15s}
+button:hover{border-color:var(--pen);background:var(--pen-soft)}
+button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(12px,calc(1.2*var(--u)),15px);white-space:nowrap}
+#tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
+#tip.on{opacity:1}
+@media(max-width:760px){
+  #count,#tip{display:none}
+  button{padding:12px 14px;font-size:16px}
+  .timer{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ---------- математика ---------- */
+.eqn{font-family:"JetBrains Mono",monospace;font-weight:700;
+     font-size:clamp(17px,calc(2.3*var(--u)),26px);line-height:1.65;font-variant-numeric:tabular-nums}
+.step{font-size:clamp(15px,calc(1.8*var(--u)),22px);line-height:1.7}
+.numbig{font-family:"JetBrains Mono",monospace;font-weight:700;letter-spacing:.08em;
+     font-size:clamp(20px,calc(3*var(--u)),36px);font-variant-numeric:tabular-nums;line-height:1.35;margin:0}
+.numbig .g{color:var(--pen)}
+.pair{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.pair span{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(15px,calc(1.9*var(--u)),24px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(5px,.7vw,9px) clamp(7px,1vw,13px)}
+.razr{width:100%;overflow-x:auto}
+.razr table{font-size:clamp(11px,calc(1.25*var(--u)),15px)}
+.razr th,.razr td{padding:clamp(4px,.6vw,8px);text-align:center;vertical-align:middle}
+.razr td.v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(14px,calc(1.75*var(--u)),22px)}
+.razr td.k{text-align:left;white-space:nowrap;font-weight:800}
+
+/* ---------- тема уроку — завжди вгорі ---------- */
+#topic{position:sticky;top:0;z-index:6;
+  display:flex;align-items:baseline;gap:clamp(10px,1.6vw,22px);
+  padding:clamp(6px,.9vw,11px) clamp(14px,4vw,56px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 90%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--edge)}
+#topic .k{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--pen);white-space:nowrap;flex:none}
+#topic .t{flex:1;min-width:0;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.01em;text-wrap:balance}
+@media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<div id="topic">
+  <span class="k">Математика · 5-З · Урок 4</span>
+  <span class="t">Натуральні числа. Цифри. Число нуль</span>
+</div>
+
+<div id="sheet">
+
+<!-- 1 -->
+<section class="slide on" data-t="Вітання">
+  <p class="eyebrow">Математика · 5-З · Урок 4 · онлайн</p>
+  <h1>Натуральні числа.<br>Цифри. Число нуль</h1>
+  <p class="lede" style="margin-top:16px">Перший урок нового розділу.<br>Підручник: § 1, сторінки 16–19.</p>
+  <div class="row c3" style="margin-top:22px">
+    <div class="box pen"><h3>Знадобиться</h3><p>Підручник, зошит, ручка, олівець</p></div>
+    <div class="box ok"><h3>Три уроки поспіль</h3><p>Ми повторювали початкову школу. Повторення закінчилось</p></div>
+    <div class="box play"><h3>Сьогодні</h3><p>Розділ I. Натуральні числа і дії з ними</p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Технічна перевірка">
+  <h2>Технічна перевірка</h2>
+  <div class="row c2">
+    <div class="box ok">
+      <h3>Зроби зараз</h3>
+      <ul>
+        <li>Постав <b>+</b> у чат</li>
+        <li>Мікрофон — <b>вимкнено</b></li>
+        <li>Підручник відкрий на сторінці <b>16</b></li>
+        <li>Зошит і ручка — поруч</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Як ми відповідаємо</h3>
+      <div class="modes" style="margin:0">
+      <span class="mode chat"><span class="dot"></span>у чат</span>
+      <span class="mode cam"><span class="dot"></span>на камеру</span>
+      <span class="mode voice"><span class="dot"></span>вголос</span>
+      <span class="mode book"><span class="dot"></span>у зошит</span>
+        <span class="mode away"><span class="dot"></span>відпочиваємо</span>
+      </div>
+    </div>
+  </div>
+  <div class="box pen" style="margin-top:18px">
+    <p class="big">Смужка вгорі кожного завдання показує, <b>як відповідати</b>. Помилятися можна.
+    Не зрозумів — пиши в чат <b>«?»</b>.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-t="Записуємо в зошит" data-timer="90">
+  <h2>Записуємо в зошит</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box pen">
+    <p class="huge">Дата<br>Класна робота</p>
+    <p class="huge" style="margin-top:18px">Натуральні числа. Цифри. Число нуль</p>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Натуральні числа">
+  <p class="eyebrow">Означення · § 1, с. 16</p>
+  <h2>Натуральні числа</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box pen">
+    <p class="big">Числа <b>1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, …</b>, які використовують
+    для <b>лічби предметів</b>, називають <b>натуральними числами</b>.</p>
+  </div>
+  <div class="box ok" style="margin-top:18px">
+    <p class="big">Тисячі років тому люди рахували членів родини, худобу, здобич, рибу.
+    Числа з'явилися <b>з потреби порахувати</b> — і найперше число завжди було <b>1</b>.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="Скільки чи котрий">
+  <h2>Два питання, на які відповідають числа</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат</span></div>
+  <div class="klas">
+    <div>
+      <div class="cap">Лічба предметів</div>
+      <div class="box pen">
+        <p class="huge">Скільки?</p>
+        <p class="big">Один, два, три…</p>
+        <p>У класі <b>28</b> учнів. Я купив <b>5</b> зошитів.</p>
+      </div>
+    </div>
+    <div>
+      <div class="cap">Порядок розміщення</div>
+      <div class="box play">
+        <p class="huge">Котрий?</p>
+        <p class="big">Перший, другий, третій…</p>
+        <p>Я сиджу за <b>третьою</b> партою. Сьогодні <b>четвертий</b> урок.</p>
+      </div>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:16px">Натуральні числа працюють <b>і так, і так</b>.</p>
+  <div class="row c3 hide" style="margin-top:16px">
+    <div class="box"><p class="big">«У мене 7 олівців»</p><p class="ans">Скільки?</p></div>
+    <div class="box"><p class="big">«Я в черзі дев'ятий»</p><p class="ans">Котрий?</p></div>
+    <div class="box"><p class="big">«Дім номер 12»</p><p class="ans">Котрий?</p></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="№ 114" data-timer="60">
+  <p class="eyebrow">№ 114 · с. 19</p>
+  <h2>Який з рядів є рядом натуральних чисел?</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат</span></div>
+  <div class="timerslot"></div>
+  <div class="row c2" style="margin-top:16px">
+    <div class="box"><p class="eqn">1) ∆, □, *, ∆, □, *, …</p>
+      <p class="ans hide">Ні — це взагалі не числа</p></div>
+    <div class="box"><p class="eqn">2) 0, 1, 2, 3, 4, 5, …</p>
+      <p class="ans hide">Ні — тут є нуль</p></div>
+    <div class="box"><p class="eqn">3) 1, 2, 3, 4, 5, 6, …</p>
+      <p class="ans hide">Так! Це натуральний ряд</p></div>
+    <div class="box"><p class="eqn">4) 1, 3, 5, 7, 9, 11, 13, …</p>
+      <p class="ans hide">Ні — пропущені 2, 4, 6…</p></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="Цифри">
+  <p class="eyebrow">§ 1 · с. 16</p>
+  <h2>Цифри</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box pen">
+    <p class="big">Будь-яке натуральне число можна записати за допомогою <b>десяти цифр</b>:</p>
+    <div class="pair" style="margin-top:12px">
+      <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span>
+      <span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+    </div>
+    <p class="big" style="margin-top:12px">Такий запис називають <b>десятковим</b>,
+    а самі цифри — <b>арабськими</b>.</p>
+  </div>
+  <div class="box warn" style="margin-top:18px">
+    <p class="big"><b>Цифра ≠ число.</b> Цифр усього десять. А чисел — нескінченно багато.
+    Цифри — це <b>знаки</b>, якими числа записують. Як букви й слова.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="Одноцифрові, двоцифрові">
+  <h2>Скільки цифр — так і називаємо</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат</span></div>
+  <div class="row c4">
+    <div class="box"><p class="numbig">7</p><p class="ans hide">одноцифрове</p></div>
+    <div class="box"><p class="numbig">45</p><p class="ans hide">двоцифрове</p></div>
+    <div class="box"><p class="numbig">308</p><p class="ans hide">трицифрове</p></div>
+    <div class="box"><p class="numbig">10 000</p><p class="ans hide">п'ятицифрове</p></div>
+  </div>
+  <div class="box ok hide" style="margin-top:18px">
+    <p class="big">Найбільше одноцифрове — <b>9</b>. Найменше двоцифрове — <b>10</b>.
+    Найбільше двоцифрове — <b>99</b>. Найменше трицифрове — <b>100</b>.</p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="Класи й розряди">
+  <p class="eyebrow">§ 1 · с. 17</p>
+  <h2>Як читають великі числа</h2>
+  <div class="box pen">
+    <p class="big">Цифри розбивають на групи <b>справа наліво, по три</b>.
+    Найперша група ліворуч може бути коротшою.</p>
+    <p class="numbig" style="margin-top:10px">57 403</p>
+  </div>
+  <div class="box" style="margin-top:16px">
+    <p class="big">Кожна група — це <b>клас</b>: одиниць, тисяч, мільйонів, мільярдів.
+    У кожному класі <b>три розряди</b>: одиниці, десятки, сотні.</p>
+  </div>
+  <div class="razr" style="margin-top:16px">
+    <table>
+      <tr><th rowspan="2" style="text-align:left">Клас</th><th colspan="3">Мільйонів</th><th colspan="3">Тисяч</th><th colspan="3">Одиниць</th></tr>
+      <tr><th>сот.</th><th>дес.</th><th>од.</th><th>сот.</th><th>дес.</th><th>од.</th><th>сот.</th><th>дес.</th><th>од.</th></tr>
+      <tr><td class="k">215 305 289</td>
+        <td class="v">2</td><td class="v">1</td><td class="v">5</td>
+        <td class="v">3</td><td class="v">0</td><td class="v">5</td>
+        <td class="v">2</td><td class="v">8</td><td class="v">9</td></tr>
+    </table>
+  </div>
+  <p class="lede" style="margin-top:14px">Читаємо: <b>двісті п'ятнадцять мільйонів триста п'ять тисяч двісті вісімдесят дев'ять</b>.</p>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="№ 115 — читаємо числа" data-timer="120">
+  <p class="eyebrow">№ 115 (1) · с. 19</p>
+  <h2>Прочитай числа — це населення міст України</h2>
+  <div class="modes"><span class="mode voice"><span class="dot"></span>вголос</span></div>
+  <div class="timerslot"></div>
+  <div class="tbl" style="margin-top:16px">
+  <table>
+    <tr><th>Місто</th><th style="width:200px">Населення</th><th>Місто</th><th style="width:200px">Населення</th></tr>
+    <tr><td>Арциз</td><td class="n">16 370</td><td>Дніпро</td><td class="n">1 065 008</td></tr>
+    <tr><td>Бердянськ</td><td class="n">121 692</td><td>Зміїв</td><td class="n">17 063</td></tr>
+    <tr><td>Берестечко</td><td class="n">1904</td><td>Калинівка</td><td class="n">20 061</td></tr>
+    <tr><td>Біла Церква</td><td class="n">200 131</td><td>Київ</td><td class="n">2 611 327</td></tr>
+  </table>
+  </div>
+  <div class="box ok hide" style="margin-top:14px">
+    <p class="big">Найменше з них — <b>Берестечко, 1904</b>. Найбільше — <b>Київ, 2 611 327</b>:
+    два мільйони шістсот одинадцять тисяч триста двадцять сім.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <h2>Пауза для очей</h2>
+  <div class="modes"><span class="mode away"><span class="dot"></span>відпочиваємо</span></div>
+  <div class="row c3">
+    <div class="box ok"><h3>1</h3><p class="big">Відведи погляд від екрана. Дивись у вікно, у найдальшу точку — 15 секунд.</p></div>
+    <div class="box ok"><h3>2</h3><p class="big">Міцно заплющ очі на 5 секунд. Розплющ. Три рази.</p></div>
+    <div class="box ok"><h3>3</h3><p class="big">Розімни плечі й шию — 4 повільні кола.</p></div>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="Число нуль">
+  <p class="eyebrow">§ 1 · с. 17</p>
+  <h2>Число нуль</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>Робота перша: тримати порожній розряд</h3>
+      <p class="big">Якщо в числі <b>немає</b> якогось розряду, на його місці ставлять цифру <b>0</b>.</p>
+      <p class="numbig" style="margin-top:10px">3<span class="g">0</span>5</p>
+      <p>Три сотні, <b>жодного</b> десятка, п'ять одиниць.</p>
+    </div>
+    <div class="box play">
+      <h3>Робота друга: означати «жодного»</h3>
+      <p class="big">Нулем записують саме число <b>«нуль»</b>, яке означає <b>«жодного»</b>.</p>
+    </div>
+  </div>
+  <div class="box warn" style="margin-top:18px">
+    <p class="huge">Нуль <b>не є</b> натуральним числом.</p>
+    <p class="big">Бо натуральні числа — для <b>лічби предметів</b>. А «жодного предмета» не лічать.</p>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="Натуральний ряд чисел">
+  <p class="eyebrow">§ 1 · с. 18</p>
+  <h2>Натуральний ряд чисел</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box pen">
+    <p class="big">Усі натуральні числа, записані в ряд так, що за кожним числом іде наступне:
+    <b>1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, …</b> — утворюють <b>натуральний ряд чисел</b>.</p>
+  </div>
+  <div class="row c3" style="margin-top:18px">
+    <div class="box ok"><h3>Властивість 1</h3><p class="big">Має <b>найменше</b> число — <b>1</b>.</p></div>
+    <div class="box ok"><h3>Властивість 2</h3><p class="big">Кожне наступне число <b>більше за попереднє на 1</b>.</p></div>
+    <div class="box ok"><h3>Властивість 3</h3><p class="big"><b>Не має найбільшого</b> числа.</p></div>
+  </div>
+  <div class="box note" style="margin-top:16px">
+    <p class="big">Хоч би яке велике число ми назвали — <b>додай до нього 1</b>, і отримаєш ще більше.
+    Тому останнього числа не існує.</p>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="Приклад із підручника">
+  <p class="eyebrow">Приклад · с. 18</p>
+  <h2>Як записати число цифрами</h2>
+  <div class="row c2">
+    <div class="box">
+      <p class="big">1) <b>37 мільйонів 142 тисячі 15</b></p>
+      <p class="eqn hide">37 142 015</p>
+    </div>
+    <div class="box">
+      <p class="big">2) <b>тринадцять мільйонів дві тисячі</b></p>
+      <p class="eqn hide">13 002 000</p>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:18px">
+    <h3>Головна пастка</h3>
+    <p class="big">У другому числі <b>немає</b> ні сотень тисяч, ні одиниць. Але місця для них
+    <b>треба зайняти нулями</b>: 13&nbsp;<b>0</b>02&nbsp;<b>000</b>. У кожному класі має бути рівно <b>три</b> цифри
+    (крім найпершого зліва).</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="№ 117 — запиши цифрами" data-timer="180">
+  <p class="eyebrow">№ 117 · с. 19</p>
+  <h2>Запиши цифрами</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="timerslot"></div>
+  <div class="row c2" style="margin-top:16px">
+    <div class="box"><p class="big">1) 5 мільйонів 413 тисяч 25</p><p class="eqn ans hide">5 413 025</p></div>
+    <div class="box"><p class="big">2) 12 мільярдів 507 мільйонів 125 тисяч</p><p class="eqn ans hide">12 507 125 000</p></div>
+    <div class="box"><p class="big">3) сім мільйонів тридцять сім</p><p class="eqn ans hide">7 000 037</p></div>
+    <div class="box"><p class="big">4) двадцять п'ять мільярдів сімнадцять мільйонів п'ятдесят дві тисячі сімсот</p>
+      <p class="eqn ans hide">25 017 052 700</p></div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="№ 116 — запиши словами">
+  <p class="eyebrow">№ 116 · с. 19</p>
+  <h2>Запиши словами</h2>
+  <div class="modes"><span class="mode voice"><span class="dot"></span>вголос</span></div>
+  <div class="row c3">
+    <div class="box"><p class="numbig">52 003 342</p>
+      <p class="big ans hide">п'ятдесят два мільйони три тисячі триста сорок два</p></div>
+    <div class="box"><p class="numbig">3 742 500 000</p>
+      <p class="big ans hide">три мільярди сімсот сорок два мільйони п'ятсот тисяч</p></div>
+    <div class="box"><p class="numbig">110 602 327</p>
+      <p class="big ans hide">сто десять мільйонів шістсот дві тисячі триста двадцять сім</p></div>
+  </div>
+  <p class="lede hide" style="margin-top:16px">Порада: читай <b>по класах, справа наліво не читають</b> —
+  називаєш групу і одразу її клас: «мільярди… мільйони… тисячі…».</p>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-t="№ 119 і № 121">
+  <h2>Ще дві задачі</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат</span></div>
+  <div class="row c2">
+    <div class="box">
+      <h3>№ 119 · с. 19</h3>
+      <p class="big">Запиши сім разів підряд цифру 5. Прочитай одержане число.</p>
+      <p class="numbig hide" style="margin-top:10px">5 555 555</p>
+      <p class="big ans hide">п'ять мільйонів п'ятсот п'ятдесят п'ять тисяч п'ятсот п'ятдесят п'ять</p>
+    </div>
+    <div class="box">
+      <h3>№ 121 · с. 19</h3>
+      <p class="big">Запиши найменше шестицифрове число й найбільше п'ятицифрове.
+      На скільки одиниць перше більше за друге?</p>
+      <p class="eqn hide" style="margin-top:10px">100 000 і 99 999</p>
+      <p class="eqn ans hide">100 000 − 99 999 = 1</p>
+      <p class="big hide">Вони <b>сусіди</b> в натуральному ряді!</p>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-t="Римські цифри">
+  <p class="eyebrow">Цікаво · с. 18–19</p>
+  <h2>Римські цифри</h2>
+  <div class="tbl">
+  <table>
+    <tr><th>I</th><th>V</th><th>X</th><th>L</th><th>C</th><th>D</th><th>M</th></tr>
+    <tr><td class="n">1</td><td class="n">5</td><td class="n">10</td><td class="n">50</td>
+        <td class="n">100</td><td class="n">500</td><td class="n">1000</td></tr>
+  </table>
+  </div>
+  <div class="row c2" style="margin-top:18px">
+    <div class="box ok">
+      <h3>Менша цифра ПІСЛЯ більшої — додаємо</h3>
+      <p class="eqn">XVIII = 10 + 5 + 1 + 1 + 1 = 18</p>
+      <p class="eqn">LX = 50 + 10 = 60</p>
+    </div>
+    <div class="box warn">
+      <h3>Менша цифра ПЕРЕД більшою — віднімаємо</h3>
+      <p class="eqn">IV = 5 − 1 = 4</p>
+      <p class="eqn">XC = 100 − 10 = 90</p>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:16px">Їх і досі використовують: циферблат годинника, номери століть,
+  нумерація розділів у книжці. <b>Розділ I</b> у нашому підручнику — це якраз римська одиниця.</p>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-t="Підсумок">
+  <h2>Перевір себе</h2>
+  <div class="modes"><span class="mode voice"><span class="dot"></span>вголос</span></div>
+  <div class="row c2">
+    <div class="box"><p class="big">1. Які числа називають натуральними?</p>
+      <p class="ans hide">Ті, які використовують для лічби предметів: 1, 2, 3, …</p></div>
+    <div class="box"><p class="big">2. Скільки всього цифр?</p>
+      <p class="ans hide">Десять: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</p></div>
+    <div class="box"><p class="big">3. Чи є нуль натуральним числом?</p>
+      <p class="ans hide">Ні. Нуль не є натуральним числом</p></div>
+    <div class="box"><p class="big">4. Яке найменше натуральне число?</p>
+      <p class="ans hide">1</p></div>
+    <div class="box"><p class="big">5. Яке найбільше натуральне число?</p>
+      <p class="ans hide">Його не існує — ряд нескінченний</p></div>
+    <div class="box"><p class="big">6. По скільки цифр розбивають число і в який бік?</p>
+      <p class="ans hide">По три, справа наліво</p></div>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-t="Домашнє завдання">
+  <h2>Домашнє завдання</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>Записуємо</h3>
+      <p class="big"><b>§ 1</b>, с. 16–19 — вивчити означення.</p>
+      <p class="big"><b>№ 118</b> — запиши цифрами (чотири числа).</p>
+      <p class="big"><b>№ 120</b> — найбільше шестицифрове число; яке наступне за ним; якими цифрами воно записане.</p>
+    </div>
+    <div class="box play">
+      <h3>Підказка до № 120</h3>
+      <p class="big">Не поспішай. Спочатку запиши <b>найбільше шестицифрове</b> — це шість однакових цифр.</p>
+      <p class="big">Потім додай до нього <b>1</b> і подивись, що сталося з кількістю цифр.</p>
+    </div>
+  </div>
+  <div class="box warn" style="margin-top:18px">
+    <p class="big">У № 118 стеж за <b>порожніми розрядами</b>. «7 мільйонів 52 тисячі 9» —
+    це не 7&nbsp;52&nbsp;9. У кожному класі має бути три цифри.</p>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-t="До зустрічі">
+  <h1>Дякую за урок!</h1>
+  <p class="lede" style="margin-top:18px">Наступного разу — <b>десятковий запис натурального числа</b>:
+  розкладемо число на розрядні доданки.</p>
+  <div class="box ok" style="margin-top:22px">
+    <p class="big">Головне з сьогодні: цифр — <b>десять</b>, натуральних чисел — <b>нескінченно</b>,
+    а нуль до них <b>не належить</b>.</p>
+  </div>
+</section>
+
+</div>
+
+<div id="bar">
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Попередній слайд">←</button>
+    <button id="next" type="button" aria-label="Далі">→</button>
+  </div>
+  <div id="rail" aria-hidden="true"></div>
+  <div id="tip">пробіл — показати відповідь</div>
+  <div id="count">1 / 21</div>
+  <button id="fs" type="button" aria-label="На весь екран">⛶</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('rail');
+  var count = document.getElementById('count');
+  var tip = document.getElementById('tip');
+  var cur = 0, tick = null;
+
+  slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
+  var cells = [].slice.call(rail.children);
+
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
+    var slot = s.querySelector('.timerslot');
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
+    var total = parseInt(s.dataset.timer, 10);
+    var box = document.createElement('div');
+    box.className = 'timer';
+    box.innerHTML =
+      '<div class="clock"></div>' +
+      '<div class="track"><div class="fill"></div></div>' +
+      '<div class="lab"></div>' +
+      '<button type="button" class="go"></button>';
+    slot.appendChild(box);
+    box.dataset.total = total;
+    box.dataset.left = total;
+    box.dataset.run = '0';
+  });
+
+  function fmt(sec){
+    sec = Math.max(0, sec);
+    return Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2);
+  }
+
+  function drawTimer(box){
+    var total = +box.dataset.total, left = +box.dataset.left, run = box.dataset.run === '1';
+    box.querySelector('.clock').textContent = fmt(left);
+    box.querySelector('.fill').style.width = (100 * left / total) + '%';
+    box.classList.toggle('warn', left > 0 && left <= 30);
+    box.classList.toggle('over', left === 0);
+    box.querySelector('.lab').textContent =
+      left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
+    box.querySelector('.go').textContent =
+      left === 0 ? 'Ще раз' : (run ? 'Пауза' : 'Почати');
+  }
+
+  function stopTick(){ if(tick){ clearInterval(tick); tick = null; } }
+
+  function toggleTimer(box){
+    if(box.dataset.run === '1'){
+      box.dataset.run = '0'; stopTick(); drawTimer(box); return;
+    }
+    if(+box.dataset.left === 0){ box.dataset.left = box.dataset.total; }
+    box.dataset.run = '1';
+    stopTick();
+    tick = setInterval(function(){
+      var left = +box.dataset.left - 1;
+      box.dataset.left = Math.max(0, left);
+      if(left <= 0){ box.dataset.run = '0'; stopTick(); }
+      drawTimer(box);
+    }, 1000);
+    drawTimer(box);
+  }
+
+  function resetTimer(s){
+    var box = s.querySelector('.timer');
+    if(!box) return;
+    box.dataset.left = box.dataset.total;
+    box.dataset.run = '0';
+    drawTimer(box);
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.timer .go') : null;
+    if(!b) return;
+    e.stopPropagation();
+    toggleTimer(b.parentNode);
+  }, true);
+
+  /* ---- показ відповідей і навігація ---- */
+  function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
+  function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
+
+  var sheet = document.getElementById('sheet');
+  function fit(){
+    var s = slides[cur];
+    s.style.zoom = '';
+    var cs = getComputedStyle(sheet);
+    var avail = sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var h = s.scrollHeight;
+    if(avail > 0 && h > avail){
+      s.style.zoom = Math.max(0.5, Math.floor(100 * avail / h) / 100);
+    }
+  }
+
+  function paint(){
+    cells.forEach(function(c, i){
+      c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
+    });
+    count.textContent = (cur + 1) + ' / ' + slides.length;
+    tip.classList.toggle('on', hidden(cur).length > 0);
+    fit();
+  }
+
+  var rt = null;
+  window.addEventListener('resize', function(){
+    if(rt) clearTimeout(rt);
+    rt = setTimeout(fit, 120);
+  });
+
+  function go(i, revealAll){
+    if(i < 0 || i >= slides.length) return;
+    stopTick();
+    resetTimer(slides[cur]);
+    slides[cur].classList.remove('on');
+    cur = i;
+    var s = slides[cur];
+    s.classList.add('on');
+    [].slice.call(s.querySelectorAll('.hide')).forEach(function(el){
+      el.classList.toggle('on', !!revealAll);
+    });
+    resetTimer(s);
+    window.scrollTo(0, 0);
+    paint();
+  }
+
+  function next(){
+    var h = hidden(cur);
+    if(h.length){ h[0].classList.add('on'); paint(); return; }
+    go(cur + 1, false);
+  }
+
+  function prev(){
+    var s = shown(cur);
+    if(s.length){ s[s.length - 1].classList.remove('on'); paint(); return; }
+    go(cur - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else { document.documentElement.requestFullscreen(); }
+  });
+
+  document.getElementById('sheet').addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('button')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'ArrowRight' || e.code === 'Space' || e.code === 'PageDown' || e.code === 'Enter'){
+      e.preventDefault(); next();
+    } else if(e.code === 'ArrowLeft' || e.code === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(e.code === 'Home'){ go(0, false); }
+    else if(e.code === 'End'){ go(slides.length - 1, true); }
+    else if(e.code === 'KeyT'){
+      var box = slides[cur].querySelector('.timer');
+      if(box){ e.preventDefault(); toggleTimer(box); }
+    }
+    else if(e.code === 'KeyF'){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  slides.forEach(resetTimer);
+  paint();
+})();
+</script>
+
+</body>
+</html>
