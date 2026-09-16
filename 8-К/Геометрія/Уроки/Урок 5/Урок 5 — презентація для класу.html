@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Паралелограм, його властивості й ознаки</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
+  --ink:#1B2430; --soft:#5B6879;
+  --pen:#2C4BC9; --pen-soft:#E7ECFC;
+  --check:#1B7F4B; --check-soft:#E4F3EA;
+  --marker:#D7263D; --marker-soft:#FCEAEC;
+  --sun:#B57C00; --sun-soft:#FDF3DC;
+  --note:#6B4FA8; --note-soft:#EFEAFA;
+  --edge:#DDE4EC;
+  --cell:30px;
+  --u:min(1vw,1.55vh);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121821; --card:#1A222D; --grid:#26374A;
+    --ink:#EAF0F6; --soft:#9AAABC;
+    --pen:#8DA9FF; --pen-soft:#1E2A47;
+    --check:#5FD394; --check-soft:#163024;
+    --marker:#FF7B8A; --marker-soft:#371D22;
+    --sun:#FFC93C; --sun-soft:#332813;
+    --note:#C0A8F5; --note-soft:#251E3A;
+    --edge:#2C3948;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121821; --card:#1A222D; --grid:#26374A;
+  --ink:#EAF0F6; --soft:#9AAABC;
+  --pen:#8DA9FF; --pen-soft:#1E2A47;
+  --check:#5FD394; --check-soft:#163024;
+  --marker:#FF7B8A; --marker-soft:#371D22;
+  --sun:#FFC93C; --sun-soft:#332813;
+  --note:#C0A8F5; --note-soft:#251E3A;
+  --edge:#2C3948;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:var(--cell) var(--cell);
+  background-position:center top;
+  -webkit-text-size-adjust:100%;
+}
+
+#stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(10px,1.7vh,26px) clamp(14px,4vw,56px) 84px}
+.slide{display:none;width:100%;max-width:1180px}
+.slide.on{display:block;animation:in .3s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(24px,calc(4.3*var(--u)),46px);line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(20px,calc(3.1*var(--u)),33px);line-height:1.16;letter-spacing:-.015em;margin:0 0 clamp(9px,1.4vw,16px);text-wrap:balance}
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 8px}
+p{margin:0 0 10px;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.45}
+p:last-child{margin-bottom:0}
+.lede{font-size:clamp(16px,calc(2.05*var(--u)),24px);color:var(--soft);line-height:1.4}
+b,strong{font-weight:800}
+ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.4}
+li{margin:.34em 0}
+li::marker{color:var(--pen)}
+
+.row{display:grid;gap:clamp(9px,1.3vw,16px)}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c21{grid-template-columns:1.15fr .85fr}
+@media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
+
+.box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(11px,1.5vw,18px);box-shadow:0 1px 0 var(--edge)}
+.box.pen{border-color:var(--pen);background:var(--pen-soft)}
+.box.ok{border-color:var(--check);background:var(--check-soft)}
+.box.warn{border-color:var(--marker);background:var(--marker-soft)}
+.box.play{border-color:var(--sun);background:var(--sun-soft)}
+.box.note{border-color:var(--note);background:var(--note-soft)}
+.box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,calc(1.1*var(--u)),14px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 7px}
+.box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
+.box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
+
+/* ---------- смужка «як відповідаємо» ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 clamp(8px,1.2vw,14px)}
+.mode{display:inline-flex;align-items:center;gap:8px;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:6px 10px;background:var(--card);white-space:nowrap}
+.mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
+.mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+.mode.voice{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.mode.book{color:var(--note);border-color:var(--note);background:var(--note-soft)}
+.mode.away{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+
+/* ---------- таймер ---------- */
+.timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(8px,1vw,12px) clamp(10px,1.3vw,16px);margin:clamp(9px,1.3vw,15px) 0}
+.timerslot:empty{display:none}
+.timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(21px,calc(2.9*var(--u)),35px);line-height:1;min-width:3.6ch}
+.timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
+.timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
+.timer .lab{font-size:clamp(12px,calc(1.2*var(--u)),15px);color:var(--soft);white-space:nowrap}
+.timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
+.timer.over{border-color:var(--marker);background:var(--marker-soft)}
+.timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
+
+/* ---------- лампочки й біти ---------- */
+.lamps{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.lamp{text-align:center;min-width:clamp(52px,6.4vw,86px)}
+.lamp .b{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1.2;
+  font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.9vw,12px) 0}
+.lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.lamp .w{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
+.cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
+.cw .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(18px,2.5vw,32px);letter-spacing:.08em}
+.cw .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(22px,3vw,40px);color:var(--check);margin-top:6px}
+
+/* ---------- цифри ---------- */
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(17px,calc(2.35*var(--u)),27px);line-height:1.4}
+.huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+      font-size:clamp(23px,calc(4*var(--u)),44px);line-height:1.12;letter-spacing:-.02em}
+.ans{color:var(--check);font-weight:800}
+.tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
+      border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
+.tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
+         font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .lab{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.1vw,15px)}
+.klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--soft);text-align:center;margin-bottom:8px}
+
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(13px,calc(1.55*var(--u)),19px)}
+th,td{border:2px solid var(--edge);padding:clamp(6px,.85vw,11px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(10px,calc(1.02*var(--u)),13px);
+   letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+
+.code{display:flex;flex-wrap:wrap;gap:clamp(8px,1.1vw,14px)}
+.code div{flex:1 1 auto;min-width:clamp(86px,10.5vw,146px);text-align:center;
+  border:2px solid var(--sun);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 8px}
+.code .v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.6vw,33px);font-variant-numeric:tabular-nums}
+.code .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(19px,2.6vw,33px);color:var(--sun);margin-top:4px}
+.word{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(32px,6.6vw,88px);letter-spacing:.14em;color:var(--check);line-height:1.1}
+
+.hide{opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+span.hide{display:inline-block}
+.hide.on{opacity:1;pointer-events:auto;transform:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+  padding:10px clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:2px solid var(--edge)}
+#rail{flex:1;display:flex;gap:3px;min-width:0;overflow:hidden}
+#rail i{flex:1 1 0;height:14px;border:1.5px solid var(--edge);border-radius:2px;background:transparent;
+  transition:background .2s ease,border-color .2s ease}
+#rail i.done{background:var(--grid);border-color:var(--grid)}
+#rail i.cur{background:var(--pen);border-color:var(--pen)}
+#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
+  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nav{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:4px;padding:10px 16px;font-weight:800;font-size:17px;line-height:1;
+  transition:background .15s,border-color .15s}
+button:hover{border-color:var(--pen);background:var(--pen-soft)}
+button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(12px,calc(1.2*var(--u)),15px);white-space:nowrap}
+#tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
+#tip.on{opacity:1}
+@media(max-width:760px){
+  #count,#tip{display:none}
+  button{padding:12px 14px;font-size:16px}
+  .timer{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ---------- тема уроку — завжди вгорі ---------- */
+#topic{position:sticky;top:0;z-index:6;
+  display:flex;align-items:baseline;gap:clamp(10px,1.6vw,22px);
+  padding:clamp(6px,.9vw,11px) clamp(14px,4vw,56px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 90%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--edge)}
+#topic .k{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--pen);white-space:nowrap;flex:none}
+#topic .t{flex:1;min-width:0;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.01em;text-wrap:balance}
+@media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
+
+/* ---------- математика ---------- */
+.eqn{font-family:"JetBrains Mono",monospace;font-weight:700;
+     font-size:clamp(16px,calc(2.3*var(--u)),27px);line-height:1.6;font-variant-numeric:tabular-nums}
+.step{font-size:clamp(15px,calc(1.85*var(--u)),23px);line-height:1.7}
+.math{font-size:clamp(16px,calc(2*var(--u)),25px);line-height:1.6;margin:0}
+.math .cmt{font-size:.66em;color:var(--soft);font-style:normal}
+.pair{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.pair span{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(14px,calc(1.7*var(--u)),21px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(5px,.7vw,9px) clamp(7px,1vw,13px)}
+.m{font-style:italic;font-family:"Charter",Georgia,serif}
+
+/* ---------- дроби ---------- */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;
+    margin:0 .16em;line-height:1.08;font-variant-numeric:tabular-nums}
+.fr .n{border-bottom:.09em solid currentColor;padding:0 .2em}
+.fr .d{padding:0 .2em}
+.mix{display:inline-flex;align-items:center;gap:.1em;vertical-align:middle}
+
+/* ---------- креслення ---------- */
+.fig{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(8px,1.1vw,14px) clamp(10px,1.3vw,16px)}
+.fig svg{display:block;width:100%;height:auto;color:var(--ink)}
+.fig .cap{text-align:center;color:var(--soft);font-size:clamp(11px,calc(1.15*var(--u)),15px);margin-top:6px}
+svg line,svg path,svg circle,svg polyline,svg polygon{stroke:currentColor;stroke-width:2.4;fill:none;vector-effect:non-scaling-stroke}
+svg circle.pt{fill:currentColor;stroke:none}
+svg text{font:italic 21px "Charter",Georgia,serif;fill:currentColor;stroke:none}
+svg text.n{font-style:normal;font-weight:700;font-size:17px}
+svg .hl{stroke:var(--marker)}
+svg .gr{stroke:var(--grid);stroke-width:1.2}
+svg .ax{stroke:var(--soft);stroke-width:2}
+svg .l1{stroke:var(--pen)}    svg circle.pt.l1{fill:var(--pen)}
+svg .l2{stroke:var(--marker)} svg circle.pt.l2{fill:var(--marker)}
+svg .l3{stroke:var(--check)}  svg circle.pt.l3{fill:var(--check)}
+svg .l4{stroke:var(--sun)}    svg circle.pt.l4{fill:var(--sun)}
+.leg{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.leg span{display:inline-flex;align-items:center;gap:7px;font-weight:800;
+  font-size:clamp(13px,calc(1.5*var(--u)),19px);font-family:"JetBrains Mono",monospace}
+.leg i{width:26px;height:0;border-top:4px solid currentColor;flex:none}
+
+/* ---------- геометрія: букви-відповіді № 2.9 ---------- */
+.lt{display:grid;grid-template-columns:repeat(8,1fr);gap:clamp(4px,.6vw,8px)}
+.lt>div{border:2px solid var(--edge);border-radius:4px;background:var(--card);text-align:center;padding:clamp(4px,.6vw,8px) 2px}
+.lt .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:clamp(13px,calc(1.6*var(--u)),20px)}
+.lt .l{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(18px,calc(2.6*var(--u)),32px);color:var(--check);min-height:1.2em}
+.c6{grid-template-columns:repeat(6,1fr)}
+@media(max-width:820px){.c6{grid-template-columns:repeat(3,1fr)}}
+
+</style>
+</head>
+<body>
+<div id="stage">
+
+<div id="topic">
+  <span class="k">Геометрія · 8-К · Урок 5</span>
+  <span class="t">Паралелограм, його властивості й ознаки</span>
+</div>
+
+<div id="sheet">
+
+<!-- 1 -->
+<section class="slide on" data-t="Вітання">
+  <p class="eyebrow">Геометрія · 8-К · Урок 5 · онлайн</p>
+  <h1>Паралелограм:<br>властивості й ознаки</h1>
+  <p class="lede" style="margin-top:clamp(10px,1.6vw,20px)">Минулого разу — будь-який чотирикутник. Сьогодні — перший «особливий»: у нього протилежні сторони паралельні.</p>
+  <div class="row c3" style="margin-top:clamp(12px,2vw,26px)">
+    <div class="box"><h3>Потрібно</h3><p style="margin:0">зошит з <b>геометрії</b>, лінійка, олівець, підручник</p></div>
+    <div class="box pen"><h3>Підручник</h3><p style="margin:0">Істер, «Геометрія. 8 клас»<br>§ 2, сторінки <b>18–23</b></p></div>
+    <div class="box play"><h3>Головне число уроку</h3><p class="huge" style="margin:4px 0 0;color:var(--sun)">180°</p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Технічна перевірка">
+  <p class="eyebrow">Поки не почали</p>
+  <h2>Два кроки — і стартуємо</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>Крок 1</h3>
+      <p style="margin:0">Відкрий <b>зошит з геометрії</b> й підручник на <b>ст. 18</b>. Лінійка поруч — креслимо.</p>
+    </div>
+    <div class="box play">
+      <h3>Крок 2</h3>
+      <p style="margin:0">Напиши в чат <b>плюс</b> — я бачу, що ти на місці.</p>
+      <p class="huge" style="margin:8px 0 0;color:var(--pen)">+</p>
+    </div>
+  </div>
+  <h3 style="margin-top:clamp(10px,1.6vw,20px)">Як відповідаємо сьогодні</h3>
+  <div class="modes">
+    <span class="mode chat"><span class="dot"></span>У чат — короткі відповіді</span>
+    <span class="mode voice"><span class="dot"></span>Вголос — коли назву імʼя</span>
+    <span class="mode book"><span class="dot"></span>У зошит — усі задачі</span>
+  </div>
+  <div class="box warn">
+    <p class="big" style="margin:0"><b>Мікрофон вимкнено.</b> Вмикаєш, коли я звертаюсь до тебе особисто.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-t="Записуємо тему" data-timer="90">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <h2>Записуємо</h2>
+  <div class="box">
+    <p class="huge" style="text-align:center;margin:0">Дата</p>
+    <p class="huge" style="text-align:center;margin:clamp(4px,.8vw,10px) 0 0">Класна робота</p>
+    <p class="big" style="text-align:center;margin:clamp(10px,1.8vw,22px) 0 0;color:var(--pen)">
+      <b>Паралелограм, його властивості й ознаки</b></p>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Розминка: паралельні прямі" data-timer="120">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат — градуси</span></div>
+  <p class="eyebrow">Розминка · згадуємо 7 клас</p>
+  <h2>Прямі <span class="m">a</span> ∥ <span class="m">b</span>, січна <span class="m">c</span>, ∠1 = 65°. Знайдіть ∠2 і ∠3</h2>
+  <div class="row c21">
+    <div class="fig" style="align-self:center"><svg viewBox="0 0 340 210"><line x1="20" y1="60" x2="320" y2="60"/><line x1="20" y1="160" x2="320" y2="160"/><line class="hl" x1="110" y1="200" x2="230" y2="20"/><text x="300" y="50">a</text><text x="300" y="150">b</text><text x="236" y="22">c</text><text class="n" x="168" y="84">1</text><text class="n" x="156" y="152">2</text><text class="n" x="112" y="152">3</text></svg></div>
+    <div>
+      <div class="box ok hide"><h3>∠2 — різносторонній до ∠1</h3><p class="big" style="margin:0">Різносторонні кути рівні: <b class="ans">∠2 = 65°</b></p></div>
+      <div class="box pen hide" style="margin-top:clamp(6px,1vw,12px)"><h3>∠3 — односторонній до ∠1</h3><p class="big" style="margin:0">Сума односторонніх 180°: <b class="ans">∠3 = 115°</b></p></div>
+      <div class="box play hide" style="margin-top:clamp(6px,1vw,12px)"><p style="margin:0">Ці два факти — <b>різносторонні рівні, односторонні дають 180°</b> — сьогодні доводять усі властивості паралелограма.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="Означення паралелограма">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — означення й малюнок</span></div>
+  <p class="eyebrow">Означення</p>
+  <h2>Паралелограм — чотирикутник, у якого протилежні сторони попарно паралельні</h2>
+  <div class="row c21">
+    <div class="box pen">
+      <p class="eqn" style="margin:0"><span class="m">AB</span> ∥ <span class="m">CD</span>, &nbsp; <span class="m">AD</span> ∥ <span class="m">BC</span></p>
+      <p style="margin:10px 0 0">«Попарно» — означає <b>обидві</b> пари: і верх з низом, і ліва сторона з правою.</p>
+      <p class="hide" style="margin:10px 0 0;color:var(--soft)">Назва грецька: «паралелос» — паралельний, «грамма» — лінія. Термін, імовірно, ввів Евклід близько 300 р. до н. е.</p>
+    </div>
+    <div class="fig"><svg viewBox="0 0 350 205"><path d="M40 175 L100 45 L310 45 L250 175 Z"/><text x="18" y="183">A</text><text x="90" y="35">B</text><text x="318" y="35">C</text><text x="258" y="183">D</text></svg><div class="cap">Мал. 2.1 · паралелограм ABCD</div></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="№ 2.1 — усно" data-timer="90">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат — номери малюнків</span></div>
+  <p class="eyebrow">№ 2.1 (ст. 21) · усно</p>
+  <h2>Які з чотирикутників — паралелограми?</h2>
+  <div class="row c6"><div class="fig"><svg viewBox="0 0 130 150"><path d="M20 35 L110 35 L110 125 L20 125 Z"/></svg><div class="cap">Мал. 2.9</div></div><div class="fig"><svg viewBox="0 0 130 150"><path d="M10 125 L40 45 L80 45 L125 125 Z"/></svg><div class="cap">Мал. 2.10</div></div><div class="fig"><svg viewBox="0 0 130 150"><path d="M35 15 L120 140 L95 135 L15 50 Z"/></svg><div class="cap">Мал. 2.11</div></div><div class="fig"><svg viewBox="0 0 130 150"><path d="M30 20 L100 20 L100 130 L30 130 Z"/></svg><div class="cap">Мал. 2.12</div></div><div class="fig"><svg viewBox="0 0 130 150"><path d="M10 125 L45 30 L125 30 L90 125 Z"/></svg><div class="cap">Мал. 2.13</div></div><div class="fig"><svg viewBox="0 0 130 150"><path d="M20 60 L110 15 L110 130 L20 130 Z"/></svg><div class="cap">Мал. 2.14</div></div></div>
+  <div class="timerslot"></div>
+  <div class="row c2 hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <div class="box ok"><h3>Паралелограми</h3><p style="margin:0"><b class="ans">Мал. 2.9, 2.12, 2.13</b> — обидві пари протилежних сторін паралельні.</p></div>
+    <div class="box warn"><h3>Ні</h3><p style="margin:0"><b>2.10</b> і <b>2.14</b> — паралельна лише одна пара; <b>2.11</b> — жодної.</p></div>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(6px,1vw,12px)">
+    <p style="margin:0">Квадрат і прямокутник — <b>теж паралелограми</b>, просто особливі. Про них — окремі уроки.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="Властивості 1–2">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — властивості</span></div>
+  <p class="eyebrow">Властивості паралелограма · 1 і 2</p>
+  <h2>Сусідні кути разом дають 180°</h2>
+  <div class="row c21">
+    <div>
+      <div class="box pen">
+        <h3>Властивість 1</h3>
+        <p class="big" style="margin:0">Сума будь-яких <b>двох сусідніх</b> кутів паралелограма дорівнює <b>180°</b>.</p>
+      </div>
+      <div class="box hide" style="margin-top:clamp(6px,1vw,12px)">
+        <h3>Чому</h3>
+        <p style="margin:0">∠<span class="m">A</span> і ∠<span class="m">B</span> — <b>односторонні</b> кути при паралельних <span class="m">AD</span> і <span class="m">BC</span> та січній <span class="m">AB</span>. А сума односторонніх — 180°, як на розминці.</p>
+      </div>
+      <div class="box ok hide" style="margin-top:clamp(6px,1vw,12px)">
+        <h3>Властивість 2</h3>
+        <p style="margin:0">Паралелограм — <b>опуклий</b>: кожен кут менший за 180°, бо разом із сусіднім дає рівно 180°.</p>
+      </div>
+    </div>
+    <div class="fig" style="align-self:center"><svg viewBox="0 0 350 205"><path d="M40 175 L100 45 L310 45 L250 175 Z"/><text x="18" y="183">A</text><text x="90" y="35">B</text><text x="318" y="35">C</text><text x="258" y="183">D</text></svg><div class="cap">∠A + ∠B = 180°, ∠B + ∠C = 180°</div></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="Властивість 3">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — властивість</span></div>
+  <p class="eyebrow">Властивість 3 · з доведенням</p>
+  <h2>Протилежні сторони рівні, протилежні кути рівні</h2>
+  <div class="row c21">
+    <div>
+      <div class="box pen"><p class="eqn" style="margin:0"><span class="m">AB</span> = <span class="m">CD</span>, &nbsp;<span class="m">BC</span> = <span class="m">AD</span><br>∠<span class="m">A</span> = ∠<span class="m">C</span>, &nbsp;∠<span class="m">B</span> = ∠<span class="m">D</span></p></div>
+      <div class="box hide" style="margin-top:clamp(6px,1vw,12px)">
+        <p class="step" style="margin:0">1) Діагональ <span class="m">AC</span> ділить паралелограм на △<span class="m">ABC</span> і △<span class="m">CDA</span>. <span class="m">AC</span> — спільна.</p>
+        <p class="step" style="margin:4px 0 0">2) ∠<span class="m">CAD</span> = ∠<span class="m">ACB</span>, ∠<span class="m">CAB</span> = ∠<span class="m">ACD</span> — <b>різносторонні</b>.</p>
+      </div>
+      <div class="box ok hide" style="margin-top:clamp(6px,1vw,12px)">
+        <p class="step" style="margin:0">3) △<span class="m">ABC</span> = △<span class="m">CDA</span> за стороною і двома прилеглими кутами → <span class="m">AB</span> = <span class="m">CD</span>, <span class="m">BC</span> = <span class="m">AD</span>, ∠<span class="m">B</span> = ∠<span class="m">D</span>.</p>
+      </div>
+    </div>
+    <div class="fig" style="align-self:center"><svg viewBox="0 0 350 205"><path d="M40 175 L100 45 L310 45 L250 175 Z"/><text x="18" y="183">A</text><text x="90" y="35">B</text><text x="318" y="35">C</text><text x="258" y="183">D</text><line class="hl" x1="40" y1="175" x2="310" y2="45"/><path d="M70 175 A30 30 0 0 0 67 162"/><path d="M280 45 A30 30 0 0 0 283 58"/><path d="M77.8 156.8 A42 42 0 0 0 57.6 136.9"/><path d="M83.2 154.2 A48 48 0 0 0 60.1 131.4"/><path d="M272.2 63.2 A42 42 0 0 0 292.4 83.1"/><path d="M266.8 65.8 A48 48 0 0 0 289.9 88.6"/></svg><div class="cap">Мал. 2.2 · однакові дужки — рівні кути</div></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="Властивості 4–5">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — властивості</span></div>
+  <p class="eyebrow">Властивості паралелограма · 4 і 5</p>
+  <h2>Периметр і діагоналі</h2>
+  <div class="row c21">
+    <div>
+      <div class="box pen">
+        <h3>Властивість 4</h3>
+        <p class="eqn" style="margin:0">P = 2(<span class="m">AB</span> + <span class="m">BC</span>)</p>
+        <p style="margin:6px 0 0">Протилежні сторони рівні — тож досить знати <b>дві сусідні</b>.</p>
+      </div>
+      <div class="box ok" style="margin-top:clamp(6px,1vw,12px)">
+        <h3>Властивість 5</h3>
+        <p class="big" style="margin:0">Діагоналі точкою перетину <b>діляться навпіл</b>:</p>
+        <p class="eqn" style="margin:4px 0 0"><span class="m">AO</span> = <span class="m">OC</span>, &nbsp;<span class="m">BO</span> = <span class="m">OD</span></p>
+      </div>
+      <div class="box warn hide" style="margin-top:clamp(6px,1vw,12px)">
+        <p style="margin:0">Навпіл ділиться <b>кожна</b> діагональ, але самі діагоналі між собою <b>не рівні</b>: <span class="m">AC</span> ≠ <span class="m">BD</span>.</p>
+      </div>
+    </div>
+    <div class="fig" style="align-self:center"><svg viewBox="0 0 350 205"><path d="M40 175 L100 45 L310 45 L250 175 Z"/><text x="18" y="183">A</text><text x="90" y="35">B</text><text x="318" y="35">C</text><text x="258" y="183">D</text><line class="hl" x1="40" y1="175" x2="310" y2="45"/><line class="hl" x1="100" y1="45" x2="250" y2="175"/><line class="hl" x1="104.5" y1="136.2" x2="110.5" y2="148.8"/><line class="hl" x1="239.5" y1="71.2" x2="245.5" y2="83.8"/><line class="hl" x1="139.8" y1="70.2" x2="130.6" y2="80.8"/><line class="hl" x1="144.4" y1="74.2" x2="135.2" y2="84.8"/><line class="hl" x1="214.8" y1="135.2" x2="205.6" y2="145.8"/><line class="hl" x1="219.4" y1="139.2" x2="210.2" y2="149.8"/><circle class="pt" cx="175" cy="110" r="4.5"/><text x="169" y="138">O</text></svg><div class="cap">Мал. 2.3 · однакові рисочки — рівні відрізки</div></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="№ 2.4–2.6 — усно" data-timer="150">
+  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат — числа</span></div>
+  <p class="eyebrow">№ 2.4, 2.5, 2.6 (ст. 21–22) · усно</p>
+  <h2>Одразу за властивостями</h2>
+  <div class="row c3">
+    <div class="box"><h3>№ 2.4</h3><p style="margin:0">Одна сторона — <b>6 см</b>. Яка протилежна?</p>
+      <p class="hide big" style="margin:8px 0 0"><b class="ans">6 см</b></p></div>
+    <div class="box"><h3>№ 2.5</h3><p style="margin:0">Один кут — <b>50°</b>. Знайдіть інші.</p>
+      <p class="hide big" style="margin:8px 0 0"><b class="ans">130°, 50°, 130°</b></p></div>
+    <div class="box"><h3>№ 2.6</h3><p style="margin:0">Один кут — <b>110°</b>. Знайдіть кути.</p>
+      <p class="hide big" style="margin:8px 0 0"><b class="ans">110°, 70°, 110°, 70°</b></p></div>
+  </div>
+  <div class="box play hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p class="big" style="margin:0">У паралелограма лише <b>два різні</b> кути: протилежні рівні, сусідні дають 180°.</p>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="№ 2.7 і 2.14 — у зошит" data-timer="300">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
+  <p class="eyebrow">№ 2.7 і № 2.14 (ст. 22) · периметр</p>
+  <h2>Периметр і сторони</h2>
+  <div class="row c3">
+    <div class="box">
+      <h3>№ 2.7</h3>
+      <p style="margin:0">Одна сторона 12 см, друга — на 3 см більша. Знайдіть периметр.</p>
+      <div class="hide"><p class="step" style="margin:8px 0 0">12 + 3 = 15 (см)</p><p class="step" style="margin:2px 0 0">P = 2(12 + 15) = <b class="ans">54 см</b></p></div>
+    </div>
+    <div class="box">
+      <h3>№ 2.14 (1)</h3>
+      <p style="margin:0">P = 40 см, одна сторона на 4 см більша за другу. Знайдіть сторони.</p>
+      <div class="hide"><p class="step" style="margin:8px 0 0">Півпериметр: 40 : 2 = 20</p><p class="step" style="margin:2px 0 0"><span class="m">x</span> + <span class="m">x</span> + 4 = 20 → <span class="m">x</span> = 8</p><p class="step" style="margin:2px 0 0"><b class="ans">8 см і 12 см</b></p></div>
+    </div>
+    <div class="box">
+      <h3>№ 2.14 (2)</h3>
+      <p style="margin:0">P = 40 см, сторони відносяться як 3 : 7.</p>
+      <div class="hide"><p class="step" style="margin:8px 0 0">20 : (3 + 7) = 2 — одна частина</p><p class="step" style="margin:2px 0 0">3 · 2 = 6, &nbsp;7 · 2 = 14</p><p class="step" style="margin:2px 0 0"><b class="ans">6 см і 14 см</b></p></div>
+    </div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p style="margin:0">Найчастіша помилка: ділити на частини <b>весь периметр</b> 40, а не півпериметр 20. Дві сусідні сторони — це лише <b>половина</b> периметра.</p>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <div class="modes"><span class="mode away"><span class="dot"></span>Відводимо очі від екрана</span></div>
+  <h2>Хвилина відпочинку</h2>
+  <div class="row c3">
+    <div class="box play"><h3>1</h3><p style="margin:0">Подивись у вікно на найдальшу точку — <b>20 секунд</b>.</p></div>
+    <div class="box play"><h3>2</h3><p style="margin:0">«Намалюй» очима паралелограм: вершини по черзі — <b>A, B, C, D</b>.</p></div>
+    <div class="box play"><h3>3</h3><p style="margin:0">Розправ плечі й покрути головою — повільно.</p></div>
+  </div>
+  <div class="timerslot"></div>
+  <p class="lede" style="margin-top:clamp(8px,1.3vw,16px)">Далі — бісектриса, висота й ознаки паралелограма.</p>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="Приклад 1 — бісектриса">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — зразок</span></div>
+  <p class="eyebrow">Приклад 1 (ст. 19) · розбираємо разом</p>
+  <h2><span class="m">AK</span> — бісектриса кута <span class="m">A</span>, <span class="m">BK</span> = 5 см, <span class="m">KC</span> = 3 см. Знайдіть периметр</h2>
+  <div class="row c21">
+    <div>
+      <div class="box hide">
+        <p class="step" style="margin:0">1) <span class="m">BC</span> = 5 + 3 = <b>8 см</b></p>
+        <p class="step" style="margin:4px 0 0">2) ∠<span class="m">KAD</span> = ∠<span class="m">BKA</span> — різносторонні при <span class="m">AD</span> ∥ <span class="m">BC</span></p>
+      </div>
+      <div class="box pen hide" style="margin-top:clamp(6px,1vw,12px)">
+        <p class="step" style="margin:0">3) ∠<span class="m">KAD</span> = ∠<span class="m">KAB</span> — бо <span class="m">AK</span> бісектриса. Отже ∠<span class="m">BKA</span> = ∠<span class="m">KAB</span></p>
+        <p class="step" style="margin:4px 0 0">→ △<span class="m">ABK</span> <b>рівнобедрений</b>, <span class="m">AB</span> = <span class="m">BK</span> = 5 см</p>
+      </div>
+      <div class="box ok hide" style="margin-top:clamp(6px,1vw,12px)">
+        <p class="step" style="margin:0">4) P = 2(5 + 8) = <b class="ans">26 см</b></p>
+      </div>
+    </div>
+    <div class="fig" style="align-self:center"><svg viewBox="0 0 350 205"><path d="M40 175 L100 45 L310 45 L250 175 Z"/><text x="18" y="183">A</text><text x="90" y="35">B</text><text x="318" y="35">C</text><text x="258" y="183">D</text><line class="hl" x1="40" y1="175" x2="250" y2="45"/><text x="244" y="35">K</text><path d="M70 175 A30 30 0 0 0 65.5 159.2"/><path d="M72.3 155 A38 38 0 0 0 55.9 140.5"/><path d="M227.9 58.7 A26 26 0 0 1 224 45"/><text class="n" x="170" y="34">5</text><text class="n" x="276" y="34">3</text></svg><div class="cap">Мал. 2.4</div></div>
+  </div>
+  <div class="box play hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p style="margin:0">Запамʼятай прийом: <b>бісектриса кута паралелограма відтинає рівнобедрений трикутник</b>. Він ще не раз знадобиться.</p>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="Висота паралелограма">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — означення</span></div>
+  <p class="eyebrow">Означення</p>
+  <h2>Висота — перпендикуляр з точки сторони до прямої, що містить протилежну сторону</h2>
+  <div class="row c2">
+    <div class="fig"><svg viewBox="0 0 350 205"><path d="M40 175 L100 45 L310 45 L250 175 Z"/><text x="18" y="183">A</text><text x="90" y="35">B</text><text x="318" y="35">C</text><text x="258" y="183">D</text><line class="hl" x1="140" y1="45" x2="140" y2="175"/><path class="hl" d="M140 161 L154 161 L154 175"/><text x="132" y="34">M</text><text x="132" y="198">N</text></svg><div class="cap">Мал. 2.5 · MN ⟂ AD, MN ⟂ BC</div></div>
+    <div class="fig"><svg viewBox="0 0 350 205"><path d="M40 175 L100 45 L310 45 L250 175 Z"/><text x="18" y="183">A</text><text x="90" y="35">B</text><text x="318" y="35">C</text><text x="258" y="183">D</text><line class="hl" x1="100" y1="45" x2="100" y2="175"/><line class="hl" x1="100" y1="45" x2="273.1" y2="124.9"/><path class="hl" d="M100 161 L114 161 L114 175"/><text x="94" y="198">F</text><text x="281.1" y="132.9">T</text></svg><div class="cap">Мал. 2.6 · BF і BT — дві висоти з вершини B</div></div>
+  </div>
+  <div class="box note hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p style="margin:0">З кожної вершини можна провести <b>дві</b> висоти — до кожної з протилежних сторін. Висота може виходити не з вершини, а з будь-якої точки сторони, як <span class="m">MN</span>.</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="Ознаки паралелограма">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — теорема</span></div>
+  <p class="eyebrow">Теорема (ст. 20) · ознаки</p>
+  <h2>Як довести, що чотирикутник — паралелограм</h2>
+  <p class="lede">Властивість: «паралелограм → має …». Ознака — навпаки: «має … → паралелограм». Досить <b>однієї</b> з чотирьох:</p>
+  <div class="row c2" style="margin-top:clamp(6px,1vw,12px)">
+    <div class="box pen"><h3>Ознака 1</h3><p style="margin:0">Дві сторони <b>рівні й паралельні</b>.</p></div>
+    <div class="box pen"><h3>Ознака 2</h3><p style="margin:0">Протилежні сторони <b>попарно рівні</b>.</p></div>
+    <div class="box pen"><h3>Ознака 3</h3><p style="margin:0">Діагоналі перетинаються і точкою перетину <b>діляться навпіл</b>.</p></div>
+    <div class="box pen"><h3>Ознака 4</h3><p style="margin:0">Протилежні кути <b>попарно рівні</b>.</p></div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p style="margin:0">В ознаці 1 потрібні <b>обидві</b> умови про <b>ту саму пару</b> сторін. Лише «дві сторони паралельні» — може бути трапеція (мал. 2.10).</p>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="№ 2.13 — знайди помилку" data-timer="150">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос — пояснюємо</span></div>
+  <p class="eyebrow">№ 2.13 (ст. 22) · усно</p>
+  <h2>Кожен малюнок нібито паралелограм. Де помилка?</h2>
+  <div class="row c3">
+    <div>
+      <div class="fig"><svg viewBox="0 0 260 170"><path d="M20 150 L70 30 L240 30 L190 150 Z"/><line class="hl" x1="70" y1="30" x2="190" y2="150"/><text class="n" x="86" y="56">50°</text><text class="n" x="138" y="144">45°</text></svg><div class="cap">Мал. 2.15</div></div>
+      <p class="hide" style="margin:8px 0 0">50° і 45° — <b>різносторонні</b> кути при діагоналі, мають бути <b>рівні</b>.</p>
+    </div>
+    <div>
+      <div class="fig"><svg viewBox="0 0 260 170"><path d="M20 150 L70 30 L240 30 L190 150 Z"/><line class="hl" x1="70" y1="30" x2="190" y2="150"/><line class="hl" x1="20" y1="150" x2="240" y2="30"/><text class="n" x="88" y="76">5</text><text class="n" x="160" y="66">7</text><text class="n" x="78" y="128">7</text><text class="n" x="158" y="118">4</text></svg><div class="cap">Мал. 2.16</div></div>
+      <p class="hide" style="margin:8px 0 0">На одній діагоналі відрізки <b>5 і 4</b> — а діагоналі мають ділитися <b>навпіл</b>.</p>
+    </div>
+    <div>
+      <div class="fig"><svg viewBox="0 0 260 170"><path d="M20 150 L70 30 L240 30 L190 150 Z"/><text class="n" x="76" y="56">130°</text><text class="n" x="196" y="56">60°</text><text class="n" x="34" y="144">60°</text><text class="n" x="140" y="144">130°</text></svg><div class="cap">Мал. 2.17</div></div>
+      <p class="hide" style="margin:8px 0 0">Сусідні кути 130° + 60° = <b>190°</b>, а мають дати <b>180°</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-t="№ 2.9 — прізвище" data-timer="300">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Слово — у чат</span></div>
+  <p class="eyebrow">№ 2.9 (ст. 22) · розгадай прізвище</p>
+  <h2>Знайдіть ∠<span class="m">A</span> і ∠<span class="m">B</span> паралелограма <span class="m">ABCD</span> — і прочитайте прізвище видатної української математикині</h2>
+  <div class="tbl">
+    <table>
+      <tr><th>Умова</th><th>∠A</th><th>∠B</th></tr>
+      <tr><td>∠A + ∠C = 120°</td><td class="n">І = <span class="hide">60°</span></td><td class="n">К = <span class="hide">120°</span></td></tr>
+      <tr><td>кут A на 20° більший за кут B</td><td class="n">Е = <span class="hide">100°</span></td><td class="n">Ч = <span class="hide">80°</span></td></tr>
+      <tr><td>кут A утричі менший від кута B</td><td class="n">В = <span class="hide">45°</span></td><td class="n">О = <span class="hide">135°</span></td></tr>
+      <tr><td>∠A : ∠B = 3 : 2</td><td class="n">Н = <span class="hide">108°</span></td><td class="n">Р = <span class="hide">72°</span></td></tr>
+    </table>
+  </div>
+  <div class="lt" style="margin-top:clamp(8px,1.3vw,16px)"><div><div class="v">45°</div><div class="l"><span class="hide">В</span></div></div><div><div class="v">60°</div><div class="l"><span class="hide">І</span></div></div><div><div class="v">72°</div><div class="l"><span class="hide">Р</span></div></div><div><div class="v">80°</div><div class="l"><span class="hide">Ч</span></div></div><div><div class="v">100°</div><div class="l"><span class="hide">Е</span></div></div><div><div class="v">108°</div><div class="l"><span class="hide">Н</span></div></div><div><div class="v">120°</div><div class="l"><span class="hide">К</span></div></div><div><div class="v">135°</div><div class="l"><span class="hide">О</span></div></div></div>
+  <div class="box ok hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p style="margin:0"><b>Ніна Опанасівна Вірченко</b> — докторка фізико-математичних наук, професорка КПІ, авторка сотень наукових праць. Хто знайде про неї цікавий факт — розкаже на наступному уроці.</p>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-t="Підсумок">
+  <p class="eyebrow">Підсумок</p>
+  <h2>Що маємо знати після цього уроку</h2>
+  <div class="row c2">
+    <div class="box pen"><h3>Означення</h3><p style="margin:0">Протилежні сторони <b>попарно паралельні</b>.</p></div>
+    <div class="box ok"><h3>Властивості</h3><p style="margin:0">Сусідні кути — 180°; протилежні сторони й кути рівні; P = 2(a + b); діагоналі діляться навпіл.</p></div>
+    <div class="box note"><h3>Висота</h3><p style="margin:0">Перпендикуляр до прямої протилежної сторони. З вершини — дві.</p></div>
+    <div class="box play"><h3>Ознаки</h3><p style="margin:0">Рівні й паралельні · попарно рівні сторони · діагоналі навпіл · попарно рівні кути.</p></div>
+  </div>
+  <div class="box warn hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p class="big" style="margin:0">Одна відповідь у чат: <b>кут паралелограма 35°. Чому дорівнює сусідній?</b></p>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-t="Домашнє завдання">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо в щоденник</span></div>
+  <p class="eyebrow">Домашнє завдання</p>
+  <h2>§ 2, ст. 18–21 · № 2.10 і № 2.18 (ст. 22–23)</h2>
+  <div class="row c2">
+    <div class="box">
+      <h3>№ 2.10 — як № 2.9 на уроці</h3>
+      <p style="margin:0">Знайдіть усі кути паралелограма, якщо:</p>
+      <p class="step" style="margin:6px 0 0">1) сума двох з них 200°;<br>2) один на 40° менший від другого;<br>3) один удвічі більший за другий;<br>4) градусні міри двох відносяться як 4 : 5.</p>
+    </div>
+    <div class="box">
+      <h3>№ 2.18 — доведення</h3>
+      <p style="margin:0">△<span class="m">ABC</span> = △<span class="m">CDA</span> (мал. 2.18). Доведіть, що <span class="m">ABCD</span> — паралелограм.</p>
+      <div class="fig" style="margin-top:8px;border:0;padding:0"><svg viewBox="0 0 350 205"><path d="M40 175 L100 45 L310 45 L250 175 Z"/><text x="18" y="183">A</text><text x="90" y="35">B</text><text x="318" y="35">C</text><text x="258" y="183">D</text><line class="hl" x1="40" y1="175" x2="310" y2="45"/><text class="n" x="72" y="150">3</text><text class="n" x="92" y="170">2</text><text class="n" x="268" y="64">1</text><text class="n" x="284" y="86">4</text></svg></div>
+    </div>
+  </div>
+  <div class="box pen" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p style="margin:0">У № 2.10 (1) подумай: <b>сусідні</b> кути не можуть дати 200°, тож це протилежні. У № 2.18 випиши, які <b>сторони</b> рівні з рівності трикутників, — і знайди потрібну ознаку.</p>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-t="Переходимо на алгебру">
+  <h1>Дякую за роботу!</h1>
+  <p class="lede" style="margin-top:clamp(10px,1.6vw,20px)">Наступного уроку геометрії — ще один урок про паралелограм: задачі на властивості й ознаки.</p>
+  <div class="row c2" style="margin-top:clamp(12px,2vw,26px)">
+    <div class="box play"><h3>Зараз</h3><p style="margin:0">Закрий зошит з геометрії й <b>не виходь</b> з уроку — переходимо на алгебру.</p></div>
+    <div class="box pen"><h3>Приготуй</h3><p style="margin:0">Зошит з <b>алгебри</b> і підручник на <b>ст. 10</b>.</p></div>
+  </div>
+</section>
+
+</div>
+<div id="bar">
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Попередній слайд">←</button>
+    <button id="next" type="button" aria-label="Далі">→</button>
+  </div>
+  <div id="rail" aria-hidden="true"></div>
+  <div id="tip">пробіл — показати відповідь</div>
+  <div id="count">1 / 20</div>
+  <button id="fs" type="button" aria-label="На весь екран">⛶</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('rail');
+  var count = document.getElementById('count');
+  var tip = document.getElementById('tip');
+  var cur = 0, tick = null;
+
+  slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
+  var cells = [].slice.call(rail.children);
+
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
+    var slot = s.querySelector('.timerslot');
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
+    var total = parseInt(s.dataset.timer, 10);
+    var box = document.createElement('div');
+    box.className = 'timer';
+    box.innerHTML =
+      '<div class="clock"></div>' +
+      '<div class="track"><div class="fill"></div></div>' +
+      '<div class="lab"></div>' +
+      '<button type="button" class="go"></button>';
+    slot.appendChild(box);
+    box.dataset.total = total;
+    box.dataset.left = total;
+    box.dataset.run = '0';
+  });
+
+  function fmt(sec){
+    sec = Math.max(0, sec);
+    return Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2);
+  }
+
+  function drawTimer(box){
+    var total = +box.dataset.total, left = +box.dataset.left, run = box.dataset.run === '1';
+    box.querySelector('.clock').textContent = fmt(left);
+    box.querySelector('.fill').style.width = (100 * left / total) + '%';
+    box.classList.toggle('warn', left > 0 && left <= 30);
+    box.classList.toggle('over', left === 0);
+    box.querySelector('.lab').textContent =
+      left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
+    box.querySelector('.go').textContent =
+      left === 0 ? 'Ще раз' : (run ? 'Пауза' : 'Почати');
+  }
+
+  function stopTick(){ if(tick){ clearInterval(tick); tick = null; } }
+
+  function toggleTimer(box){
+    if(box.dataset.run === '1'){
+      box.dataset.run = '0'; stopTick(); drawTimer(box); return;
+    }
+    if(+box.dataset.left === 0){ box.dataset.left = box.dataset.total; }
+    box.dataset.run = '1';
+    stopTick();
+    tick = setInterval(function(){
+      var left = +box.dataset.left - 1;
+      box.dataset.left = Math.max(0, left);
+      if(left <= 0){ box.dataset.run = '0'; stopTick(); }
+      drawTimer(box);
+    }, 1000);
+    drawTimer(box);
+  }
+
+  function resetTimer(s){
+    var box = s.querySelector('.timer');
+    if(!box) return;
+    box.dataset.left = box.dataset.total;
+    box.dataset.run = '0';
+    drawTimer(box);
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.timer .go') : null;
+    if(!b) return;
+    e.stopPropagation();
+    toggleTimer(b.parentNode);
+  }, true);
+
+  /* ---- показ відповідей і навігація ---- */
+  function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
+  function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
+
+  var sheet = document.getElementById('sheet');
+  function fit(){
+    var s = slides[cur];
+    s.style.zoom = '';
+    var cs = getComputedStyle(sheet);
+    var avail = sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var h = s.scrollHeight;
+    if(avail > 0 && h > avail){
+      s.style.zoom = Math.max(0.5, Math.floor(100 * avail / h) / 100);
+    }
+  }
+
+  function paint(){
+    cells.forEach(function(c, i){
+      c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
+    });
+    count.textContent = (cur + 1) + ' / ' + slides.length;
+    tip.classList.toggle('on', hidden(cur).length > 0);
+    fit();
+  }
+
+  var rt = null;
+  window.addEventListener('resize', function(){
+    if(rt) clearTimeout(rt);
+    rt = setTimeout(fit, 120);
+  });
+
+  function go(i, revealAll){
+    if(i < 0 || i >= slides.length) return;
+    stopTick();
+    resetTimer(slides[cur]);
+    slides[cur].classList.remove('on');
+    cur = i;
+    var s = slides[cur];
+    s.classList.add('on');
+    [].slice.call(s.querySelectorAll('.hide')).forEach(function(el){
+      el.classList.toggle('on', !!revealAll);
+    });
+    resetTimer(s);
+    window.scrollTo(0, 0);
+    paint();
+  }
+
+  function next(){
+    var h = hidden(cur);
+    if(h.length){ h[0].classList.add('on'); paint(); return; }
+    go(cur + 1, false);
+  }
+
+  function prev(){
+    var s = shown(cur);
+    if(s.length){ s[s.length - 1].classList.remove('on'); paint(); return; }
+    go(cur - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else { document.documentElement.requestFullscreen(); }
+  });
+
+  document.getElementById('sheet').addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('button')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'ArrowRight' || e.code === 'Space' || e.code === 'PageDown' || e.code === 'Enter'){
+      e.preventDefault(); next();
+    } else if(e.code === 'ArrowLeft' || e.code === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(e.code === 'Home'){ go(0, false); }
+    else if(e.code === 'End'){ go(slides.length - 1, true); }
+    else if(e.code === 'KeyT'){
+      var box = slides[cur].querySelector('.timer');
+      if(box){ e.preventDefault(); toggleTimer(box); }
+    }
+    else if(e.code === 'KeyF'){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  slides.forEach(resetTimer);
+  paint();
+})();
+</script>
+
+</body>
+</html>

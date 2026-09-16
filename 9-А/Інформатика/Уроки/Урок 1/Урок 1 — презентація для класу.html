@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Знайомство. Обираємо, що вчимо цього року</title>
+<title>Як бачить око і як «бачить» машина</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>
 :root{
@@ -17,6 +17,7 @@
   --note:#6B4FA8; --note-soft:#EFEAFA;
   --edge:#DDE4EC;
   --cell:30px;
+  --u:min(1vw,1.55vh);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -54,26 +55,26 @@ body{
 }
 
 #stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
-#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vw,40px) clamp(14px,4vw,56px) 96px}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(10px,1.7vh,26px) clamp(14px,4vw,56px) 84px}
 .slide{display:none;width:100%;max-width:1180px}
 .slide.on{display:block;animation:in .3s ease-out both}
 @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
 h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-   font-size:clamp(29px,5.2vw,64px);line-height:1.06;letter-spacing:-.02em;margin:0;text-wrap:balance}
+   font-size:clamp(24px,calc(4.3*var(--u)),46px);line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
 h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(23px,3.7vw,44px);line-height:1.14;letter-spacing:-.015em;margin:0 0 clamp(14px,2vw,26px);text-wrap:balance}
+   font-size:clamp(20px,calc(3.1*var(--u)),33px);line-height:1.16;letter-spacing:-.015em;margin:0 0 clamp(9px,1.4vw,16px);text-wrap:balance}
 .eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(11px,1.15vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 12px}
-p{margin:0 0 14px;font-size:clamp(16px,1.95vw,26px);line-height:1.5}
+   font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 8px}
+p{margin:0 0 10px;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.45}
 p:last-child{margin-bottom:0}
-.lede{font-size:clamp(18px,2.4vw,31px);color:var(--soft);line-height:1.4}
+.lede{font-size:clamp(16px,calc(2.05*var(--u)),24px);color:var(--soft);line-height:1.4}
 b,strong{font-weight:800}
-ul,ol{margin:0;padding-left:1.3em;font-size:clamp(16px,1.95vw,26px);line-height:1.45}
-li{margin:.5em 0}
+ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px);line-height:1.4}
+li{margin:.34em 0}
 li::marker{color:var(--pen)}
 
-.row{display:grid;gap:clamp(12px,1.7vw,22px)}
+.row{display:grid;gap:clamp(9px,1.3vw,16px)}
 .c2{grid-template-columns:1fr 1fr}
 .c3{grid-template-columns:repeat(3,1fr)}
 .c4{grid-template-columns:repeat(4,1fr)}
@@ -81,23 +82,23 @@ li::marker{color:var(--pen)}
 @media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
 
 .box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
-     padding:clamp(14px,2vw,26px);box-shadow:0 1px 0 var(--edge)}
+     padding:clamp(11px,1.5vw,18px);box-shadow:0 1px 0 var(--edge)}
 .box.pen{border-color:var(--pen);background:var(--pen-soft)}
 .box.ok{border-color:var(--check);background:var(--check-soft)}
 .box.warn{border-color:var(--marker);background:var(--marker-soft)}
 .box.play{border-color:var(--sun);background:var(--sun-soft)}
 .box.note{border-color:var(--note);background:var(--note-soft)}
 .box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(12px,1.25vw,16px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 10px}
+   font-size:clamp(11px,calc(1.1*var(--u)),14px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 7px}
 .box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
 .box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
 
 /* ---------- смужка «як відповідаємо» ---------- */
-.modes{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(12px,1.7vw,20px)}
+.modes{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 clamp(8px,1.2vw,14px)}
 .mode{display:inline-flex;align-items:center;gap:8px;
   font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(11px,1.15vw,15px);letter-spacing:.08em;text-transform:uppercase;
-  border:2px solid;border-radius:4px;padding:8px 12px;background:var(--card);white-space:nowrap}
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:6px 10px;background:var(--card);white-space:nowrap}
 .mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
 .mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
 .mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
@@ -108,13 +109,13 @@ li::marker{color:var(--pen)}
 /* ---------- таймер ---------- */
 .timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
   border:2px solid var(--edge);border-radius:6px;background:var(--card);
-  padding:clamp(10px,1.3vw,16px) clamp(12px,1.6vw,20px);margin:clamp(12px,1.7vw,20px) 0}
+  padding:clamp(8px,1vw,12px) clamp(10px,1.3vw,16px);margin:clamp(9px,1.3vw,15px) 0}
 .timerslot:empty{display:none}
 .timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
-  font-size:clamp(26px,3.6vw,48px);line-height:1;min-width:3.6ch}
+  font-size:clamp(21px,calc(2.9*var(--u)),35px);line-height:1;min-width:3.6ch}
 .timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
 .timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
-.timer .lab{font-size:clamp(13px,1.35vw,17px);color:var(--soft);white-space:nowrap}
+.timer .lab{font-size:clamp(12px,calc(1.2*var(--u)),15px);color:var(--soft);white-space:nowrap}
 .timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
 .timer.over{border-color:var(--marker);background:var(--marker-soft)}
 .timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
@@ -126,7 +127,7 @@ li::marker{color:var(--pen)}
   font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
   background:var(--card);padding:clamp(6px,.9vw,12px) 0}
 .lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
-.lamp .w{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.lamp .w{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
 .cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
 .cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
   border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
@@ -137,26 +138,26 @@ li::marker{color:var(--pen)}
 
 /* ---------- цифри ---------- */
 .num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
-.big{font-size:clamp(22px,3.3vw,42px);line-height:1.45}
+.big{font-size:clamp(17px,calc(2.35*var(--u)),27px);line-height:1.4}
 .huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-      font-size:clamp(32px,5.8vw,80px);line-height:1.1;letter-spacing:-.02em}
+      font-size:clamp(23px,calc(4*var(--u)),44px);line-height:1.12;letter-spacing:-.02em}
 .ans{color:var(--check);font-weight:800}
 .tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
 .tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
       border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
 .tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
          font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
-.tile .lab{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile .lab{font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft);margin-top:6px;line-height:1.25}
 .tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
-.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.4vw,20px)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.1vw,15px)}
 .klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(11px,1.15vw,15px);letter-spacing:.14em;text-transform:uppercase;
+   font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
    color:var(--soft);text-align:center;margin-bottom:8px}
 
 .tbl{width:100%;overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:clamp(14px,1.8vw,24px)}
-th,td{border:2px solid var(--edge);padding:clamp(8px,1.05vw,15px);text-align:left;background:var(--card)}
-th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(11px,1.15vw,15px);
+table{border-collapse:collapse;width:100%;font-size:clamp(13px,calc(1.55*var(--u)),19px)}
+th,td{border:2px solid var(--edge);padding:clamp(6px,.85vw,11px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(10px,calc(1.02*var(--u)),13px);
    letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
 td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
 
@@ -194,7 +195,7 @@ button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(-
   transition:background .15s,border-color .15s}
 button:hover{border-color:var(--pen);background:var(--pen-soft)}
 button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
-.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(13px,1.35vw,17px);white-space:nowrap}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(12px,calc(1.2*var(--u)),15px);white-space:nowrap}
 #tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
 #tip.on{opacity:1}
 @media(max-width:760px){
@@ -206,451 +207,409 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 
-/* ---------- код на Python ---------- */
-.py{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:700;
-  background:var(--card);border:2px solid var(--edge);border-radius:6px;
-  padding:clamp(10px,1.5vw,20px) clamp(12px,1.7vw,22px);
-  font-size:clamp(13px,1.75vw,25px);line-height:1.5;
-  white-space:pre-wrap;overflow-x:auto;margin:0}
-.py.big{font-size:clamp(18px,3vw,42px);text-align:center}
-.py .kw{color:var(--note)}
-.py .st{color:var(--check)}
-.py .nu{color:var(--marker)}
-.py .cm{color:var(--soft);font-weight:400}
-.py .fn{color:var(--pen)}
-.out{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:700;
-  font-size:clamp(18px,2.8vw,38px);line-height:1.4;text-align:center;
-  background:var(--check-soft);border:2px solid var(--check);border-radius:6px;
-  padding:clamp(10px,1.4vw,18px) clamp(12px,1.7vw,22px);
-  white-space:pre-wrap;overflow-x:auto;margin:0;color:var(--check)}
-.arrow{text-align:center;font-size:clamp(18px,2.6vw,34px);color:var(--soft);
-  margin:clamp(6px,1vw,14px) 0;line-height:1}
-.parts{display:grid;gap:clamp(8px,1.1vw,14px)}
-.part{display:grid;grid-template-columns:minmax(110px,auto) 1fr;gap:clamp(10px,1.5vw,20px);align-items:center;
-  border:2px solid var(--edge);border-radius:4px;background:var(--card);
-  padding:clamp(9px,1.2vw,16px) clamp(10px,1.5vw,18px)}
-.part .k{font-family:"JetBrains Mono",monospace;font-weight:700;
-  font-size:clamp(18px,2.5vw,34px);color:var(--pen);text-align:center}
-.part .d{font-size:clamp(14px,1.75vw,24px);line-height:1.4}
-@media(max-width:640px){.part{grid-template-columns:1fr;gap:6px}.part .k{text-align:left}}
-
-/* ---------- шапка з темою уроку ---------- */
+/* ---------- тема уроку — завжди вгорі ---------- */
 #topic{position:sticky;top:0;z-index:6;
-  display:flex;align-items:center;justify-content:space-between;gap:clamp(10px,2vw,28px);
-  padding:clamp(7px,1vw,13px) clamp(12px,2.2vw,26px);
+  display:flex;align-items:baseline;gap:clamp(10px,1.6vw,22px);
+  padding:clamp(6px,.9vw,11px) clamp(14px,4vw,56px);
   background:var(--paper);
   background:color-mix(in srgb, var(--paper) 90%, transparent);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   border-bottom:2px solid var(--edge)}
-#topic .who{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(9px,1vw,13px);letter-spacing:.2em;text-transform:uppercase;
-  color:var(--soft);white-space:nowrap}
-#topic .what{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-  font-size:clamp(11px,1.5vw,19px);line-height:1.15;text-align:right;color:var(--ink)}
-@media(max-width:560px){#topic .who{display:none}#topic .what{text-align:left}}
+#topic .k{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--pen);white-space:nowrap;flex:none}
+#topic .t{flex:1;min-width:0;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.01em;text-wrap:balance}
+@media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
 
-/* ---------- картки-варіанти курсу ---------- */
-.picks{display:grid;gap:clamp(10px,1.4vw,18px);grid-template-columns:1fr 1fr}
-@media(max-width:820px){.picks{grid-template-columns:1fr}}
-.pick{display:grid;grid-template-columns:auto 1fr;gap:clamp(10px,1.5vw,20px);align-items:start;
+/* ---------- урок 1: піксельна сітка ---------- */
+.pixwrap{display:flex;flex-wrap:wrap;gap:clamp(14px,2.4vw,34px);align-items:center;justify-content:center}
+.pix{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;
+  width:clamp(210px,calc(31*var(--u)),400px)}
+.pix i{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-style:normal;
+  font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(9px,calc(1.08*var(--u)),14px);border:1px solid var(--edge);border-radius:2px}
+.pixpic{display:grid;grid-template-columns:repeat(8,1fr);gap:0;
+  width:clamp(118px,calc(17*var(--u)),210px);border:2px solid var(--edge);border-radius:4px;overflow:hidden}
+.pixpic i{aspect-ratio:1;display:block}
+.pcap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,calc(.98*var(--u)),12px);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--soft);text-align:center;margin-top:9px}
+
+/* ---------- код ---------- */
+pre.cd{font-family:"JetBrains Mono",monospace;font-size:clamp(11px,calc(1.42*var(--u)),17px);
+  line-height:1.55;margin:0;white-space:pre;overflow-x:auto;
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);padding:clamp(10px,1.4vw,18px)}
+pre.cd .c{color:var(--soft)}
+pre.cd .k{color:var(--pen);font-weight:700}
+
+/* ---------- маршрут курсу ---------- */
+.route{display:grid;gap:5px}
+.route div{display:flex;align-items:baseline;gap:clamp(8px,1.2vw,14px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);
+  padding:clamp(6px,.85vw,11px) clamp(9px,1.2vw,14px)}
+.route .n{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--pen);flex:none;
+  font-size:clamp(12px,calc(1.5*var(--u)),18px)}
+.route .t{font-size:clamp(12px,calc(1.5*var(--u)),18px);line-height:1.3}
+.route .h{margin-left:auto;font-size:clamp(9px,calc(.98*var(--u)),12px);color:var(--soft);flex:none;white-space:nowrap}
+.route div.now{border-color:var(--pen);background:var(--pen-soft)}
+
+/* ---------- сліпа пляма ---------- */
+.blind{display:flex;align-items:center;justify-content:center;
+  gap:min(8cm,58vw);
   border:2px solid var(--edge);border-radius:6px;background:var(--card);
-  padding:clamp(11px,1.5vw,20px) clamp(12px,1.7vw,22px)}
-.pick .no{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;line-height:1;
-  font-size:clamp(26px,4.2vw,54px);color:var(--soft)}
-.pick .t{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;line-height:1.15;
-  font-size:clamp(15px,2vw,27px);margin:0 0 6px}
-.pick .s{font-size:clamp(13px,1.5vw,21px);line-height:1.35;color:var(--soft);margin:0}
-.pick.k1{border-color:var(--note);background:var(--note-soft)} .pick.k1 .no{color:var(--note)}
-.pick.k2{border-color:var(--pen);background:var(--pen-soft)}   .pick.k2 .no{color:var(--pen)}
-.pick.k3{border-color:var(--check);background:var(--check-soft)}.pick.k3 .no{color:var(--check)}
-.pick.k4{border-color:var(--sun);background:var(--sun-soft)}   .pick.k4 .no{color:var(--sun)}
-
-/* ---------- чипи-мітки ---------- */
-.tags{display:flex;flex-wrap:wrap;gap:7px;margin:clamp(10px,1.4vw,18px) 0 0}
-.tag{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(9px,1.05vw,14px);letter-spacing:.09em;text-transform:uppercase;
-  border:2px solid var(--edge);border-radius:999px;padding:6px 12px;color:var(--soft);background:var(--card)}
-
-/* ---------- шкала складності ---------- */
-.lvl{display:inline-flex;gap:5px;vertical-align:middle;margin-left:8px}
-.lvl i{display:block;width:clamp(10px,1.1vw,15px);height:clamp(10px,1.1vw,15px);
-  border-radius:50%;border:2px solid var(--soft);background:transparent}
-.lvl i.f{background:var(--marker);border-color:var(--marker)}
-
-/* ---------- сходинки теми ---------- */
-.stack{display:grid;gap:clamp(6px,.9vw,11px)}
-.stack > div{display:grid;grid-template-columns:auto 1fr;gap:clamp(10px,1.4vw,18px);align-items:baseline;
-  border-left:5px solid var(--edge);padding:clamp(5px,.7vw,9px) 0 clamp(5px,.7vw,9px) clamp(10px,1.3vw,16px);
-  font-size:clamp(14px,1.7vw,24px);line-height:1.35}
-.stack .n2{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--pen);
-  font-size:clamp(13px,1.5vw,21px)}
-.stack.g > div{border-left-color:var(--check)} .stack.g .n2{color:var(--check)}
-.stack.v > div{border-left-color:var(--note)}  .stack.v .n2{color:var(--note)}
-.stack.y > div{border-left-color:var(--sun)}   .stack.y .n2{color:var(--sun)}
-
-/* ---------- бюлетень ---------- */
-.ballot{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,16px)}
-.ballot div{flex:1 1 auto;min-width:clamp(120px,15vw,220px);text-align:center;
-  border:2px solid var(--edge);border-radius:6px;background:var(--card);padding:clamp(10px,1.4vw,18px) 8px}
-.ballot .v{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;line-height:1;
-  font-size:clamp(30px,5vw,64px)}
-.ballot .l{font-size:clamp(12px,1.35vw,18px);color:var(--soft);margin-top:8px;line-height:1.3}
-.ballot .b1{border-color:var(--note)} .ballot .b1 .v{color:var(--note)}
-.ballot .b2{border-color:var(--pen)}  .ballot .b2 .v{color:var(--pen)}
-.ballot .b3{border-color:var(--check)}.ballot .b3 .v{color:var(--check)}
-.ballot .b4{border-color:var(--sun)}  .ballot .b4 .v{color:var(--sun)}
+  padding:clamp(14px,2.2vw,30px) clamp(18px,3vw,40px);
+  margin:clamp(8px,1.2vw,14px) auto;width:fit-content;max-width:100%}
+.blind span{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1;
+  font-size:clamp(24px,calc(3.8*var(--u)),42px)}
 </style>
 </head>
 <body>
 <div id="stage">
+
 <div id="topic">
-  <div class="who">Інформатика · 9-А · Урок 1</div>
-  <div class="what">Знайомство. Обираємо, що вчимо цього року</div>
+  <span class="k">Інформатика · 9-А · Урок 1</span>
+  <span class="t">Як бачить око і як «бачить» машина. Що вміє комп’ютерний зір</span>
 </div>
+
 <div id="sheet">
 
 <!-- 1 -->
 <section class="slide on" data-t="Вітання">
   <p class="eyebrow">Інформатика · 9-А · Урок 1</p>
-  <h1>Знайомство.<br>Сьогодні ви обираєте,<br>що ми вчимо цілий рік</h1>
-  <p class="lede" style="margin-top:clamp(14px,2vw,26px)">Чотири варіанти курсу. Один урок на те, щоб їх розібрати.
-  У кінці уроку — голосування, і воно справжнє: як проголосуєте, так і буде.</p>
-  <div class="box pen" style="margin-top:clamp(14px,2vw,24px)">
-    <h3>Поки що</h3>
-    <p style="margin:0">Увімкніть звук, приготуйте чат. Записувати сьогодні майже нічого — тільки думати й обирати.</p>
+  <h1>Як бачить машина</h1>
+  <p class="lede">Ви обрали цей курс голосуванням. Наступні 34 уроки ми розбираємо, як комп’ютер перетворює світло на рішення — і робимо це самі, з нуля.</p>
+  <div class="row c2" style="margin-top:clamp(10px,1.6vw,20px)">
+    <div class="box pen">
+      <h3>Сьогодні</h3>
+      <p>Як бачить око і як «бачить» машина. У чому між ними різниця — і чому вона все вирішує.</p>
+    </div>
+    <div class="box ok">
+      <h3>Наприкінці року</h3>
+      <p>Ваша програма сама знаходить обличчя на відео й автоматично їх розмиває.</p>
+    </div>
   </div>
 </section>
 
 <!-- 2 -->
 <section class="slide" data-t="Технічна перевірка" data-timer="60">
-  <p class="eyebrow">Крок 0</p>
-  <h2>Технічна перевірка</h2>
+  <h2>Перевірка звʼязку</h2>
   <div class="row c3">
-    <div class="box ok"><h3>Чат</h3><p style="margin:0">Напишіть у чат <b>«+»</b> — я побачу, що ви на зв'язку.</p></div>
-    <div class="box play"><h3>Мікрофон</h3><p style="margin:0">Вимкнений. Вмикаєте, коли я називаю ваше ім'я.</p></div>
-    <div class="box pen"><h3>Екран</h3><p style="margin:0">Якщо слайд видно нечітко — напишіть у чат, збільшу.</p></div>
+    <div class="box"><h3>1</h3><p>Напишіть у чат <b>+</b>, якщо чуєте й бачите екран.</p></div>
+    <div class="box"><h3>2</h3><p>Мікрофон — <b>вимкнений</b>. Вмикаємо, коли я називаю імʼя.</p></div>
+    <div class="box"><h3>3</h3><p>Поруч — <b>зошит і ручка</b>. Записуємо сьогодні мало, але записуємо.</p></div>
   </div>
-  <div class="timerslot"></div>
+  <p class="lede" style="margin-top:clamp(10px,1.5vw,18px)">Хвилина на перевірку — і починаємо.</p>
 </section>
 
 <!-- 3 -->
 <section class="slide" data-t="Як ми відповідаємо">
-  <p class="eyebrow">Домовляємось</p>
-  <h2>Як ми відповідаємо на уроці</h2>
+  <h2>Як ми відповідаємо цього року</h2>
   <div class="modes">
-    <span class="mode chat"><span class="dot"></span>у чат</span>
-    <span class="mode voice"><span class="dot"></span>вголос</span>
-    <span class="mode cam"><span class="dot"></span>на камеру</span>
-    <span class="mode book"><span class="dot"></span>у зошит</span>
+    <span class="mode chat"><i class="dot"></i>у чат</span>
+    <span class="mode cam"><i class="dot"></i>на камеру</span>
+    <span class="mode voice"><i class="dot"></i>вголос</span>
+    <span class="mode book"><i class="dot"></i>у зошит</span>
   </div>
   <div class="row c2">
-    <div class="box"><h3>Правило 1</h3><p style="margin:0">Коли на слайді така смужка — вона показує, <b>як саме</b> відповідаємо на цьому завданні.</p></div>
-    <div class="box"><h3>Правило 2</h3><p style="margin:0">Неправильна відповідь у чаті — <b>нормально</b>. Мовчання — гірше: я не бачу, хто зрозумів.</p></div>
+    <div class="box"><h3>Швидке питання</h3><p>Відповідь одним словом або числом — <b>у чат</b>. Пишуть усі, не тільки той, хто знає.</p></div>
+    <div class="box"><h3>Пояснення</h3><p>Треба сказати думку — <b>вголос</b>, вмикаєш мікрофон. Помилитися тут безпечно: на цьому уроці помилка — це матеріал.</p></div>
   </div>
-  <div class="box note" style="margin-top:clamp(12px,1.7vw,20px)">
-    <h3>Правило 3</h3>
-    <p style="margin:0">Сьогодні особливий урок: тут <b>немає</b> правильних і неправильних відповідей. Є ваш вибір.</p>
-  </div>
+  <p style="margin-top:clamp(9px,1.3vw,15px)">Код ми пишемо не в зошиті, а в браузері. Що це за браузер — покажу наприкінці уроку.</p>
 </section>
 
 <!-- 4 -->
-<section class="slide" data-t="Знайомство: я">
-  <p class="eyebrow">Хто веде</p>
-  <h2>Кілька слів про те, як буде</h2>
-  <div class="stack">
-    <div><span class="n2">01</span><span>Уроки дистанційні. Кожен урок — така сама презентація, і <b>посилання лишається у вас</b>: удома можна відкрити й повторити.</span></div>
-    <div><span class="n2">02</span><span>Я не вимагаю нічого встановлювати. Усе, що ми запускатимемо, працює <b>в браузері</b>.</span></div>
-    <div><span class="n2">03</span><span>Оцінки — за роботу на уроці, короткі практичні й проєкт. Не за зазубрені означення.</span></div>
-    <div><span class="n2">04</span><span>Питання можна ставити <b>будь-якої миті</b> в чат. Я читаю чат постійно, не тільки в кінці.</span></div>
+<section class="slide" data-t="Маршрут року">
+  <h2>Куди ми йдемо: 34 уроки</h2>
+  <div class="route">
+    <div class="now"><span class="n">1</span><span class="t">Зображення — це таблиця чисел</span><span class="h">6 уроків</span></div>
+    <div><span class="n">2</span><span class="t">Фільтри та згортка: вчимося дивитися на сусідів</span><span class="h">7 уроків</span></div>
+    <div><span class="n">3</span><span class="t">Знаходимо обʼєкт без жодного навчання</span><span class="h">5 уроків</span></div>
+    <div><span class="n">4</span><span class="t">Як машина вчиться</span><span class="h">6 уроків</span></div>
+    <div><span class="n">5</span><span class="t">Згорткові нейромережі</span><span class="h">6 уроків</span></div>
+    <div><span class="n">6</span><span class="t">Фінальний проєкт: детектор облич</span><span class="h">4 уроки</span></div>
   </div>
+  <p class="lede" style="margin-top:clamp(9px,1.3vw,15px)">Кожен модуль ставить питання, на яке відповідає наступний. Пропустити один — далі буде незрозуміло.</p>
 </section>
 
 <!-- 5 -->
-<section class="slide" data-t="Знайомство: ви" data-timer="180">
-  <p class="eyebrow">Тепер про вас</p>
-  <h2>Три питання в чат</h2>
-  <div class="modes"><span class="mode chat"><span class="dot"></span>пишемо в чат</span></div>
-  <div class="stack g">
-    <div><span class="n2">1</span><span>Чи писали ви колись <b>хоч рядок коду</b>? Так / ні / трохи.</span></div>
-    <div><span class="n2">2</span><span>Чи користувались <b>ШІ</b> (ChatGPT, Gemini, Claude)? Для чого востаннє?</span></div>
-    <div><span class="n2">3</span><span>Одним словом: чого ви <b>хочете</b> від інформатики цього року?</span></div>
+<section class="slide" data-t="Записуємо тему" data-timer="90">
+  <h2>Записуємо в зошит</h2>
+  <div class="box pen">
+    <h3>Тема уроку</h3>
+    <p class="huge">Як бачить око і як «бачить» машина</p>
   </div>
-  <div class="box play" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p style="margin:0">Питаю не для галочки. Від ваших відповідей залежить, з якого рівня ми стартуємо.</p>
-  </div>
-  <div class="timerslot"></div>
+  <p style="margin-top:clamp(9px,1.3vw,15px)">Під темою залиште півсторінки — наприкінці уроку туди підуть три речення, які треба запамʼятати.</p>
 </section>
 
 <!-- 6 -->
-<section class="slide" data-t="Головне про урок">
-  <p class="eyebrow">Головне</p>
-  <h2>Курс обираєте ви</h2>
-  <p class="lede">Зазвичай учитель приходить і каже, що ви вчите. Сьогодні навпаки: я показую <b>чотири різні курси</b>,
-  а ви обираєте той, який вам справді цікавий.</p>
-  <div class="row c2" style="margin-top:clamp(12px,1.7vw,22px)">
-    <div class="box ok"><h3>Чому так</h3><p style="margin:0">Рік — це близько <b>35 уроків</b>. Витратити їх на те, що вам нецікаво, — шкода. Виберете самі — самі й тягнутимете.</p></div>
-    <div class="box warn"><h3>Чесна умова</h3><p style="margin:0">Вибір <b>один на весь рік</b> і на весь клас. Посеред року передумати не вийде — програму треба закінчити.</p></div>
+<section class="slide" data-t="Розминка">
+  <h2>Питання, з якого все починається</h2>
+  <p class="big">Ти гортаєш стрічку й бачиш фото однокласника. Скільки часу тобі треба, щоб його впізнати?</p>
+  <div class="hide box ok" style="margin-top:clamp(9px,1.3vw,15px)">
+    <h3>Відповідь</h3>
+    <p class="big">Приблизно <span class="ans num">0,1 секунди</span>. І ти при цьому <b>не думав</b>.</p>
+  </div>
+  <div class="hide box warn" style="margin-top:clamp(8px,1.1vw,13px)">
+    <h3>А тепер складне</h3>
+    <p class="big">Поясни словами, <b>як</b> ти це зробив. За якими саме ознаками. Щоб я міг записати це у вигляді інструкції.</p>
+  </div>
+  <div class="hide" style="margin-top:clamp(8px,1.1vw,13px)">
+    <p class="lede">Не виходить. Ми чудово вміємо бачити — і зовсім не вміємо пояснити, як. А комп’ютеру треба пояснити. У цьому весь курс.</p>
   </div>
 </section>
 
 <!-- 7 -->
-<section class="slide" data-t="Чотири варіанти">
-  <p class="eyebrow">Огляд</p>
-  <h2>Ось із чого обираємо</h2>
-  <div class="picks">
-    <div class="pick k1"><div class="no">1</div><div><p class="t">Йти по книжці</p><p class="s">Стандартна програма 9 класу: таблиці, бази даних, мережі, безпека, алгоритми.</p></div></div>
-    <div class="pick k2"><div class="no">2</div><div><p class="t">Штучний інтелект</p><p class="s">Як він влаштований зсередини, чому вигадує і як з ним правильно розмовляти.</p></div></div>
-    <div class="pick k3"><div class="no">3</div><div><p class="t">Програмування на Python</p><p class="s">Від першого рядка коду до власного сайта, який працює на сервері.</p></div></div>
-    <div class="pick k4"><div class="no">4</div><div><p class="t">Як бачить машина</p><p class="s">Машинний зір: від «фото — це таблиця чисел» до нейромереж, що впізнають об'єкти.</p></div></div>
+<section class="slide" data-t="Як бачить око">
+  <h2>Крок 1. Як бачить око</h2>
+  <div class="cw">
+    <div><div class="v">126 млн</div><div class="l">рецепторів</div></div>
+    <div><div class="v">1 млн</div><div class="l">волокон нерва</div></div>
+    <div><div class="v">≈100×</div><div class="l">стиснення</div></div>
   </div>
-  <p style="margin-top:clamp(12px,1.7vw,20px);color:var(--soft)">Зараз розберемо кожен окремо: що робимо, що складно і що у вас буде в руках у травні.</p>
+  <p style="margin-top:clamp(10px,1.5vw,18px)">На сітківці ока — близько <b>126 мільйонів</b> світлочутливих клітин. Кожна працює як один піксель: упало світло — дала сигнал.</p>
+  <p>Але зоровий нерв, який веде до мозку, має лише <b>близько мільйона</b> волокон. Тобто <b>око стискає картинку приблизно в сто разів</b> ще до того, як мозок щось побачить.</p>
+  <div class="box note" style="margin-top:clamp(8px,1.1vw,13px)">
+    <h3>Аналогія</h3>
+    <p>Сітківка не передає мозку фото. Вона передає <b>короткий переказ</b>: де світло, де темно, де щось рухається, де край.</p>
+  </div>
 </section>
 
 <!-- 8 -->
-<section class="slide" data-t="Варіант 1 — по книжці">
-  <p class="eyebrow">Варіант 1</p>
-  <h2>Йти по книжці <span class="lvl"><i class="f"></i><i></i><i></i><i></i><i></i></span></h2>
-  <div class="row c21">
-    <div>
-      <div class="stack v">
-        <div><span class="n2">01</span><span>Таблиці й обчислення: формули, діаграми, обробка даних</span></div>
-        <div><span class="n2">02</span><span>Бази даних: як зберігають і шукають великі обсяги інформації</span></div>
-        <div><span class="n2">03</span><span>Мережі та безпека: як влаштований інтернет, як не втратити акаунт</span></div>
-        <div><span class="n2">04</span><span>Алгоритми і програми — базовий рівень</span></div>
-        <div><span class="n2">05</span><span>Мультимедіа: обробка зображень, звуку, відео</span></div>
-      </div>
-    </div>
-    <div>
-      <div class="box ok"><h3>За що</h3><p style="margin:0">Рівно те, що питають на контрольних і на ДПА. Нічого не пропустимо, оцінку отримати найлегше.</p></div>
-      <div class="box warn" style="margin-top:12px"><h3>Проти чого</h3><p style="margin:0">Половину ви вже вмієте. Багато теорії, мало «вау». Проєкту в кінці року не буде.</p></div>
-    </div>
+<section class="slide" data-t="Сліпа пляма">
+  <h2>Доказ: у вас у полі зору є діра</h2>
+  <p>Там, де зоровий нерв виходить із сітківки, рецепторів <b>немає взагалі</b>. У кожного ока є сліпа пляма розміром приблизно з кулак витягнутої руки. Ви її ніколи не помічали.</p>
+  <div class="blind"><span>✚</span><span>●</span></div>
+  <p class="pcap" style="margin-top:0">закрийте <b>ліве</b> око · дивіться правим лише на ✚ · відстань приблизно 30 см · повільно рухайтесь ближче й далі</p>
+  <div class="hide box ok" style="margin-top:clamp(9px,1.3vw,15px)">
+    <h3>Що станеться</h3>
+    <p class="big">На певній відстані <b>чорна крапка зникне</b>. Не почорніє, не розмиється — зникне, а на її місці буде рівний фон.</p>
+    <p>Якщо не виходить — не дивіться на крапку, дивіться <b>тільки на ✚</b>, і міняйте відстань повільніше. У когось спрацює на 25 см, у когось на 40.</p>
   </div>
-  <div class="tags"><span class="tag">найлегший</span><span class="tag">без домашніх проєктів</span><span class="tag">максимум теорії</span></div>
+  <div class="hide" style="margin-top:clamp(8px,1.1vw,13px)">
+    <p class="lede">Мозок не побачив, що там порожньо. Він <b>домалював</b> те, що там мало би бути.</p>
+  </div>
 </section>
 
 <!-- 9 -->
-<section class="slide" data-t="Варіант 2 — ШІ">
-  <p class="eyebrow">Варіант 2</p>
-  <h2>Штучний інтелект <span class="lvl"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></span></h2>
-  <p class="lede">Не «як користуватися ChatGPT». А <b>як воно взагалі працює</b> — з самого низу і до кінця.</p>
-  <div class="stack">
-    <div><span class="n2">01</span><span>Як машина «вчиться»: приклади → помилка → виправлення. Один штучний нейрон на пальцях.</span></div>
-    <div><span class="n2">02</span><span>Від нейрона до нейромережі: чому шари, і що таке «навчити модель».</span></div>
-    <div><span class="n2">03</span><span><b>Токени.</b> Модель бачить не слова, а шматочки. Розберемо, чому вона плутається в «скільки букв Р у слові».</span></div>
-    <div><span class="n2">04</span><span><b>Генерація.</b> Модель не знає відповіді — вона щоразу вгадує <b>наступний токен</b> за ймовірністю.</span></div>
-    <div><span class="n2">05</span><span><b>Галюцинації.</b> Чому вигадане звучить так само впевнено, як правда, — і як це ловити.</span></div>
-    <div><span class="n2">06</span><span><b>Харнес.</b> Чат ≠ модель. Навколо моделі є обв'язка: пам'ять, пошук, інструменти, запуск коду.</span></div>
-    <div><span class="n2">07</span><span><b>Промпти.</b> Роль, контекст, приклади, формат. Чому «зроби гарно» не працює, а чіткий опис — працює.</span></div>
+<section class="slide" data-t="Головне про зір">
+  <div class="box pen">
+    <h3>Запишіть</h3>
+    <p class="huge">Зір — це не запис. Це висновок.</p>
   </div>
+  <p style="margin-top:clamp(10px,1.5vw,18px)">Мозок не показує вам фото. Він показує <b>здогад</b>, побудований за уривчастими сигналами: частину домалював, частину добудував із памʼяті, частину просто вгадав.</p>
+  <p>Запамʼятайте це — бо саме такого висновку ми будемо вчити машину. Не зберігати картинку, а робити з неї висновок.</p>
 </section>
 
 <!-- 10 -->
-<section class="slide" data-t="Варіант 2 — як це виглядатиме">
-  <p class="eyebrow">Варіант 2 · практика</p>
-  <h2>Що ми робитимемо руками</h2>
-  <div class="row c2">
-    <div class="box pen"><h3>На уроках</h3>
-      <ul style="margin:0">
-        <li>Даємо моделі два різні промпти на одне завдання і порівнюємо результат</li>
-        <li>Свідомо ловимо галюцинацію на перевірюваному факті</li>
-        <li>Збираємо власну бібліотеку промптів для навчання</li>
-        <li>Дивимось, як та сама модель поводиться з інструментами й без них</li>
-      </ul>
-    </div>
-    <div class="box ok"><h3>Що у вас буде в травні</h3>
-      <p style="margin:0">Уміння <b>перевіряти</b> ШІ, а не вірити йому. Власний набір робочих промптів.
-      І розуміння, чому «він же сказав» — не аргумент.</p>
-    </div>
+<section class="slide" data-t="Як бачить камера">
+  <h2>Крок 2. Як «бачить» камера</h2>
+  <div class="row c3">
+    <div class="box"><h3>Матриця</h3><p>Мільйони мікроскопічних комірок. Кожна рахує, скільки світла на неї впало.</p></div>
+    <div class="box"><h3>Число</h3><p>Більше світла — більше число. Від <b class="num">0</b> (чорний) до <b class="num">255</b> (білий).</p></div>
+    <div class="box"><h3>Вихід</h3><p>Таблиця чисел. Усе. Жодного «кота», жодного «обличчя».</p></div>
   </div>
-  <div class="box warn" style="margin-top:clamp(12px,1.7vw,20px)">
-    <h3>Чесно про складне</h3>
-    <p style="margin:0">Тут буде трохи математики про ймовірності й багато читання. Хто чекає «ШІ зробить за мене домашку» — це не той курс.</p>
-  </div>
-  <div class="tags"><span class="tag">мало коду</span><span class="tag">багато розбору</span><span class="tag">корисно всім</span></div>
+  <p class="lede" style="margin-top:clamp(10px,1.5vw,18px)">Камера не бачить обʼєктів. Вона вимірює світло й записує результат числами. Обʼєкти — це вже наша з вами робота.</p>
 </section>
 
 <!-- 11 -->
-<section class="slide" data-t="Варіант 3 — Python">
-  <p class="eyebrow">Варіант 3</p>
-  <h2>Програмування на Python <span class="lvl"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span></h2>
-  <div class="stack g">
-    <div><span class="n2">01</span><span>Основи мови: змінні, умови, цикли, функції. З нуля, навіть якщо ви не писали жодного рядка.</span></div>
-    <div><span class="n2">02</span><span><b>Бекенд</b> — те, що працює на сервері: запит → обробка → відповідь. Пишемо свій перший сервер.</span></div>
-    <div><span class="n2">03</span><span>Дані: зберігаємо те, що вводять користувачі, у базу.</span></div>
-    <div><span class="n2">04</span><span><b>Фронтенд</b> — те, що бачить людина: HTML, CSS, форма, кнопка.</span></div>
-    <div><span class="n2">05</span><span>З'єднуємо: сторінка надсилає дані серверу, сервер відповідає.</span></div>
-    <div><span class="n2">06</span><span><b>Запуск у світ:</b> виносимо сайт на справжній сервер і отримуємо посилання.</span></div>
+<section class="slide" data-t="Фото — це таблиця чисел">
+  <h2>Ось що насправді отримує комп’ютер</h2>
+  <p>Фрагмент фотографії розміром <b>8 × 8 пікселів</b>. Не картинка — просто 64 числа. Подивіться на них секунд десять: що тут зображено?</p>
+  <div class="pixwrap" style="margin-top:clamp(9px,1.3vw,15px)">
+    <div>
+      <div class="pix"><i style="background:rgb(198,198,198);color:#111">198</i><i style="background:rgb(191,191,191);color:#111">191</i><i style="background:rgb(182,182,182);color:#111">182</i><i style="background:rgb(174,174,174);color:#111">174</i><i style="background:rgb(172,172,172);color:#111">172</i><i style="background:rgb(173,173,173);color:#111">173</i><i style="background:rgb(173,173,173);color:#111">173</i><i style="background:rgb(171,171,171);color:#111">171</i><i style="background:rgb(192,192,192);color:#111">192</i><i style="background:rgb(176,176,176);color:#111">176</i><i style="background:rgb(156,156,156);color:#111">156</i><i style="background:rgb(141,141,141);color:#111">141</i><i style="background:rgb(142,142,142);color:#111">142</i><i style="background:rgb(154,154,154);color:#111">154</i><i style="background:rgb(164,164,164);color:#111">164</i><i style="background:rgb(167,167,167);color:#111">167</i><i style="background:rgb(182,182,182);color:#111">182</i><i style="background:rgb(152,152,152);color:#111">152</i><i style="background:rgb(112,112,112);color:#fff">112</i><i style="background:rgb(84,84,84);color:#fff">84</i><i style="background:rgb(91,91,91);color:#fff">91</i><i style="background:rgb(122,122,122);color:#111">122</i><i style="background:rgb(150,150,150);color:#111">150</i><i style="background:rgb(162,162,162);color:#111">162</i><i style="background:rgb(173,173,173);color:#111">173</i><i style="background:rgb(129,129,129);color:#111">129</i><i style="background:rgb(69,69,69);color:#fff">69</i><i style="background:rgb(29,29,29);color:#fff">29</i><i style="background:rgb(42,42,42);color:#fff">42</i><i style="background:rgb(91,91,91);color:#fff">91</i><i style="background:rgb(136,136,136);color:#111">136</i><i style="background:rgb(156,156,156);color:#111">156</i><i style="background:rgb(170,170,170);color:#111">170</i><i style="background:rgb(125,125,125);color:#111">125</i><i style="background:rgb(63,63,63);color:#fff">63</i><i style="background:rgb(21,21,21);color:#fff">21</i><i style="background:rgb(35,35,35);color:#fff">35</i><i style="background:rgb(86,86,86);color:#fff">86</i><i style="background:rgb(133,133,133);color:#111">133</i><i style="background:rgb(154,154,154);color:#111">154</i><i style="background:rgb(174,174,174);color:#111">174</i><i style="background:rgb(141,141,141);color:#111">141</i><i style="background:rgb(96,96,96);color:#fff">96</i><i style="background:rgb(66,66,66);color:#fff">66</i><i style="background:rgb(74,74,74);color:#fff">74</i><i style="background:rgb(109,109,109);color:#fff">109</i><i style="background:rgb(141,141,141);color:#111">141</i><i style="background:rgb(155,155,155);color:#111">155</i><i style="background:rgb(180,180,180);color:#111">180</i><i style="background:rgb(163,163,163);color:#111">163</i><i style="background:rgb(139,139,139);color:#111">139</i><i style="background:rgb(122,122,122);color:#111">122</i><i style="background:rgb(124,124,124);color:#111">124</i><i style="background:rgb(139,139,139);color:#111">139</i><i style="background:rgb(152,152,152);color:#111">152</i><i style="background:rgb(157,157,157);color:#111">157</i><i style="background:rgb(184,184,184);color:#111">184</i><i style="background:rgb(175,175,175);color:#111">175</i><i style="background:rgb(164,164,164);color:#111">164</i><i style="background:rgb(156,156,156);color:#111">156</i><i style="background:rgb(154,154,154);color:#111">154</i><i style="background:rgb(156,156,156);color:#111">156</i><i style="background:rgb(158,158,158);color:#111">158</i><i style="background:rgb(157,157,157);color:#111">157</i></div>
+      <div class="pcap">так це бачить програма</div>
+    </div>
+    <div class="hide">
+      <div class="pixpic"><i style="background:rgb(198,198,198)"></i><i style="background:rgb(191,191,191)"></i><i style="background:rgb(182,182,182)"></i><i style="background:rgb(174,174,174)"></i><i style="background:rgb(172,172,172)"></i><i style="background:rgb(173,173,173)"></i><i style="background:rgb(173,173,173)"></i><i style="background:rgb(171,171,171)"></i><i style="background:rgb(192,192,192)"></i><i style="background:rgb(176,176,176)"></i><i style="background:rgb(156,156,156)"></i><i style="background:rgb(141,141,141)"></i><i style="background:rgb(142,142,142)"></i><i style="background:rgb(154,154,154)"></i><i style="background:rgb(164,164,164)"></i><i style="background:rgb(167,167,167)"></i><i style="background:rgb(182,182,182)"></i><i style="background:rgb(152,152,152)"></i><i style="background:rgb(112,112,112)"></i><i style="background:rgb(84,84,84)"></i><i style="background:rgb(91,91,91)"></i><i style="background:rgb(122,122,122)"></i><i style="background:rgb(150,150,150)"></i><i style="background:rgb(162,162,162)"></i><i style="background:rgb(173,173,173)"></i><i style="background:rgb(129,129,129)"></i><i style="background:rgb(69,69,69)"></i><i style="background:rgb(29,29,29)"></i><i style="background:rgb(42,42,42)"></i><i style="background:rgb(91,91,91)"></i><i style="background:rgb(136,136,136)"></i><i style="background:rgb(156,156,156)"></i><i style="background:rgb(170,170,170)"></i><i style="background:rgb(125,125,125)"></i><i style="background:rgb(63,63,63)"></i><i style="background:rgb(21,21,21)"></i><i style="background:rgb(35,35,35)"></i><i style="background:rgb(86,86,86)"></i><i style="background:rgb(133,133,133)"></i><i style="background:rgb(154,154,154)"></i><i style="background:rgb(174,174,174)"></i><i style="background:rgb(141,141,141)"></i><i style="background:rgb(96,96,96)"></i><i style="background:rgb(66,66,66)"></i><i style="background:rgb(74,74,74)"></i><i style="background:rgb(109,109,109)"></i><i style="background:rgb(141,141,141)"></i><i style="background:rgb(155,155,155)"></i><i style="background:rgb(180,180,180)"></i><i style="background:rgb(163,163,163)"></i><i style="background:rgb(139,139,139)"></i><i style="background:rgb(122,122,122)"></i><i style="background:rgb(124,124,124)"></i><i style="background:rgb(139,139,139)"></i><i style="background:rgb(152,152,152)"></i><i style="background:rgb(157,157,157)"></i><i style="background:rgb(184,184,184)"></i><i style="background:rgb(175,175,175)"></i><i style="background:rgb(164,164,164)"></i><i style="background:rgb(156,156,156)"></i><i style="background:rgb(154,154,154)"></i><i style="background:rgb(156,156,156)"></i><i style="background:rgb(158,158,158)"></i><i style="background:rgb(157,157,157)"></i></div>
+      <div class="pcap">так це бачите ви</div>
+    </div>
   </div>
 </section>
 
 <!-- 12 -->
-<section class="slide" data-t="Варіант 3 — результат">
-  <p class="eyebrow">Варіант 3 · результат</p>
-  <h2>У кінці року — ваш сайт в інтернеті</h2>
-  <p class="lede">Не «на комп'ютері в кабінеті». Справжнє посилання, яке можна відкрити з телефона і скинути будь-кому.</p>
-  <div class="py big" style="margin-top:clamp(12px,1.7vw,20px)">https://<span class="st">ваша-назва</span>.???</div>
-  <div class="row c2" style="margin-top:clamp(12px,1.7vw,20px)">
-    <div class="box ok"><h3>За що</h3><p style="margin:0">Найпомітніший результат. Це вже <b>реальна навичка</b>, за яку в дорослому житті платять.</p></div>
-    <div class="box warn"><h3>Чесно про складне</h3><p style="margin:0">Найважчий варіант. Пропустив тему — наступна не зайде. Треба буде дописувати вдома.</p></div>
+<section class="slide" data-t="Головне речення курсу">
+  <div class="box pen">
+    <h3>Запишіть — це головне речення всього курсу</h3>
+    <p class="huge">Для комп’ютера фото — це не картинка, а таблиця чисел.</p>
   </div>
-  <div class="tags"><span class="tag">найбільше коду</span><span class="tag">потрібна регулярність</span><span class="tag">видимий результат</span></div>
+  <p style="margin-top:clamp(10px,1.5vw,18px)">Усе інше в цих 34 уроках — наслідок. Зробити фото світлішим = додати число до всіх клітинок. Знайти край = порівняти сусідні числа. Упізнати обличчя = знайти в числах закономірність.</p>
+  <p class="lede">Магії не буде жодного разу. Буде арифметика — і дуже багато її.</p>
 </section>
 
 <!-- 13 -->
-<section class="slide" data-t="Варіант 4 — машинний зір">
-  <p class="eyebrow">Варіант 4</p>
-  <h2>Як бачить машина <span class="lvl"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></span></h2>
-  <p class="lede">Камера не бачить кота. Вона бачить таблицю чисел. Весь курс — про те, як із цих чисел народжується «це кіт».</p>
-  <div class="stack y">
-    <div><span class="n2">01</span><span>Зображення = таблиця чисел. Піксель, яскравість, три канали R&nbsp;G&nbsp;B.</span></div>
-    <div><span class="n2">02</span><span>Найпростіші алгоритми: поріг, освітлення, розмиття. Робимо руками на реальному фото.</span></div>
-    <div><span class="n2">03</span><span><b>Згортка</b> — маленьке віконце, що біжить по картинці. Так знаходять <b>краї</b> об'єктів.</span></div>
-    <div><span class="n2">04</span><span>Чому прості методи ламаються: тінь, поворот, інший фон.</span></div>
-    <div><span class="n2">05</span><span>Згорткові нейромережі: мережа сама вигадує ознаки — від країв до цілих об'єктів.</span></div>
-    <div><span class="n2">06</span><span><b>Куди дивиться модель:</b> карти важливості. Видно, яка саме ділянка фото вплинула на відповідь.</span></div>
+<section class="slide" data-t="Скільки чисел">
+  <h2>Скільки цих чисел насправді</h2>
+  <div class="tiles">
+    <div class="tile"><div class="d">1</div><div class="lab">піксель сірого фото</div></div>
+    <div class="tile k2"><div class="d">3</div><div class="lab">піксель кольорового</div></div>
+    <div class="tile"><div class="d">36 млн</div><div class="lab">фото з телефона, 12 Мп</div></div>
+    <div class="tile k2"><div class="d">11 млрд</div><div class="lab">хвилина відео Full HD</div></div>
   </div>
+  <div class="box note" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Щоб відчути масштаб</h3>
+    <p>Якби ви виписували ці числа від руки — по одному за секунду, без сну й перерв — <b>одне фото з телефона</b> зайняло б у вас <b>більше року</b>.</p>
+  </div>
+  <p style="margin-top:clamp(8px,1.1vw,13px)">Комп’ютер робить це за соті частки секунди. Саме тому зір доручили йому, а не нам.</p>
 </section>
 
 <!-- 14 -->
-<section class="slide" data-t="Варіант 4 — результат">
-  <p class="eyebrow">Варіант 4 · результат</p>
-  <h2>Що робитимемо і що вийде</h2>
-  <div class="row c2">
-    <div class="box play"><h3>На уроках</h3>
-      <ul style="margin:0">
-        <li>Обробляємо власні фото просто в браузері</li>
-        <li>Самі пишемо фільтр і пошук країв</li>
-        <li>Запускаємо готову нейромережу на своєму фото</li>
-        <li>Дивимось карту важливості: де модель «підглянула» відповідь</li>
-      </ul>
-    </div>
-    <div class="box ok"><h3>Що у вас буде в травні</h3>
-      <p style="margin:0">Своя програма, яка щось <b>знаходить на фото</b>, і розуміння, чому вона іноді помиляється —
-      з картинкою-доказом, куди саме вона дивилась.</p>
-    </div>
+<section class="slide" data-t="Перевіряємо себе" data-timer="120">
+  <h2>Перевіряємо, чи зрозуміли</h2>
+  <div class="modes"><span class="mode chat"><i class="dot"></i>відповіді у чат</span></div>
+  <ol>
+    <li>Скільки чисел у чорно-білому фото розміром 1000 × 1000?</li>
+    <li>А в кольоровому такого самого розміру?</li>
+    <li>Фото зробили світлішим. Що сталося з числами?</li>
+  </ol>
+  <div class="hide box ok" style="margin-top:clamp(9px,1.3vw,15px)">
+    <h3>Відповіді</h3>
+    <p class="big">1) <span class="ans num">1 000 000</span> &nbsp;·&nbsp; 2) <span class="ans num">3 000 000</span>, бо на кожен піксель три числа &nbsp;·&nbsp; 3) <span class="ans">усі побільшали</span></p>
   </div>
-  <div class="box warn" style="margin-top:clamp(12px,1.7vw,20px)">
-    <h3>Чесно про складне</h3>
-    <p style="margin:0">Код тут простіший, ніж у варіанті 3, але його треба читати уважно. І знадобиться трохи математики про таблиці чисел.</p>
+  <div class="hide box play" style="margin-top:clamp(8px,1.1vw,13px)">
+    <h3>На подумати до наступного уроку</h3>
+    <p class="big">А що станеться з кольоровим фото, якщо всі три таблиці зробити <b>однаковими</b>?</p>
   </div>
-  <div class="tags"><span class="tag">багато картинок</span><span class="tag">код за зразком</span><span class="tag">ефектний результат</span></div>
 </section>
 
 <!-- 15 -->
 <section class="slide" data-t="Пауза для очей" data-timer="60">
-  <p class="eyebrow">Пауза</p>
   <h2>Хвилина для очей</h2>
-  <p class="lede">Відірвіться від екрана. Подивіться у вікно на щось далеке. Покліпайте.
-  Далі — порівняння чотирьох варіантів і голосування, тож голову треба свіжу.</p>
-  <div class="timerslot"></div>
+  <p class="lede">Відвернулися від екрана. Знайшли найдальшу точку за вікном і дивіться на неї, поки йде таймер. Потім — швидко поморгали.</p>
+  <p style="margin-top:clamp(10px,1.5vw,18px)">До речі, зараз ваш кришталик змінив форму, щоб перефокусуватися. Камері для цього доводиться рухати лінзу мотором.</p>
 </section>
 
 <!-- 16 -->
-<section class="slide" data-t="Порівняння">
-  <p class="eyebrow">Разом</p>
-  <h2>Усе чотири поруч</h2>
-  <div class="tbl">
-    <table>
-      <tr><th>Варіант</th><th>Що робимо</th><th>Складність</th><th>Що покажете в травні</th></tr>
-      <tr><td class="n">1 · Книжка</td><td>читаємо, розбираємо, виконуємо вправи</td><td>низька</td><td>міцні оцінки, без проєкту</td></tr>
-      <tr><td class="n">2 · ШІ</td><td>розбираємо, порівнюємо, перевіряємо</td><td>середня</td><td>уміння працювати з ШІ</td></tr>
-      <tr><td class="n">3 · Python</td><td>пишемо код майже щоуроку</td><td>висока</td><td>власний сайт у мережі</td></tr>
-      <tr><td class="n">4 · Зір</td><td>обробляємо фото, запускаємо моделі</td><td>середня</td><td>програму, що бачить</td></tr>
-    </table>
-  </div>
-  <div class="box note" style="margin-top:clamp(12px,1.7vw,20px)">
-    <h3>Що не змінюється</h3>
-    <p style="margin:0">Обов'язкові теми програми 9 класу ми закриємо <b>в будь-якому разі</b> — просто в трьох останніх варіантах
-    вони підуть усередині цікавої теми, а не окремим списком.</p>
+<section class="slide" data-t="Де це вже працює">
+  <h2>Де машинний зір уже працює</h2>
+  <div class="row c3">
+    <div class="box"><h3>Медицина</h3><p>Знаходить пухлину на знімку — інколи раніше, ніж її помічає лікар.</p></div>
+    <div class="box"><h3>Автомобілі</h3><p>Розмітка, знаки, пішохід, який виходить на дорогу.</p></div>
+    <div class="box"><h3>Ваш телефон</h3><p>Розблокування обличчям, портретний режим, пошук «покажи фото з котом».</p></div>
+    <div class="box"><h3>Каси й паркінги</h3><p>Номер авто на шлагбаумі, товар без штрихкоду.</p></div>
+    <div class="box"><h3>Сільське господарство</h3><p>Дрон облітає поле й рахує хворі рослини.</p></div>
+    <div class="box"><h3>Переклад</h3><p>Наводиш камеру на вивіску — і текст стає українським.</p></div>
   </div>
 </section>
 
 <!-- 17 -->
-<section class="slide" data-t="Як голосуємо">
-  <p class="eyebrow">Правила</p>
-  <h2>Як влаштоване голосування</h2>
-  <div class="stack">
-    <div><span class="n2">01</span><span>Пишете в чат <b>два номери</b>: спершу головний вибір, потім запасний. Наприклад: <b>3, 2</b>.</span></div>
-    <div><span class="n2">02</span><span>Рахуємо разом, уголос. Перемагає той варіант, у якого <b>найбільше</b> голосів.</span></div>
-    <div><span class="n2">03</span><span>Другий за голосами не зникає: візьмемо його як <b>міні-блок у другому семестрі</b>.</span></div>
-    <div><span class="n2">04</span><span>Хто сьогодні відсутній — голосує до наступного уроку. Потім результат <b>закривається</b>.</span></div>
+<section class="slide" data-t="Три різні питання">
+  <h2>Насправді це три різні задачі</h2>
+  <div class="row c3">
+    <div class="box pen"><h3>Класифікація</h3><p><b>«Що це?»</b><br>Одне слово на все фото: кіт.</p></div>
+    <div class="box ok"><h3>Детекція</h3><p><b>«Що і де?»</b><br>Рамка навколо кожного обʼєкта.</p></div>
+    <div class="box warn"><h3>Сегментація</h3><p><b>«Де саме, до пікселя?»</b><br>Маска по контуру, як у розмальовці.</p></div>
   </div>
-  <div class="box warn" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p style="margin:0">Голосуйте за <b>те, що цікаво</b>, а не за те, що здається легшим або що обрав сусід.
-    Легкий нецікавий рік тягнеться довше за важкий цікавий.</p>
+  <div class="box note" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Наш фінальний проєкт</h3>
+    <p class="big">Середня задача: знайти <b>всі обличчя</b> на фото й відео — і автоматично їх <b>розмити</b>. Робочий інструмент, який справді захищає чиюсь приватність.</p>
   </div>
 </section>
 
 <!-- 18 -->
-<section class="slide" data-t="Голосуємо" data-timer="120">
-  <p class="eyebrow">Зараз</p>
-  <h2>Пишемо в чат два номери</h2>
-  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат: головний, запасний</span></div>
-  <div class="ballot">
-    <div class="b1"><div class="v">1</div><div class="l">По книжці</div></div>
-    <div class="b2"><div class="v">2</div><div class="l">Штучний інтелект</div></div>
-    <div class="b3"><div class="v">3</div><div class="l">Python і свій сайт</div></div>
-    <div class="b4"><div class="v">4</div><div class="l">Машинний зір</div></div>
+<section class="slide" data-t="Головна різниця">
+  <h2>У чому різниця між оком і програмою</h2>
+  <div class="row c2">
+    <div class="box ok">
+      <h3>Мозок</h3>
+      <p>Правила <b>виросли самі</b> — за роки дивлення на світ. Вас ніхто не вчив, як виглядає сімка. Ви просто бачили тисячі сімок.</p>
+    </div>
+    <div class="box pen">
+      <h3>Програма</h3>
+      <p>Правил немає взагалі. Їх треба або <b>написати руками</b>, або <b>виростити на прикладах</b>.</p>
+    </div>
   </div>
-  <div class="timerslot"></div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.7vw,20px)">
-    <h3>Далі</h3>
-    <p style="margin:0">Рахуємо голоси разом і оголошуємо результат уголос.</p>
-  </div>
+  <p class="lede" style="margin-top:clamp(10px,1.5vw,18px)">Перша половина року — пишемо руками. Друга — вирощуємо. І ви на власному досвіді побачите, чому другий шлях переміг.</p>
 </section>
 
 <!-- 19 -->
-<section class="slide" data-t="Що буде в будь-якому разі">
-  <p class="eyebrow">Спільне</p>
-  <h2>Незалежно від результату</h2>
-  <div class="row c3">
-    <div class="box ok"><h3>Оцінювання</h3><p style="margin:0">Робота на уроці, короткі практичні, одна робота за семестр. Ніяких раптових контрольних.</p></div>
-    <div class="box pen"><h3>Матеріали</h3><p style="margin:0">Кожен урок лишається посиланням. Пропустив — відкрив і надолужив сам.</p></div>
-    <div class="box play"><h3>Програма</h3><p style="margin:0">Обов'язкові теми 9 класу закриваємо в будь-якому варіанті — це не обговорюється.</p></div>
+<section class="slide" data-t="Дві половини курсу">
+  <h2>Два шляхи, якими ми пройдемо</h2>
+  <div class="tbl">
+    <table>
+      <tr><th></th><th>Правила руками</th><th>Правила з прикладів</th></tr>
+      <tr><td>Хто їх придумує</td><td>ми з вами</td><td>сама програма</td></tr>
+      <tr><td>Що для цього треба</td><td>голова</td><td>дуже багато прикладів</td></tr>
+      <tr><td>Скільки чекати</td><td>працює одразу</td><td>години навчання</td></tr>
+      <tr><td>Зрозуміло, чому працює</td><td>так, до кожного числа</td><td>майже ні</td></tr>
+      <tr><td>А в реальних умовах</td><td>ламається від тіні</td><td>працює</td></tr>
+    </table>
   </div>
-  <div class="box note" style="margin-top:clamp(12px,1.7vw,20px)">
-    <p style="margin:0">І ще: якщо посеред року ви зрозумієте, що зайшло не так, як хотілось, — скажете мені прямо.
-    Курс можна підправити, навіть якщо не можна повністю змінити.</p>
-  </div>
+  <p style="margin-top:clamp(9px,1.3vw,15px)">Останній рядок — причина, чому весь світ перейшов на другий стовпчик. Але щоб зрозуміти другий, треба своїми руками зробити перший.</p>
 </section>
 
 <!-- 20 -->
-<section class="slide" data-t="Підсумок">
-  <p class="eyebrow">Підсумок уроку</p>
-  <h2>Що сталося сьогодні</h2>
-  <div class="stack g">
-    <div><span class="n2">01</span><span>Познайомились і домовились, як працюємо.</span></div>
-    <div><span class="n2">02</span><span>Розібрали чотири різні курси з інформатики.</span></div>
-    <div><span class="n2">03</span><span>Проголосували — і ви самі визначили, чим займатиметесь 35 уроків.</span></div>
+<section class="slide" data-t="Наш інструмент">
+  <h2>Де ми будемо працювати</h2>
+  <div class="row c21">
+    <div class="box pen">
+      <h3>Google Colab</h3>
+      <p class="big">Це Google-документ, тільки замість тексту — <b>код</b>. І виконується він не на вашому комп’ютері, а на комп’ютері Google.</p>
+    </div>
+    <div class="box">
+      <h3>Що це дає</h3>
+      <ul>
+        <li>нічого не треба встановлювати</li>
+        <li>працює й з телефона</li>
+        <li>зберігається саме</li>
+        <li>безкоштовна відеокарта — на ній ми будемо вчити мережу</li>
+      </ul>
+    </div>
   </div>
-  <div class="box play" style="margin-top:clamp(12px,1.7vw,22px)">
-    <h3>Питання на подумати</h3>
-    <p style="margin:0">Чому, на вашу думку, вчитель узагалі дав вам обирати? Відповідь скажу на наступному уроці —
-    але спершу подумайте самі.</p>
-  </div>
+  <p style="margin-top:clamp(9px,1.3vw,15px)">Потрібні лише браузер і Google-акаунт. Адреса: <b class="num">colab.research.google.com</b></p>
 </section>
 
 <!-- 21 -->
-<section class="slide" data-t="Домашнє завдання">
-  <p class="eyebrow">Домашнє завдання</p>
-  <h2>Одне речення в чат</h2>
-  <div class="box pen">
-    <p class="big" style="margin:0">Напишіть до наступного уроку: <b>«Я обрав варіант №__, бо ...»</b> — одне речення, своїми словами.</p>
-  </div>
-  <div class="row c2" style="margin-top:clamp(12px,1.7vw,20px)">
-    <div class="box"><h3>Навіщо</h3><p style="margin:0">Щоб я побачив, чого саме ви чекаєте, і зібрав перші уроки під це.</p></div>
-    <div class="box ok"><h3>Кому окремо</h3><p style="margin:0">Хто сьогодні не голосував — надішліть свої два номери. Ваш голос ще рахується.</p></div>
-  </div>
+<section class="slide" data-t="Перша клітинка коду">
+  <h2>Ось увесь сьогоднішній урок у вигляді коду</h2>
+<pre class="cd"><span class="k">from</span> PIL <span class="k">import</span> Image      <span class="c"># працюємо з картинками</span>
+<span class="k">import</span> numpy <span class="k">as</span> np          <span class="c"># працюємо з таблицями чисел</span>
+
+img = Image.open(<span class="c">'фото.jpg'</span>).convert(<span class="c">'L'</span>)   <span class="c"># 'L' — сірий</span>
+a   = np.array(img)                        <span class="c"># ось наша таблиця</span>
+
+print(a.shape)              <span class="c"># (висота, ширина)</span>
+print(a[100:108, 100:108])  <span class="c"># шматок 8×8 — числами</span></pre>
+  <p style="margin-top:clamp(9px,1.3vw,15px)">Чотири рядки — і фотографія перетворилася на таблицю. Далі весь курс ми працюємо <b>тільки з цією таблицею</b>.</p>
 </section>
 
 <!-- 22 -->
-<section class="slide" data-t="До зустрічі">
-  <h1>До зустрічі<br>на наступному уроці</h1>
-  <div class="box play" style="margin-top:clamp(14px,2vw,24px)">
-    <p class="big" style="margin:0">Дякую за урок! Наступного разу починаємо вже <b>обраний вами курс</b> —
-    з першої практичної. Це посилання працює й після уроку: можна ще раз перечитати всі чотири варіанти.</p>
+<section class="slide" data-t="Підсумок">
+  <h2>Три речення в зошит</h2>
+  <div class="row">
+    <div class="box ok"><h3>1</h3><p class="big">Зір — це не запис, а <b>висновок</b>. Мозок показує здогад, а не фото.</p></div>
+    <div class="box pen"><h3>2</h3><p class="big">Для комп’ютера фото — це <b>таблиця чисел</b>. Усе інше в курсі — наслідок.</p></div>
+    <div class="box warn"><h3>3</h3><p class="big">Правила зору можна <b>написати руками</b> або <b>виростити на прикладах</b>. Ми пройдемо обидва шляхи.</p></div>
   </div>
 </section>
+
+<!-- 23 -->
+<section class="slide" data-t="Домашнє завдання">
+  <h2>Домашнє завдання</h2>
+  <div class="row c2">
+    <div class="box pen">
+      <h3>1 · У чат, одним абзацом</h3>
+      <p>Знайдіть, де машинний зір уже працює <b>у вашому житті</b>. Опишіть три речі: що він робить, що для цього мусить побачити і де може помилитися.</p>
+    </div>
+    <div class="box ok">
+      <h3>2 · Підготувати інструмент</h3>
+      <p>Зайдіть на <b class="num">colab.research.google.com</b>, створіть новий ноутбук і назвіть його <b>«Як бачить машина — 01»</b>. Писати в ньому нічого не треба.</p>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:clamp(10px,1.5vw,18px)">Термін — до наступного уроку. Без другого пункту наступний урок не вийде: там ми одразу починаємо з коду.</p>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-t="До зустрічі">
+  <h1>До зустрічі наступного тижня</h1>
+  <p class="lede" style="margin-top:clamp(10px,1.6vw,20px)">Наступного разу розберемо піксель до самого дна — і зробимо своє перше зображення вручну, з чисел. Без жодної фотографії.</p>
+  <div class="box note" style="margin-top:clamp(10px,1.5vw,18px)">
+    <h3>Питання, з яким піти</h3>
+    <p class="big">Ви щойно подивилися на 64 числа й побачили в них темну пляму. А як пояснити комп’ютеру, що ця пляма там є?</p>
+  </div>
+</section>
+
 </div>
 
 <div id="bar">
@@ -660,7 +619,7 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   </div>
   <div id="rail" aria-hidden="true"></div>
   <div id="tip">пробіл — показати відповідь</div>
-  <div id="count">1 / 22</div>
+  <div id="count">1 / 24</div>
   <button id="fs" type="button" aria-label="На весь екран">⛶</button>
 </div>
 </div>
@@ -771,13 +730,32 @@ button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
   function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
   function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
 
+  var sheet = document.getElementById('sheet');
+  function fit(){
+    var s = slides[cur];
+    s.style.zoom = '';
+    var cs = getComputedStyle(sheet);
+    var avail = sheet.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var h = s.scrollHeight;
+    if(avail > 0 && h > avail){
+      s.style.zoom = Math.max(0.5, Math.floor(100 * avail / h) / 100);
+    }
+  }
+
   function paint(){
     cells.forEach(function(c, i){
       c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
     });
     count.textContent = (cur + 1) + ' / ' + slides.length;
     tip.classList.toggle('on', hidden(cur).length > 0);
+    fit();
   }
+
+  var rt = null;
+  window.addEventListener('resize', function(){
+    if(rt) clearTimeout(rt);
+    rt = setTimeout(fit, 120);
+  });
 
   function go(i, revealAll){
     if(i < 0 || i >= slides.length) return;

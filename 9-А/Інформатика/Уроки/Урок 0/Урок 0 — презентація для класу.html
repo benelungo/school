@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Знайомство. Обираємо, що вчимо цього року</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
+  --ink:#1B2430; --soft:#5B6879;
+  --pen:#2C4BC9; --pen-soft:#E7ECFC;
+  --check:#1B7F4B; --check-soft:#E4F3EA;
+  --marker:#D7263D; --marker-soft:#FCEAEC;
+  --sun:#B57C00; --sun-soft:#FDF3DC;
+  --note:#6B4FA8; --note-soft:#EFEAFA;
+  --edge:#DDE4EC;
+  --cell:30px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121821; --card:#1A222D; --grid:#26374A;
+    --ink:#EAF0F6; --soft:#9AAABC;
+    --pen:#8DA9FF; --pen-soft:#1E2A47;
+    --check:#5FD394; --check-soft:#163024;
+    --marker:#FF7B8A; --marker-soft:#371D22;
+    --sun:#FFC93C; --sun-soft:#332813;
+    --note:#C0A8F5; --note-soft:#251E3A;
+    --edge:#2C3948;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121821; --card:#1A222D; --grid:#26374A;
+  --ink:#EAF0F6; --soft:#9AAABC;
+  --pen:#8DA9FF; --pen-soft:#1E2A47;
+  --check:#5FD394; --check-soft:#163024;
+  --marker:#FF7B8A; --marker-soft:#371D22;
+  --sun:#FFC93C; --sun-soft:#332813;
+  --note:#C0A8F5; --note-soft:#251E3A;
+  --edge:#2C3948;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:var(--cell) var(--cell);
+  background-position:center top;
+  -webkit-text-size-adjust:100%;
+}
+
+#stage{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+#sheet{flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,3vw,40px) clamp(14px,4vw,56px) 96px}
+.slide{display:none;width:100%;max-width:1180px}
+.slide.on{display:block;animation:in .3s ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(29px,5.2vw,64px);line-height:1.06;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(23px,3.7vw,44px);line-height:1.14;letter-spacing:-.015em;margin:0 0 clamp(14px,2vw,26px);text-wrap:balance}
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,1.15vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 12px}
+p{margin:0 0 14px;font-size:clamp(16px,1.95vw,26px);line-height:1.5}
+p:last-child{margin-bottom:0}
+.lede{font-size:clamp(18px,2.4vw,31px);color:var(--soft);line-height:1.4}
+b,strong{font-weight:800}
+ul,ol{margin:0;padding-left:1.3em;font-size:clamp(16px,1.95vw,26px);line-height:1.45}
+li{margin:.5em 0}
+li::marker{color:var(--pen)}
+
+.row{display:grid;gap:clamp(12px,1.7vw,22px)}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c21{grid-template-columns:1.15fr .85fr}
+@media(max-width:820px){.c2,.c3,.c21{grid-template-columns:1fr}.c4{grid-template-columns:1fr 1fr}}
+
+.box{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(14px,2vw,26px);box-shadow:0 1px 0 var(--edge)}
+.box.pen{border-color:var(--pen);background:var(--pen-soft)}
+.box.ok{border-color:var(--check);background:var(--check-soft)}
+.box.warn{border-color:var(--marker);background:var(--marker-soft)}
+.box.play{border-color:var(--sun);background:var(--sun-soft)}
+.box.note{border-color:var(--note);background:var(--note-soft)}
+.box h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(12px,1.25vw,16px);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:0 0 10px}
+.box.ok h3{color:var(--check)} .box.warn h3{color:var(--marker)}
+.box.pen h3{color:var(--pen)} .box.play h3{color:var(--sun)} .box.note h3{color:var(--note)}
+
+/* ---------- смужка «як відповідаємо» ---------- */
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(12px,1.7vw,20px)}
+.mode{display:inline-flex;align-items:center;gap:8px;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(11px,1.15vw,15px);letter-spacing:.08em;text-transform:uppercase;
+  border:2px solid;border-radius:4px;padding:8px 12px;background:var(--card);white-space:nowrap}
+.mode .dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex:none}
+.mode.chat{color:var(--pen);border-color:var(--pen);background:var(--pen-soft)}
+.mode.cam{color:var(--sun);border-color:var(--sun);background:var(--sun-soft)}
+.mode.voice{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.mode.book{color:var(--note);border-color:var(--note);background:var(--note-soft)}
+.mode.away{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+
+/* ---------- таймер ---------- */
+.timer{display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(10px,1.3vw,16px) clamp(12px,1.6vw,20px);margin:clamp(12px,1.7vw,20px) 0}
+.timerslot:empty{display:none}
+.timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(26px,3.6vw,48px);line-height:1;min-width:3.6ch}
+.timer .track{flex:1;height:12px;border:1.5px solid var(--edge);border-radius:2px;overflow:hidden;min-width:60px}
+.timer .fill{height:100%;width:100%;background:var(--check);transition:width .95s linear}
+.timer .lab{font-size:clamp(13px,1.35vw,17px);color:var(--soft);white-space:nowrap}
+.timer.warn .fill{background:var(--sun)} .timer.warn .clock{color:var(--sun)}
+.timer.over{border-color:var(--marker);background:var(--marker-soft)}
+.timer.over .fill{background:var(--marker)} .timer.over .clock{color:var(--marker)}
+
+/* ---------- лампочки й біти ---------- */
+.lamps{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px);justify-content:center}
+.lamp{text-align:center;min-width:clamp(52px,6.4vw,86px)}
+.lamp .b{font-family:"JetBrains Mono",monospace;font-weight:700;line-height:1.2;
+  font-size:clamp(22px,3.8vw,50px);border:2px solid var(--edge);border-radius:4px;
+  background:var(--card);padding:clamp(6px,.9vw,12px) 0}
+.lamp .b.on{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.lamp .w{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.cw{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,18px);justify-content:center}
+.cw div{text-align:center;flex:1 1 auto;min-width:clamp(96px,12vw,168px);
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 6px}
+.cw .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(18px,2.5vw,32px);letter-spacing:.08em}
+.cw .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(22px,3vw,40px);color:var(--check);margin-top:6px}
+
+/* ---------- цифри ---------- */
+.num{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.big{font-size:clamp(22px,3.3vw,42px);line-height:1.45}
+.huge{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+      font-size:clamp(32px,5.8vw,80px);line-height:1.1;letter-spacing:-.02em}
+.ans{color:var(--check);font-weight:800}
+.tiles{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.tile{flex:1 1 auto;min-width:clamp(54px,6.6vw,88px);text-align:center;
+      border:2px solid var(--edge);border-radius:4px;background:var(--card);padding:clamp(8px,1vw,14px) 6px}
+.tile .d{font-family:"JetBrains Mono",monospace;font-weight:700;
+         font-size:clamp(24px,4.1vw,54px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .lab{font-size:clamp(10px,1.05vw,14px);color:var(--soft);margin-top:6px;line-height:1.25}
+.tile.k2{border-color:var(--pen)} .tile.k2 .d{color:var(--pen)}
+.klas{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.4vw,20px)}
+.klas .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(11px,1.15vw,15px);letter-spacing:.14em;text-transform:uppercase;
+   color:var(--soft);text-align:center;margin-bottom:8px}
+
+.tbl{width:100%;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:clamp(14px,1.8vw,24px)}
+th,td{border:2px solid var(--edge);padding:clamp(8px,1.05vw,15px);text-align:left;background:var(--card)}
+th{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(11px,1.15vw,15px);
+   letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+
+.code{display:flex;flex-wrap:wrap;gap:clamp(8px,1.1vw,14px)}
+.code div{flex:1 1 auto;min-width:clamp(86px,10.5vw,146px);text-align:center;
+  border:2px solid var(--sun);border-radius:4px;background:var(--card);padding:clamp(8px,1.1vw,14px) 8px}
+.code .v{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.6vw,33px);font-variant-numeric:tabular-nums}
+.code .l{font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:clamp(19px,2.6vw,33px);color:var(--sun);margin-top:4px}
+.word{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(32px,6.6vw,88px);letter-spacing:.14em;color:var(--check);line-height:1.1}
+
+.hide{opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .28s ease,transform .28s ease}
+span.hide{display:inline-block}
+.hide.on{opacity:1;pointer-events:auto;transform:none}
+
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;
+  display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+  padding:10px clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-top:2px solid var(--edge)}
+#rail{flex:1;display:flex;gap:3px;min-width:0;overflow:hidden}
+#rail i{flex:1 1 0;height:14px;border:1.5px solid var(--edge);border-radius:2px;background:transparent;
+  transition:background .2s ease,border-color .2s ease}
+#rail i.done{background:var(--grid);border-color:var(--grid)}
+#rail i.cur{background:var(--pen);border-color:var(--pen)}
+#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
+  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nav{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:4px;padding:10px 16px;font-weight:800;font-size:17px;line-height:1;
+  transition:background .15s,border-color .15s}
+button:hover{border-color:var(--pen);background:var(--pen-soft)}
+button:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.timer button{font-family:"Unbounded","Manrope",sans-serif;font-size:clamp(13px,1.35vw,17px);white-space:nowrap}
+#tip{font-size:14px;font-weight:800;color:var(--pen);white-space:nowrap;opacity:0;transition:opacity .2s}
+#tip.on{opacity:1}
+@media(max-width:760px){
+  #count,#tip{display:none}
+  button{padding:12px 14px;font-size:16px}
+  .timer{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* ---------- код на Python ---------- */
+.py{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:700;
+  background:var(--card);border:2px solid var(--edge);border-radius:6px;
+  padding:clamp(10px,1.5vw,20px) clamp(12px,1.7vw,22px);
+  font-size:clamp(13px,1.75vw,25px);line-height:1.5;
+  white-space:pre-wrap;overflow-x:auto;margin:0}
+.py.big{font-size:clamp(18px,3vw,42px);text-align:center}
+.py .kw{color:var(--note)}
+.py .st{color:var(--check)}
+.py .nu{color:var(--marker)}
+.py .cm{color:var(--soft);font-weight:400}
+.py .fn{color:var(--pen)}
+.out{font-family:"JetBrains Mono",ui-monospace,monospace;font-weight:700;
+  font-size:clamp(18px,2.8vw,38px);line-height:1.4;text-align:center;
+  background:var(--check-soft);border:2px solid var(--check);border-radius:6px;
+  padding:clamp(10px,1.4vw,18px) clamp(12px,1.7vw,22px);
+  white-space:pre-wrap;overflow-x:auto;margin:0;color:var(--check)}
+.arrow{text-align:center;font-size:clamp(18px,2.6vw,34px);color:var(--soft);
+  margin:clamp(6px,1vw,14px) 0;line-height:1}
+.parts{display:grid;gap:clamp(8px,1.1vw,14px)}
+.part{display:grid;grid-template-columns:minmax(110px,auto) 1fr;gap:clamp(10px,1.5vw,20px);align-items:center;
+  border:2px solid var(--edge);border-radius:4px;background:var(--card);
+  padding:clamp(9px,1.2vw,16px) clamp(10px,1.5vw,18px)}
+.part .k{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,2.5vw,34px);color:var(--pen);text-align:center}
+.part .d{font-size:clamp(14px,1.75vw,24px);line-height:1.4}
+@media(max-width:640px){.part{grid-template-columns:1fr;gap:6px}.part .k{text-align:left}}
+
+/* ---------- шапка з темою уроку ---------- */
+#topic{position:sticky;top:0;z-index:6;
+  display:flex;align-items:center;justify-content:space-between;gap:clamp(10px,2vw,28px);
+  padding:clamp(7px,1vw,13px) clamp(12px,2.2vw,26px);
+  background:var(--paper);
+  background:color-mix(in srgb, var(--paper) 90%, transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--edge)}
+#topic .who{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,1vw,13px);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--soft);white-space:nowrap}
+#topic .what{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+  font-size:clamp(11px,1.5vw,19px);line-height:1.15;text-align:right;color:var(--ink)}
+@media(max-width:560px){#topic .who{display:none}#topic .what{text-align:left}}
+
+/* ---------- картки-варіанти курсу ---------- */
+.picks{display:grid;gap:clamp(10px,1.4vw,18px);grid-template-columns:1fr 1fr}
+@media(max-width:820px){.picks{grid-template-columns:1fr}}
+.pick{display:grid;grid-template-columns:auto 1fr;gap:clamp(10px,1.5vw,20px);align-items:start;
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);
+  padding:clamp(11px,1.5vw,20px) clamp(12px,1.7vw,22px)}
+.pick .no{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;line-height:1;
+  font-size:clamp(26px,4.2vw,54px);color:var(--soft)}
+.pick .t{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;line-height:1.15;
+  font-size:clamp(15px,2vw,27px);margin:0 0 6px}
+.pick .s{font-size:clamp(13px,1.5vw,21px);line-height:1.35;color:var(--soft);margin:0}
+.pick.k1{border-color:var(--note);background:var(--note-soft)} .pick.k1 .no{color:var(--note)}
+.pick.k2{border-color:var(--pen);background:var(--pen-soft)}   .pick.k2 .no{color:var(--pen)}
+.pick.k3{border-color:var(--check);background:var(--check-soft)}.pick.k3 .no{color:var(--check)}
+.pick.k4{border-color:var(--sun);background:var(--sun-soft)}   .pick.k4 .no{color:var(--sun)}
+
+/* ---------- чипи-мітки ---------- */
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:clamp(10px,1.4vw,18px) 0 0}
+.tag{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,1.05vw,14px);letter-spacing:.09em;text-transform:uppercase;
+  border:2px solid var(--edge);border-radius:999px;padding:6px 12px;color:var(--soft);background:var(--card)}
+
+/* ---------- шкала складності ---------- */
+.lvl{display:inline-flex;gap:5px;vertical-align:middle;margin-left:8px}
+.lvl i{display:block;width:clamp(10px,1.1vw,15px);height:clamp(10px,1.1vw,15px);
+  border-radius:50%;border:2px solid var(--soft);background:transparent}
+.lvl i.f{background:var(--marker);border-color:var(--marker)}
+
+/* ---------- сходинки теми ---------- */
+.stack{display:grid;gap:clamp(6px,.9vw,11px)}
+.stack > div{display:grid;grid-template-columns:auto 1fr;gap:clamp(10px,1.4vw,18px);align-items:baseline;
+  border-left:5px solid var(--edge);padding:clamp(5px,.7vw,9px) 0 clamp(5px,.7vw,9px) clamp(10px,1.3vw,16px);
+  font-size:clamp(14px,1.7vw,24px);line-height:1.35}
+.stack .n2{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--pen);
+  font-size:clamp(13px,1.5vw,21px)}
+.stack.g > div{border-left-color:var(--check)} .stack.g .n2{color:var(--check)}
+.stack.v > div{border-left-color:var(--note)}  .stack.v .n2{color:var(--note)}
+.stack.y > div{border-left-color:var(--sun)}   .stack.y .n2{color:var(--sun)}
+
+/* ---------- бюлетень ---------- */
+.ballot{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,16px)}
+.ballot div{flex:1 1 auto;min-width:clamp(120px,15vw,220px);text-align:center;
+  border:2px solid var(--edge);border-radius:6px;background:var(--card);padding:clamp(10px,1.4vw,18px) 8px}
+.ballot .v{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;line-height:1;
+  font-size:clamp(30px,5vw,64px)}
+.ballot .l{font-size:clamp(12px,1.35vw,18px);color:var(--soft);margin-top:8px;line-height:1.3}
+.ballot .b1{border-color:var(--note)} .ballot .b1 .v{color:var(--note)}
+.ballot .b2{border-color:var(--pen)}  .ballot .b2 .v{color:var(--pen)}
+.ballot .b3{border-color:var(--check)}.ballot .b3 .v{color:var(--check)}
+.ballot .b4{border-color:var(--sun)}  .ballot .b4 .v{color:var(--sun)}
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="topic">
+  <div class="who">Інформатика · 9-А · Урок 0</div>
+  <div class="what">Знайомство. Обираємо, що вчимо цього року</div>
+</div>
+<div id="sheet">
+
+<!-- 1 -->
+<section class="slide on" data-t="Вітання">
+  <p class="eyebrow">Інформатика · 9-А · Урок 0</p>
+  <h1>Знайомство.<br>Сьогодні ви обираєте,<br>що ми вчимо цілий рік</h1>
+  <p class="lede" style="margin-top:clamp(14px,2vw,26px)">Чотири варіанти курсу. Один урок на те, щоб їх розібрати.
+  У кінці уроку — голосування, і воно справжнє: як проголосуєте, так і буде.</p>
+  <div class="box pen" style="margin-top:clamp(14px,2vw,24px)">
+    <h3>Поки що</h3>
+    <p style="margin:0">Увімкніть звук, приготуйте чат. Записувати сьогодні майже нічого — тільки думати й обирати.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-t="Технічна перевірка" data-timer="60">
+  <p class="eyebrow">Крок 0</p>
+  <h2>Технічна перевірка</h2>
+  <div class="row c3">
+    <div class="box ok"><h3>Чат</h3><p style="margin:0">Напишіть у чат <b>«+»</b> — я побачу, що ви на зв'язку.</p></div>
+    <div class="box play"><h3>Мікрофон</h3><p style="margin:0">Вимкнений. Вмикаєте, коли я називаю ваше ім'я.</p></div>
+    <div class="box pen"><h3>Екран</h3><p style="margin:0">Якщо слайд видно нечітко — напишіть у чат, збільшу.</p></div>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-t="Як ми відповідаємо">
+  <p class="eyebrow">Домовляємось</p>
+  <h2>Як ми відповідаємо на уроці</h2>
+  <div class="modes">
+    <span class="mode chat"><span class="dot"></span>у чат</span>
+    <span class="mode voice"><span class="dot"></span>вголос</span>
+    <span class="mode cam"><span class="dot"></span>на камеру</span>
+    <span class="mode book"><span class="dot"></span>у зошит</span>
+  </div>
+  <div class="row c2">
+    <div class="box"><h3>Правило 1</h3><p style="margin:0">Коли на слайді така смужка — вона показує, <b>як саме</b> відповідаємо на цьому завданні.</p></div>
+    <div class="box"><h3>Правило 2</h3><p style="margin:0">Неправильна відповідь у чаті — <b>нормально</b>. Мовчання — гірше: я не бачу, хто зрозумів.</p></div>
+  </div>
+  <div class="box note" style="margin-top:clamp(12px,1.7vw,20px)">
+    <h3>Правило 3</h3>
+    <p style="margin:0">Сьогодні особливий урок: тут <b>немає</b> правильних і неправильних відповідей. Є ваш вибір.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-t="Знайомство: я">
+  <p class="eyebrow">Хто веде</p>
+  <h2>Кілька слів про те, як буде</h2>
+  <div class="stack">
+    <div><span class="n2">01</span><span>Уроки дистанційні. Кожен урок — така сама презентація, і <b>посилання лишається у вас</b>: удома можна відкрити й повторити.</span></div>
+    <div><span class="n2">02</span><span>Я не вимагаю нічого встановлювати. Усе, що ми запускатимемо, працює <b>в браузері</b>.</span></div>
+    <div><span class="n2">03</span><span>Оцінки — за роботу на уроці, короткі практичні й проєкт. Не за зазубрені означення.</span></div>
+    <div><span class="n2">04</span><span>Питання можна ставити <b>будь-якої миті</b> в чат. Я читаю чат постійно, не тільки в кінці.</span></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-t="Знайомство: ви" data-timer="180">
+  <p class="eyebrow">Тепер про вас</p>
+  <h2>Три питання в чат</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>пишемо в чат</span></div>
+  <div class="stack g">
+    <div><span class="n2">1</span><span>Чи писали ви колись <b>хоч рядок коду</b>? Так / ні / трохи.</span></div>
+    <div><span class="n2">2</span><span>Чи користувались <b>ШІ</b> (ChatGPT, Gemini, Claude)? Для чого востаннє?</span></div>
+    <div><span class="n2">3</span><span>Одним словом: чого ви <b>хочете</b> від інформатики цього року?</span></div>
+  </div>
+  <div class="box play" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p style="margin:0">Питаю не для галочки. Від ваших відповідей залежить, з якого рівня ми стартуємо.</p>
+  </div>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-t="Головне про урок">
+  <p class="eyebrow">Головне</p>
+  <h2>Курс обираєте ви</h2>
+  <p class="lede">Зазвичай учитель приходить і каже, що ви вчите. Сьогодні навпаки: я показую <b>чотири різні курси</b>,
+  а ви обираєте той, який вам справді цікавий.</p>
+  <div class="row c2" style="margin-top:clamp(12px,1.7vw,22px)">
+    <div class="box ok"><h3>Чому так</h3><p style="margin:0">Рік — це близько <b>35 уроків</b>. Витратити їх на те, що вам нецікаво, — шкода. Виберете самі — самі й тягнутимете.</p></div>
+    <div class="box warn"><h3>Чесна умова</h3><p style="margin:0">Вибір <b>один на весь рік</b> і на весь клас. Посеред року передумати не вийде — програму треба закінчити.</p></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-t="Чотири варіанти">
+  <p class="eyebrow">Огляд</p>
+  <h2>Ось із чого обираємо</h2>
+  <div class="picks">
+    <div class="pick k1"><div class="no">1</div><div><p class="t">Йти по книжці</p><p class="s">Стандартна програма 9 класу: таблиці, бази даних, мережі, безпека, алгоритми.</p></div></div>
+    <div class="pick k2"><div class="no">2</div><div><p class="t">Штучний інтелект</p><p class="s">Як він влаштований зсередини, чому вигадує і як з ним правильно розмовляти.</p></div></div>
+    <div class="pick k3"><div class="no">3</div><div><p class="t">Програмування на Python</p><p class="s">Від першого рядка коду до власного сайта, який працює на сервері.</p></div></div>
+    <div class="pick k4"><div class="no">4</div><div><p class="t">Як бачить машина</p><p class="s">Машинний зір: від «фото — це таблиця чисел» до нейромереж, що впізнають об'єкти.</p></div></div>
+  </div>
+  <p style="margin-top:clamp(12px,1.7vw,20px);color:var(--soft)">Зараз розберемо кожен окремо: що робимо, що складно і що у вас буде в руках у травні.</p>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-t="Варіант 1 — по книжці">
+  <p class="eyebrow">Варіант 1</p>
+  <h2>Йти по книжці <span class="lvl"><i class="f"></i><i></i><i></i><i></i><i></i></span></h2>
+  <div class="row c21">
+    <div>
+      <div class="stack v">
+        <div><span class="n2">01</span><span>Таблиці й обчислення: формули, діаграми, обробка даних</span></div>
+        <div><span class="n2">02</span><span>Бази даних: як зберігають і шукають великі обсяги інформації</span></div>
+        <div><span class="n2">03</span><span>Мережі та безпека: як влаштований інтернет, як не втратити акаунт</span></div>
+        <div><span class="n2">04</span><span>Алгоритми і програми — базовий рівень</span></div>
+        <div><span class="n2">05</span><span>Мультимедіа: обробка зображень, звуку, відео</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="box ok"><h3>За що</h3><p style="margin:0">Рівно те, що питають на контрольних і на ДПА. Нічого не пропустимо, оцінку отримати найлегше.</p></div>
+      <div class="box warn" style="margin-top:12px"><h3>Проти чого</h3><p style="margin:0">Половину ви вже вмієте. Багато теорії, мало «вау». Проєкту в кінці року не буде.</p></div>
+    </div>
+  </div>
+  <div class="tags"><span class="tag">найлегший</span><span class="tag">без домашніх проєктів</span><span class="tag">максимум теорії</span></div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-t="Варіант 2 — ШІ">
+  <p class="eyebrow">Варіант 2</p>
+  <h2>Штучний інтелект <span class="lvl"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></span></h2>
+  <p class="lede">Не «як користуватися ChatGPT». А <b>як воно взагалі працює</b> — з самого низу і до кінця.</p>
+  <div class="stack">
+    <div><span class="n2">01</span><span>Як машина «вчиться»: приклади → помилка → виправлення. Один штучний нейрон на пальцях.</span></div>
+    <div><span class="n2">02</span><span>Від нейрона до нейромережі: чому шари, і що таке «навчити модель».</span></div>
+    <div><span class="n2">03</span><span><b>Токени.</b> Модель бачить не слова, а шматочки. Розберемо, чому вона плутається в «скільки букв Р у слові».</span></div>
+    <div><span class="n2">04</span><span><b>Генерація.</b> Модель не знає відповіді — вона щоразу вгадує <b>наступний токен</b> за ймовірністю.</span></div>
+    <div><span class="n2">05</span><span><b>Галюцинації.</b> Чому вигадане звучить так само впевнено, як правда, — і як це ловити.</span></div>
+    <div><span class="n2">06</span><span><b>Харнес.</b> Чат ≠ модель. Навколо моделі є обв'язка: пам'ять, пошук, інструменти, запуск коду.</span></div>
+    <div><span class="n2">07</span><span><b>Промпти.</b> Роль, контекст, приклади, формат. Чому «зроби гарно» не працює, а чіткий опис — працює.</span></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-t="Варіант 2 — як це виглядатиме">
+  <p class="eyebrow">Варіант 2 · практика</p>
+  <h2>Що ми робитимемо руками</h2>
+  <div class="row c2">
+    <div class="box pen"><h3>На уроках</h3>
+      <ul style="margin:0">
+        <li>Даємо моделі два різні промпти на одне завдання і порівнюємо результат</li>
+        <li>Свідомо ловимо галюцинацію на перевірюваному факті</li>
+        <li>Збираємо власну бібліотеку промптів для навчання</li>
+        <li>Дивимось, як та сама модель поводиться з інструментами й без них</li>
+      </ul>
+    </div>
+    <div class="box ok"><h3>Що у вас буде в травні</h3>
+      <p style="margin:0">Уміння <b>перевіряти</b> ШІ, а не вірити йому. Власний набір робочих промптів.
+      І розуміння, чому «він же сказав» — не аргумент.</p>
+    </div>
+  </div>
+  <div class="box warn" style="margin-top:clamp(12px,1.7vw,20px)">
+    <h3>Чесно про складне</h3>
+    <p style="margin:0">Тут буде трохи математики про ймовірності й багато читання. Хто чекає «ШІ зробить за мене домашку» — це не той курс.</p>
+  </div>
+  <div class="tags"><span class="tag">мало коду</span><span class="tag">багато розбору</span><span class="tag">корисно всім</span></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-t="Варіант 3 — Python">
+  <p class="eyebrow">Варіант 3</p>
+  <h2>Програмування на Python <span class="lvl"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span></h2>
+  <div class="stack g">
+    <div><span class="n2">01</span><span>Основи мови: змінні, умови, цикли, функції. З нуля, навіть якщо ви не писали жодного рядка.</span></div>
+    <div><span class="n2">02</span><span><b>Бекенд</b> — те, що працює на сервері: запит → обробка → відповідь. Пишемо свій перший сервер.</span></div>
+    <div><span class="n2">03</span><span>Дані: зберігаємо те, що вводять користувачі, у базу.</span></div>
+    <div><span class="n2">04</span><span><b>Фронтенд</b> — те, що бачить людина: HTML, CSS, форма, кнопка.</span></div>
+    <div><span class="n2">05</span><span>З'єднуємо: сторінка надсилає дані серверу, сервер відповідає.</span></div>
+    <div><span class="n2">06</span><span><b>Запуск у світ:</b> виносимо сайт на справжній сервер і отримуємо посилання.</span></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-t="Варіант 3 — результат">
+  <p class="eyebrow">Варіант 3 · результат</p>
+  <h2>У кінці року — ваш сайт в інтернеті</h2>
+  <p class="lede">Не «на комп'ютері в кабінеті». Справжнє посилання, яке можна відкрити з телефона і скинути будь-кому.</p>
+  <div class="py big" style="margin-top:clamp(12px,1.7vw,20px)">https://<span class="st">ваша-назва</span>.???</div>
+  <div class="row c2" style="margin-top:clamp(12px,1.7vw,20px)">
+    <div class="box ok"><h3>За що</h3><p style="margin:0">Найпомітніший результат. Це вже <b>реальна навичка</b>, за яку в дорослому житті платять.</p></div>
+    <div class="box warn"><h3>Чесно про складне</h3><p style="margin:0">Найважчий варіант. Пропустив тему — наступна не зайде. Треба буде дописувати вдома.</p></div>
+  </div>
+  <div class="tags"><span class="tag">найбільше коду</span><span class="tag">потрібна регулярність</span><span class="tag">видимий результат</span></div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-t="Варіант 4 — машинний зір">
+  <p class="eyebrow">Варіант 4</p>
+  <h2>Як бачить машина <span class="lvl"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></span></h2>
+  <p class="lede">Камера не бачить кота. Вона бачить таблицю чисел. Весь курс — про те, як із цих чисел народжується «це кіт».</p>
+  <div class="stack y">
+    <div><span class="n2">01</span><span>Зображення = таблиця чисел. Піксель, яскравість, три канали R&nbsp;G&nbsp;B.</span></div>
+    <div><span class="n2">02</span><span>Найпростіші алгоритми: поріг, освітлення, розмиття. Робимо руками на реальному фото.</span></div>
+    <div><span class="n2">03</span><span><b>Згортка</b> — маленьке віконце, що біжить по картинці. Так знаходять <b>краї</b> об'єктів.</span></div>
+    <div><span class="n2">04</span><span>Чому прості методи ламаються: тінь, поворот, інший фон.</span></div>
+    <div><span class="n2">05</span><span>Згорткові нейромережі: мережа сама вигадує ознаки — від країв до цілих об'єктів.</span></div>
+    <div><span class="n2">06</span><span><b>Куди дивиться модель:</b> карти важливості. Видно, яка саме ділянка фото вплинула на відповідь.</span></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-t="Варіант 4 — результат">
+  <p class="eyebrow">Варіант 4 · результат</p>
+  <h2>Що робитимемо і що вийде</h2>
+  <div class="row c2">
+    <div class="box play"><h3>На уроках</h3>
+      <ul style="margin:0">
+        <li>Обробляємо власні фото просто в браузері</li>
+        <li>Самі пишемо фільтр і пошук країв</li>
+        <li>Запускаємо готову нейромережу на своєму фото</li>
+        <li>Дивимось карту важливості: де модель «підглянула» відповідь</li>
+      </ul>
+    </div>
+    <div class="box ok"><h3>Що у вас буде в травні</h3>
+      <p style="margin:0">Своя програма, яка щось <b>знаходить на фото</b>, і розуміння, чому вона іноді помиляється —
+      з картинкою-доказом, куди саме вона дивилась.</p>
+    </div>
+  </div>
+  <div class="box warn" style="margin-top:clamp(12px,1.7vw,20px)">
+    <h3>Чесно про складне</h3>
+    <p style="margin:0">Код тут простіший, ніж у варіанті 3, але його треба читати уважно. І знадобиться трохи математики про таблиці чисел.</p>
+  </div>
+  <div class="tags"><span class="tag">багато картинок</span><span class="tag">код за зразком</span><span class="tag">ефектний результат</span></div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <p class="eyebrow">Пауза</p>
+  <h2>Хвилина для очей</h2>
+  <p class="lede">Відірвіться від екрана. Подивіться у вікно на щось далеке. Покліпайте.
+  Далі — порівняння чотирьох варіантів і голосування, тож голову треба свіжу.</p>
+  <div class="timerslot"></div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-t="Порівняння">
+  <p class="eyebrow">Разом</p>
+  <h2>Усе чотири поруч</h2>
+  <div class="tbl">
+    <table>
+      <tr><th>Варіант</th><th>Що робимо</th><th>Складність</th><th>Що покажете в травні</th></tr>
+      <tr><td class="n">1 · Книжка</td><td>читаємо, розбираємо, виконуємо вправи</td><td>низька</td><td>міцні оцінки, без проєкту</td></tr>
+      <tr><td class="n">2 · ШІ</td><td>розбираємо, порівнюємо, перевіряємо</td><td>середня</td><td>уміння працювати з ШІ</td></tr>
+      <tr><td class="n">3 · Python</td><td>пишемо код майже щоуроку</td><td>висока</td><td>власний сайт у мережі</td></tr>
+      <tr><td class="n">4 · Зір</td><td>обробляємо фото, запускаємо моделі</td><td>середня</td><td>програму, що бачить</td></tr>
+    </table>
+  </div>
+  <div class="box note" style="margin-top:clamp(12px,1.7vw,20px)">
+    <h3>Що не змінюється</h3>
+    <p style="margin:0">Обов'язкові теми програми 9 класу ми закриємо <b>в будь-якому разі</b> — просто в трьох останніх варіантах
+    вони підуть усередині цікавої теми, а не окремим списком.</p>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-t="Як голосуємо">
+  <p class="eyebrow">Правила</p>
+  <h2>Як влаштоване голосування</h2>
+  <div class="stack">
+    <div><span class="n2">01</span><span>Пишете в чат <b>два номери</b>: спершу головний вибір, потім запасний. Наприклад: <b>3, 2</b>.</span></div>
+    <div><span class="n2">02</span><span>Рахуємо разом, уголос. Перемагає той варіант, у якого <b>найбільше</b> голосів.</span></div>
+    <div><span class="n2">03</span><span>Другий за голосами не зникає: візьмемо його як <b>міні-блок у другому семестрі</b>.</span></div>
+    <div><span class="n2">04</span><span>Хто сьогодні відсутній — голосує до наступного уроку. Потім результат <b>закривається</b>.</span></div>
+  </div>
+  <div class="box warn" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p style="margin:0">Голосуйте за <b>те, що цікаво</b>, а не за те, що здається легшим або що обрав сусід.
+    Легкий нецікавий рік тягнеться довше за важкий цікавий.</p>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-t="Голосуємо" data-timer="120">
+  <p class="eyebrow">Зараз</p>
+  <h2>Пишемо в чат два номери</h2>
+  <div class="modes"><span class="mode chat"><span class="dot"></span>у чат: головний, запасний</span></div>
+  <div class="ballot">
+    <div class="b1"><div class="v">1</div><div class="l">По книжці</div></div>
+    <div class="b2"><div class="v">2</div><div class="l">Штучний інтелект</div></div>
+    <div class="b3"><div class="v">3</div><div class="l">Python і свій сайт</div></div>
+    <div class="b4"><div class="v">4</div><div class="l">Машинний зір</div></div>
+  </div>
+  <div class="timerslot"></div>
+  <div class="box ok hide" style="margin-top:clamp(12px,1.7vw,20px)">
+    <h3>Далі</h3>
+    <p style="margin:0">Рахуємо голоси разом і оголошуємо результат уголос.</p>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-t="Що буде в будь-якому разі">
+  <p class="eyebrow">Спільне</p>
+  <h2>Незалежно від результату</h2>
+  <div class="row c3">
+    <div class="box ok"><h3>Оцінювання</h3><p style="margin:0">Робота на уроці, короткі практичні, одна робота за семестр. Ніяких раптових контрольних.</p></div>
+    <div class="box pen"><h3>Матеріали</h3><p style="margin:0">Кожен урок лишається посиланням. Пропустив — відкрив і надолужив сам.</p></div>
+    <div class="box play"><h3>Програма</h3><p style="margin:0">Обов'язкові теми 9 класу закриваємо в будь-якому варіанті — це не обговорюється.</p></div>
+  </div>
+  <div class="box note" style="margin-top:clamp(12px,1.7vw,20px)">
+    <p style="margin:0">І ще: якщо посеред року ви зрозумієте, що зайшло не так, як хотілось, — скажете мені прямо.
+    Курс можна підправити, навіть якщо не можна повністю змінити.</p>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-t="Підсумок">
+  <p class="eyebrow">Підсумок уроку</p>
+  <h2>Що сталося сьогодні</h2>
+  <div class="stack g">
+    <div><span class="n2">01</span><span>Познайомились і домовились, як працюємо.</span></div>
+    <div><span class="n2">02</span><span>Розібрали чотири різні курси з інформатики.</span></div>
+    <div><span class="n2">03</span><span>Проголосували — і ви самі визначили, чим займатиметесь 35 уроків.</span></div>
+  </div>
+  <div class="box play" style="margin-top:clamp(12px,1.7vw,22px)">
+    <h3>Питання на подумати</h3>
+    <p style="margin:0">Чому, на вашу думку, вчитель узагалі дав вам обирати? Відповідь скажу на наступному уроці —
+    але спершу подумайте самі.</p>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-t="Домашнє завдання">
+  <p class="eyebrow">Домашнє завдання</p>
+  <h2>Одне речення в чат</h2>
+  <div class="box pen">
+    <p class="big" style="margin:0">Напишіть до наступного уроку: <b>«Я обрав варіант №__, бо ...»</b> — одне речення, своїми словами.</p>
+  </div>
+  <div class="row c2" style="margin-top:clamp(12px,1.7vw,20px)">
+    <div class="box"><h3>Навіщо</h3><p style="margin:0">Щоб я побачив, чого саме ви чекаєте, і зібрав перші уроки під це.</p></div>
+    <div class="box ok"><h3>Кому окремо</h3><p style="margin:0">Хто сьогодні не голосував — надішліть свої два номери. Ваш голос ще рахується.</p></div>
+  </div>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-t="До зустрічі">
+  <h1>До зустрічі<br>на наступному уроці</h1>
+  <div class="box play" style="margin-top:clamp(14px,2vw,24px)">
+    <p class="big" style="margin:0">Дякую за урок! Наступного разу починаємо вже <b>обраний вами курс</b> —
+    з першої практичної. Це посилання працює й після уроку: можна ще раз перечитати всі чотири варіанти.</p>
+  </div>
+</section>
+</div>
+
+<div id="bar">
+  <div class="nav">
+    <button id="prev" type="button" aria-label="Попередній слайд">←</button>
+    <button id="next" type="button" aria-label="Далі">→</button>
+  </div>
+  <div id="rail" aria-hidden="true"></div>
+  <div id="tip">пробіл — показати відповідь</div>
+  <div id="count">1 / 22</div>
+  <button id="fs" type="button" aria-label="На весь екран">⛶</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var rail = document.getElementById('rail');
+  var count = document.getElementById('count');
+  var tip = document.getElementById('tip');
+  var cur = 0, tick = null;
+
+  slides.forEach(function(){ rail.appendChild(document.createElement('i')); });
+  var cells = [].slice.call(rail.children);
+
+  /* ---- таймер завдання ----
+     Слот сам стає МІЖ умовою і відповідями: перед першим блоком, що містить .hide.
+     Якщо відповідей на слайді немає — одразу під заголовком/умовою, а не в кінці слайда.
+     Тому <div class="timerslot"></div> у розмітці можна ставити будь-де або не ставити зовсім:
+     достатньо data-timer="секунди" на самому слайді. */
+  function placeSlot(s){
+    var slot = s.querySelector('.timerslot');
+    if(!slot){ slot = document.createElement('div'); slot.className = 'timerslot'; }
+    if(slot.parentNode) slot.parentNode.removeChild(slot);
+    var kids = [].slice.call(s.children), anchor = null, intro = null, introDone = false;
+    for(var i = 0; i < kids.length; i++){
+      var k = kids[i];
+      if(k.classList.contains('hide') || k.querySelector('.hide')){ anchor = k; break; }
+      if(!introDone){
+        if(/^H[1-6]$/.test(k.tagName) || k.classList.contains('modes') ||
+           k.classList.contains('lede') || k.classList.contains('eyebrow')) intro = k;
+        else introDone = true;
+      }
+    }
+    if(!anchor) anchor = intro ? intro.nextSibling : null;
+    s.insertBefore(slot, anchor);           /* anchor === null → у кінець слайда */
+    return slot;
+  }
+
+  slides.forEach(function(s){
+    if(!s.dataset.timer) return;
+    var slot = placeSlot(s);
+    var total = parseInt(s.dataset.timer, 10);
+    var box = document.createElement('div');
+    box.className = 'timer';
+    box.innerHTML =
+      '<div class="clock"></div>' +
+      '<div class="track"><div class="fill"></div></div>' +
+      '<div class="lab"></div>' +
+      '<button type="button" class="go"></button>';
+    slot.appendChild(box);
+    box.dataset.total = total;
+    box.dataset.left = total;
+    box.dataset.run = '0';
+  });
+
+  function fmt(sec){
+    sec = Math.max(0, sec);
+    return Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2);
+  }
+
+  function drawTimer(box){
+    var total = +box.dataset.total, left = +box.dataset.left, run = box.dataset.run === '1';
+    box.querySelector('.clock').textContent = fmt(left);
+    box.querySelector('.fill').style.width = (100 * left / total) + '%';
+    box.classList.toggle('warn', left > 0 && left <= 30);
+    box.classList.toggle('over', left === 0);
+    box.querySelector('.lab').textContent =
+      left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
+    box.querySelector('.go').textContent =
+      left === 0 ? 'Ще раз' : (run ? 'Пауза' : 'Почати');
+  }
+
+  function stopTick(){ if(tick){ clearInterval(tick); tick = null; } }
+
+  function toggleTimer(box){
+    if(box.dataset.run === '1'){
+      box.dataset.run = '0'; stopTick(); drawTimer(box); return;
+    }
+    if(+box.dataset.left === 0){ box.dataset.left = box.dataset.total; }
+    box.dataset.run = '1';
+    stopTick();
+    tick = setInterval(function(){
+      var left = +box.dataset.left - 1;
+      box.dataset.left = Math.max(0, left);
+      if(left <= 0){ box.dataset.run = '0'; stopTick(); }
+      drawTimer(box);
+    }, 1000);
+    drawTimer(box);
+  }
+
+  function resetTimer(s){
+    var box = s.querySelector('.timer');
+    if(!box) return;
+    box.dataset.left = box.dataset.total;
+    box.dataset.run = '0';
+    drawTimer(box);
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.timer .go') : null;
+    if(!b) return;
+    e.stopPropagation();
+    toggleTimer(b.parentNode);
+  }, true);
+
+  /* ---- показ відповідей і навігація ---- */
+  function hidden(i){ return [].slice.call(slides[i].querySelectorAll('.hide:not(.on)')); }
+  function shown(i){ return [].slice.call(slides[i].querySelectorAll('.hide.on')); }
+
+  function paint(){
+    cells.forEach(function(c, i){
+      c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
+    });
+    count.textContent = (cur + 1) + ' / ' + slides.length;
+    tip.classList.toggle('on', hidden(cur).length > 0);
+  }
+
+  function go(i, revealAll){
+    if(i < 0 || i >= slides.length) return;
+    stopTick();
+    resetTimer(slides[cur]);
+    slides[cur].classList.remove('on');
+    cur = i;
+    var s = slides[cur];
+    s.classList.add('on');
+    [].slice.call(s.querySelectorAll('.hide')).forEach(function(el){
+      el.classList.toggle('on', !!revealAll);
+    });
+    resetTimer(s);
+    window.scrollTo(0, 0);
+    paint();
+  }
+
+  function next(){
+    var h = hidden(cur);
+    if(h.length){ h[0].classList.add('on'); paint(); return; }
+    go(cur + 1, false);
+  }
+
+  function prev(){
+    var s = shown(cur);
+    if(s.length){ s[s.length - 1].classList.remove('on'); paint(); return; }
+    go(cur - 1, true);
+  }
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else { document.documentElement.requestFullscreen(); }
+  });
+
+  document.getElementById('sheet').addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('button')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'ArrowRight' || e.code === 'Space' || e.code === 'PageDown' || e.code === 'Enter'){
+      e.preventDefault(); next();
+    } else if(e.code === 'ArrowLeft' || e.code === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(e.code === 'Home'){ go(0, false); }
+    else if(e.code === 'End'){ go(slides.length - 1, true); }
+    else if(e.code === 'KeyT'){
+      var box = slides[cur].querySelector('.timer');
+      if(box){ e.preventDefault(); toggleTimer(box); }
+    }
+    else if(e.code === 'KeyF'){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else { document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  slides.forEach(resetTimer);
+  paint();
+})();
+</script>
+
+</body>
+</html>
