@@ -2,151 +2,211 @@
 <html lang="uk">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Уроки</title>
 <meta name="description" content="Презентації уроків для учнів: математика, алгебра, геометрія, інформатика.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>
+/* Палітра та сама, що в презентаціях: один тон --h, решта виводиться формулою. */
 :root{
-  --paper:#FBFAF7; --card:#FFFFFF; --grid:#C9D8E8;
-  --ink:#1B2430; --soft:#5B6879;
-  --pen:#2C4BC9; --pen-soft:#E7ECFC;
-  --check:#1B7F4B; --check-soft:#E4F3EA;
-  --marker:#D7263D; --marker-soft:#FCEAEC;
-  --sun:#B57C00; --sun-soft:#FDF3DC;
-  --note:#6B4FA8; --note-soft:#EFEAFA;
-  --edge:#DDE4EC;
-  --on-pen:#FFFFFF;
-  --cell:30px;
+  --h:258; --cell:30px; --rad:12px;
+  --paper:oklch(98.4% .006 var(--h));
+  --card:oklch(100% 0 0);
+  --sunk:oklch(96.6% .009 var(--h));
+  --grid:oklch(89% .024 var(--h));
+  --ink:oklch(24% .035 var(--h));
+  --soft:oklch(51% .028 var(--h));
+  --edge:oklch(90% .015 var(--h));
+  --penL:50%; --penC:.19; --penSL:95.5%; --penSC:.036;
+  --pen:oklch(var(--penL) var(--penC) var(--h));
+  --pen-soft:oklch(var(--penSL) var(--penSC) var(--h));
+  --on-pen:oklch(100% 0 0);
+  --check:oklch(52% .14 150);     --check-soft:oklch(95.5% .04 150);
+  --marker:oklch(55% .21 22);     --marker-soft:oklch(95.5% .04 22);
+  --sun:oklch(58% .13 78);        --sun-soft:oklch(96% .05 88);
+  --note:oklch(52% .16 300);      --note-soft:oklch(95.5% .04 300);
+  --sh1:0 1px 2px oklch(24% .04 var(--h)/.06);
+  --sh2:0 4px 10px -3px oklch(24% .04 var(--h)/.10), 0 2px 4px -2px oklch(24% .04 var(--h)/.06);
+  --sh3:0 18px 40px -16px oklch(24% .04 var(--h)/.22);
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --paper:#121821; --card:#1A222D; --grid:#26374A;
-    --ink:#EAF0F6; --soft:#9AAABC;
-    --pen:#8DA9FF; --pen-soft:#1E2A47;
-    --check:#5FD394; --check-soft:#163024;
-    --marker:#FF7B8A; --marker-soft:#371D22;
-    --sun:#FFC93C; --sun-soft:#332813;
-    --note:#C0A8F5; --note-soft:#251E3A;
-    --edge:#2C3948;
-    --on-pen:#121821;
-  }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ color-scheme:dark;
+  --paper:oklch(17% .022 var(--h)); --card:oklch(21.5% .025 var(--h)); --sunk:oklch(19% .022 var(--h));
+  --grid:oklch(30% .03 var(--h)); --ink:oklch(95% .015 var(--h)); --soft:oklch(72% .025 var(--h));
+  --edge:oklch(31% .028 var(--h));
+  --penL:78%; --penC:.13; --penSL:29%; --penSC:.07;
+  --pen:oklch(var(--penL) var(--penC) var(--h));
+  --pen-soft:oklch(var(--penSL) var(--penSC) var(--h));
+  --on-pen:oklch(17% .02 var(--h));
+  --check:oklch(80% .16 150); --check-soft:oklch(28% .06 150);
+  --marker:oklch(74% .16 22);  --marker-soft:oklch(29% .07 22);
+  --sun:oklch(84% .14 88);     --sun-soft:oklch(29% .06 78);
+  --note:oklch(80% .13 300);   --note-soft:oklch(29% .06 300);
+  --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
+}}
+:root[data-theme="dark"]{ color-scheme:dark;
+  --paper:oklch(17% .022 var(--h)); --card:oklch(21.5% .025 var(--h)); --sunk:oklch(19% .022 var(--h));
+  --grid:oklch(30% .03 var(--h)); --ink:oklch(95% .015 var(--h)); --soft:oklch(72% .025 var(--h));
+  --edge:oklch(31% .028 var(--h));
+  --penL:78%; --penC:.13; --penSL:29%; --penSC:.07;
+  --pen:oklch(var(--penL) var(--penC) var(--h));
+  --pen-soft:oklch(var(--penSL) var(--penSC) var(--h));
+  --on-pen:oklch(17% .02 var(--h));
+  --check:oklch(80% .16 150); --check-soft:oklch(28% .06 150);
+  --marker:oklch(74% .16 22);  --marker-soft:oklch(29% .07 22);
+  --sun:oklch(84% .14 88);     --sun-soft:oklch(29% .06 78);
+  --note:oklch(80% .13 300);   --note-soft:oklch(29% .06 300);
+  --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
 }
-:root[data-theme="dark"]{
-  --paper:#121821; --card:#1A222D; --grid:#26374A;
-  --ink:#EAF0F6; --soft:#9AAABC;
-  --pen:#8DA9FF; --pen-soft:#1E2A47;
-  --check:#5FD394; --check-soft:#163024;
-  --marker:#FF7B8A; --marker-soft:#371D22;
-  --sun:#FFC93C; --sun-soft:#332813;
-  --note:#C0A8F5; --note-soft:#251E3A;
-  --edge:#2C3948;
-  --on-pen:#121821;
+@supports not (color: oklch(50% .1 200)){
+  :root{--paper:#FBFAF7;--card:#fff;--sunk:#F3F5F8;--grid:#C9D8E8;--ink:#1B2430;--soft:#5B6879;
+        --edge:#DDE4EC;--pen:#2C4BC9;--pen-soft:#E7ECFC;--on-pen:#fff;--check:#1B7F4B;--check-soft:#E4F3EA;
+        --marker:#D7263D;--marker-soft:#FCEAEC;--sun:#B57C00;--sun-soft:#FDF3DC;--note:#6B4FA8;--note-soft:#EFEAFA;
+        --sh1:0 1px 0 #DDE4EC;--sh2:0 2px 6px rgba(27,36,48,.10);--sh3:0 14px 34px rgba(27,36,48,.20)}
 }
+
+/* Кожен предмет має свій тон. Власні властивості обчислюються там, де оголошені,
+   тож у межах .subj їх треба перерахувати — інакше --h нижче нічого не змінює. */
+@supports (color: oklch(50% .1 200)){
+  .subj{--pen:oklch(var(--penL) var(--penC) var(--h));
+        --pen-soft:oklch(var(--penSL) var(--penSC) var(--h))}
+}
+
+/* D4 · мʼякий перехід сайт → урок (де браузер уміє; де ні — звичайний перехід) */
+@view-transition{navigation:auto}
 
 *{box-sizing:border-box}
-body{
-  margin:0; background-color:var(--paper); color:var(--ink);
+body{margin:0;background-color:var(--paper);color:var(--ink);min-height:100vh;
   font-family:"Manrope","Segoe UI",system-ui,sans-serif;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size:var(--cell) var(--cell);
-  background-position:center top;
-  -webkit-text-size-adjust:100%;
-  min-height:100vh;
-}
-.wrap{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,56px) clamp(14px,4vw,48px) clamp(40px,6vw,80px)}
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:var(--cell) var(--cell);background-position:center top;
+  -webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:1220px;margin:0 auto;
+  padding:calc(clamp(20px,4vw,52px) + env(safe-area-inset-top,0px)) clamp(14px,4vw,44px)
+          calc(clamp(40px,6vw,80px) + env(safe-area-inset-bottom,0px))}
 
 h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-   font-size:clamp(34px,6vw,76px);line-height:1.04;letter-spacing:-.025em;margin:0;text-wrap:balance}
+   font-size:clamp(34px,6vw,72px);line-height:1.02;letter-spacing:-.03em;margin:0;text-wrap:balance}
 .eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
    font-size:clamp(11px,1.15vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 12px}
-.lede{font-size:clamp(16px,2.1vw,25px);color:var(--soft);line-height:1.45;
-   margin:clamp(12px,2vw,22px) 0 0;max-width:46ch}
+.lede{font-size:clamp(16px,2vw,23px);color:var(--soft);line-height:1.45;
+   margin:clamp(12px,2vw,20px) 0 0;max-width:48ch}
 
-/* ---------- панель керування ---------- */
-.controls{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,14px);align-items:center;
-  margin:clamp(24px,4vw,44px) 0 clamp(18px,2.6vw,30px)}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
+/* ─────────── керування ─────────── */
+.controls{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,12px);align-items:center;
+  margin:clamp(24px,4vw,40px) 0 clamp(18px,2.6vw,28px)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(13px,1.4vw,17px);letter-spacing:.04em;
+  font-size:clamp(13px,1.4vw,16px);letter-spacing:.03em;
   border:2px solid var(--edge);background:var(--card);color:var(--ink);
-  border-radius:4px;padding:10px 16px;cursor:pointer;line-height:1;
-  transition:background .15s,border-color .15s,color .15s}
+  border-radius:99px;padding:10px 17px;cursor:pointer;line-height:1;box-shadow:var(--sh1);
+  transition:background .15s,border-color .15s,color .15s,transform .1s}
 .chip:hover{border-color:var(--pen)}
+.chip:active{transform:translateY(1px)}
 .chip[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:var(--on-pen)}
 .chip:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
 
-.search{flex:1 1 220px;min-width:180px;position:relative}
-#q{width:100%;font:inherit;font-size:clamp(15px,1.6vw,19px);
-  border:2px solid var(--edge);border-radius:4px;background:var(--card);color:var(--ink);
-  padding:11px 14px}
+.search{flex:1 1 230px;min-width:190px;position:relative}
+#q{width:100%;font:inherit;font-size:clamp(15px,1.6vw,18px);color:inherit;
+  border:2px solid var(--edge);border-radius:99px;background:var(--card);
+  padding:11px 46px 11px 18px;box-shadow:var(--sh1)}
 #q::placeholder{color:var(--soft)}
-#q:focus{outline:none;border-color:var(--pen)}
-
+#q:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 3px var(--pen-soft)}
+.search kbd{position:absolute;right:13px;top:50%;transform:translateY(-50%);pointer-events:none;
+  font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;color:var(--soft);
+  border:1.5px solid var(--edge);border-bottom-width:3px;border-radius:5px;padding:1px 6px;background:var(--card)}
+.search:focus-within kbd{display:none}
 #theme{font:inherit;font-size:19px;line-height:1;cursor:pointer;
-  border:2px solid var(--edge);border-radius:4px;background:var(--card);color:var(--ink);
-  padding:10px 14px;transition:border-color .15s}
+  border:2px solid var(--edge);border-radius:99px;background:var(--card);color:var(--ink);
+  padding:10px 15px;box-shadow:var(--sh1);transition:border-color .15s}
 #theme:hover{border-color:var(--pen)}
 #theme:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+#found{font-size:14px;color:var(--soft);white-space:nowrap}
 
-/* ---------- групи ---------- */
-.cls{margin:0 0 clamp(26px,4vw,46px)}
+/* ─────────── групи ─────────── */
+.cls{margin:0 0 clamp(26px,4vw,44px)}
 .cls > h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-  font-size:clamp(24px,3.4vw,42px);letter-spacing:-.015em;margin:0 0 4px;line-height:1.1}
-.cls > .sub{font-size:clamp(13px,1.4vw,17px);color:var(--soft);margin:0 0 clamp(14px,2vw,22px)}
+  font-size:clamp(24px,3.4vw,40px);letter-spacing:-.02em;margin:0 0 4px;line-height:1.1}
+.cls > .sub{font-size:clamp(13px,1.4vw,16px);color:var(--soft);margin:0 0 clamp(14px,2vw,20px)}
 
-.subj{margin:0 0 clamp(16px,2.4vw,28px)}
+.subj{margin:0 0 clamp(16px,2.4vw,26px)}
 .subj > h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(12px,1.25vw,16px);letter-spacing:.14em;text-transform:uppercase;
-  color:var(--soft);margin:0 0 10px;display:flex;align-items:center;gap:10px}
+  font-size:clamp(12px,1.25vw,15px);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);margin:0 0 12px;display:flex;align-items:center;gap:10px}
 .subj > h3::after{content:"";flex:1;height:2px;background:var(--edge);border-radius:2px}
-.subj > h3 .swatch{width:12px;height:12px;border-radius:50%;background:var(--accent,var(--pen));flex:none}
+.subj > h3 .swatch{width:11px;height:11px;border-radius:50%;background:var(--pen);flex:none}
 
-.cards{display:grid;gap:clamp(10px,1.5vw,18px);
-  grid-template-columns:repeat(auto-fill,minmax(clamp(240px,26vw,320px),1fr))}
+/* D6 · тема КТП */
+.theme{margin:0 0 clamp(14px,2vw,22px)}
+.theme > .th{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 9px}
+.theme > .th .nm{font-family:"Unbounded",sans-serif;font-weight:600;
+  font-size:clamp(13px,1.45vw,17px);line-height:1.2}
+.theme > .th .cnt{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--soft);white-space:nowrap}
+.theme > .bar{display:flex;gap:3px;margin:0 0 12px}
+.theme > .bar i{height:6px;border-radius:99px;background:var(--edge)}
+.theme > .bar i.d{background:var(--pen)}
 
-.card{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;
-  background:var(--card);border:2px solid var(--edge);border-radius:6px;
-  padding:clamp(14px,1.8vw,22px);box-shadow:0 1px 0 var(--edge);
-  transition:border-color .15s,transform .15s,box-shadow .15s}
-.card:hover{border-color:var(--accent,var(--pen));transform:translateY(-2px);
-  box-shadow:0 6px 0 -2px var(--accent-soft,var(--pen-soft))}
-.card:focus-visible{outline:3px solid var(--accent,var(--pen));outline-offset:2px}
-.card .hd{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.card .n{font-family:"JetBrains Mono",monospace;font-weight:700;
-  font-size:clamp(11px,1.15vw,14px);letter-spacing:.14em;text-transform:uppercase;
-  color:var(--accent,var(--pen))}
+.cards{display:grid;gap:clamp(10px,1.5vw,16px);
+  grid-template-columns:repeat(auto-fill,minmax(clamp(210px,23vw,280px),1fr))}
 
-/* урок, який проводили очно: у списку є, але відкривати нічого */
-.card.off{--accent:var(--soft);--accent-soft:transparent;
-  cursor:default;border-style:dashed;background:transparent;box-shadow:none}
-.card.off:hover{transform:none;box-shadow:none;border-color:var(--edge)}
-.card.off .t{color:var(--soft);font-weight:400}
-.badge{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(10px,1.05vw,13px);letter-spacing:.16em;text-transform:uppercase;
-  border:2px solid var(--sun);color:var(--sun);background:var(--sun-soft);
-  border-radius:4px;padding:5px 9px;line-height:1;white-space:nowrap;flex:none}
+/* D1 · картка з прев'ю */
+.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;
+  background:var(--card);border:2px solid var(--edge);border-radius:var(--rad);overflow:hidden;
+  box-shadow:var(--sh1);transition:border-color .16s,transform .16s,box-shadow .16s}
+.card:hover{border-color:var(--pen);transform:translateY(-3px);box-shadow:var(--sh3)}
+.card:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.card .thumb{aspect-ratio:16/9;position:relative;overflow:hidden;background:var(--sunk);
+  border-bottom:2px solid var(--edge);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:17px 17px}
+.card .thumb .mini{position:absolute;inset:0;padding:11px 13px;display:flex;flex-direction:column;
+  justify-content:center;gap:6px}
+.card .thumb .mini b{font-family:"Unbounded",sans-serif;font-weight:800;letter-spacing:-.015em;
+  font-size:clamp(12px,1.35vw,15px);line-height:1.15;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card .thumb .mini i{display:block;height:4px;border-radius:99px;background:var(--edge)}
+.card .thumb .glow{position:absolute;inset:auto -18% -48% auto;width:56%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,var(--pen) 0,transparent 68%);opacity:.14}
+.card .in{padding:12px 15px 15px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card .k{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(11px,1.15vw,13px);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--pen);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .card .t{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(17px,2vw,25px);line-height:1.22;letter-spacing:-.01em;text-wrap:balance}
-.card .m{font-size:clamp(12px,1.25vw,16px);color:var(--soft);margin-top:auto;padding-top:6px}
+  font-size:clamp(15px,1.75vw,19px);line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
+.card .m{font-size:clamp(12px,1.25vw,14px);color:var(--soft);margin-top:auto;padding-top:4px}
 
-.a-pen{--accent:var(--pen);--accent-soft:var(--pen-soft)}
-.a-note{--accent:var(--note);--accent-soft:var(--note-soft)}
-.a-check{--accent:var(--check);--accent-soft:var(--check-soft)}
-.a-sun{--accent:var(--sun);--accent-soft:var(--sun-soft)}
+/* урок, який проводили очно, і урок, якого ще немає */
+.card.off,.card.soon{cursor:default;border-style:dashed;background:transparent;box-shadow:none}
+.card.off:hover,.card.soon:hover{transform:none;box-shadow:none;border-color:var(--edge)}
+.card.off .thumb,.card.soon .thumb{opacity:.45}
+.card.soon .t,.card.off .t{color:var(--soft);font-weight:400}
 
-#empty{display:none;font-size:clamp(16px,2vw,24px);color:var(--soft);
-  border:2px dashed var(--edge);border-radius:6px;padding:clamp(20px,3vw,36px);text-align:center}
+/* D2 · позначки */
+.flag{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(9px,1vw,11px);letter-spacing:.14em;text-transform:uppercase;
+  border-radius:99px;padding:3px 9px;line-height:1.5;white-space:nowrap;flex:none;border:1.5px solid}
+.flag.new{background:var(--sun-soft);color:var(--sun);border-color:var(--sun)}
+.flag.seen{background:var(--check-soft);color:var(--check);border-color:var(--check)}
+.flag.live{background:var(--marker-soft);color:var(--marker);border-color:var(--marker)}
+.flag.soon{background:transparent;color:var(--soft);border-color:var(--edge);border-style:dashed}
+
+mark{background:var(--sun-soft);color:var(--sun);border-radius:4px;padding:0 2px;font-weight:800}
+
+#empty{display:none;font-size:clamp(16px,2vw,22px);color:var(--soft);margin:30px 0}
 #empty.on{display:block}
 
-footer{margin-top:clamp(30px,5vw,60px);padding-top:clamp(16px,2.4vw,26px);
-  border-top:2px solid var(--edge);color:var(--soft);font-size:clamp(13px,1.4vw,17px);line-height:1.5}
-footer b{color:var(--ink)}
+footer{margin-top:clamp(30px,5vw,56px);border-top:2px solid var(--edge);padding-top:18px;
+  font-size:clamp(13px,1.4vw,16px);color:var(--soft);line-height:1.6}
+footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge);border-bottom-width:3px;
+  border-radius:5px;background:var(--card);padding:1px 6px;font-size:.85em;font-weight:700;color:var(--ink)}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 }
 </style>
 </head>
@@ -162,7 +222,11 @@ footer b{color:var(--ink)}
 
 <div class="controls">
   <div class="chips" id="chips" role="group" aria-label="Клас"></div>
-  <div class="search"><input id="q" type="search" placeholder="Пошук за темою…" aria-label="Пошук за темою"></div>
+  <div class="search">
+    <input id="q" type="search" placeholder="Пошук за темою…" aria-label="Пошук за темою" autocomplete="off">
+    <kbd>/</kbd>
+  </div>
+  <span id="found" aria-live="polite"></span>
   <button id="theme" type="button" aria-label="Змінити тему">◐</button>
 </div>
 
@@ -171,9 +235,11 @@ footer b{color:var(--ink)}
 
 <footer>
   <p style="margin:0">Відкривати можна з телефона, планшета чи ноутбука. Усередині презентації:
-  <b>клік або стрілки</b> — далі, <b>пробіл</b> — показати відповідь, <b>F</b> — на весь екран.</p>
-  <p style="margin:10px 0 0">Картка з позначкою <b>ОЧНО</b> — урок, який ми проводили в класі.
-  Він є в списку, щоб не збилася нумерація, але презентації для нього немає.</p>
+  <kbd>клік</kbd> або <kbd>→</kbd> — далі, <kbd>пробіл</kbd> — показати відповідь,
+  <kbd>O</kbd> — усі слайди, <kbd>F</kbd> — на весь екран, <kbd>?</kbd> — решта клавіш.</p>
+  <p style="margin:10px 0 0">Позначка <b>ОЧНО</b> — урок, який ми проводили в класі: він є в списку,
+  щоб не збилася нумерація, але презентації для нього немає.
+  Позначка <b>БУДЕ</b> — урок, який ще попереду.</p>
 </footer>
 
 </div>
@@ -186,186 +252,344 @@ footer b{color:var(--ink)}
   "subject": "Інформатика",
   "n": 1,
   "lesson": "Урок 1",
+  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+  "themeTotal": 9,
   "title": "Інформація та повідомлення",
-  "slides": 21,
-  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 22,
+  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Інформатика",
   "n": 2,
   "lesson": "Урок 2",
+  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+  "themeTotal": 9,
   "title": "Інформаційні процеси і технології",
-  "slides": 22,
-  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 23,
+  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Інформатика",
   "n": 3,
   "lesson": "Урок 3",
+  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+  "themeTotal": 9,
   "title": "Використання комп'ютерів",
-  "slides": 17,
-  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 18,
+  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "5-З",
+  "subject": "Інформатика",
+  "n": 4,
+  "lesson": "Урок 4",
+  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+  "themeTotal": 9,
+  "title": "Комп'ютер як інформаційна система. Складові комп'ютера",
+  "slides": 20,
+  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "5-З",
+  "subject": "Інформатика",
+  "n": 5,
+  "lesson": "Урок 5",
+  "title": "Інструктаж з БЖД. Операційна система та її інтерфейс",
+  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+  "themeTotal": 9,
+  "planned": true
+ },
+ {
+  "cls": "5-З",
+  "subject": "Інформатика",
+  "n": 6,
+  "lesson": "Урок 6",
+  "title": "Інструктаж з БЖД. Практикум. Робота з вікнами, значками та ярликами",
+  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+  "themeTotal": 9,
+  "planned": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 1,
   "lesson": "Урок 1",
+  "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
+  "themeTotal": 3,
   "title": "Натуральні числа та їх запис",
-  "slides": 19,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 20,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 2,
   "lesson": "Урок 2",
+  "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
+  "themeTotal": 3,
   "title": "Арифметичні дії з натуральними числами",
-  "slides": 17,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 18,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 3,
   "lesson": "Урок 3",
+  "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
+  "themeTotal": 3,
   "title": "Величини. Розв’язування текстових задач",
-  "slides": 17,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 18,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 4,
   "lesson": "Урок 4",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
   "title": "Натуральні числа. Цифри. Число нуль",
-  "slides": 21,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 22,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 5,
   "lesson": "Урок 5",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
   "title": "Десятковий запис натурального числа",
-  "slides": 22,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 23,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 6,
   "lesson": "Урок 6",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
   "title": "Розв’язування вправ. Натуральні числа",
-  "slides": 20,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 21,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 7,
   "lesson": "Урок 7",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
   "title": "Порівняння натуральних чисел",
-  "slides": 20,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 21,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 8,
   "lesson": "Урок 8",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
   "title": "Розв’язування вправ. Порівняння натуральних чисел",
-  "slides": 19,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%208/%D0%A3%D1%80%D0%BE%D0%BA%208%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 20,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%208/%D0%A3%D1%80%D0%BE%D0%BA%208%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 9,
   "lesson": "Урок 9",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
   "title": "Округлення натуральних чисел",
-  "slides": 22,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%209/%D0%A3%D1%80%D0%BE%D0%BA%209%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 23,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%209/%D0%A3%D1%80%D0%BE%D0%BA%209%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "5-З",
   "subject": "Математика",
   "n": 10,
   "lesson": "Урок 10",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
   "title": "Розвʼязування вправ. Округлення натуральних чисел",
-  "slides": 18,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2010/%D0%A3%D1%80%D0%BE%D0%BA%2010%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 19,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2010/%D0%A3%D1%80%D0%BE%D0%BA%2010%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "5-З",
+  "subject": "Математика",
+  "n": 11,
+  "lesson": "Урок 11",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
+  "title": "Додавання натуральних чисел",
+  "slides": 20,
+  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "5-З",
+  "subject": "Математика",
+  "n": 12,
+  "lesson": "Урок 12",
+  "title": "Додавання натуральних чисел. Властивості додавання",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
+  "planned": true
+ },
+ {
+  "cls": "5-З",
+  "subject": "Математика",
+  "n": 13,
+  "lesson": "Урок 13",
+  "title": "Додавання натуральних чисел. Властивості додавання",
+  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+  "themeTotal": 17,
+  "planned": true
  },
  {
   "cls": "7-І",
   "subject": "Алгебра",
   "n": 1,
   "lesson": "Урок 1",
+  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+  "themeTotal": 5,
   "title": "Числа, які ми вже вміємо",
-  "slides": 20,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 21,
+  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Алгебра",
   "n": 2,
   "lesson": "Урок 2",
+  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+  "themeTotal": 5,
   "title": "Дроби: десяткові та звичайні",
-  "slides": 18,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 19,
+  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Алгебра",
   "n": 3,
   "lesson": "Урок 3",
+  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+  "themeTotal": 5,
   "title": "Відношення і пропорції",
-  "slides": 20,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 21,
+  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Алгебра",
   "n": 4,
   "lesson": "Урок 4",
+  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+  "themeTotal": 5,
   "title": "Раціональні числа і дії з ними",
-  "slides": 19,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 20,
+  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Алгебра",
   "n": 5,
   "lesson": "Урок 5",
+  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+  "themeTotal": 5,
   "title": "Самостійна робота № 1",
-  "slides": 17,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 18,
+  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Алгебра",
   "n": 6,
   "lesson": "Урок 6",
+  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+  "themeTotal": 10,
   "title": "Загальні відомості про рівняння",
-  "slides": 21,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 22,
+  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Алгебра",
   "n": 7,
   "lesson": "Урок 7",
+  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+  "themeTotal": 10,
   "title": "Лінійне рівняння з однією змінною",
-  "slides": 21,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 22,
+  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "7-І",
+  "subject": "Алгебра",
+  "n": 8,
+  "lesson": "Урок 8",
+  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+  "themeTotal": 10,
+  "title": "Лінійне рівняння з однією змінною. Розвʼязування рівнянь",
+  "slides": 19,
+  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%208/%D0%A3%D1%80%D0%BE%D0%BA%208%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "7-І",
+  "subject": "Алгебра",
+  "n": 9,
+  "lesson": "Урок 9",
+  "title": "Лінійне рівняння з однією змінною",
+  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+  "themeTotal": 10,
+  "planned": true
+ },
+ {
+  "cls": "7-І",
+  "subject": "Алгебра",
+  "n": 10,
+  "lesson": "Урок 10",
+  "title": "Розв’язування задач за допомогою лінійних рівнянь. Рівняння як математична модель задачі",
+  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+  "themeTotal": 10,
+  "planned": true
  },
  {
   "cls": "7-І",
   "subject": "Геометрія",
   "n": 1,
   "lesson": "Урок 1",
+  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+  "themeTotal": 12,
   "title": "Геометричні фігури. Точка, пряма, промінь",
   "offline": true
  },
@@ -374,78 +598,156 @@ footer b{color:var(--ink)}
   "subject": "Геометрія",
   "n": 2,
   "lesson": "Урок 2",
+  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+  "themeTotal": 12,
   "title": "Відрізок і його довжина",
-  "slides": 21,
-  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 22,
+  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Геометрія",
   "n": 3,
   "lesson": "Урок 3",
+  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+  "themeTotal": 12,
   "title": "Вимірювання відрізків",
-  "slides": 17,
-  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 18,
+  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Геометрія",
   "n": 4,
   "lesson": "Урок 4",
+  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+  "themeTotal": 12,
   "title": "Кут. Вимірювання кутів. Бісектриса",
-  "slides": 21,
-  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 22,
+  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "7-І",
   "subject": "Геометрія",
   "n": 5,
   "lesson": "Урок 5",
+  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+  "themeTotal": 12,
   "title": "Кути й бісектриса — розвʼязування задач",
-  "slides": 16,
-  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 17,
+  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "7-І",
+  "subject": "Геометрія",
+  "n": 6,
+  "lesson": "Урок 6",
+  "title": "Самостійна робота № 1. Елементарні геометричні фігури та їхні властивості",
+  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+  "themeTotal": 12,
+  "planned": true
+ },
+ {
+  "cls": "7-І",
+  "subject": "Геометрія",
+  "n": 7,
+  "lesson": "Урок 7",
+  "title": "Аксіоми, теореми, означення",
+  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+  "themeTotal": 12,
+  "planned": true
  },
  {
   "cls": "8-К",
   "subject": "Алгебра",
   "n": 1,
   "lesson": "Урок 1",
+  "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+  "themeTotal": 4,
   "title": "Рівняння виду ax = b",
-  "slides": 24,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 25,
+  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "8-К",
   "subject": "Алгебра",
   "n": 2,
   "lesson": "Урок 2",
+  "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+  "themeTotal": 4,
   "title": "Цілі вирази — повторення за 7 клас",
-  "slides": 20,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 21,
+  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "8-К",
   "subject": "Алгебра",
   "n": 3,
   "lesson": "Урок 3",
+  "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+  "themeTotal": 4,
   "title": "Функції — повторення 7 класу",
-  "slides": 20,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 21,
+  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "8-К",
   "subject": "Алгебра",
   "n": 4,
   "lesson": "Урок 4",
+  "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+  "themeTotal": 4,
   "title": "Системи лінійних рівнянь — повторення 7 класу",
-  "slides": 20,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 21,
+  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "8-К",
+  "subject": "Алгебра",
+  "n": 5,
+  "lesson": "Урок 5",
+  "theme": "Тема 1. Раціональні дроби. Додавання і віднімання дробів (16 год)",
+  "themeTotal": 16,
+  "title": "Раціональні вирази. Раціональні дроби",
+  "slides": 21,
+  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "8-К",
+  "subject": "Алгебра",
+  "n": 6,
+  "lesson": "Урок 6",
+  "title": "Раціональні вирази. Раціональні дроби",
+  "theme": "Тема 1. Раціональні дроби. Додавання і віднімання дробів (16 год)",
+  "themeTotal": 16,
+  "planned": true
+ },
+ {
+  "cls": "8-К",
+  "subject": "Алгебра",
+  "n": 7,
+  "lesson": "Урок 7",
+  "title": "Раціональні вирази. Раціональні дроби",
+  "theme": "Тема 1. Раціональні дроби. Додавання і віднімання дробів (16 год)",
+  "themeTotal": 16,
+  "planned": true
  },
  {
   "cls": "8-К",
   "subject": "Геометрія",
   "n": 1,
   "lesson": "Урок 1",
+  "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
+  "themeTotal": 3,
   "title": "Елементарні фігури. Прямі на площині",
   "offline": true
  },
@@ -454,36 +756,80 @@ footer b{color:var(--ink)}
   "subject": "Геометрія",
   "n": 2,
   "lesson": "Урок 2",
+  "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
+  "themeTotal": 3,
   "title": "Три ознаки рівності",
-  "slides": 19,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 20,
+  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "8-К",
   "subject": "Геометрія",
   "n": 3,
   "lesson": "Урок 3",
+  "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
+  "themeTotal": 3,
   "title": "Коло і круг",
-  "slides": 20,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 21,
+  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "8-К",
   "subject": "Геометрія",
   "n": 4,
   "lesson": "Урок 4",
+  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+  "themeTotal": 9,
   "title": "Чотирикутник і сума його кутів",
-  "slides": 21,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 22,
+  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "8-К",
   "subject": "Геометрія",
   "n": 5,
   "lesson": "Урок 5",
+  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+  "themeTotal": 9,
   "title": "Паралелограм, його властивості й ознаки",
+  "slides": 21,
+  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "8-К",
+  "subject": "Геометрія",
+  "n": 6,
+  "lesson": "Урок 6",
+  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+  "themeTotal": 9,
+  "title": "Паралелограм, його властивості й ознаки (розвʼязування задач)",
   "slides": 20,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "8-К",
+  "subject": "Геометрія",
+  "n": 7,
+  "lesson": "Урок 7",
+  "title": "Прямокутник і його властивості",
+  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+  "themeTotal": 9,
+  "planned": true
+ },
+ {
+  "cls": "8-К",
+  "subject": "Геометрія",
+  "n": 8,
+  "lesson": "Урок 8",
+  "title": "Прямокутник і його властивості",
+  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+  "themeTotal": 9,
+  "planned": true
  },
  {
   "cls": "9-А",
@@ -491,8 +837,9 @@ footer b{color:var(--ink)}
   "n": 0,
   "lesson": "Урок 0",
   "title": "Знайомство. Обираємо, що вчимо цього року",
-  "slides": 22,
-  "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%200/%D0%A3%D1%80%D0%BE%D0%BA%200%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 23,
+  "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%200/%D0%A3%D1%80%D0%BE%D0%BA%200%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  },
  {
   "cls": "9-А",
@@ -500,8 +847,19 @@ footer b{color:var(--ink)}
   "n": 1,
   "lesson": "Урок 1",
   "title": "Як бачить око і як «бачить» машина",
-  "slides": 24,
-  "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html"
+  "slides": 25,
+  "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
+ },
+ {
+  "cls": "9-А",
+  "subject": "Інформатика",
+  "n": 2,
+  "lesson": "Урок 2",
+  "title": "Піксель. Яскравість. Зображення як таблиця чисел",
+  "slides": 25,
+  "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+  "fresh": true
  }
 ]
 </script>
@@ -509,34 +867,33 @@ footer b{color:var(--ink)}
 
 <script>
 (function(){
-  var raw = document.getElementById('lessons').textContent;
+  "use strict";
+  var D = document;
   var data = [];
-  try { data = JSON.parse(raw) || []; } catch(e) { data = []; }
+  try { data = JSON.parse(D.getElementById('lessons').textContent) || []; } catch(e) { data = []; }
 
-  var list  = document.getElementById('list');
-  var chips = document.getElementById('chips');
-  var empty = document.getElementById('empty');
-  var q     = document.getElementById('q');
+  var list = D.getElementById('list'), chips = D.getElementById('chips');
+  var empty = D.getElementById('empty'), q = D.getElementById('q'), found = D.getElementById('found');
+
+  function store(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 
   /* ---- тема ---- */
-  var themeBtn = document.getElementById('theme');
-  function store(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
-  function load(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
-
+  var themeBtn = D.getElementById('theme');
   var saved = load('theme');
-  if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+  if (saved === 'dark' || saved === 'light') D.documentElement.dataset.theme = saved;
   themeBtn.addEventListener('click', function(){
-    var cur = document.documentElement.dataset.theme;
-    if (!cur) {
-      var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      cur = dark ? 'dark' : 'light';
-    }
+    var cur = D.documentElement.dataset.theme;
+    if (!cur) cur = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
     var next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
+    D.documentElement.dataset.theme = next;
     store('theme', next);
   });
 
-  /* ---- слова ---- */
+  /* ---- що учень уже відкривав ---- */
+  var seen = {};
+  try { seen = JSON.parse(load('seen') || '{}') || {}; } catch(e) { seen = {}; }
+
   function plural(n, one, few, many){
     var a = Math.abs(n) % 100, b = a % 10;
     if (a > 10 && a < 20) return many;
@@ -545,31 +902,23 @@ footer b{color:var(--ink)}
     return many;
   }
 
-  var ACCENT = {
-    'Математика':'a-pen', 'Алгебра':'a-pen',
-    'Геометрія':'a-note',
-    'Інформатика':'a-check'
-  };
-  function accent(subject){ return ACCENT[subject] || 'a-sun'; }
+  /* тон предмета — той самий, що в самій презентації */
+  var HUE = { 'Математика':258, 'Алгебра':300, 'Геометрія':150, 'Інформатика':40 };
+  function hueOf(s){ return HUE[s] != null ? HUE[s] : 258; }
 
   /* ---- фільтри ---- */
   var classes = [];
   data.forEach(function(d){ if (classes.indexOf(d.cls) < 0) classes.push(d.cls); });
-
   var active = load('cls');
   if (active !== null && active !== '*' && classes.indexOf(active) < 0) active = null;
   if (active === null) active = '*';
 
   function makeChip(value, label){
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'chip';
-    b.textContent = label;
-    b.dataset.v = value;
+    var b = D.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = label; b.dataset.v = value;
     b.setAttribute('aria-pressed', String(value === active));
     b.addEventListener('click', function(){
-      active = value;
-      store('cls', value);
+      active = value; store('cls', value);
       [].forEach.call(chips.children, function(c){
         c.setAttribute('aria-pressed', String(c.dataset.v === active));
       });
@@ -577,33 +926,47 @@ footer b{color:var(--ink)}
     });
     return b;
   }
-
   if (classes.length > 1) chips.appendChild(makeChip('*', 'Усі класи'));
   classes.forEach(function(c){ chips.appendChild(makeChip(c, c)); });
 
-  /* ---- малювання ---- */
+  /* ---- дрібні помічники ---- */
   function el(tag, cls, text){
-    var n = document.createElement(tag);
+    var n = D.createElement(tag);
     if (cls) n.className = cls;
     if (text != null) n.textContent = text;
     return n;
   }
+  /* D3 · підсвітка знайденого. Через textContent, а не innerHTML:
+     назви уроків приходять із <title> файлів і не мають ставати розміткою. */
+  function hilite(node, text, term){
+    node.textContent = '';
+    if (!term) { node.textContent = text; return; }
+    var low = String(text).toLowerCase(), from = 0, i;
+    while ((i = low.indexOf(term, from)) >= 0){
+      if (i > from) node.appendChild(D.createTextNode(text.slice(from, i)));
+      node.appendChild(el('mark', null, text.slice(i, i + term.length)));
+      from = i + term.length;
+    }
+    node.appendChild(D.createTextNode(text.slice(from)));
+  }
+  function themeShort(t){ return String(t || '').replace(/\s*\(\d+\s*год\)\s*$/, ''); }
 
   function render(){
     var term = q.value.trim().toLowerCase();
     var rows = data.filter(function(d){
       if (active !== '*' && d.cls !== active) return false;
       if (!term) return true;
-      return (d.title + ' ' + d.subject + ' ' + d.cls + ' ' + d.lesson)
+      return (d.title + ' ' + d.subject + ' ' + d.cls + ' ' + d.lesson + ' ' + (d.theme || ''))
              .toLowerCase().indexOf(term) >= 0;
     });
 
     list.textContent = '';
     empty.classList.toggle('on', rows.length === 0);
+    var real = rows.filter(function(d){ return !d.planned; }).length;
+    found.textContent = term ? (real + ' ' + plural(real, 'урок', 'уроки', 'уроків')) : '';
     if (!rows.length) return;
 
-    var order = [];
-    var groups = {};
+    var order = [], groups = {};
     rows.forEach(function(d){
       if (!groups[d.cls]) { groups[d.cls] = { order: [], subj: {} }; order.push(d.cls); }
       var g = groups[d.cls];
@@ -612,67 +975,114 @@ footer b{color:var(--ink)}
     });
 
     order.forEach(function(cls){
-      var g = groups[cls];
-      var total = 0;
-      g.order.forEach(function(s){ total += g.subj[s].length; });
+      var g = groups[cls], total = 0, off = 0;
+      g.order.forEach(function(s){
+        g.subj[s].forEach(function(d){
+          if (d.planned) return;
+          total++;
+          if (d.offline) off++;
+        });
+      });
 
       var box = el('section', 'cls');
       box.appendChild(el('h2', null, cls + ' клас'));
-      var off = 0;
-      g.order.forEach(function(s){
-        g.subj[s].forEach(function(d){ if (d.offline) off++; });
-      });
       box.appendChild(el('p', 'sub',
-        g.order.join(' · ') + ' — ' + total + ' ' +
-        plural(total, 'урок', 'уроки', 'уроків') +
+        g.order.join(' · ') + ' — ' + total + ' ' + plural(total, 'урок', 'уроки', 'уроків') +
         (off ? ' · ' + off + ' очно' : '')));
 
       g.order.forEach(function(subject){
         var sec = el('section', 'subj');
+        sec.style.setProperty('--h', hueOf(subject));
         var h3 = el('h3');
         h3.appendChild(el('span', 'swatch'));
-        h3.appendChild(document.createTextNode(subject));
+        h3.appendChild(D.createTextNode(subject));
         sec.appendChild(h3);
-        sec.className = 'subj ' + accent(subject);
 
-        var cards = el('div', 'cards');
+        /* D6 · розкладаємо по темах КТП, зберігаючи порядок */
+        var tOrder = [], byTheme = {};
         g.subj[subject].forEach(function(d){
-          var offline = !!d.offline;
+          var key = d.theme || '';
+          if (!byTheme[key]) { byTheme[key] = []; tOrder.push(key); }
+          byTheme[key].push(d);
+        });
 
-          // очний урок — це div, а не посилання: відкривати нічого
-          var card = document.createElement(offline ? 'div' : 'a');
-          card.className = 'card ' + accent(subject) + (offline ? ' off' : '');
-          if (offline) {
-            card.setAttribute('aria-disabled', 'true');
-          } else {
-            card.href = d.href;
+        tOrder.forEach(function(key){
+          var items = byTheme[key];
+          var wrap = el('div', 'theme');
+          if (key){
+            var totalInTheme = items[0].themeTotal || items.length;
+            var doneInTheme = items.filter(function(d){ return !d.planned; }).length;
+            var th = el('div', 'th');
+            var nm = el('span', 'nm'); hilite(nm, themeShort(key), term); th.appendChild(nm);
+            th.appendChild(el('span', 'cnt', doneInTheme + ' / ' + totalInTheme));
+            wrap.appendChild(th);
+            var bar = el('div', 'bar');
+            var d1 = el('i'); d1.className = 'd'; d1.style.flex = doneInTheme;
+            bar.appendChild(d1);
+            var rest = Math.max(0, totalInTheme - doneInTheme);
+            if (rest) { var d2 = el('i'); d2.style.flex = rest; bar.appendChild(d2); }
+            wrap.appendChild(bar);
           }
 
-          var hd = el('span', 'hd');
-          hd.appendChild(el('span', 'n', d.lesson));
-          if (offline) hd.appendChild(el('span', 'badge', 'Очно'));
-          card.appendChild(hd);
+          var cards = el('div', 'cards');
+          items.forEach(function(d){
+            var offline = !!d.offline, planned = !!d.planned;
+            var open = !offline && !planned;
+            var card = D.createElement(open ? 'a' : 'div');
+            card.className = 'card' + (offline ? ' off' : '') + (planned ? ' soon' : '');
+            if (open) card.href = d.href; else card.setAttribute('aria-disabled', 'true');
 
-          card.appendChild(el('span', 't', d.title));
-          card.appendChild(el('span', 'm', offline
-            ? subject + ' · проведено очно'
-            : subject + (d.slides ? ' · ' + d.slides + ' ' +
-              plural(d.slides, 'слайд', 'слайди', 'слайдів') : '')));
+            var thumb = el('span', 'thumb');
+            thumb.appendChild(el('span', 'glow'));
+            var mini = el('span', 'mini');
+            mini.appendChild(el('b', null, d.title));
+            var i1 = el('i'); i1.style.width = '72%'; mini.appendChild(i1);
+            var i2 = el('i'); i2.style.width = '46%'; mini.appendChild(i2);
+            thumb.appendChild(mini);
+            card.appendChild(thumb);
 
-          cards.appendChild(card);
+            var inner = el('span', 'in');
+            var k = el('span', 'k');
+            k.appendChild(el('span', null, d.lesson));
+            if (offline) k.appendChild(el('span', 'flag live', 'Очно'));
+            else if (planned) k.appendChild(el('span', 'flag soon', 'Буде'));
+            else if (seen[d.href]) k.appendChild(el('span', 'flag seen', 'Переглянуто'));
+            else if (d.fresh) k.appendChild(el('span', 'flag new', 'Новий'));
+            inner.appendChild(k);
+
+            var t = el('span', 't'); hilite(t, d.title, term); inner.appendChild(t);
+            inner.appendChild(el('span', 'm', offline ? subject + ' · проведено очно'
+              : planned ? subject + ' · ще попереду'
+              : subject + (d.slides ? ' · ' + d.slides + ' ' +
+                  plural(d.slides, 'слайд', 'слайди', 'слайдів') : '')));
+            card.appendChild(inner);
+
+            if (open) card.addEventListener('click', function(){
+              seen[d.href] = 1;
+              store('seen', JSON.stringify(seen));
+            });
+            cards.appendChild(card);
+          });
+          wrap.appendChild(cards);
+          sec.appendChild(wrap);
         });
-        sec.appendChild(cards);
         box.appendChild(sec);
       });
-
       list.appendChild(box);
     });
   }
 
   q.addEventListener('input', render);
+  D.addEventListener('keydown', function(e){
+    if (e.key === '/' && D.activeElement !== q &&
+        !/^(INPUT|TEXTAREA|SELECT)$/.test(D.activeElement && D.activeElement.tagName)){
+      e.preventDefault(); q.focus(); q.select();
+    } else if (e.key === 'Escape' && D.activeElement === q){
+      q.value = ''; render(); q.blur();
+    }
+  });
   render();
 })();
 </script>
-
 </body>
 </html>

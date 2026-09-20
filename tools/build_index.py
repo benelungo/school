@@ -19,7 +19,9 @@
 
 import json
 import re
+import subprocess
 import sys
+import time
 from pathlib import Path
 from urllib.parse import quote
 
@@ -36,6 +38,77 @@ END = "<!-- /BUILD:LESSONS -->"
 
 # папки, куди не заглядаємо
 SKIP_DIRS = {".git", ".venv", ".idea", "tools", ".github", "node_modules"}
+
+# урок вважається новим, якщо зʼявився за стільки днів
+NEW_DAYS = 10
+# скільки найближчих запланованих уроків показувати після останнього готового
+PLANNED_AHEAD = 2
+
+
+def git_dates():
+    """{шлях: unix-час останнього коміту}. Потрібно для позначки «новий»:
+    час зміни файла не годиться — масове оновлення двигуна оновлює всі файли."""
+    try:
+        out = subprocess.run(
+            ["git", "log", "--name-only", "--format=%ct", "--diff-filter=A"],
+            cwd=ROOT, capture_output=True, text=True, timeout=30).stdout
+    except (OSError, subprocess.SubprocessError):
+        return {}
+    dates, ts = {}, None
+    for line in out.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        if line.isdigit():
+            ts = int(line)
+        elif ts is not None:
+            dates.setdefault(line, ts)
+    return dates
+
+
+def read_ktp(subject_dir):
+    """КТП.docx → (теми у порядку, {№ уроку: (тема, назва)}).
+
+    У таблиці КТП рядок-заголовок теми — це рядок, де всі клітинки однакові.
+    Рядок уроку починається з номера.
+    """
+    plans = subject_dir / "Плани"
+    # Якщо клас іде за власним курсом (є «… план курсу ….html»), офіційне КТП
+    # не описує те, що реально відбувається — теми й «буде» з нього брати не можна.
+    if plans.is_dir() and any(plans.glob("*план курсу*")):
+        return [], {}
+    path = plans / "КТП.docx"
+    if not path.is_file():
+        return [], {}
+    try:
+        from docx import Document
+    except ImportError:
+        return [], {}
+    try:
+        doc = Document(str(path))
+    except Exception:
+        return [], {}
+    if not doc.tables:
+        return [], {}
+
+    themes, by_num, current = [], {}, None
+    for row in doc.tables[0].rows:
+        cells = [c.text.replace("\n", " ").strip() for c in row.cells]
+        if not cells or not cells[0]:
+            continue
+        head = cells[0]
+        if len(set(cells)) == 1:                       # обʼєднаний рядок-заголовок
+            if re.match(r"^[IІ]+\s*семестр", head):
+                continue                               # семестр — не тема
+            current = re.sub(r"\s+", " ", head).strip()
+            if current and current not in themes:
+                themes.append(current)
+            continue
+        m = re.match(r"^(\d+)$", head)
+        if not m or len(cells) < 3:
+            continue
+        by_num[int(m.group(1))] = (current, re.sub(r"\s+", " ", cells[2]).strip())
+    return themes, by_num
 
 
 def class_sort_key(name):
@@ -100,6 +173,8 @@ def href_for(path):
 
 def collect():
     lessons = []
+    gdates = git_dates()
+    now = time.time()
     for class_dir in sorted(
         (p for p in ROOT.iterdir() if p.is_dir() and p.name not in SKIP_DIRS
          and not p.name.startswith((".", "_"))),
@@ -109,6 +184,11 @@ def collect():
             lessons_dir = subject_dir / "Уроки"
             if not lessons_dir.is_dir():
                 continue
+            themes, ktp = read_ktp(subject_dir)
+            theme_size = {}
+            for _t, _ in ktp.values():
+                theme_size[_t] = theme_size.get(_t, 0) + 1
+            done_numbers = []
             for lesson_dir in sorted(
                 (p for p in lessons_dir.iterdir() if p.is_dir()),
                 key=lambda p: lesson_number(p.name),
@@ -126,11 +206,21 @@ def collect():
                     "lesson": lesson_dir.name,
                 }
 
+                ktp_row = ktp.get(item["n"])
+                if ktp_row and ktp_row[0]:
+                    item["theme"] = ktp_row[0]
+                    item["themeTotal"] = theme_size.get(ktp_row[0], 0)
+
                 if deck is not None:
                     item["title"] = read_title(deck, lesson_dir.name)
                     item["slides"] = count_slides(deck)
                     item["href"] = href_for(deck)
+                    rel = deck.relative_to(ROOT).as_posix()
+                    ts = gdates.get(rel) or deck.stat().st_mtime
+                    if now - ts < NEW_DAYS * 86400:
+                        item["fresh"] = True
                     lessons.append(item)
+                    done_numbers.append(item["n"])
                     continue
 
                 # Презентації для класу немає. Якщо є вчительська — урок
@@ -148,6 +238,27 @@ def collect():
                     subject_dir.name, class_dir.name)
                 item["offline"] = True
                 lessons.append(item)
+                done_numbers.append(item["n"])
+
+            # найближчі заплановані уроки з КТП — щоб було видно, що далі
+            if ktp and done_numbers:
+                nxt = max(done_numbers)
+                added = 0
+                n = nxt + 1
+                while added < PLANNED_AHEAD and n in ktp:
+                    theme, title = ktp[n]
+                    lessons.append({
+                        "cls": class_dir.name,
+                        "subject": subject_dir.name,
+                        "n": n,
+                        "lesson": f"Урок {n}",
+                        "title": title,
+                        "theme": theme,
+                        "themeTotal": theme_size.get(theme, 0),
+                        "planned": True,
+                    })
+                    added += 1
+                    n += 1
     return lessons
 
 
@@ -188,7 +299,7 @@ def main():
     for item in lessons:
         by_class.setdefault(item["cls"], []).append(item)
 
-    online = sum(1 for i in lessons if not i.get("offline"))
+    online = sum(1 for i in lessons if not i.get("offline") and not i.get("planned"))
     offline = len(lessons) - online
     print(f"Презентацій для класу: {online}"
           + (f"; очних уроків без презентації: {offline}" if offline else ""))
@@ -196,6 +307,7 @@ def main():
         names = ", ".join(
             f"{i['subject']} {i['lesson'].lower()}"
             + (" [ОЧНО]" if i.get("offline") else "")
+            + (" [ПЛАН]" if i.get("planned") else "")
             for i in by_class[cls]
         )
         print(f"  {cls}: {names}")

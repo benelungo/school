@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="uk" data-subject="algebra">
+<html lang="uk" data-subject="geometry">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Цілі вирази — повторення за 7 клас</title>
+<title>Паралелограм, його властивості й ознаки (розвʼязування задач)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>/*=ENGINE-CSS=*/
 /* ═══════════════════════════════════════════════════════════════════════
@@ -603,6 +603,28 @@ details.hint .in{padding:0 clamp(11px,1.4vw,16px) clamp(11px,1.4vw,16px);
   font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.015em;text-wrap:balance}
 @media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
 
+/* ── D5b · загальний таймер уроку (чип у шапці) ──────────────────────────
+   Стоїть завжди праворуч: .step-of двигун додає пізніше, тому порядок
+   тримається на order, а не на порядку в розмітці. */
+#topic .step-of{order:8}
+#lesson{order:9;flex:none;align-self:center;cursor:pointer;
+  display:inline-flex;align-items:center;gap:.5em;
+  border:var(--bw) solid var(--edge);border-radius:99px;
+  padding:.3em .8em .34em;background:var(--card);color:var(--soft);
+  box-shadow:var(--sh1);transition:color .3s,border-color .3s,background .3s}
+#lesson .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(8px,calc(.8*var(--u)),10px);letter-spacing:.18em;text-transform:uppercase}
+#lesson .cl{font-family:"Manrope","Segoe UI",system-ui,sans-serif;font-weight:800;
+  font-variant-numeric:tabular-nums;font-size:clamp(13px,calc(1.5*var(--u)),19px);
+  line-height:1;min-width:4.2ch;text-align:right}
+#lesson .cl b,#lesson .cl i{font-style:normal;font-family:inherit}
+#lesson.idle{opacity:.72}
+#lesson.run{color:var(--ink);border-color:var(--pen)}
+#lesson.run .cl i{animation:tick-blink 1s steps(1,end) infinite}
+#lesson.warn{color:var(--sun);border-color:var(--sun)}
+#lesson.over{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+@media(max-width:620px){#lesson .cap{display:none}}
+
 .nextl{display:flex;align-items:center;justify-content:space-between;gap:clamp(10px,1.5vw,18px);
   border:var(--bw) solid var(--edge);border-radius:var(--rad);background:var(--card);
   padding:clamp(11px,1.4vw,16px) clamp(13px,1.7vw,19px);text-decoration:none;color:inherit;
@@ -782,494 +804,368 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 }
 /*=/ENGINE-CSS=*/</style>
 <style>/*=LESSON-CSS=*/
-.stolb{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:pre;
-       font-size:clamp(18px,2.5vw,34px);line-height:1.45;letter-spacing:.06em;
-       font-variant-numeric:tabular-nums;margin:0}
+.math{font-size:clamp(16px,calc(2*var(--u)),25px);line-height:1.6;margin:0}
+.math .cmt{font-size:.66em;color:var(--soft);font-style:normal}
+.m{font-style:italic;font-family:"Charter",Georgia,serif}
 .mix{display:inline-flex;align-items:center;gap:.1em;vertical-align:middle}
+.fig{background:var(--card);border:2px solid var(--edge);border-radius:6px;
+     padding:clamp(8px,1.1vw,14px) clamp(10px,1.3vw,16px)}
+.fig svg{display:block;width:100%;height:auto;color:var(--ink)}
+.fig .cap{text-align:center;color:var(--soft);font-size:clamp(11px,calc(1.15*var(--u)),15px);margin-top:6px}
+svg line,svg path,svg circle,svg polyline,svg polygon{stroke:currentColor;stroke-width:2.4;fill:none;vector-effect:non-scaling-stroke}
+svg circle.pt{fill:currentColor;stroke:none}
+svg text{font:italic 21px "Charter",Georgia,serif;fill:currentColor;stroke:none}
+svg text.n{font-style:normal;font-weight:700;font-size:17px}
+svg .hl{stroke:var(--marker)}
+svg .gr{stroke:var(--grid);stroke-width:1.2}
+svg .ax{stroke:var(--soft);stroke-width:2}
+svg .l1{stroke:var(--pen)}
+svg circle.pt.l1{fill:var(--pen)}
+svg .l2{stroke:var(--marker)}
+svg circle.pt.l2{fill:var(--marker)}
+svg .l3{stroke:var(--check)}
+svg circle.pt.l3{fill:var(--check)}
+svg .l4{stroke:var(--sun)}
+svg circle.pt.l4{fill:var(--sun)}
+.leg{display:flex;flex-wrap:wrap;gap:clamp(6px,.9vw,12px)}
+.leg span{display:inline-flex;align-items:center;gap:7px;font-weight:800;
+  font-size:clamp(13px,calc(1.5*var(--u)),19px);font-family:"JetBrains Mono",monospace}
+.leg i{width:26px;height:0;border-top:4px solid currentColor;flex:none}
+.c6{grid-template-columns:repeat(6,1fr)}
+@media(max-width:820px){.c6{grid-template-columns:repeat(3,1fr)}}
 /*=/LESSON-CSS=*/</style>
 </head>
 <body>
 <div id="stage">
 
 <div id="topic">
-  <span class="k">Алгебра · 8-К · Урок 2</span>
-  <span class="t">Повторення. Цілі вирази: степені, многочлени, розкладання на множники</span>
+  <span class="k">Геометрія · 8-К · Урок 6</span>
+  <span class="t">Паралелограм, його властивості й ознаки (розвʼязування задач)</span>
 </div>
 
 <div id="sheet">
 
 <!-- 1 -->
 <section class="slide on" data-t="Вітання">
-  <p class="eyebrow">Алгебра · 8-К · Урок 2 · онлайн</p>
-  <h1>Цілі вирази.<br>Повторюємо 7 клас</h1>
-  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">Геометрію завершили — переходимо на алгебру. Зошит міняємо, налаштування лишаємо ті самі.</p>
-  <div class="row c3" style="margin-top:clamp(16px,2.6vw,34px)">
-    <div class="box"><h3>Потрібно</h3><p style="margin:0">зошит з <b>алгебри</b>,<br>ручка, підручник</p></div>
-    <div class="box pen"><h3>Підручник</h3><p style="margin:0">Істер, «Алгебра. 8 клас»<br>сторінки <b>6–7</b></p></div>
-    <div class="box warn"><h3>Не потрібно</h3><p style="margin:0"><b>Калькулятор</b><br>усе рахуємо самі</p></div>
+  <p class="eyebrow">Геометрія · 8-К · Урок 6 · онлайн</p>
+  <h1>Паралелограм:<br>розвʼязуємо задачі</h1>
+  <p class="lede" style="margin-top:clamp(10px,1.6vw,20px)">Властивості й ознаки вже знаємо. Сьогодні — практикум: кути, діагоналі, бісектриса, висота й доведення. Наступного уроку — <b>самостійна робота № 1</b>.</p>
+  <div class="row c3" style="margin-top:clamp(12px,2vw,26px)">
+    <div class="box"><h3>Потрібно</h3><p style="margin:0">зошит з <b>геометрії</b>, лінійка, олівець, підручник</p></div>
+    <div class="box pen"><h3>Підручник</h3><p style="margin:0">Істер, «Геометрія. 8 клас»<br>§ 2, сторінки <b>18–24</b></p></div>
+    <div class="box play"><h3>Мета уроку</h3><p style="margin:0">Навчитися розвʼязувати <b>всі типи задач</b>, що будуть на самостійній</p></div>
   </div>
 </section>
 
 <!-- 2 -->
-<section class="slide" data-t="Перехід і як відповідаємо">
+<section class="slide" data-t="Технічна перевірка">
   <p class="eyebrow">Поки не почали</p>
   <h2>Два кроки — і стартуємо</h2>
   <div class="row c2">
     <div class="box pen">
       <h3>Крок 1</h3>
-      <p style="margin:0">Відклади зошит з геометрії. Відкрий <b>зошит з алгебри</b> й підручник на <b>ст. 6</b>.</p>
+      <p style="margin:0">Відкрий <b>зошит з геометрії</b> на домашньому завданні (№ 2.10 і № 2.18) і підручник на <b>ст. 22</b>.</p>
     </div>
     <div class="box play">
       <h3>Крок 2</h3>
       <p style="margin:0">Напиши в чат <b>плюс</b> — я бачу, що ти на місці.</p>
-      <p class="huge" style="margin:12px 0 0;color:var(--pen)">+</p>
+      <p class="huge" style="margin:8px 0 0;color:var(--pen)">+</p>
     </div>
   </div>
-  <h3 style="margin-top:clamp(14px,2.2vw,26px)">Як відповідаємо сьогодні</h3>
+  <h3 style="margin-top:clamp(10px,1.6vw,20px)">Як відповідаємо сьогодні</h3>
   <div class="modes">
-    <span class="mode chat"><span class="dot"></span>У чат — короткі відповіді</span>
-    <span class="mode voice"><span class="dot"></span>Вголос — коли назву імʼя</span>
-    <span class="mode book"><span class="dot"></span>У зошит — усі приклади</span>
+    <span class="mode want"><span class="dot"></span>бажаючий — короткі відповіді</span><span class="mode pick"><span class="dot"></span>випадковий номер</span>
+    <span class="mode voice"><span class="dot"></span>Вголос — коли випаде номер</span>
+    <span class="mode book"><span class="dot"></span>У зошит — малюнок і розвʼязання</span>
   </div>
-  <div class="box warn" style="margin-top:clamp(12px,1.8vw,22px)">
+  <p style="margin:0 0 clamp(8px,1.2vw,14px)"><span class="nb-legend"><i></i>бірюзова рамка з позначкою «✎ у зошит» — це записуємо в зошит</span></p>
+  <div class="box warn">
     <p class="big" style="margin:0"><b>Мікрофон вимкнено.</b> Вмикаєш, коли я звертаюсь до тебе особисто.</p>
   </div>
 </section>
 
 <!-- 3 -->
-<section class="slide" data-t="Записуємо тему" data-timer="90">
+<section class="slide" data-t="Записуємо тему" data-timer="60">
   <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
   <h2>Записуємо</h2>
-  <div class="box">
+  <div class="box nb">
     <p class="huge" style="text-align:center;margin:0">Дата</p>
-    <p class="huge" style="text-align:center;margin:clamp(6px,1vw,14px) 0 0">Класна робота</p>
-    <p class="big" style="text-align:center;margin:clamp(14px,2.2vw,26px) 0 0;color:var(--pen)">
-      <b>Повторення. Цілі вирази</b></p>
+    <p class="huge" style="text-align:center;margin:clamp(4px,.8vw,10px) 0 0">Класна робота</p>
+    <p class="big" style="text-align:center;margin:clamp(10px,1.8vw,22px) 0 0;color:var(--nb)">
+      <b>Паралелограм, його властивості й ознаки</b><br>Розвʼязування задач</p>
   </div>
   <div class="timerslot"></div>
 </section>
 
 <!-- 4 -->
-<section class="slide" data-t="Карта уроку">
-  <p class="eyebrow">Про що весь урок</p>
-  <h2>Цілий вираз — це вираз без ділення на змінну</h2>
-  <div class="row c3">
-    <div class="box ok">
-      <h3>Це цілі вирази</h3>
-      <p class="eqn" style="margin:0">5a<sup>3</sup></p>
-      <p class="eqn" style="margin:6px 0 0">x<sup>2</sup> − 4x + 7</p>
-      <p class="eqn" style="margin:6px 0 0">(a + b)(a − b)</p>
-    </div>
-    <div class="box warn">
-      <h3>А це — ні</h3>
-      <p class="eqn" style="margin:0"><span class="fr"><span class="n">5</span><span class="d">x</span></span></p>
-      <p class="eqn" style="margin:6px 0 0"><span class="fr"><span class="n">a + 1</span><span class="d">a − 3</span></span></p>
-      <p style="margin-top:10px">Змінна <b>у знаменнику</b> — це вже дробовий вираз.</p>
-    </div>
-    <div class="box pen">
-      <h3>Куди ми йдемо</h3>
-      <p style="margin:0">Уже з наступного тижня — <b>раціональні дроби</b>. А там у знаменнику стоїть саме те, що ми сьогодні повторюємо.</p>
-    </div>
+<section class="slide" data-t="Перевіряємо ДЗ: № 2.10" data-timer="120">
+  <div class="modes"><span class="mode solo"><span class="dot"></span>у зошит — кути, які вийшли</span><span class="mode pick"><span class="dot"></span>Випадковий номер — кути</span></div>
+  <p class="eyebrow">Домашнє завдання · № 2.10 (ст. 22)</p>
+  <h2>Знайдіть усі кути паралелограма, якщо…</h2>
+  <div class="tbl">
+    <table>
+      <tr><th>Умова</th><th>Розвʼязання</th><th>Кути</th></tr>
+      <tr><td>1) сума двох з них 200°</td><td><span class="hide">сусідні дають 180°, отже це протилежні: 200° : 2 = 100°; 180° − 100° = 80°</span></td><td class="n"><span class="hide ans">100°, 80°, 100°, 80°</span></td></tr>
+      <tr><td>2) один на 40° менший від другого</td><td><span class="hide"><span class="m">x</span> + (<span class="m">x</span> − 40°) = 180° → <span class="m">x</span> = 110°</span></td><td class="n"><span class="hide ans">110°, 70°, 110°, 70°</span></td></tr>
+      <tr><td>3) один удвічі більший за другий</td><td><span class="hide"><span class="m">x</span> + 2<span class="m">x</span> = 180° → <span class="m">x</span> = 60°</span></td><td class="n"><span class="hide ans">60°, 120°, 60°, 120°</span></td></tr>
+      <tr><td>4) два з них відносяться як 4 : 5</td><td><span class="hide">180° : (4 + 5) = 20°; 4 · 20° = 80°, 5 · 20° = 100°</span></td><td class="n"><span class="hide ans">80°, 100°, 80°, 100°</span></td></tr>
+    </table>
   </div>
-  <div class="box hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Чотири зупинки сьогодні</h3>
-    <div class="pair" style="margin-top:10px">
-      <span>1. Степені</span><span>2. Множення многочленів</span><span>3. Формули скороченого множення</span><span>4. Розкладання на множники</span>
-    </div>
+  <div class="box warn hide" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p style="margin:0">У 2)–4) «два різні кути» — це завжди <b>сусідні</b>, бо протилежні рівні. Тому рівняння складаємо на <b>180°</b>, а не на 360°.</p>
   </div>
 </section>
 
 <!-- 5 -->
-<section class="slide" data-t="Степені — чотири властивості">
-  <p class="eyebrow">Зупинка 1</p>
-  <h2>Степені: чотири дії, які треба знати напам'ять</h2>
-  <div class="row c2">
-    <div class="box pen">
-      <p class="eqn" style="margin:0">a<sup>m</sup> · a<sup>n</sup> = a<sup>m + n</sup></p>
-      <p style="margin-top:8px">Множимо — показники <b>додаємо</b>.</p>
+<section class="slide" data-t="Перевіряємо ДЗ: № 2.18">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос — читаємо доведення</span></div>
+  <p class="eyebrow">Домашнє завдання · № 2.18 (ст. 23)</p>
+  <h2>△<span class="m">ABC</span> = △<span class="m">CDA</span>. Доведіть, що <span class="m">ABCD</span> — паралелограм</h2>
+  <div class="row c21">
+    <div>
+      <div class="box hide"><p class="step" style="margin:0">1) З рівності трикутників: <span class="m">AB</span> = <span class="m">CD</span>, <span class="m">BC</span> = <span class="m">DA</span> — відповідні сторони.</p></div>
+      <div class="box hide" style="margin-top:clamp(6px,1vw,12px)"><p class="step" style="margin:0">2) Отже, у чотирикутнику <span class="m">ABCD</span> протилежні сторони <b>попарно рівні</b>.</p></div>
+      <div class="box ok hide" style="margin-top:clamp(6px,1vw,12px)"><p class="step" style="margin:0">3) За <b>ознакою 2</b> <span class="m">ABCD</span> — паралелограм.</p></div>
+      <div class="box note hide" style="margin-top:clamp(6px,1vw,12px)"><p style="margin:0">Інший спосіб: ∠<span class="m">BAC</span> = ∠<span class="m">DCA</span> → <span class="m">AB</span> ∥ <span class="m">CD</span>; ∠<span class="m">BCA</span> = ∠<span class="m">DAC</span> → <span class="m">BC</span> ∥ <span class="m">AD</span> — це саме означення.</p></div>
     </div>
-    <div class="box pen">
-      <p class="eqn" style="margin:0">a<sup>m</sup> : a<sup>n</sup> = a<sup>m − n</sup></p>
-      <p style="margin-top:8px">Ділимо — показники <b>віднімаємо</b>.</p>
-    </div>
-    <div class="box pen">
-      <p class="eqn" style="margin:0">(a<sup>m</sup>)<sup>n</sup> = a<sup>m · n</sup></p>
-      <p style="margin-top:8px">Степінь від степеня — показники <b>множимо</b>.</p>
-    </div>
-    <div class="box pen">
-      <p class="eqn" style="margin:0">(ab)<sup>n</sup> = a<sup>n</sup>b<sup>n</sup></p>
-      <p style="margin-top:8px">Степінь добутку — <b>кожен множник</b> у цей степінь.</p>
-    </div>
-  </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Пам'ятай про невидиму одиницю</h3>
-    <p class="big" style="margin:0">Запис <b>t</b> означає <b>t<sup>1</sup></b>. Саме на цьому найчастіше губиться одиниця в показнику.</p>
+    <div class="fig" style="align-self:center"><svg viewBox="0 0 350 210"><path d="M34 163.3 L96 46.7 L316 46.7 L254 163.3 Z"/><line class="hl" x1="34" y1="163.3" x2="316" y2="46.7"/><line class="hl" x1="71.2" y1="108.3" x2="58.8" y2="101.7"/><line class="hl" x1="278.8" y1="101.7" x2="291.2" y2="108.3"/><line class="hl" x1="203.5" y1="53.7" x2="203.5" y2="39.7"/><line class="hl" x1="208.5" y1="53.7" x2="208.5" y2="39.7"/><line class="hl" x1="141.5" y1="170.3" x2="141.5" y2="156.3"/><line class="hl" x1="146.5" y1="170.3" x2="146.5" y2="156.3"/><text x="18.3" y="176.8" text-anchor="middle">A</text><text x="82.3" y="43.6" text-anchor="middle">B</text><text x="331.7" y="47.2" text-anchor="middle">C</text><text x="267.7" y="180.4" text-anchor="middle">D</text></svg><div class="cap">Мал. 2.18 · однакові рисочки — рівні сторони</div></div>
   </div>
 </section>
 
 <!-- 6 -->
-<section class="slide" data-t="№ 19 — усно" data-timer="120">
-  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
-  <p class="eyebrow">Розминка · усно</p>
-  <h2>№ 19 (ст. 6). Подайте у вигляді степеня</h2>
-  <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) p<sup>7</sup>p<sup>2</sup> &nbsp;<span class="ans hide">= p<sup>9</sup></span></p>
-      <p class="eqn" style="margin:10px 0 0">2) t · t<sup>2</sup> · t<sup>3</sup> &nbsp;<span class="ans hide">= t<sup>6</sup></span></p>
-    </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">3) c<sup>15</sup> : c<sup>5</sup> &nbsp;<span class="ans hide">= c<sup>10</sup></span></p>
-      <p class="eqn" style="margin:10px 0 0">4) (a<sup>3</sup>)<sup>8</sup> &nbsp;<span class="ans hide">= a<sup>24</sup></span></p>
-    </div>
+<section class="slide" data-t="Правда чи ні?" data-timer="120">
+  <div class="modes"><span class="mode solo"><span class="dot"></span>у зошит — номер і «+» або «−»</span><span class="mode want"><span class="dot"></span>Бажаючий — «+» чи «−»</span></div>
+  <p class="eyebrow">Розминка перед задачами · властивості й ознаки</p>
+  <h2>Правда чи ні?</h2>
+  <div class="tbl">
+    <table>
+      <tr><th>№</th><th>Твердження</th><th>Відповідь</th></tr>
+      <tr><td class="n">1</td><td>Сусідні кути паралелограма рівні.</td><td><span class="hide"><b style="color:var(--marker)">−</b> їхня сума 180°</span></td></tr>
+      <tr><td class="n">2</td><td>Протилежні сторони паралелограма рівні.</td><td><span class="hide"><b class="ans">+</b></span></td></tr>
+      <tr><td class="n">3</td><td>Діагоналі паралелограма рівні.</td><td><span class="hide"><b style="color:var(--marker)">−</b> вони лише діляться навпіл</span></td></tr>
+      <tr><td class="n">4</td><td>Якщо діагоналі чотирикутника точкою перетину діляться навпіл, то це паралелограм.</td><td><span class="hide"><b class="ans">+</b> ознака 3</span></td></tr>
+      <tr><td class="n">5</td><td>Якщо в чотирикутнику дві сторони паралельні, то це паралелограм.</td><td><span class="hide"><b style="color:var(--marker)">−</b> може бути трапеція</span></td></tr>
+      <tr><td class="n">6</td><td>Бісектриса кута паралелограма відтинає від нього рівнобедрений трикутник.</td><td><span class="hide"><b class="ans">+</b> приклад 1</span></td></tr>
+    </table>
   </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Найпідступніший тут — другий</h3>
-    <p class="big" style="margin:0">t · t<sup>2</sup> · t<sup>3</sup> = t<sup>1 + 2 + 3</sup> = t<sup>6</sup>. Хто забув про одиницю — отримав t<sup>5</sup>.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 7 -->
-<section class="slide" data-t="№ 23 — значення виразу" data-timer="150">
-  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
-  <p class="eyebrow">Усно · пильнуємо знаки</p>
-  <h2>№ 23 (ст. 6). Знайдіть значення виразу</h2>
-  <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) (−2)<sup>4</sup> &nbsp;<span class="ans hide">= 16</span></p>
-      <p class="eqn" style="margin:10px 0 0">2) (−5)<sup>3</sup> &nbsp;<span class="ans hide">= −125</span></p>
+<section class="slide" data-t="№ 2.11 — кути" data-timer="180">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — малюнок і розвʼязання</span><span class="mode pick"><span class="dot"></span>Випадковий номер — кут</span></div>
+  <p class="eyebrow">№ 2.11 (ст. 22)</p>
+  <h2>У паралелограмі <span class="m">ABCD</span> ∠<span class="m">BAD</span> = 80°, ∠<span class="m">ACD</span> = 50°. Знайдіть ∠<span class="m">ACB</span> і ∠<span class="m">ABC</span></h2>
+  <div class="row c21">
+    <div>
+      <div class="box nb hide"><p class="step" style="margin:0">1) ∠<span class="m">BAC</span> = ∠<span class="m">ACD</span> = 50° — різносторонні при <span class="m">AB</span> ∥ <span class="m">CD</span></p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">2) ∠<span class="m">CAD</span> = 80° − 50° = 30°</p>
+        <p class="step" style="margin:0">3) ∠<span class="m">ACB</span> = ∠<span class="m">CAD</span> = <b class="ans">30°</b> — різносторонні при <span class="m">AD</span> ∥ <span class="m">BC</span></p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">4) ∠<span class="m">ABC</span> = 180° − 80° = <b class="ans">100°</b> — сусідній з ∠<span class="m">A</span></p></div>
     </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">3) 0,2 · 5<sup>3</sup> &nbsp;<span class="ans hide">= 0,2 · 125 = 25</span></p>
-      <p class="eqn" style="margin:10px 0 0">4) (1,5 − 1,8)<sup>2</sup> &nbsp;<span class="ans hide">= (−0,3)<sup>2</sup> = 0,09</span></p>
-    </div>
+    <div class="fig nb" style="align-self:center"><svg viewBox="0 0 350 230"><path d="M34 196.4 L62.7 33.6 L316 33.6 L287.3 196.4 Z"/><line class="hl" x1="34" y1="196.4" x2="316" y2="33.6"/><path d="M38.2 172.8 A24 24 0 0 1 58 196.4"/><text class="n" x="74" y="146.4" text-anchor="middle">80°</text><path d="M310.1 67.1 A34 34 0 0 1 286.6 50.6"/><text class="n" x="283.9" y="85.5" text-anchor="middle">50°</text><path class="hl" d="M293.5 46.6 A26 26 0 0 1 290 33.6"/><text class="n" x="269.6" y="52" text-anchor="middle">?</text><path class="hl" d="M84.7 33.6 A22 22 0 0 1 58.9 55.3"/><text class="n" x="89.7" y="71.8" text-anchor="middle">?</text><text x="19.3" y="211.9" text-anchor="middle">A</text><text x="48.9" y="30.6" text-anchor="middle">B</text><text x="330.7" y="32.1" text-anchor="middle">C</text><text x="301.1" y="213.4" text-anchor="middle">D</text></svg></div>
   </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Правило знака — одним рядком</h3>
-    <p class="big" style="margin:0"><b>Парний</b> показник → результат <b>додатний</b>. <b>Непарний</b> → знак мінуса зберігається.</p>
-    <p style="margin-top:10px">У четвертому спершу дія в дужках, і лише потім квадрат. Мінус зникає, бо показник парний, — але <b>0,09</b>, а не 0,9: множимо 0,3 · 0,3, а знаків після коми стає два.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 8 -->
-<section class="slide" data-t="Дужки й мінус">
-  <p class="eyebrow">Зупинка 2</p>
-  <h2>Знак перед дужками вирішує все</h2>
-  <div class="row c2">
-    <div class="box ok">
-      <h3>Плюс перед дужками</h3>
-      <p class="eqn" style="margin:0">+ (2a − 5) = 2a − 5</p>
-      <p style="margin-top:10px">Дужки просто зникають, усе лишається як було.</p>
+<section class="slide" data-t="№ 2.16 — діагоналі" data-timer="150">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode pick"><span class="dot"></span>випадковий номер — відповідь</span></div>
+  <p class="eyebrow">№ 2.16 (ст. 23)</p>
+  <h2><span class="m">O</span> — точка перетину діагоналей паралелограма <span class="m">ABCD</span>. <span class="m">BD</span> = 20 см, <span class="m">AB</span> = 15 см, <span class="m">P</span><sub>△<i>AOB</i></sub> = 32 см. Знайдіть <span class="m">AC</span></h2>
+  <div class="row c21">
+    <div>
+      <div class="box nb hide"><p class="step" style="margin:0">1) <span class="m">BO</span> = 20 : 2 = 10 (см) — діагоналі діляться навпіл</p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">2) <span class="m">AO</span> = 32 − 15 − 10 = 7 (см)</p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">3) <span class="m">AC</span> = 2 · 7 = <b class="ans">14 см</b></p></div>
+      <div class="box warn hide" style="margin-top:clamp(6px,1vw,12px)"><p style="margin:0">У периметр △<span class="m">AOB</span> входять <b>половинки</b> діагоналей, а не цілі діагоналі.</p></div>
     </div>
-    <div class="box warn">
-      <h3>Мінус перед дужками</h3>
-      <p class="eqn" style="margin:0">− (2a − 5) = −2a + 5</p>
-      <p style="margin-top:10px"><b>Кожен</b> доданок міняє знак. Не тільки перший.</p>
-    </div>
-  </div>
-  <div class="box pen" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Множимо многочлен на многочлен</h3>
-    <p class="big" style="margin:0">Кожен доданок першої дужки — на кожен доданок другої, а тоді зводимо подібні.</p>
-    <p class="eqn" style="margin:12px 0 0">(m + 2)(m − 4) = m<sup>2</sup> − 4m + 2m − 8 = m<sup>2</sup> − 2m − 8</p>
+    <div class="fig nb" style="align-self:center"><svg viewBox="0 0 350 210"><path d="M86.1 165.1 L316 165.1 L263.9 44.9 L34 44.9 Z"/><line class="l1" x1="86.1" y1="165.1" x2="263.9" y2="44.9"/><line class="l1" x1="316" y1="165.1" x2="34" y2="44.9"/><path class="hl" d="M86.1 165.1 L316 165.1 L175 105 Z"/><line class="l1" x1="134.5" y1="140.8" x2="126.6" y2="129.2"/><line class="l1" x1="223.4" y1="80.8" x2="215.5" y2="69.2"/><line class="l1" x1="250.5" y1="129.6" x2="245.1" y2="142.5"/><line class="l1" x1="245.9" y1="127.6" x2="240.5" y2="140.5"/><line class="l1" x1="109.5" y1="69.5" x2="104.1" y2="82.4"/><line class="l1" x1="104.9" y1="67.5" x2="99.5" y2="80.4"/><circle class="pt" cx="175" cy="105" r="4.5"/><text x="72" y="181.6" text-anchor="middle">A</text><text x="331.6" y="178.7" text-anchor="middle">B</text><text x="278" y="42.4" text-anchor="middle">C</text><text x="18.4" y="45.3" text-anchor="middle">D</text><text x="185.3" y="137.9" text-anchor="middle">O</text><text class="n" x="201.1" y="187.1" text-anchor="middle">15</text></svg></div>
   </div>
 </section>
 
 <!-- 9 -->
-<section class="slide" data-t="№ 25 — у зошит" data-timer="240">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Працюємо самостійно</p>
-  <h2>№ 25 (ст. 6). Перетворіть на многочлен</h2>
-  <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) 7b<sup>2</sup>(b − 3)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 7b<sup>3</sup> − 21b<sup>2</sup></p>
-      <p class="eqn" style="margin:12px 0 0">2) 4(b − 3) − 2(2b + 1)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 4b − 12 − 4b − 2 = <b>−14</b></p>
-      <p class="eqn" style="margin:12px 0 0">3) (m + 2)(m − 4)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= m<sup>2</sup> − 2m − 8</p>
+<section class="slide" data-t="№ 2.21 — бісектриса і кут" data-timer="180">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode solo"><span class="dot"></span>у зошит — кути</span><span class="mode want"><span class="dot"></span>Бажаючий — кути</span></div>
+  <p class="eyebrow">№ 2.21 (ст. 23)</p>
+  <h2>Бісектриса кута паралелограма перетинає його сторону під кутом 48°. Знайдіть кути паралелограма</h2>
+  <div class="row c21">
+    <div>
+      <div class="box note"><p style="margin:0">Малюнка в умові немає — робимо сам: <span class="m">AK</span> — бісектриса ∠<span class="m">A</span>, ∠<span class="m">AKB</span> = 48°.</p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">1) ∠<span class="m">KAD</span> = ∠<span class="m">AKB</span> = 48° — різносторонні при <span class="m">AD</span> ∥ <span class="m">BC</span></p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">2) ∠<span class="m">A</span> = 2 · 48° = 96° — бо <span class="m">AK</span> бісектриса</p>
+        <p class="step" style="margin:0">3) ∠<span class="m">B</span> = 180° − 96° = 84°. &nbsp;Відповідь: <b class="ans">96°, 84°, 96°, 84°</b></p></div>
     </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">4) −2x<sup>3</sup>(4 − x<sup>2</sup> + x)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 2x<sup>5</sup> − 2x<sup>4</sup> − 8x<sup>3</sup></p>
-      <p class="eqn" style="margin:12px 0 0">5) 3(2c − 6) − (5c − 18)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 6c − 18 − 5c + 18 = <b>c</b></p>
-      <p class="eqn" style="margin:12px 0 0">6) (3x + y)(x − y)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 3x<sup>2</sup> − 2xy − y<sup>2</sup></p>
-    </div>
+    <div class="fig nb" style="align-self:center"><svg viewBox="0 0 350 210"><path d="M50.9 180 L35.1 30 L299.1 30 L314.9 180 Z"/><line class="hl" x1="50.9" y1="180" x2="186" y2="30"/><path d="M48.2 154.1 A26 26 0 0 1 68.3 160.7"/><path d="M72.3 156.2 A32 32 0 0 1 82.9 180"/><path class="hl" d="M168.6 49.3 A26 26 0 0 1 160 30"/><text class="n" x="142.1" y="55.5" text-anchor="middle">48°</text><circle class="pt" cx="186" cy="30" r="4.5"/><text x="37.1" y="196.9" text-anchor="middle">A</text><text x="19.5" y="30.4" text-anchor="middle">B</text><text x="314.3" y="29.5" text-anchor="middle">C</text><text x="329.1" y="196.3" text-anchor="middle">D</text><text x="202" y="23.6" text-anchor="middle">K</text></svg></div>
   </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Другий і п'ятий — не помилка</h3>
-    <p class="big" style="margin:0">Там справді <b>зникають усі x-и</b>: у № 2 лишається число −14, у № 5 — одна буква c. Так буває: многочлен може згорнутися до однієї величини.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 10 -->
-<section class="slide" data-t="Формули скороченого множення">
-  <p class="eyebrow">Зупинка 3</p>
-  <h2>Три формули, які економлять півуроку</h2>
+<section class="slide" data-t="Пауза для очей" data-timer="60">
+  <div class="modes"><span class="mode away"><span class="dot"></span>Відводимо очі від екрана</span></div>
+  <h2>Хвилина відпочинку</h2>
   <div class="row c3">
-    <div class="box pen">
-      <h3>Квадрат суми</h3>
-      <p class="eqn" style="margin:0">(a + b)<sup>2</sup> =</p>
-      <p class="eqn" style="margin:4px 0 0">a<sup>2</sup> + 2ab + b<sup>2</sup></p>
-    </div>
-    <div class="box pen">
-      <h3>Квадрат різниці</h3>
-      <p class="eqn" style="margin:0">(a − b)<sup>2</sup> =</p>
-      <p class="eqn" style="margin:4px 0 0">a<sup>2</sup> − 2ab + b<sup>2</sup></p>
-    </div>
-    <div class="box pen">
-      <h3>Різниця квадратів</h3>
-      <p class="eqn" style="margin:0">(a − b)(a + b) =</p>
-      <p class="eqn" style="margin:4px 0 0">a<sup>2</sup> − b<sup>2</sup></p>
-    </div>
+    <div class="box play"><h3>1</h3><p style="margin:0">Подивись у вікно на найдальшу точку — <b>20 секунд</b>.</p></div>
+    <div class="box play"><h3>2</h3><p style="margin:0">Заплющ очі й «намалюй» ними дві паралельні прямі, а потім — <b>бісектрису</b> кута між ними й січною.</p></div>
+    <div class="box play"><h3>3</h3><p style="margin:0">Встань, потягнись угору, розправ плечі.</p></div>
   </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Найчастіша помилка класу</h3>
-    <p class="big" style="margin:0">(a + b)<sup>2</sup> — це <b>не</b> a<sup>2</sup> + b<sup>2</sup>. Загубити подвоєний добуток <b>2ab</b> — те саме, що загубити половину відповіді.</p>
-    <p style="margin-top:10px">Перевір на числах: (2 + 3)<sup>2</sup> = 25, а 2<sup>2</sup> + 3<sup>2</sup> = 13. Не сходиться.</p>
-  </div>
+  <div class="timerslot"></div>
+  <p class="lede" style="margin-top:clamp(8px,1.3vw,16px)">Далі — бісектриса відтинає рівнобедрений трикутник, висота й доведення.</p>
 </section>
 
 <!-- 11 -->
-<section class="slide" data-t="№ 27 — у зошит" data-timer="240">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Працюємо самостійно</p>
-  <h2>№ 27 (ст. 6). Подайте у вигляді многочлена</h2>
+<section class="slide" data-t="№ 2.22 і № 2.23 — бісектриса" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит — обидві задачі</span><span class="mode pick"><span class="dot"></span>Випадковий номер — периметр</span></div>
+  <p class="eyebrow">№ 2.22 і № 2.23 (ст. 23) · прийом із прикладу 1</p>
+  <h2>Бісектриса кута <span class="m">A</span> відтинає рівнобедрений △</h2>
   <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) (c + 5)<sup>2</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= c<sup>2</sup> + 10c + 25</p>
-      <p class="eqn" style="margin:12px 0 0">2) (8b − 3)<sup>2</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= 64b<sup>2</sup> − 48b + 9</p>
-      <p class="eqn" style="margin:12px 0 0">3) (4x + 3)<sup>2</sup> − 9</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 16x<sup>2</sup> + 24x + 9 − 9 = <b>16x<sup>2</sup> + 24x</b></p>
+    <div>
+      <div class="box"><h3>№ 2.22</h3><p style="margin:0">Бісектриса кута <span class="m">A</span> ділить <span class="m">BC</span> на <span class="m">BM</span> = 5 см і <span class="m">MC</span> = 7 см. Знайдіть периметр.</p></div>
+      <div class="row" style="grid-template-columns:1.05fr .95fr;margin-top:clamp(9px,1.2vw,14px);align-items:center">
+      <div class="fig nb"><svg viewBox="0 0 330 170"><path d="M30 131.3 L63.7 38.7 L300 38.7 L266.3 131.3 Z"/><line class="hl" x1="30" y1="131.3" x2="162.1" y2="38.7"/><path d="M38.9 106.8 A26 26 0 0 1 51.3 116.4"/><path d="M56.2 112.9 A32 32 0 0 1 62 131.3"/><circle class="pt" cx="162.1" cy="38.7" r="4.5"/><text x="14.3" y="144.8" text-anchor="middle">A</text><text x="47.7" y="39.9" text-anchor="middle">B</text><text x="316.4" y="41.3" text-anchor="middle">C</text><text x="281.3" y="146.4" text-anchor="middle">D</text><text x="178.9" y="35.4" text-anchor="middle">M</text><text class="n" x="112.9" y="60.7" text-anchor="middle">5</text><text class="n" x="231.1" y="60.7" text-anchor="middle">7</text></svg></div>
+      <div class="box nb hide"><p class="step" style="margin:0">△<span class="m">ABM</span> рівнобедрений →</p><p class="step" style="margin:0"><span class="m">AB</span> = <span class="m">BM</span> = 5 см</p><p class="step" style="margin:0"><span class="m">BC</span> = 5 + 7 = 12 (см)</p>
+        <p class="step" style="margin:0"><span class="m">P</span> = 2(5 + 12) = <b class="ans">34 см</b></p></div>
+      </div>
     </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">4) (c + 2)(c − 2)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= c<sup>2</sup> − 4</p>
-      <p class="eqn" style="margin:12px 0 0">5) (m − 9)(9 + m)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= (m − 9)(m + 9) = m<sup>2</sup> − 81</p>
-      <p class="eqn" style="margin:12px 0 0">6) (5p − 2)(5p + 2) − 25p<sup>2</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= 25p<sup>2</sup> − 4 − 25p<sup>2</sup> = <b>−4</b></p>
+    <div>
+      <div class="box"><h3>№ 2.23</h3><p style="margin:0"><span class="m">AB</span> = 4 см, <span class="m">BC</span> = 12 см. Бісектриса кута <span class="m">A</span> перетинає <span class="m">BC</span> у точці <span class="m">P</span>. Знайдіть <span class="m">BP</span> і <span class="m">PC</span>.</p></div>
+      <div class="row" style="grid-template-columns:1.05fr .95fr;margin-top:clamp(9px,1.2vw,14px);align-items:center">
+      <div class="fig nb"><svg viewBox="0 0 330 170"><path d="M30 120.3 L64.4 49.7 L300 49.7 L265.6 120.3 Z"/><line class="hl" x1="30" y1="120.3" x2="142.9" y2="49.7"/><path d="M41.4 96.9 A26 26 0 0 1 52 106.5"/><path d="M57.1 103.3 A32 32 0 0 1 62 120.3"/><circle class="pt" cx="142.9" cy="49.7" r="4.5"/><text x="13.8" y="132.5" text-anchor="middle">A</text><text x="48.1" y="51.9" text-anchor="middle">B</text><text x="316.7" y="53.3" text-anchor="middle">C</text><text x="281.3" y="133.6" text-anchor="middle">D</text><text x="160.2" y="47.2" text-anchor="middle">P</text><text class="n" x="103.7" y="71.7" text-anchor="middle">?</text><text class="n" x="221.5" y="71.7" text-anchor="middle">?</text></svg></div>
+      <div class="box nb hide"><p class="step" style="margin:0">△<span class="m">ABP</span> рівнобедрений →</p><p class="step" style="margin:0"><span class="m">BP</span> = <span class="m">AB</span> = <b class="ans">4 см</b></p>
+        <p class="step" style="margin:0"><span class="m">PC</span> = 12 − 4 = <b class="ans">8 см</b></p></div>
+      </div>
     </div>
   </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>П'ятий — перевірка на уважність</h3>
-    <p class="big" style="margin:0">(m − 9)(9 + m) на вигляд «не така» формула. Але доданки в дужці можна переставити: 9 + m = m + 9. І це чиста різниця квадратів.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 12 -->
-<section class="slide" data-t="Пауза для очей" data-timer="60">
-  <p class="eyebrow">Хвилина відпочинку</p>
-  <h2>Відводимо очі від екрана</h2>
-  <div class="row c3">
-    <div class="box"><h3>1</h3><p style="margin:0">Подивись у <b>вікно</b>, на найдальшу точку. Порахуй до десяти.</p></div>
-    <div class="box"><h3>2</h3><p style="margin:0">Міцно <b>заплющ очі</b> на п'ять секунд. Розплющ.</p></div>
-    <div class="box"><h3>3</h3><p style="margin:0">Поверни голову <b>вліво і вправо</b>. Розправ плечі.</p></div>
+<section class="slide" data-t="№ 2.33 — рівняння" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode want"><span class="dot"></span>Бажаючий — сторони</span></div>
+  <p class="eyebrow">№ 2.33 (ст. 24) · зразок до домашньої № 2.34</p>
+  <h2>Бісектриса кута <span class="m">B</span> паралелограма <span class="m">ABCD</span> ділить <span class="m">AD</span> на <span class="m">AK</span> і <span class="m">KD</span>, <span class="m">AK</span> − <span class="m">KD</span> = 1 см, <span class="m">P</span> = 40 см. Знайдіть сторони</h2>
+  <div class="row c21">
+    <div>
+      <div class="box nb hide"><p class="step" style="margin:0">1) ∠<span class="m">AKB</span> = ∠<span class="m">KBC</span> = ∠<span class="m">ABK</span> → △<span class="m">ABK</span> рівнобедрений, <span class="m">AB</span> = <span class="m">AK</span></p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">2) Нехай <span class="m">KD</span> = <span class="m">x</span>, тоді <span class="m">AK</span> = <span class="m">AB</span> = <span class="m">x</span> + 1, <span class="m">AD</span> = 2<span class="m">x</span> + 1</p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">3) <span class="m">AB</span> + <span class="m">AD</span> = 40 : 2 = 20: &nbsp;(<span class="m">x</span> + 1) + (2<span class="m">x</span> + 1) = 20, &nbsp;3<span class="m">x</span> = 18, &nbsp;<span class="m">x</span> = 6</p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">4) <span class="m">AB</span> = <span class="m">CD</span> = <b class="ans">7 см</b>, &nbsp;<span class="m">AD</span> = <span class="m">BC</span> = 6 + 7 = <b class="ans">13 см</b></p></div>
+    </div>
+    <div class="fig nb" style="align-self:center"><svg viewBox="0 0 350 190"><path d="M34 150.2 L87.9 39.8 L316 39.8 L262.1 150.2 Z"/><line class="hl" x1="87.9" y1="39.8" x2="156.8" y2="150.2"/><path d="M100.6 60.1 A24 24 0 0 1 77.3 61.4"/><path d="M117.9 39.8 A30 30 0 0 1 103.8 65.2"/><circle class="pt" cx="156.8" cy="150.2" r="4.5"/><text x="17.8" y="162.4" text-anchor="middle">A</text><text x="74.5" y="36.2" text-anchor="middle">B</text><text x="331.5" y="39.7" text-anchor="middle">C</text><text x="277.4" y="164.6" text-anchor="middle">D</text><text x="166.4" y="172.5" text-anchor="middle">K</text></svg></div>
   </div>
-  <p class="lede" style="margin-top:clamp(16px,2.4vw,30px);text-align:center">Далі — найцікавіша частина уроку.</p>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 13 -->
-<section class="slide" data-t="№ 33 — у зошит" data-timer="180">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Два кроки в одному прикладі</p>
-  <h2>№ 33 (ст. 7). Перетворіть на многочлен стандартного вигляду</h2>
-  <div class="box">
-    <p class="eqn" style="margin:0">1) m<sup>2</sup>(m + 3) − (m<sup>2</sup> + 4m)(m − 1)</p>
-    <div class="ans hide">
-      <p class="step" style="margin:8px 0 0">= m<sup>3</sup> + 3m<sup>2</sup> − (m<sup>3</sup> − m<sup>2</sup> + 4m<sup>2</sup> − 4m)</p>
-      <p class="step" style="margin:4px 0 0">= m<sup>3</sup> + 3m<sup>2</sup> − m<sup>3</sup> − 3m<sup>2</sup> + 4m = <b>4m</b></p>
+<section class="slide" data-t="№ 2.29 — висота" data-timer="240">
+  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode solo"><span class="dot"></span>у зошит — периметр</span><span class="mode pick"><span class="dot"></span>Випадковий номер — периметр</span></div>
+  <p class="eyebrow">№ 2.29 (ст. 23) · зразок до домашньої № 2.30</p>
+  <p class="lede" style="margin:0 0 clamp(8px,1.2vw,14px);color:var(--pen)">Згадуємо 7 клас: <b>катет проти кута 30° дорівнює половині гіпотенузи</b></p>
+  <h2>Гострий кут паралелограма 60°. Висота з вершини тупого кута ділить протилежну сторону на 3 см і 5 см, починаючи від вершини гострого кута. Знайдіть периметр</h2>
+  <div class="row c21">
+    <div>
+      <div class="box nb hide"><p class="step" style="margin:0">1) ∠<span class="m">A</span> = 60°, <span class="m">BH</span> ⟂ <span class="m">AD</span>, <span class="m">AH</span> = 3 см, <span class="m">HD</span> = 5 см</p>
+        <p class="step" style="margin:0">2) У △<span class="m">ABH</span>: ∠<span class="m">ABH</span> = 90° − 60° = 30°</p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">3) Катет <span class="m">AH</span> лежить проти кута 30° → <span class="m">AB</span> = 2 · 3 = 6 (см)</p>
+        <p class="step" style="margin:0">4) <span class="m">AD</span> = 3 + 5 = 8 (см), &nbsp;<span class="m">P</span> = 2(6 + 8) = <b class="ans">28 см</b></p></div>
     </div>
+    <div class="fig nb" style="align-self:center"><svg viewBox="0 0 350 200"><path d="M34 166.6 L110.9 33.4 L316 33.4 L239.1 166.6 Z"/><line class="hl" x1="110.9" y1="33.4" x2="110.9" y2="166.6"/><path class="hl" d="M110.9 154.6 L122.9 154.6 L122.9 166.6"/><path d="M46 145.8 A24 24 0 0 1 58 166.6"/><text class="n" x="73.8" y="149.6" text-anchor="middle">60°</text><circle class="pt" cx="110.9" cy="166.6" r="4.5"/><text x="18.3" y="180.1" text-anchor="middle">A</text><text x="101.7" y="26.1" text-anchor="middle">B</text><text x="331.1" y="32.6" text-anchor="middle">C</text><text x="253.1" y="183.3" text-anchor="middle">D</text><text x="110.9" y="193.6" text-anchor="middle">H</text><text class="n" x="72.5" y="192.6" text-anchor="middle">3</text><text class="n" x="175" y="192.6" text-anchor="middle">5</text></svg></div>
   </div>
-  <div class="box" style="margin-top:clamp(10px,1.5vw,18px)">
-    <p class="eqn" style="margin:0">2) (9x − 1)(x + 3) − (3x − 2)<sup>2</sup></p>
-    <div class="ans hide">
-      <p class="step" style="margin:8px 0 0">= 9x<sup>2</sup> + 27x − x − 3 − (9x<sup>2</sup> − 12x + 4)</p>
-      <p class="step" style="margin:4px 0 0">= 9x<sup>2</sup> + 26x − 3 − 9x<sup>2</sup> + 12x − 4 = <b>38x − 7</b></p>
-    </div>
-  </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">В обох прикладах друга дужка стоїть <b>після мінуса</b>. Спершу розкрий множення <b>всередині</b> неї, візьми результат у дужки — і аж тоді міняй знаки. Хто міняє знак одразу, губить один доданок.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 14 -->
-<section class="slide" data-t="№ 34 — шахи" data-timer="180">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Відповідь — у чат</span></div>
-  <p class="eyebrow">Задача з підказкою</p>
-  <h2>№ 34 (ст. 7)</h2>
-  <div class="box pen">
-    <p class="big" style="margin:0">Спрости вираз <span class="eqn">(9x − 1)(4x + 2) − (6x − 7)(6x + 7)</span> та знайди його значення, якщо <b>x = −3</b>.</p>
-    <p style="margin-top:10px">Число, яке вийде, — це <b>скільки разів чоловіча збірна України із шахів ставала призером командного чемпіонату світу</b>.</p>
-  </div>
-  <div class="ans hide">
-    <div class="box" style="margin-top:clamp(10px,1.5vw,18px)">
-      <p class="step" style="margin:0">(9x − 1)(4x + 2) = 36x<sup>2</sup> + 18x − 4x − 2 = 36x<sup>2</sup> + 14x − 2</p>
-      <p class="step" style="margin:4px 0 0">(6x − 7)(6x + 7) = 36x<sup>2</sup> − 49</p>
-      <p class="step" style="margin:4px 0 0">36x<sup>2</sup> + 14x − 2 − 36x<sup>2</sup> + 49 = <b>14x + 47</b></p>
-      <p class="step" style="margin:8px 0 0">x = −3: &nbsp; 14 · (−3) + 47 = −42 + 47 = <b>5</b></p>
+<section class="slide" data-t="№ 2.27 — доведення" data-timer="180">
+  <div class="modes"><span class="mode voice"><span class="dot"></span>Вголос — крок за кроком</span><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode want"><span class="dot"></span>Бажаючий — наступний крок доведення</span></div>
+  <p class="eyebrow">№ 2.27 (ст. 23) · доведення</p>
+  <h2>На сторонах <span class="m">AD</span> і <span class="m">BC</span> паралелограма <span class="m">ABCD</span> позначено <span class="m">M</span> і <span class="m">K</span>, <span class="m">AM</span> = <span class="m">KC</span>. Доведіть, що <span class="m">BMDK</span> — паралелограм</h2>
+  <div class="row c21">
+    <div>
+      <div class="box nb hide"><p class="step" style="margin:0">1) <span class="m">AD</span> = <span class="m">BC</span> — протилежні сторони паралелограма</p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">2) <span class="m">MD</span> = <span class="m">AD</span> − <span class="m">AM</span>, &nbsp;<span class="m">BK</span> = <span class="m">BC</span> − <span class="m">KC</span> → <span class="m">MD</span> = <span class="m">BK</span></p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">3) <span class="m">MD</span> ∥ <span class="m">BK</span> — лежать на паралельних <span class="m">AD</span> і <span class="m">BC</span></p></div>
+      <div class="box nb hide" style="margin-top:clamp(9px,1.2vw,14px)"><p class="step" style="margin:0">4) Сторони <span class="m">BK</span> і <span class="m">MD</span> рівні й паралельні → <span class="m">BMDK</span> — <b class="ans">паралелограм</b> (ознака 1)</p></div>
     </div>
+    <div class="fig nb" style="align-self:center"><svg viewBox="0 0 350 190"><path d="M34 147.4 L89.8 42.6 L316 42.6 L260.2 147.4 Z"/><line class="hl" x1="89.8" y1="42.6" x2="175.4" y2="147.4"/><line class="hl" x1="174.6" y1="42.6" x2="260.2" y2="147.4"/><line class="l1" x1="104.7" y1="154.4" x2="104.7" y2="140.4"/><line class="l1" x1="245.3" y1="49.6" x2="245.3" y2="35.6"/><circle class="pt" cx="175.4" cy="147.4" r="4.5"/><circle class="pt" cx="174.6" cy="42.6" r="4.5"/><text x="18.1" y="160.4" text-anchor="middle">A</text><text x="75.3" y="40.7" text-anchor="middle">B</text><text x="331.9" y="43.6" text-anchor="middle">C</text><text x="274.7" y="163.3" text-anchor="middle">D</text><text x="175.6" y="174.4" text-anchor="middle">M</text><text x="174.4" y="29.6" text-anchor="middle">K</text></svg><div class="cap">Мал. 2.19</div></div>
   </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0"><b>5 разів.</b> Зверни увагу: підставляти x = −3 в початковий вираз було б довго й легко помилитися. Спростили — і лишилося дві дії.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 15 -->
-<section class="slide" data-t="Розкладання — три способи">
-  <p class="eyebrow">Зупинка 4</p>
-  <h2>Розкласти на множники — це перетворити суму на добуток</h2>
-  <div class="row c3">
-    <div class="box pen">
-      <h3>1. Спільний множник</h3>
-      <p class="eqn" style="margin:0">6a + 9b =</p>
-      <p class="eqn" style="margin:4px 0 0">3(2a + 3b)</p>
-      <p style="margin-top:10px">Виносимо за дужки те, що є в кожному доданку.</p>
+<section class="slide" data-t="Бонус: № 2.32" data-timer="150">
+  <div class="modes"><span class="mode pick"><span class="dot"></span>випадковий номер — відповідь</span></div>
+  <p class="eyebrow">№ 2.32 (ст. 23) · якщо лишився час</p>
+  <h2>З вершини тупого кута <span class="m">B</span> паралелограма <span class="m">ABCD</span> проведено висоти <span class="m">BM</span> і <span class="m">BN</span>, ∠<span class="m">MBN</span> = 70°. Знайдіть ∠<span class="m">D</span></h2>
+  <div class="row c21">
+    <div>
+      <div class="box hide"><p class="step" style="margin:0">1) У чотирикутнику <span class="m">MBND</span>: ∠<span class="m">M</span> = ∠<span class="m">N</span> = 90°</p></div>
+      <div class="box ok hide" style="margin-top:clamp(6px,1vw,12px)"><p class="step" style="margin:0">2) ∠<span class="m">D</span> = 360° − 90° − 90° − 70° = <b class="ans">110°</b></p></div>
+      <div class="box play hide" style="margin-top:clamp(6px,1vw,12px)"><p style="margin:0">Цікаво: кут між висотами з вершини тупого кута дорівнює <b>гострому куту</b> паралелограма.</p></div>
     </div>
-    <div class="box pen">
-      <h3>2. Групування</h3>
-      <p class="eqn" style="margin:0">ax + ay + bx + by =</p>
-      <p class="eqn" style="margin:4px 0 0">(a + b)(x + y)</p>
-      <p style="margin-top:10px">Ділимо на пари, з кожної виносимо спільне.</p>
-    </div>
-    <div class="box pen">
-      <h3>3. Формула</h3>
-      <p class="eqn" style="margin:0">a<sup>2</sup> − b<sup>2</sup> =</p>
-      <p class="eqn" style="margin:4px 0 0">(a − b)(a + b)</p>
-      <p style="margin-top:10px">Ті самі три формули, тільки читаємо їх справа наліво.</p>
-    </div>
-  </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0"><b>Порядок дій завжди однаковий:</b> спершу шукаю спільний множник, потім дивлюсь, чи не сховалася формула, і аж тоді пробую групування.</p>
+    <div class="fig" style="align-self:center"><svg viewBox="0 0 350 210"><path d="M51.9 180 L106.5 30 L298.1 30 L243.5 180 Z"/><line class="hl" x1="106.5" y1="30" x2="106.5" y2="180"/><line class="hl" x1="106.5" y1="30" x2="275.7" y2="91.6"/><path class="hl" d="M106.5 168 L118.5 168 L118.5 180"/><path class="hl" d="M264.4 87.5 L260.3 98.7 L271.6 102.8"/><path class="hl" d="M131 38.9 A26 26 0 0 1 106.5 56"/><text class="n" x="134.1" y="75.3" text-anchor="middle">70°</text><path d="M221.5 180 A22 22 0 0 1 251 159.3"/><text class="n" x="220.5" y="153.2" text-anchor="middle">?</text><text x="36.7" y="194.7" text-anchor="middle">A</text><text x="95.4" y="24.1" text-anchor="middle">B</text><text x="311.8" y="27" text-anchor="middle">C</text><text x="255.3" y="199.2" text-anchor="middle">D</text><text x="106.5" y="207" text-anchor="middle">M</text><text x="300.5" y="105.4" text-anchor="middle">N</text></svg></div>
   </div>
 </section>
 
 <!-- 16 -->
-<section class="slide" data-t="№ 29 — у зошит" data-timer="240">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Працюємо самостійно</p>
-  <h2>№ 29 (ст. 7). Розкладіть на множники</h2>
-  <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) 9x − 18y</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 9(x − 2y)</p>
-      <p class="eqn" style="margin:12px 0 0">2) 4xm + 6m</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 2m(2x + 3)</p>
-      <p class="eqn" style="margin:12px 0 0">3) m(x − p) + 3x − 3p</p>
-      <p class="step ans hide" style="margin:6px 0 0">= m(x − p) + 3(x − p) = <b>(x − p)(m + 3)</b></p>
-    </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">4) −2x<sup>3</sup> − 8x<sup>5</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= −2x<sup>3</sup>(1 + 4x<sup>2</sup>)</p>
-      <p class="eqn" style="margin:12px 0 0">5) b<sup>2</sup> − b<sup>5</sup> + b<sup>3</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= b<sup>2</sup>(1 − b<sup>3</sup> + b)</p>
-      <p class="eqn" style="margin:12px 0 0">6) 7c + 7n − cx − xn</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 7(c + n) − x(c + n) = <b>(c + n)(7 − x)</b></p>
-    </div>
+<section class="slide" data-t="Міні-тест як на «На Урок»" data-timer="180">
+  <div class="modes"><span class="mode solo"><span class="dot"></span>у зошит — чотири букви, напр. «бвга»</span><span class="mode pick"><span class="dot"></span>Випадковий номер — свої букви</span></div>
+  <h2>Міні-тест: одна правильна відповідь — як на самостійній</h2>
+  <div class="row c3">
+    <div class="box"><h3>1</h3><p style="margin:0">Один з кутів паралелограма 64°. Найбільший його кут —</p>
+      <p class="step" style="margin:4px 0 0"><span style="white-space:nowrap">а) 64°</span> &nbsp; <span style="white-space:nowrap">б) 116°</span> &nbsp; <span style="white-space:nowrap">в) 126°</span> &nbsp; <span style="white-space:nowrap">г) 296°</span> &nbsp;<span class="hide">→ <b class="ans">б) 116°</b> (180° − 64°)</span></p></div>
+    <div class="box"><h3>2</h3><p style="margin:0">Діагоналі паралелограма 10 см і 16 см. Більшу точка перетину ділить на —</p>
+      <p class="step" style="margin:4px 0 0"><span style="white-space:nowrap">а) 5 і 5</span> &nbsp; <span style="white-space:nowrap">б) 8 і 8</span> &nbsp; <span style="white-space:nowrap">в) 6 і 10</span> &nbsp; <span style="white-space:nowrap">г) 10 і 16</span> &nbsp;<span class="hide">→ <b class="ans">б) 8 см і 8 см</b> (навпіл)</span></p></div>
+    <div class="box"><h3>3</h3><p style="margin:0">Периметр паралелограма 30 см, одна сторона 6 см. Сусідня сторона —</p>
+      <p class="step" style="margin:4px 0 0"><span style="white-space:nowrap">а) 24 см</span> &nbsp; <span style="white-space:nowrap">б) 18 см</span> &nbsp; <span style="white-space:nowrap">в) 9 см</span> &nbsp; <span style="white-space:nowrap">г) 12 см</span> &nbsp;<span class="hide">→ <b class="ans">в) 9 см</b> (30 : 2 − 6)</span></p></div>
+    <div class="box" style="grid-column:1/-1"><h3>4</h3><p style="margin:0">Яка умова <b>не</b> гарантує, що чотирикутник — паралелограм?</p>
+      <p class="step" style="margin:4px 0 0"><span style="white-space:nowrap">а) діагоналі діляться навпіл</span> &nbsp; <span style="white-space:nowrap">б) протилежні кути попарно рівні</span> &nbsp; <span style="white-space:nowrap">в) дві сторони паралельні, дві інші рівні</span> &nbsp; <span style="white-space:nowrap">г) протилежні сторони попарно рівні</span> &nbsp;<span class="hide">→ <b class="ans">в)</b> (так виглядає і рівнобічна трапеція)</span></p></div>
   </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Третій і шостий — це групування</h3>
-    <p class="big" style="margin:0">Спільним множником може бути <b>ціла дужка</b>, а не тільки число чи буква. У № 3 це (x − p), у № 6 — (c + n).</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 17 -->
-<section class="slide" data-t="№ 38 — рівняння" data-timer="150">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Навіщо нам розкладання</p>
-  <h2>№ 38 (ст. 7). Розв'яжіть рівняння</h2>
-  <div class="box ok">
-    <p class="big" style="margin:0">Якщо <b>добуток дорівнює нулю</b>, то нулю дорівнює хоча б один множник. Тому рівняння розкладаємо на множники — і воно розпадається на прості.</p>
+<section class="slide" data-t="Готуємось до самостійної № 1">
+  <p class="eyebrow">Наступний урок геометрії · самостійна робота № 1</p>
+  <h2>Що повторити до самостійної</h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>Слухаємо пояснення</span></div>
+  <div class="row c3">
+    <div class="box pen"><h3>1 · Кути</h3><p style="margin:0">Сусідні — 180°, протилежні рівні. <span style="color:var(--soft)">№ 2.5, 2.10, 2.11</span></p></div>
+    <div class="box pen"><h3>2 · Периметр і сторони</h3><p style="margin:0"><span class="m">P</span> = 2(<span class="m">a</span> + <span class="m">b</span>), півпериметр, частини. <span style="color:var(--soft)">№ 2.7, 2.14</span></p></div>
+    <div class="box pen"><h3>3 · Діагоналі</h3><p style="margin:0">Діляться навпіл. <span style="color:var(--soft)">№ 2.16</span></p></div>
+    <div class="box pen"><h3>4 · Бісектриса</h3><p style="margin:0">Відтинає рівнобедрений △. <span style="color:var(--soft)">приклад 1, № 2.21–2.23, 2.33</span></p></div>
+    <div class="box pen"><h3>5 · Висота</h3><p style="margin:0">Прямокутний △ і катет проти 30°. <span style="color:var(--soft)">№ 2.29, 2.32</span></p></div>
+    <div class="box pen"><h3>6 · Ознаки</h3><p style="margin:0">Чотири ознаки — знати напамʼять. <span style="color:var(--soft)">№ 2.18, 2.27</span></p></div>
   </div>
-  <div class="row c2" style="margin-top:clamp(10px,1.5vw,18px)">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) 4x<sup>2</sup> − x = 0</p>
-      <div class="ans hide">
-        <p class="step" style="margin:8px 0 0">x(4x − 1) = 0</p>
-        <p class="step" style="margin:4px 0 0">x = 0 &nbsp; або &nbsp; 4x − 1 = 0</p>
-        <p class="step" style="margin:4px 0 0"><b>x = 0; &nbsp; x = 0,25</b></p>
-      </div>
-    </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">3) (x − 1)<sup>2</sup> − 4 = 0</p>
-      <div class="ans hide">
-        <p class="step" style="margin:8px 0 0">(x − 1 − 2)(x − 1 + 2) = 0</p>
-        <p class="step" style="margin:4px 0 0">(x − 3)(x + 1) = 0</p>
-        <p class="step" style="margin:4px 0 0"><b>x = 3; &nbsp; x = −1</b></p>
-      </div>
-    </div>
+  <div class="box play" style="margin-top:clamp(8px,1.3vw,16px)">
+    <h3>Як пройде</h3>
+    <p style="margin:0">Електронний тест на <b>«На Урок»</b>, код дам на початку уроку. Прізвище — як у журналі. Зошит і ручка поруч: <b>малюнок до кожної задачі</b> робимо в чернетці.</p>
   </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Це саме те, що на вас чекає в домашньому № 39. Механіка та сама — просто інші числа.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 18 -->
-<section class="slide" data-t="Підсумок">
-  <p class="eyebrow">Що забираємо з уроку</p>
-  <h2>Чотири речі</h2>
+<section class="slide" data-t="Домашнє завдання">
+  <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо в щоденник і в зошит</span></div>
+  <p class="eyebrow">Домашнє завдання</p>
+  <h2>№ 2.30 і № 2.34 (ст. 23–24)</h2>
   <div class="row c2">
-    <div class="box pen"><h3>Степені</h3><p style="margin:0">Множимо — показники додаємо, ділимо — віднімаємо, підносимо — множимо. Парний показник знімає мінус.</p></div>
-    <div class="box pen"><h3>Дужки</h3><p style="margin:0">Мінус перед дужками міняє знак <b>кожного</b> доданка, а не одного.</p></div>
-    <div class="box pen"><h3>Формули</h3><p style="margin:0">(a ± b)<sup>2</sup> = a<sup>2</sup> ± 2ab + b<sup>2</sup>, (a − b)(a + b) = a<sup>2</sup> − b<sup>2</sup>. Подвоєний добуток не губимо.</p></div>
-    <div class="box pen"><h3>Розкладання</h3><p style="margin:0">Спільний множник → формула → групування. Спільним множником буває ціла дужка.</p></div>
+    <div class="box nb">
+      <h3>№ 2.30 — як № 2.29</h3>
+      <p style="margin:0">У паралелограмі <span class="m">ABCD</span> <span class="m">AB</span> = 6 см, ∠<span class="m">B</span> = 120°. Висота <span class="m">BK</span> ділить сторону <span class="m">AD</span> на два однакові відрізки. Знайдіть периметр.</p>
+    </div>
+    <div class="box nb">
+      <h3>№ 2.34 — як № 2.33</h3>
+      <p style="margin:0">Бісектриса кута <span class="m">A</span> паралелограма <span class="m">ABCD</span> ділить <span class="m">BC</span> на <span class="m">BK</span> і <span class="m">KC</span>, <span class="m">BK</span> : <span class="m">KC</span> = 3 : 7. Знайдіть сторони, якщо <span class="m">P</span> = 78 см.</p>
+    </div>
   </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Напиши в чат <b>одним словом</b>: що з цих чотирьох сьогодні було найважче саме тобі. Мені це потрібно, щоб знати, що повторити на наступному уроці.</p>
+  <div class="box pen" style="margin-top:clamp(8px,1.3vw,16px)">
+    <p style="margin:0">Підказки: у № 2.30 спершу знайди ∠<span class="m">A</span> і подивись на △<span class="m">ABK</span>. У № 2.34 позначте одну частину через <span class="m">x</span>: <span class="m">BK</span> = 3<span class="m">x</span>, <span class="m">KC</span> = 7<span class="m">x</span>. І до самостійної — перечитай § 2, <b>ст. 18–20</b>.</p>
   </div>
 </section>
 
 <!-- 19 -->
-<section class="slide" data-t="Домашнє завдання">
-  <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо в щоденник</span></div>
-  <p class="eyebrow">Домашнє завдання</p>
-  <h2>№ 37 і № 39, ст. 7</h2>
-  <div class="row c2">
-    <div class="box pen">
-      <h3>№ 37. Розкладіть на множники</h3>
-      <p class="eqn" style="margin:0">1) 8p<sup>4</sup> − 4p<sup>5</sup> + 12p</p>
-      <p class="eqn" style="margin:6px 0 0">2) a<sup>5</sup> − 2a<sup>2</sup> − 3a<sup>3</sup> + 6</p>
-      <p class="eqn" style="margin:6px 0 0">3) −9m<sup>2</sup> − 6m − 1</p>
-      <p class="eqn" style="margin:6px 0 0">4) 0,49m<sup>4</sup> − t<sup>16</sup>p<sup>2</sup></p>
-      <p class="eqn" style="margin:6px 0 0">5) 125a<sup>6</sup> − b<sup>9</sup></p>
-      <p class="eqn" style="margin:6px 0 0">6) a<sup>2</sup> − 2ax + x<sup>2</sup> − 36</p>
-    </div>
-    <div class="box pen">
-      <h3>№ 39. Розв'яжіть рівняння</h3>
-      <p class="eqn" style="margin:0">1) 2x<sup>2</sup> + x = 0</p>
-      <p class="eqn" style="margin:6px 0 0">2) 36x<sup>2</sup> − 12x + 1 = 0</p>
-      <p class="eqn" style="margin:6px 0 0">3) (x + 2)<sup>2</sup> − 9 = 0</p>
-      <p style="margin-top:14px">Усі три — точно як № 38, який ми щойно зробили разом.</p>
-    </div>
-  </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Три підказки до № 37</h3>
-    <p style="margin:0">№ 1 — винеси <b>4p</b>. № 3 — винеси <b>мінус</b>, і під ним відкриється квадрат суми. № 6 — перші три доданки згорни у квадрат, а тоді працює різниця квадратів.</p>
-  </div>
-</section>
-
-<!-- 20 -->
-<section class="slide" data-t="До зустрічі">
-  <p class="eyebrow">Урок завершено</p>
+<section class="slide" data-t="Переходимо на алгебру">
   <h1>Дякую за роботу!</h1>
-  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">Наступного разу — функції: те, що ми повторювали, там уже працюватиме на повну.</p>
-  <div class="box pen" style="margin-top:clamp(16px,2.6vw,34px)">
-    <p class="big" style="margin:0">Питання щодо домашнього — пиши в чат зараз або мені особисто. Відповім усім.</p>
+  <p class="lede" style="margin-top:clamp(10px,1.6vw,20px)">Наступного уроку геометрії — <b>самостійна робота № 1</b> «Паралелограм, його властивості й ознаки» на «На Урок».</p>
+  <div class="row c2" style="margin-top:clamp(12px,2vw,26px)">
+    <div class="box play"><h3>Зараз</h3><p style="margin:0">Закрий зошит з геометрії й <b>не виходь</b> з уроку — переходимо на алгебру.</p></div>
+    <div class="box pen"><h3>Приготуй</h3><p style="margin:0">Зошит і підручник з <b>алгебри</b>.</p></div>
   </div>
 </section>
-</div>
 
+</div>
 <div id="bar">
   <div class="nav">
     <button id="prev" type="button" aria-label="Попередній слайд">←</button>
@@ -1277,7 +1173,7 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
   </div>
   <div id="rail" aria-hidden="true"></div>
   <div id="tip">пробіл — показати відповідь</div>
-  <div id="count">1 / 20</div>
+  <div id="count">1 / 19</div>
   <button id="fs" type="button" aria-label="На весь екран">⛶</button>
 </div>
 </div>
@@ -1613,6 +1509,7 @@ function applyState(i, revealAll){
 
 function go(i, revealAll){
   if(i < 0 || i >= slides.length || i === cur) { if(i===cur){ paint(); } return; }
+  lesAuto();
   stopTick(); resetTimer(slides[cur]);
   clearInk();
   var run = function(){ applyState(i, revealAll); };
@@ -1625,6 +1522,7 @@ function go(i, revealAll){
 }
 
 function next(){
+  lesAuto();
   var h = hiddenOf(cur);
   if(h.length){
     h[0].classList.add('on');
@@ -1858,7 +1756,8 @@ help.innerHTML =
      '<span class="k"><kbd>пробіл</kbd> <kbd>→</kbd></span><span>показати наступне / далі</span>' +
      '<span class="k"><kbd>←</kbd></span><span>сховати останнє / назад</span>' +
      '<span class="k"><kbd>O</kbd></span><span>огляд усіх слайдів</span>' +
-     '<span class="k"><kbd>T</kbd></span><span>таймер: почати / пауза</span>' +
+     '<span class="k"><kbd>T</kbd></span><span>таймер завдання: почати / пауза</span>' +
+     '<span class="k"><kbd>U</kbd></span><span>таймер уроку (Shift+U — спочатку)</span>' +
      '<span class="k"><kbd>D</kbd></span><span>маркер — писати по слайду</span>' +
      '<span class="k"><kbd>L</kbd></span><span>лазерна цятка</span>' +
      '<span class="k"><kbd>C</kbd></span><span>стерти намальоване</span>' +
@@ -2428,6 +2327,84 @@ $$('.qr').forEach(function(box){
 });
 
 /* ─────────────────────────────────────────────────────────────────────
+   A11 · загальний таймер уроку
+   Урок фактично 40 хв (вчитель, 18.09.2026: «не встигаємо»), тому основна
+   лінія планується на 35 хв, а тут видно, скільки лишилось до дзвінка.
+   Інша тривалість — атрибутом data-lesson="35" на <html>.
+   Клік по чипу або U — почати / пауза; подвійний клік або Shift+U — спочатку.
+   Час рахуємо від мітки Date.now(), а не лічильником тиків: у фоновій
+   вкладці setInterval гальмує, і чип відставав би від справжнього дзвінка.
+   ───────────────────────────────────────────────────────────────────── */
+var LES_MIN  = parseFloat(root.dataset.lesson) || 40;
+var LES_ALL  = LES_MIN * 60;
+var LES_WARN = 300;                       /* останні 5 хв — бурштин */
+var LES_KEY  = KEY + ':lesson';
+var lesBox = null, lesAcc = 0, lesT0 = 0, lesRun = false, lesInt = null, lesTouched = false;
+
+function lesSpent(){ return lesAcc + (lesRun ? (Date.now() - lesT0) / 1000 : 0); }
+function lesPaint(){
+  if(!lesBox) return;
+  var left = LES_ALL - lesSpent(), over = left < -0.5, a = Math.abs(Math.round(left));
+  $('.m', lesBox).textContent = (over ? '−' : '') + Math.floor(a / 60);
+  $('.s', lesBox).textContent = ('0' + (a % 60)).slice(-2);
+  $('.cap', lesBox).textContent = (!lesRun && lesTouched) ? 'пауза' : 'урок';
+  lesBox.classList.toggle('run',  lesRun);
+  lesBox.classList.toggle('idle', !lesTouched);
+  lesBox.classList.toggle('warn', !over && left <= LES_WARN);
+  lesBox.classList.toggle('over', over);
+}
+function lesSave(){
+  ls(LES_KEY, JSON.stringify({ a: Math.round(lesSpent()), r: lesRun ? 1 : 0, at: Date.now() }));
+}
+function lesBeat(go){
+  if(lesInt){ clearInterval(lesInt); lesInt = null; }
+  if(go) lesInt = setInterval(function(){ lesPaint(); lesSave(); }, 500);
+}
+function lesStart(){
+  if(lesRun || !lesBox) return;
+  lesRun = true; lesTouched = true; lesT0 = Date.now();
+  lesBeat(true); lesPaint(); lesSave();
+}
+function lesPause(){
+  if(!lesRun) return;
+  lesAcc = lesSpent(); lesRun = false; lesT0 = 0;
+  lesBeat(false); lesPaint(); lesSave();
+}
+function lesToggle(){ if(lesRun) lesPause(); else lesStart(); }
+function lesReset(){
+  lesAcc = 0; lesT0 = 0; lesRun = false; lesTouched = false;
+  lesBeat(false); lesPaint(); lsDel(LES_KEY);
+}
+/* Перший рух по слайдах = урок почався: вчителеві не треба пам'ятати
+   ще про одну клавішу перед класом. */
+function lesAuto(){ if(lesBox && !lesTouched) lesStart(); }
+
+(function(){
+  var host = topic || bar;
+  if(!host) return;
+  lesBox = el('button','lesson');
+  lesBox.id = 'lesson';
+  lesBox.type = 'button';
+  lesBox.title = 'Таймер уроку · ' + LES_MIN + ' хв (U) — клік: почати / пауза, подвійний клік: спочатку';
+  lesBox.innerHTML = '<span class="cap">урок</span>' +
+    '<span class="cl"><b class="m">0</b><i>:</i><b class="s">00</b></span>';
+  host.appendChild(lesBox);
+  on(lesBox,'click',function(e){ e.stopPropagation(); lesToggle(); });
+  on(lesBox,'dblclick',function(e){ e.stopPropagation(); lesReset(); });
+  try{
+    var st = JSON.parse(ls(LES_KEY) || 'null');
+    /* Відкрили той самий дек іншого дня — старий відлік не тягнемо. */
+    if(st && Date.now() - st.at < 3 * 3600e3){
+      lesTouched = true;
+      lesAcc = st.a + (st.r ? (Date.now() - st.at) / 1000 : 0);
+      if(st.r){ lesRun = true; lesT0 = Date.now(); lesBeat(true); }
+    } else if(st) lsDel(LES_KEY);
+  }catch(err){}
+  lesPaint();
+})();
+on(D,'visibilitychange',function(){ if(!D.hidden) lesPaint(); });
+
+/* ─────────────────────────────────────────────────────────────────────
    керування
    ───────────────────────────────────────────────────────────────────── */
 function fsToggle(){
@@ -2472,6 +2449,7 @@ on(D,'keydown',function(e){
   else if(k === 'End'){ e.preventDefault(); go(slides.length-1,true); }
   else if(k === 'KeyO'){ e.preventDefault(); toggleOv(); }
   else if(k === 'KeyT'){ var b = $('.timer', slides[cur]); if(b){ e.preventDefault(); toggleTimer(b); } }
+  else if(k === 'KeyU'){ e.preventDefault(); if(e.shiftKey) lesReset(); else lesToggle(); }
   else if(k === 'KeyF'){ e.preventDefault(); fsToggle(); }
   else if(k === 'KeyD'){ e.preventDefault(); setInk(inkMode === 'pen' ? 'off' : 'pen'); }
   else if(k === 'KeyL'){ e.preventDefault(); setInk(inkMode === 'laser' ? 'off' : 'laser'); }

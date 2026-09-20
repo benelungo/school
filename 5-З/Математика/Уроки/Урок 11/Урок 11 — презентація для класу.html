@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="uk" data-subject="algebra">
+<html lang="uk" data-subject="math">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Цілі вирази — повторення за 7 клас</title>
+<title>Додавання натуральних чисел</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>/*=ENGINE-CSS=*/
 /* ═══════════════════════════════════════════════════════════════════════
@@ -603,6 +603,28 @@ details.hint .in{padding:0 clamp(11px,1.4vw,16px) clamp(11px,1.4vw,16px);
   font-size:clamp(12px,calc(1.45*var(--u)),18px);line-height:1.22;letter-spacing:-.015em;text-wrap:balance}
 @media(max-width:620px){#topic{gap:8px} #topic .k{display:none}}
 
+/* ── D5b · загальний таймер уроку (чип у шапці) ──────────────────────────
+   Стоїть завжди праворуч: .step-of двигун додає пізніше, тому порядок
+   тримається на order, а не на порядку в розмітці. */
+#topic .step-of{order:8}
+#lesson{order:9;flex:none;align-self:center;cursor:pointer;
+  display:inline-flex;align-items:center;gap:.5em;
+  border:var(--bw) solid var(--edge);border-radius:99px;
+  padding:.3em .8em .34em;background:var(--card);color:var(--soft);
+  box-shadow:var(--sh1);transition:color .3s,border-color .3s,background .3s}
+#lesson .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(8px,calc(.8*var(--u)),10px);letter-spacing:.18em;text-transform:uppercase}
+#lesson .cl{font-family:"Manrope","Segoe UI",system-ui,sans-serif;font-weight:800;
+  font-variant-numeric:tabular-nums;font-size:clamp(13px,calc(1.5*var(--u)),19px);
+  line-height:1;min-width:4.2ch;text-align:right}
+#lesson .cl b,#lesson .cl i{font-style:normal;font-family:inherit}
+#lesson.idle{opacity:.72}
+#lesson.run{color:var(--ink);border-color:var(--pen)}
+#lesson.run .cl i{animation:tick-blink 1s steps(1,end) infinite}
+#lesson.warn{color:var(--sun);border-color:var(--sun)}
+#lesson.over{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+@media(max-width:620px){#lesson .cap{display:none}}
+
 .nextl{display:flex;align-items:center;justify-content:space-between;gap:clamp(10px,1.5vw,18px);
   border:var(--bw) solid var(--edge);border-radius:var(--rad);background:var(--card);
   padding:clamp(11px,1.4vw,16px) clamp(13px,1.7vw,19px);text-decoration:none;color:inherit;
@@ -782,492 +804,350 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 }
 /*=/ENGINE-CSS=*/</style>
 <style>/*=LESSON-CSS=*/
-.stolb{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:pre;
-       font-size:clamp(18px,2.5vw,34px);line-height:1.45;letter-spacing:.06em;
-       font-variant-numeric:tabular-nums;margin:0}
-.mix{display:inline-flex;align-items:center;gap:.1em;vertical-align:middle}
+.sc{width:100%;height:auto;display:block;max-height:calc(17*var(--u))}
+.sc .pan{fill:var(--sun)}
+.sc .ful{fill:var(--sun);opacity:.75}
+.sc .lt{fill:var(--card);stroke:var(--ink);stroke-width:2}
+.sc .pk{fill:var(--marker-soft);stroke:var(--marker);stroke-width:2}
+.sc .bl{fill:var(--pen-soft);stroke:var(--pen);stroke-width:2}
+.sc text{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:24px;fill:var(--ink)}
+.cmp td.n{white-space:nowrap}
+.ov{width:100%;height:auto;display:block;max-height:calc(15*var(--u))}
+.ov ellipse{stroke-width:2.5}
+.ov .a{fill:var(--sun-soft);stroke:var(--sun)}
+.ov .b{fill:var(--marker-soft);stroke:var(--marker)}
+.ov path{fill:none;stroke:var(--ink);stroke-width:2.5}
+.ov .hd{fill:var(--ink);stroke:none}
+.ov text{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:22px;fill:var(--ink)}
+.ov text.s{font-family:"Manrope",sans-serif;font-size:19px;font-weight:600;fill:var(--soft)}
 /*=/LESSON-CSS=*/</style>
 </head>
 <body>
 <div id="stage">
 
 <div id="topic">
-  <span class="k">Алгебра · 8-К · Урок 2</span>
-  <span class="t">Повторення. Цілі вирази: степені, многочлени, розкладання на множники</span>
+  <span class="k">Математика · 5-З · Урок 11</span>
+  <span class="t">Додавання натуральних чисел</span>
 </div>
 
 <div id="sheet">
 
 <!-- 1 -->
 <section class="slide on" data-t="Вітання">
-  <p class="eyebrow">Алгебра · 8-К · Урок 2 · онлайн</p>
-  <h1>Цілі вирази.<br>Повторюємо 7 клас</h1>
-  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">Геометрію завершили — переходимо на алгебру. Зошит міняємо, налаштування лишаємо ті самі.</p>
-  <div class="row c3" style="margin-top:clamp(16px,2.6vw,34px)">
-    <div class="box"><h3>Потрібно</h3><p style="margin:0">зошит з <b>алгебри</b>,<br>ручка, підручник</p></div>
-    <div class="box pen"><h3>Підручник</h3><p style="margin:0">Істер, «Алгебра. 8 клас»<br>сторінки <b>6–7</b></p></div>
-    <div class="box warn"><h3>Не потрібно</h3><p style="margin:0"><b>Калькулятор</b><br>усе рахуємо самі</p></div>
+  <p class="eyebrow">Математика · 5-З · Урок 11 · онлайн</p>
+  <h1>Додавання<br>натуральних чисел</h1>
+  <p class="lede" style="margin-top:16px">Нова тема — § 4, сторінки 29–32. Згадаємо, як називаються числа при додаванні, і навчимося додавати <b>великі</b> числа стовпчиком без помилок.</p>
+  <div class="row c3" style="margin-top:22px">
+    <div class="box pen"><h3>Знадобиться</h3><p>Підручник, зошит, ручка</p></div>
+    <div class="box ok"><h3>Минулого разу</h3><p><b>Прикидка</b> — округлили й порахували усно</p></div>
+    <div class="box play"><h3>Сьогодні</h3><p>Шифр: імʼя <b>першого Президента</b> незалежної України</p></div>
   </div>
 </section>
 
 <!-- 2 -->
-<section class="slide" data-t="Перехід і як відповідаємо">
-  <p class="eyebrow">Поки не почали</p>
-  <h2>Два кроки — і стартуємо</h2>
+<section class="slide" data-t="Технічна перевірка">
+  <h2>Технічна перевірка</h2>
   <div class="row c2">
-    <div class="box pen">
-      <h3>Крок 1</h3>
-      <p style="margin:0">Відклади зошит з геометрії. Відкрий <b>зошит з алгебри</b> й підручник на <b>ст. 6</b>.</p>
+    <div class="box ok">
+      <h3>Зроби зараз</h3>
+      <ul>
+        <li>Постав <b>+</b> у чат</li>
+        <li>Мікрофон — <b>вимкнено</b></li>
+        <li>Підручник відкрий на сторінці <b>29</b></li>
+        <li>Зошит із домашнім завданням — перед очима</li>
+      </ul>
     </div>
-    <div class="box play">
-      <h3>Крок 2</h3>
-      <p style="margin:0">Напиши в чат <b>плюс</b> — я бачу, що ти на місці.</p>
-      <p class="huge" style="margin:12px 0 0;color:var(--pen)">+</p>
+    <div class="box">
+      <h3>Як ми відповідаємо</h3>
+      <div class="modes" style="margin:0">
+        <span class="mode want"><span class="dot"></span>відповідає бажаючий</span><span class="mode pick"><span class="dot"></span>випадковий номер</span><span class="mode solo"><span class="dot"></span>самостійно у зошит</span>
+        <span class="mode cam"><span class="dot"></span>на камеру</span>
+        <span class="mode voice"><span class="dot"></span>вголос</span>
+        <span class="mode book"><span class="dot"></span>у зошит</span>
+        <span class="mode away"><span class="dot"></span>відпочиваємо</span>
+      </div>
+      <p style="margin:10px 0 0"><span class="nb-legend"><i></i>бірюзова рамка з позначкою ✎ у зошит</span> — це записуємо в зошит.</p>
     </div>
-  </div>
-  <h3 style="margin-top:clamp(14px,2.2vw,26px)">Як відповідаємо сьогодні</h3>
-  <div class="modes">
-    <span class="mode chat"><span class="dot"></span>У чат — короткі відповіді</span>
-    <span class="mode voice"><span class="dot"></span>Вголос — коли назву імʼя</span>
-    <span class="mode book"><span class="dot"></span>У зошит — усі приклади</span>
-  </div>
-  <div class="box warn" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0"><b>Мікрофон вимкнено.</b> Вмикаєш, коли я звертаюсь до тебе особисто.</p>
   </div>
 </section>
 
 <!-- 3 -->
 <section class="slide" data-t="Записуємо тему" data-timer="90">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <h2>Записуємо</h2>
-  <div class="box">
-    <p class="huge" style="text-align:center;margin:0">Дата</p>
-    <p class="huge" style="text-align:center;margin:clamp(6px,1vw,14px) 0 0">Класна робота</p>
-    <p class="big" style="text-align:center;margin:clamp(14px,2.2vw,26px) 0 0;color:var(--pen)">
-      <b>Повторення. Цілі вирази</b></p>
+  <h2>Записуємо в зошит</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box nb">
+    <p class="huge">Дата<br>Класна робота</p>
+    <p class="huge" style="margin-top:18px">Додавання натуральних чисел</p>
   </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 4 -->
-<section class="slide" data-t="Карта уроку">
-  <p class="eyebrow">Про що весь урок</p>
-  <h2>Цілий вираз — це вираз без ділення на змінну</h2>
+<section class="slide" data-t="ДЗ № 194" data-timer="150">
+  <p class="eyebrow">Перевірка ДЗ · № 194 · с. 28</p>
+  <h2>Три рівняння, сума й округлення до сотень</h2>
+  <div class="modes"><span class="mode want"><span class="dot"></span>бажаючий — «збіглося» / «ні»</span></div>
   <div class="row c3">
-    <div class="box ok">
-      <h3>Це цілі вирази</h3>
-      <p class="eqn" style="margin:0">5a<sup>3</sup></p>
-      <p class="eqn" style="margin:6px 0 0">x<sup>2</sup> − 4x + 7</p>
-      <p class="eqn" style="margin:6px 0 0">(a + b)(a − b)</p>
-    </div>
-    <div class="box warn">
-      <h3>А це — ні</h3>
-      <p class="eqn" style="margin:0"><span class="fr"><span class="n">5</span><span class="d">x</span></span></p>
-      <p class="eqn" style="margin:6px 0 0"><span class="fr"><span class="n">a + 1</span><span class="d">a − 3</span></span></p>
-      <p style="margin-top:10px">Змінна <b>у знаменнику</b> — це вже дробовий вираз.</p>
-    </div>
-    <div class="box pen">
-      <h3>Куди ми йдемо</h3>
-      <p style="margin:0">Уже з наступного тижня — <b>раціональні дроби</b>. А там у знаменнику стоїть саме те, що ми сьогодні повторюємо.</p>
-    </div>
+    <div class="box"><p class="eqn">k − 5297 = 4785</p><p class="eqn hide">k = 4785 + 5297</p><p class="eqn ans hide">k = 10 082</p></div>
+    <div class="box"><p class="eqn">m : 272 = 39</p><p class="eqn hide">m = 39 · 272</p><p class="eqn ans hide">m = 10 608</p></div>
+    <div class="box"><p class="eqn">59 225 : n = 25</p><p class="eqn hide">n = 59 225 : 25</p><p class="eqn ans hide">n = 2369</p></div>
   </div>
-  <div class="box hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Чотири зупинки сьогодні</h3>
-    <div class="pair" style="margin-top:10px">
-      <span>1. Степені</span><span>2. Множення многочленів</span><span>3. Формули скороченого множення</span><span>4. Розкладання на множники</span>
-    </div>
+  <div class="box ok hide" style="margin-top:14px">
+    <p class="numbig">10 082 + 10 608 + 2369 = 23 059 ≈ <span class="ans">23 100</span></p>
+  </div>
+  <div class="box warn hide" style="margin-top:14px">
+    <p class="big">У <b>k − 5297 = 4785</b> невідоме зменшуване — <b>додаємо</b>. Хто відняв, отримав 512 — прикидка «5000 + 5000» одразу показує помилку.</p>
   </div>
 </section>
 
 <!-- 5 -->
-<section class="slide" data-t="Степені — чотири властивості">
-  <p class="eyebrow">Зупинка 1</p>
-  <h2>Степені: чотири дії, які треба знати напам'ять</h2>
+<section class="slide" data-t="ДЗ № 198" data-timer="90">
+  <p class="eyebrow">Перевірка ДЗ · № 198 · с. 29</p>
+  <h2>Скільки Юрій витрачав на транспорт за день?</h2>
+  <div class="modes"><span class="mode pick"><span class="dot"></span>випадковий номер — відповідь</span></div>
   <div class="row c2">
-    <div class="box pen">
-      <p class="eqn" style="margin:0">a<sup>m</sup> · a<sup>n</sup> = a<sup>m + n</sup></p>
-      <p style="margin-top:8px">Множимо — показники <b>додаємо</b>.</p>
-    </div>
-    <div class="box pen">
-      <p class="eqn" style="margin:0">a<sup>m</sup> : a<sup>n</sup> = a<sup>m − n</sup></p>
-      <p style="margin-top:8px">Ділимо — показники <b>віднімаємо</b>.</p>
-    </div>
-    <div class="box pen">
-      <p class="eqn" style="margin:0">(a<sup>m</sup>)<sup>n</sup> = a<sup>m · n</sup></p>
-      <p style="margin-top:8px">Степінь від степеня — показники <b>множимо</b>.</p>
-    </div>
-    <div class="box pen">
-      <p class="eqn" style="margin:0">(ab)<sup>n</sup> = a<sup>n</sup>b<sup>n</sup></p>
-      <p style="margin-top:8px">Степінь добутку — <b>кожен множник</b> у цей степінь.</p>
-    </div>
-  </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Пам'ятай про невидиму одиницю</h3>
-    <p class="big" style="margin:0">Запис <b>t</b> означає <b>t<sup>1</sup></b>. Саме на цьому найчастіше губиться одиниця в показнику.</p>
+    <div class="box hide"><h3>1) За місяць</h3><p class="eqn">15 000 : 25 = 600 (грн)</p><p class="lab"><span class="fr"><span class="n">1</span><span class="d">25</span></span> від числа — ділимо на 25</p></div>
+    <div class="box hide"><h3>2) За день</h3><p class="eqn">600 : 20 = <span class="ans">30 (грн)</span></p><p class="lab">20 робочих днів</p></div>
   </div>
 </section>
 
 <!-- 6 -->
-<section class="slide" data-t="№ 19 — усно" data-timer="120">
-  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
-  <p class="eyebrow">Розминка · усно</p>
-  <h2>№ 19 (ст. 6). Подайте у вигляді степеня</h2>
-  <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) p<sup>7</sup>p<sup>2</sup> &nbsp;<span class="ans hide">= p<sup>9</sup></span></p>
-      <p class="eqn" style="margin:10px 0 0">2) t · t<sup>2</sup> · t<sup>3</sup> &nbsp;<span class="ans hide">= t<sup>6</sup></span></p>
-    </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">3) c<sup>15</sup> : c<sup>5</sup> &nbsp;<span class="ans hide">= c<sup>10</sup></span></p>
-      <p class="eqn" style="margin:10px 0 0">4) (a<sup>3</sup>)<sup>8</sup> &nbsp;<span class="ans hide">= a<sup>24</sup></span></p>
-    </div>
+<section class="slide" data-t="Розминка № 200" data-timer="150">
+  <p class="eyebrow">№ 200 · с. 30 · усно</p>
+  <h2>Порахуй у голові</h2>
+  <div class="modes"><span class="mode pick"><span class="dot"></span>випадковий номер — лише відповідь</span></div>
+  <div class="row c3"><div class="box"><p class="eqn">152 + 343</p><p class="eqn ans hide">= 495</p></div><div class="box"><p class="eqn">492 + 108 + 17</p><p class="eqn ans hide">= 617</p></div><div class="box"><p class="eqn">513 + 85 + 87</p><p class="eqn ans hide">= 685</p></div><div class="box"><p class="eqn">120 + 546 + 880</p><p class="eqn ans hide">= 1546</p></div><div class="box"><p class="eqn">32 + 14 + 18 + 16</p><p class="eqn ans hide">= 80</p></div><div class="box"><p class="eqn">76 + 21 + 79 + 4</p><p class="eqn ans hide">= 180</p></div></div>
+  <div class="box note hide" style="margin-top:14px">
+    <p class="big">Хитрість: <b>492 + 108</b> = 600 і <b>76 + 4</b> = 80 — шукай числа, що разом дають «круглу» суму. Докладно — наступного уроку.</p>
   </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Найпідступніший тут — другий</h3>
-    <p class="big" style="margin:0">t · t<sup>2</sup> · t<sup>3</sup> = t<sup>1 + 2 + 3</sup> = t<sup>6</sup>. Хто забув про одиницю — отримав t<sup>5</sup>.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 7 -->
-<section class="slide" data-t="№ 23 — значення виразу" data-timer="150">
-  <div class="modes"><span class="mode chat"><span class="dot"></span>У чат</span></div>
-  <p class="eyebrow">Усно · пильнуємо знаки</p>
-  <h2>№ 23 (ст. 6). Знайдіть значення виразу</h2>
-  <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) (−2)<sup>4</sup> &nbsp;<span class="ans hide">= 16</span></p>
-      <p class="eqn" style="margin:10px 0 0">2) (−5)<sup>3</sup> &nbsp;<span class="ans hide">= −125</span></p>
+<section class="slide" data-t="Як називаються числа" data-timer="90">
+  <p class="eyebrow">§ 4 · с. 29</p>
+  <h2>Доданок, доданок — сума</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span><span class="mode want"><span class="dot"></span>бажаючий — назви доданки й суму</span></div>
+  <div class="box nb">
+    <p class="huge" style="text-align:center;letter-spacing:.06em">a + b = c</p>
+    <div class="row c3" style="margin-top:8px;text-align:center">
+      <p class="big" style="margin:0"><b>a</b> — доданок</p>
+      <p class="big" style="margin:0"><b>b</b> — доданок</p>
+      <p class="big" style="margin:0"><b>c</b> — сума</p>
     </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">3) 0,2 · 5<sup>3</sup> &nbsp;<span class="ans hide">= 0,2 · 125 = 25</span></p>
-      <p class="eqn" style="margin:10px 0 0">4) (1,5 − 1,8)<sup>2</sup> &nbsp;<span class="ans hide">= (−0,3)<sup>2</sup> = 0,09</span></p>
-    </div>
+    <p class="big" style="margin-top:12px;text-align:center">Вираз <b>a + b</b> теж називають <b>сумою</b>. &nbsp; a + 0 = a, &nbsp; 0 + a = a</p>
   </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Правило знака — одним рядком</h3>
-    <p class="big" style="margin:0"><b>Парний</b> показник → результат <b>додатний</b>. <b>Непарний</b> → знак мінуса зберігається.</p>
-    <p style="margin-top:10px">У четвертому спершу дія в дужках, і лише потім квадрат. Мінус зникає, бо показник парний, — але <b>0,09</b>, а не 0,9: множимо 0,3 · 0,3, а знаків після коми стає два.</p>
+  <div class="box" style="margin-top:14px">
+    <p class="big">Вголос: у рівності <b>345 + 623 = 968</b> назви доданки й суму. А що буде, якщо до 968 додати 0?</p>
+    <p class="big ans hide">доданки 345 і 623, сума 968; 968 + 0 = 968</p>
   </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 8 -->
-<section class="slide" data-t="Дужки й мінус">
-  <p class="eyebrow">Зупинка 2</p>
-  <h2>Знак перед дужками вирішує все</h2>
-  <div class="row c2">
-    <div class="box ok">
-      <h3>Плюс перед дужками</h3>
-      <p class="eqn" style="margin:0">+ (2a − 5) = 2a − 5</p>
-      <p style="margin-top:10px">Дужки просто зникають, усе лишається як було.</p>
+<section class="slide" data-t="Стовпчиком" data-timer="150">
+  <p class="eyebrow">Письмове додавання · с. 30</p>
+  <h2>Додаємо стовпчиком</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span><span class="mode voice"><span class="dot"></span>вголос — кожен розряд</span><span class="mode pick"><span class="dot"></span>випадковий номер — наступний розряд</span></div>
+  <div class="row c21">
+    <div class="box nb">
+      <h3>Правило</h3>
+      <p class="step" style="margin:0">1. Пишемо <b>розряд під розрядом</b>: одиниці під одиницями.</p>
+      <p class="step" style="margin:0">2. Додаємо <b>справа наліво</b>, з одиниць.</p>
+      <p class="step" style="margin:0">3. Вийшло 10 або більше — пишемо одиниці, а <b>1 переносимо</b> в наступний розряд (маленька цифра зверху).</p>
     </div>
-    <div class="box warn">
-      <h3>Мінус перед дужками</h3>
-      <p class="eqn" style="margin:0">− (2a − 5) = −2a + 5</p>
-      <p style="margin-top:10px"><b>Кожен</b> доданок міняє знак. Не тільки перший.</p>
-    </div>
+    <div class="box nb"><div class="cls"><table class="cl"><tr class="c hide"><td></td><td></td><td></td><td></td></tr><tr class=""><td class="op" rowspan="2">+</td><td class="d">3</td><td class="d">4</td><td class="d">5</td></tr><tr class=""><td class="d">6</td><td class="d">2</td><td class="d">3</td></tr><tr class="r hide"><td></td><td class="d">9</td><td class="d">6</td><td class="d">8</td></tr></table><table class="cl"><tr class="c hide"><td></td><td>1</td><td>1</td><td>1</td><td></td></tr><tr class=""><td class="op" rowspan="2">+</td><td class="d">4</td><td class="d">7</td><td class="d">5</td><td class="d">8</td></tr><tr class=""><td class="d">2</td><td class="d">6</td><td class="d">6</td><td class="d">7</td></tr><tr class="r hide"><td></td><td class="d">7</td><td class="d">4</td><td class="d">2</td><td class="d">5</td></tr></table></div>
+      <p class="lab" style="text-align:center">червоні одинички — перенесені десятки, сотні, тисячі</p></div>
   </div>
-  <div class="box pen" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Множимо многочлен на многочлен</h3>
-    <p class="big" style="margin:0">Кожен доданок першої дужки — на кожен доданок другої, а тоді зводимо подібні.</p>
-    <p class="eqn" style="margin:12px 0 0">(m + 2)(m − 4) = m<sup>2</sup> − 4m + 2m − 8 = m<sup>2</sup> − 2m − 8</p>
+  <div class="box warn hide" style="margin-top:14px">
+    <p class="big">8 + 7 = 15: пишемо <b>5</b>, а <b>1</b> — над десятками. Забули перенос з одиниць — вийде 7415 замість <span class="ans">7425</span>.</p>
   </div>
 </section>
 
 <!-- 9 -->
-<section class="slide" data-t="№ 25 — у зошит" data-timer="240">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Працюємо самостійно</p>
-  <h2>№ 25 (ст. 6). Перетворіть на многочлен</h2>
-  <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) 7b<sup>2</sup>(b − 3)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 7b<sup>3</sup> − 21b<sup>2</sup></p>
-      <p class="eqn" style="margin:12px 0 0">2) 4(b − 3) − 2(2b + 1)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 4b − 12 − 4b − 2 = <b>−14</b></p>
-      <p class="eqn" style="margin:12px 0 0">3) (m + 2)(m − 4)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= m<sup>2</sup> − 2m − 8</p>
-    </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">4) −2x<sup>3</sup>(4 − x<sup>2</sup> + x)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 2x<sup>5</sup> − 2x<sup>4</sup> − 8x<sup>3</sup></p>
-      <p class="eqn" style="margin:12px 0 0">5) 3(2c − 6) − (5c − 18)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 6c − 18 − 5c + 18 = <b>c</b></p>
-      <p class="eqn" style="margin:12px 0 0">6) (3x + y)(x − y)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 3x<sup>2</sup> − 2xy − y<sup>2</sup></p>
-    </div>
+<section class="slide" data-t="№ 201" data-timer="300">
+  <p class="eyebrow">№ 201 · с. 30</p>
+  <h2>Виконай додавання</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span><span class="mode cam"><span class="dot"></span>на камеру</span><span class="mode want"><span class="dot"></span>бажаючий — відповідь</span></div>
+  <div class="box nb"><div class="cls"><table class="cl"><tr class="c hide"><td></td><td>1</td><td>1</td><td>1</td><td></td><td>1</td><td></td></tr><tr class=""><td class="op" rowspan="2">+</td><td class="d">1</td><td class="d">0</td><td class="d">5</td><td class="d">7</td><td class="d">4</td><td class="d">9</td></tr><tr class=""><td class="d"></td><td class="d">9</td><td class="d">7</td><td class="d">4</td><td class="d">2</td><td class="d">7</td></tr><tr class="r hide"><td></td><td class="d">2</td><td class="d">0</td><td class="d">3</td><td class="d">1</td><td class="d">7</td><td class="d">6</td></tr></table><table class="cl"><tr class="c hide"><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td><td></td></tr><tr class=""><td class="op" rowspan="2">+</td><td class="d">2</td><td class="d">3</td><td class="d">7</td><td class="d">1</td><td class="d">4</td><td class="d">0</td><td class="d">5</td></tr><tr class=""><td class="d">7</td><td class="d">0</td><td class="d">1</td><td class="d">8</td><td class="d">4</td><td class="d">1</td><td class="d">9</td></tr><tr class="r hide"><td></td><td class="d">9</td><td class="d">3</td><td class="d">8</td><td class="d">9</td><td class="d">8</td><td class="d">2</td><td class="d">4</td></tr></table><table class="cl"><tr class="c hide"><td></td><td>1</td><td></td><td>1</td><td>1</td><td></td><td>1</td><td></td></tr><tr class=""><td class="op" rowspan="2">+</td><td class="d"></td><td class="d">6</td><td class="d">2</td><td class="d">7</td><td class="d">1</td><td class="d">8</td><td class="d">3</td></tr><tr class=""><td class="d"></td><td class="d">9</td><td class="d">1</td><td class="d">4</td><td class="d">9</td><td class="d">0</td><td class="d">8</td></tr><tr class="r hide"><td></td><td class="d">1</td><td class="d">5</td><td class="d">4</td><td class="d">2</td><td class="d">0</td><td class="d">9</td><td class="d">1</td></tr></table></div></div>
+  <div class="box note hide" style="margin-top:14px">
+    <p class="big">Прикидка: 100 тис. + 100 тис. = 200 тис.; &nbsp;2 млн + 7 млн = 9 млн; &nbsp;600 тис. + 900 тис. = 1 млн 500 тис. — усе сходиться.</p>
   </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Другий і п'ятий — не помилка</h3>
-    <p class="big" style="margin:0">Там справді <b>зникають усі x-и</b>: у № 2 лишається число −14, у № 5 — одна буква c. Так буває: многочлен може згорнутися до однієї величини.</p>
-  </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 10 -->
-<section class="slide" data-t="Формули скороченого множення">
-  <p class="eyebrow">Зупинка 3</p>
-  <h2>Три формули, які економлять півуроку</h2>
-  <div class="row c3">
-    <div class="box pen">
-      <h3>Квадрат суми</h3>
-      <p class="eqn" style="margin:0">(a + b)<sup>2</sup> =</p>
-      <p class="eqn" style="margin:4px 0 0">a<sup>2</sup> + 2ab + b<sup>2</sup></p>
+<section class="slide" data-t="Фізкультхвилинка" data-timer="60">
+  <h2>Фізкультхвилинка</h2>
+  <div class="modes"><span class="mode away"><span class="dot"></span>відпочиваємо</span></div>
+  <div class="row c2">
+    <div class="box play">
+      <ul>
+        <li>Встань біля столу</li>
+        <li><b>Перенос</b> — підстрибни один раз, як одиничка в сусідній розряд</li>
+        <li>Я називаю два числа: якщо сума <b>більша за 10</b> — присідаєш, якщо ні — руки вгору</li>
+      </ul>
     </div>
-    <div class="box pen">
-      <h3>Квадрат різниці</h3>
-      <p class="eqn" style="margin:0">(a − b)<sup>2</sup> =</p>
-      <p class="eqn" style="margin:4px 0 0">a<sup>2</sup> − 2ab + b<sup>2</sup></p>
+    <div class="box">
+      <p class="numbig">7 + 5 &nbsp; · &nbsp; 3 + 4 &nbsp; · &nbsp; 9 + 9</p>
+      <p class="numbig">6 + 2 &nbsp; · &nbsp; 8 + 4 &nbsp; · &nbsp; 1 + 8</p>
+      <p class="lab">і наостанок — потягнись угору й сядь рівно</p>
     </div>
-    <div class="box pen">
-      <h3>Різниця квадратів</h3>
-      <p class="eqn" style="margin:0">(a − b)(a + b) =</p>
-      <p class="eqn" style="margin:4px 0 0">a<sup>2</sup> − b<sup>2</sup></p>
-    </div>
-  </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Найчастіша помилка класу</h3>
-    <p class="big" style="margin:0">(a + b)<sup>2</sup> — це <b>не</b> a<sup>2</sup> + b<sup>2</sup>. Загубити подвоєний добуток <b>2ab</b> — те саме, що загубити половину відповіді.</p>
-    <p style="margin-top:10px">Перевір на числах: (2 + 3)<sup>2</sup> = 25, а 2<sup>2</sup> + 3<sup>2</sup> = 13. Не сходиться.</p>
   </div>
 </section>
 
 <!-- 11 -->
-<section class="slide" data-t="№ 27 — у зошит" data-timer="240">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Працюємо самостійно</p>
-  <h2>№ 27 (ст. 6). Подайте у вигляді многочлена</h2>
+<section class="slide" data-t="№ 202" data-timer="300">
+  <p class="eyebrow">№ 202 · с. 30 · пункти 1 і 3</p>
+  <h2>Спершу прикидка — потім стовпчик</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span><span class="mode pick"><span class="dot"></span>випадковий номер — відповідь</span></div>
   <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) (c + 5)<sup>2</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= c<sup>2</sup> + 10c + 25</p>
-      <p class="eqn" style="margin:12px 0 0">2) (8b − 3)<sup>2</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= 64b<sup>2</sup> − 48b + 9</p>
-      <p class="eqn" style="margin:12px 0 0">3) (4x + 3)<sup>2</sup> − 9</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 16x<sup>2</sup> + 24x + 9 − 9 = <b>16x<sup>2</sup> + 24x</b></p>
-    </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">4) (c + 2)(c − 2)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= c<sup>2</sup> − 4</p>
-      <p class="eqn" style="margin:12px 0 0">5) (m − 9)(9 + m)</p>
-      <p class="step ans hide" style="margin:6px 0 0">= (m − 9)(m + 9) = m<sup>2</sup> − 81</p>
-      <p class="eqn" style="margin:12px 0 0">6) (5p − 2)(5p + 2) − 25p<sup>2</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= 25p<sup>2</sup> − 4 − 25p<sup>2</sup> = <b>−4</b></p>
-    </div>
+    <div class="box nb"><p class="eqn">1) 88 639 + 75 089</p><p class="lab hide">прикидка: 90 000 + 80 000 = 170 000</p><table class="cl"><tr class="c hide"><td></td><td>1</td><td>1</td><td></td><td>1</td><td>1</td><td></td></tr><tr class=""><td class="op" rowspan="2">+</td><td class="d"></td><td class="d">8</td><td class="d">8</td><td class="d">6</td><td class="d">3</td><td class="d">9</td></tr><tr class=""><td class="d"></td><td class="d">7</td><td class="d">5</td><td class="d">0</td><td class="d">8</td><td class="d">9</td></tr><tr class="r hide"><td></td><td class="d">1</td><td class="d">6</td><td class="d">3</td><td class="d">7</td><td class="d">2</td><td class="d">8</td></tr></table></div>
+    <div class="box nb"><p class="eqn">3) 148 495 + 251 505</p><p class="lab hide">прикидка: 100 000 + 300 000 = 400 000</p><table class="cl"><tr class="c hide"><td></td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td></td></tr><tr class=""><td class="op" rowspan="2">+</td><td class="d">1</td><td class="d">4</td><td class="d">8</td><td class="d">4</td><td class="d">9</td><td class="d">5</td></tr><tr class=""><td class="d">2</td><td class="d">5</td><td class="d">1</td><td class="d">5</td><td class="d">0</td><td class="d">5</td></tr><tr class="r hide"><td></td><td class="d">4</td><td class="d">0</td><td class="d">0</td><td class="d">0</td><td class="d">0</td><td class="d">0</td></tr></table></div>
   </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>П'ятий — перевірка на уважність</h3>
-    <p class="big" style="margin:0">(m − 9)(9 + m) на вигляд «не така» формула. Але доданки в дужці можна переставити: 9 + m = m + 9. І це чиста різниця квадратів.</p>
+  <div class="box play hide" style="margin-top:14px">
+    <p class="big">У п. 3 переноси йдуть <b>ланцюжком</b> через усі розряди — і виходить рівно <span class="ans">400 000</span>.</p>
   </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 12 -->
-<section class="slide" data-t="Пауза для очей" data-timer="60">
-  <p class="eyebrow">Хвилина відпочинку</p>
-  <h2>Відводимо очі від екрана</h2>
-  <div class="row c3">
-    <div class="box"><h3>1</h3><p style="margin:0">Подивись у <b>вікно</b>, на найдальшу точку. Порахуй до десяти.</p></div>
-    <div class="box"><h3>2</h3><p style="margin:0">Міцно <b>заплющ очі</b> на п'ять секунд. Розплющ.</p></div>
-    <div class="box"><h3>3</h3><p style="margin:0">Поверни голову <b>вліво і вправо</b>. Розправ плечі.</p></div>
+<section class="slide" data-t="№ 205 — шифр" data-timer="360">
+  <p class="eyebrow">№ 205 · с. 31 · розгадай</p>
+  <h2>Імʼя та прізвище першого Президента незалежної України</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>обчислення — у зошит</span><span class="mode want"><span class="dot"></span>бажаючий — слово</span></div>
+  <div class="row c2">
+    <div class="box">
+      <p class="eqn">579 755 + 873 + 339 686 = <span class="ans hide">920 314</span></p>
+      <p class="lab">цифри суми по черзі — це букви <b>Е Н Д О Л І</b></p>
+      <div style="margin-top:8px"><div class="lt"><div><div class="v">1</div><div class="l hide">Л</div></div><div><div class="v">9</div><div class="l hide">Е</div></div><div><div class="v">3</div><div class="l hide">О</div></div><div><div class="v">2</div><div class="l hide">Н</div></div><div><div class="v">4</div><div class="l hide">І</div></div><div><div class="v">0</div><div class="l hide">Д</div></div></div></div>
+    </div>
+    <div class="box">
+      <p class="eqn">75 982 + 14 582 + 3 005 018 = <span class="ans hide">3 095 582</span></p>
+      <p class="lab">цифри суми по черзі — це букви <b>Р У В К К Ч А</b></p>
+      <div style="margin-top:8px"><div class="lt"><div><div class="v">5</div><div class="l hide">К</div></div><div><div class="v">3</div><div class="l hide">Р</div></div><div><div class="v">2</div><div class="l hide">А</div></div><div><div class="v">9</div><div class="l hide">В</div></div><div><div class="v">8</div><div class="l hide">Ч</div></div><div><div class="v">0</div><div class="l hide">У</div></div><div><div class="v">5</div><div class="l hide">К</div></div></div></div>
+    </div>
   </div>
-  <p class="lede" style="margin-top:clamp(16px,2.4vw,30px);text-align:center">Далі — найцікавіша частина уроку.</p>
-  <div class="timerslot"></div>
+  <div class="box ok hide" style="margin-top:14px">
+    <p class="big"><b>Леонід Кравчук</b> — перший Президент України (1991–1994).</p>
+  </div>
 </section>
 
 <!-- 13 -->
-<section class="slide" data-t="№ 33 — у зошит" data-timer="180">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Два кроки в одному прикладі</p>
-  <h2>№ 33 (ст. 7). Перетворіть на многочлен стандартного вигляду</h2>
+<section class="slide" data-t="№ 208 — Капелюшник" data-timer="180">
+  <p class="eyebrow">№ 208 · с. 31 · задача</p>
+  <h2>Скільки чашечок чаю випив Капелюшник?</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span><span class="mode pick"><span class="dot"></span>випадковий номер — відповідь</span></div>
   <div class="box">
-    <p class="eqn" style="margin:0">1) m<sup>2</sup>(m + 3) − (m<sup>2</sup> + 4m)(m − 1)</p>
-    <div class="ans hide">
-      <p class="step" style="margin:8px 0 0">= m<sup>3</sup> + 3m<sup>2</sup> − (m<sup>3</sup> − m<sup>2</sup> + 4m<sup>2</sup> − 4m)</p>
-      <p class="step" style="margin:4px 0 0">= m<sup>3</sup> + 3m<sup>2</sup> − m<sup>3</sup> − 3m<sup>2</sup> + 4m = <b>4m</b></p>
-    </div>
+    <p class="big">За сніданком — <b>37</b> чашечок, за обідом — на <b>12</b> чашечок <b>більше</b>. Скільки за обідом і сніданком разом?</p>
   </div>
-  <div class="box" style="margin-top:clamp(10px,1.5vw,18px)">
-    <p class="eqn" style="margin:0">2) (9x − 1)(x + 3) − (3x − 2)<sup>2</sup></p>
-    <div class="ans hide">
-      <p class="step" style="margin:8px 0 0">= 9x<sup>2</sup> + 27x − x − 3 − (9x<sup>2</sup> − 12x + 4)</p>
-      <p class="step" style="margin:4px 0 0">= 9x<sup>2</sup> + 26x − 3 − 9x<sup>2</sup> + 12x − 4 = <b>38x − 7</b></p>
-    </div>
+  <div class="row c2" style="margin-top:14px">
+    <div class="box nb hide"><h3>1) За обідом</h3><p class="eqn">37 + 12 = 49 (ч.)</p><p class="lab">«на 12 більше» — додаємо</p></div>
+    <div class="box nb hide"><h3>2) Разом</h3><p class="eqn">37 + 49 = <span class="ans">86 (ч.)</span></p></div>
   </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">В обох прикладах друга дужка стоїть <b>після мінуса</b>. Спершу розкрий множення <b>всередині</b> неї, візьми результат у дужки — і аж тоді міняй знаки. Хто міняє знак одразу, губить один доданок.</p>
+  <div class="box warn hide" style="margin-top:14px">
+    <p class="big">Відповідь <b>49</b> — лише обід. Питали <b>разом</b>, тож потрібна друга дія.</p>
   </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 14 -->
-<section class="slide" data-t="№ 34 — шахи" data-timer="180">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span><span class="mode chat"><span class="dot"></span>Відповідь — у чат</span></div>
-  <p class="eyebrow">Задача з підказкою</p>
-  <h2>№ 34 (ст. 7)</h2>
-  <div class="box pen">
-    <p class="big" style="margin:0">Спрости вираз <span class="eqn">(9x − 1)(4x + 2) − (6x − 7)(6x + 7)</span> та знайди його значення, якщо <b>x = −3</b>.</p>
-    <p style="margin-top:10px">Число, яке вийде, — це <b>скільки разів чоловіча збірна України із шахів ставала призером командного чемпіонату світу</b>.</p>
-  </div>
-  <div class="ans hide">
-    <div class="box" style="margin-top:clamp(10px,1.5vw,18px)">
-      <p class="step" style="margin:0">(9x − 1)(4x + 2) = 36x<sup>2</sup> + 18x − 4x − 2 = 36x<sup>2</sup> + 14x − 2</p>
-      <p class="step" style="margin:4px 0 0">(6x − 7)(6x + 7) = 36x<sup>2</sup> − 49</p>
-      <p class="step" style="margin:4px 0 0">36x<sup>2</sup> + 14x − 2 − 36x<sup>2</sup> + 49 = <b>14x + 47</b></p>
-      <p class="step" style="margin:8px 0 0">x = −3: &nbsp; 14 · (−3) + 47 = −42 + 47 = <b>5</b></p>
+<section class="slide" data-t="Схема «більше на»" data-timer="240">
+  <p class="eyebrow">№ 206 (1) · с. 31 · зразок до домашнього № 210</p>
+  <h2>Стрілка — у бік більшого числа</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span><span class="mode voice"><span class="dot"></span>вголос — умова</span><span class="mode pick"><span class="dot"></span>випадковий номер — відповідь</span></div>
+  <div class="row c21">
+    <div class="box"><svg class="ov" viewBox="0 0 520 150" role="img" aria-label="схема: число 27 139, стрілка «на 14 573» до невідомого числа">
+  <path d="M150 70 C 210 10, 300 10, 360 60"/><polygon class="hd" points="364,66 346,58 358,48"/>
+  <text class="s" x="255" y="22" text-anchor="middle">на 14 573</text>
+  <ellipse class="a" cx="95" cy="100" rx="85" ry="36"/><text x="95" y="108" text-anchor="middle">27 139</text>
+  <ellipse class="b" cx="425" cy="100" rx="85" ry="36"/><text x="425" y="108" text-anchor="middle">?</text>
+</svg></div>
+    <div class="box nb hide">
+      <h3>Умова</h3><p style="margin:0">У першому класі зібрали 27 139 г макулатури, а в другому — на 14 573 г більше. Скільки зібрав другий клас?</p>
     </div>
   </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0"><b>5 разів.</b> Зверни увагу: підставляти x = −3 в початковий вираз було б довго й легко помилитися. Спростили — і лишилося дві дії.</p>
+  <div class="box nb hide" style="margin-top:14px">
+    <p class="eqn">27 139 + 14 573 = <span class="ans">41 712 (г)</span></p>
   </div>
-  <div class="timerslot"></div>
+  <div class="box play hide" style="margin-top:14px">
+    <p class="big">Удома № 210 — так само: придумай свою умову до схеми і розвʼяжи стовпчиком.</p>
+  </div>
 </section>
 
 <!-- 15 -->
-<section class="slide" data-t="Розкладання — три способи">
-  <p class="eyebrow">Зупинка 4</p>
-  <h2>Розкласти на множники — це перетворити суму на добуток</h2>
-  <div class="row c3">
-    <div class="box pen">
-      <h3>1. Спільний множник</h3>
-      <p class="eqn" style="margin:0">6a + 9b =</p>
-      <p class="eqn" style="margin:4px 0 0">3(2a + 3b)</p>
-      <p style="margin-top:10px">Виносимо за дужки те, що є в кожному доданку.</p>
-    </div>
-    <div class="box pen">
-      <h3>2. Групування</h3>
-      <p class="eqn" style="margin:0">ax + ay + bx + by =</p>
-      <p class="eqn" style="margin:4px 0 0">(a + b)(x + y)</p>
-      <p style="margin-top:10px">Ділимо на пари, з кожної виносимо спільне.</p>
-    </div>
-    <div class="box pen">
-      <h3>3. Формула</h3>
-      <p class="eqn" style="margin:0">a<sup>2</sup> − b<sup>2</sup> =</p>
-      <p class="eqn" style="margin:4px 0 0">(a − b)(a + b)</p>
-      <p style="margin-top:10px">Ті самі три формули, тільки читаємо їх справа наліво.</p>
-    </div>
+<section class="slide" data-t="№ 217 — картопля" data-timer="300">
+  <p class="eyebrow">№ 217 · с. 32 · зразок до домашнього № 218</p>
+  <h2>Скільки картоплі зібрали за три дні?</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span><span class="mode cam"><span class="dot"></span>на камеру</span><span class="mode want"><span class="dot"></span>бажаючий — відповідь по діях</span></div>
+  <div class="box">
+    <p class="big">1-й день — <b>13 223 кг</b>, це на <b>1231 кг менше</b>, ніж 2-го дня. 3-го дня — на <b>727 кг більше</b>, ніж 2-го.</p>
   </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0"><b>Порядок дій завжди однаковий:</b> спершу шукаю спільний множник, потім дивлюсь, чи не сховалася формула, і аж тоді пробую групування.</p>
+  <div class="row c3" style="margin-top:14px">
+    <div class="box nb hide"><h3>1) Другий день</h3><p class="eqn">13 223 + 1231 = 14 454 (кг)</p><p class="lab">1-й на 1231 менше → 2-й на 1231 <b>більше</b></p></div>
+    <div class="box nb hide"><h3>2) Третій день</h3><p class="eqn">14 454 + 727 = 15 181 (кг)</p></div>
+    <div class="box nb hide"><h3>3) Разом</h3><p class="eqn">13 223 + 14 454 + 15 181 = <span class="ans">42 858 (кг)</span></p></div>
+  </div>
+  <div class="box warn hide" style="margin-top:14px">
+    <p class="big">Пастка: «на 1231 кг <b>менше</b>, ніж другого» — але шукаємо <b>другий</b>, а він <b>більший</b>. Тому додаємо.</p>
   </div>
 </section>
 
 <!-- 16 -->
-<section class="slide" data-t="№ 29 — у зошит" data-timer="240">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Працюємо самостійно</p>
-  <h2>№ 29 (ст. 7). Розкладіть на множники</h2>
-  <div class="row c2">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) 9x − 18y</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 9(x − 2y)</p>
-      <p class="eqn" style="margin:12px 0 0">2) 4xm + 6m</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 2m(2x + 3)</p>
-      <p class="eqn" style="margin:12px 0 0">3) m(x − p) + 3x − 3p</p>
-      <p class="step ans hide" style="margin:6px 0 0">= m(x − p) + 3(x − p) = <b>(x − p)(m + 3)</b></p>
-    </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">4) −2x<sup>3</sup> − 8x<sup>5</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= −2x<sup>3</sup>(1 + 4x<sup>2</sup>)</p>
-      <p class="eqn" style="margin:12px 0 0">5) b<sup>2</sup> − b<sup>5</sup> + b<sup>3</sup></p>
-      <p class="step ans hide" style="margin:6px 0 0">= b<sup>2</sup>(1 − b<sup>3</sup> + b)</p>
-      <p class="eqn" style="margin:12px 0 0">6) 7c + 7n − cx − xn</p>
-      <p class="step ans hide" style="margin:6px 0 0">= 7(c + n) − x(c + n) = <b>(c + n)(7 − x)</b></p>
-    </div>
-  </div>
-  <div class="box warn hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Третій і шостий — це групування</h3>
-    <p class="big" style="margin:0">Спільним множником може бути <b>ціла дужка</b>, а не тільки число чи буква. У № 3 це (x − p), у № 6 — (c + n).</p>
-  </div>
-  <div class="timerslot"></div>
+<section class="slide" data-t="Бонус № 221" data-timer="150">
+  <p class="eyebrow">№ 221 · с. 32 · для тих, хто впорався швидше</p>
+  <h2>Сума чисел, що закінчуються на 5, між 1800 і 1846</h2>
+  <div class="modes"><span class="mode pick"><span class="dot"></span>випадковий номер — відповідь</span></div>
+  <div class="box hide"><p class="numbig">1805, 1815, 1825, 1835, 1845</p></div>
+  <div class="box nb hide" style="margin-top:14px"><p class="numbig">1805 + 1815 + 1825 + 1835 + 1845 = <span class="ans">9125</span></p></div>
+  <div class="box note hide" style="margin-top:14px"><p class="big">1846 — не входить (число має бути <b>менше</b> від 1846), а 1845 — ще входить.</p></div>
 </section>
 
 <!-- 17 -->
-<section class="slide" data-t="№ 38 — рівняння" data-timer="150">
-  <div class="modes"><span class="mode book"><span class="dot"></span>У зошит</span></div>
-  <p class="eyebrow">Навіщо нам розкладання</p>
-  <h2>№ 38 (ст. 7). Розв'яжіть рівняння</h2>
-  <div class="box ok">
-    <p class="big" style="margin:0">Якщо <b>добуток дорівнює нулю</b>, то нулю дорівнює хоча б один множник. Тому рівняння розкладаємо на множники — і воно розпадається на прості.</p>
-  </div>
-  <div class="row c2" style="margin-top:clamp(10px,1.5vw,18px)">
-    <div class="box">
-      <p class="eqn" style="margin:0">1) 4x<sup>2</sup> − x = 0</p>
-      <div class="ans hide">
-        <p class="step" style="margin:8px 0 0">x(4x − 1) = 0</p>
-        <p class="step" style="margin:4px 0 0">x = 0 &nbsp; або &nbsp; 4x − 1 = 0</p>
-        <p class="step" style="margin:4px 0 0"><b>x = 0; &nbsp; x = 0,25</b></p>
-      </div>
+<section class="slide" data-t="Підсумок">
+  <h2>Що ми сьогодні дізналися</h2>
+  <div class="row c2">
+    <div class="box ok"><h3>Назви</h3>
+      <ul>
+        <li>Числа, які додають, — <b>доданки</b></li>
+        <li>Результат — <b>сума</b></li>
+        <li>a + 0 = a</li>
+      </ul>
     </div>
-    <div class="box">
-      <p class="eqn" style="margin:0">3) (x − 1)<sup>2</sup> − 4 = 0</p>
-      <div class="ans hide">
-        <p class="step" style="margin:8px 0 0">(x − 1 − 2)(x − 1 + 2) = 0</p>
-        <p class="step" style="margin:4px 0 0">(x − 3)(x + 1) = 0</p>
-        <p class="step" style="margin:4px 0 0"><b>x = 3; &nbsp; x = −1</b></p>
-      </div>
+    <div class="box play"><h3>Стовпчиком</h3>
+      <ul>
+        <li><b>Розряд під розрядом</b></li>
+        <li>Справа наліво, з одиниць</li>
+        <li>10 і більше — <b>перенос 1</b> ліворуч</li>
+        <li>Перевір <b>прикидкою</b></li>
+      </ul>
     </div>
   </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Це саме те, що на вас чекає в домашньому № 39. Механіка та сама — просто інші числа.</p>
+  <div class="box pen" style="margin-top:14px">
+    <p class="big">На камеру, на пальцях — одне число: наскільки впевнено ти додаєш стовпчиком — від <b>1</b> до <b>5</b>?</p>
   </div>
-  <div class="timerslot"></div>
 </section>
 
 <!-- 18 -->
-<section class="slide" data-t="Підсумок">
-  <p class="eyebrow">Що забираємо з уроку</p>
-  <h2>Чотири речі</h2>
-  <div class="row c2">
-    <div class="box pen"><h3>Степені</h3><p style="margin:0">Множимо — показники додаємо, ділимо — віднімаємо, підносимо — множимо. Парний показник знімає мінус.</p></div>
-    <div class="box pen"><h3>Дужки</h3><p style="margin:0">Мінус перед дужками міняє знак <b>кожного</b> доданка, а не одного.</p></div>
-    <div class="box pen"><h3>Формули</h3><p style="margin:0">(a ± b)<sup>2</sup> = a<sup>2</sup> ± 2ab + b<sup>2</sup>, (a − b)(a + b) = a<sup>2</sup> − b<sup>2</sup>. Подвоєний добуток не губимо.</p></div>
-    <div class="box pen"><h3>Розкладання</h3><p style="margin:0">Спільний множник → формула → групування. Спільним множником буває ціла дужка.</p></div>
+<section class="slide" data-t="Домашнє завдання">
+  <h2>Домашнє завдання</h2>
+  <div class="modes"><span class="mode book"><span class="dot"></span>у зошит</span></div>
+  <div class="box nb">
+    <p class="big">§ 4, с. 29–32.</p>
+    <p class="big">№ 210 — склади умову до схеми: <b>71 518</b> → стрілка «на 28 489» → <b>?</b> — і розвʼяжи.</p>
+    <p class="big">№ 218 — олівець 3 грн 65 к., це на 2 грн 60 к. менше, ніж ручка; зошит на 6 грн 20 к. більше, ніж олівець і ручка разом. Скільки коштують олівець, ручка й зошит разом?</p>
   </div>
-  <div class="box ok hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <p class="big" style="margin:0">Напиши в чат <b>одним словом</b>: що з цих чотирьох сьогодні було найважче саме тобі. Мені це потрібно, щоб знати, що повторити на наступному уроці.</p>
+  <div class="row c2" style="margin-top:14px">
+    <div class="box note hide"><h3>Підказка до № 210</h3>
+      <p class="big">Як схема з № 206: стрілка до <b>більшого</b> числа — отже, додаємо.</p></div>
+    <div class="box note hide"><h3>Підказка до № 218</h3>
+      <p class="big">Як № 217: три дії. Гривні додавай до гривень, копійки до копійок (100 к. = 1 грн).</p></div>
   </div>
 </section>
 
 <!-- 19 -->
-<section class="slide" data-t="Домашнє завдання">
-  <div class="modes"><span class="mode book"><span class="dot"></span>Записуємо в щоденник</span></div>
-  <p class="eyebrow">Домашнє завдання</p>
-  <h2>№ 37 і № 39, ст. 7</h2>
-  <div class="row c2">
-    <div class="box pen">
-      <h3>№ 37. Розкладіть на множники</h3>
-      <p class="eqn" style="margin:0">1) 8p<sup>4</sup> − 4p<sup>5</sup> + 12p</p>
-      <p class="eqn" style="margin:6px 0 0">2) a<sup>5</sup> − 2a<sup>2</sup> − 3a<sup>3</sup> + 6</p>
-      <p class="eqn" style="margin:6px 0 0">3) −9m<sup>2</sup> − 6m − 1</p>
-      <p class="eqn" style="margin:6px 0 0">4) 0,49m<sup>4</sup> − t<sup>16</sup>p<sup>2</sup></p>
-      <p class="eqn" style="margin:6px 0 0">5) 125a<sup>6</sup> − b<sup>9</sup></p>
-      <p class="eqn" style="margin:6px 0 0">6) a<sup>2</sup> − 2ax + x<sup>2</sup> − 36</p>
-    </div>
-    <div class="box pen">
-      <h3>№ 39. Розв'яжіть рівняння</h3>
-      <p class="eqn" style="margin:0">1) 2x<sup>2</sup> + x = 0</p>
-      <p class="eqn" style="margin:6px 0 0">2) 36x<sup>2</sup> − 12x + 1 = 0</p>
-      <p class="eqn" style="margin:6px 0 0">3) (x + 2)<sup>2</sup> − 9 = 0</p>
-      <p style="margin-top:14px">Усі три — точно як № 38, який ми щойно зробили разом.</p>
-    </div>
-  </div>
-  <div class="box play hide" style="margin-top:clamp(12px,1.8vw,22px)">
-    <h3>Три підказки до № 37</h3>
-    <p style="margin:0">№ 1 — винеси <b>4p</b>. № 3 — винеси <b>мінус</b>, і під ним відкриється квадрат суми. № 6 — перші три доданки згорни у квадрат, а тоді працює різниця квадратів.</p>
+<section class="slide" data-t="До зустрічі">
+  <h1>Дякую за урок!</h1>
+  <p class="lede" style="margin-top:18px">Наступного разу — <b>властивості додавання</b>: як додати 492 + 108 + 17 за 3 секунди.</p>
+  <div class="box ok" style="margin-top:22px">
+    <p class="big">Головне з сьогодні: <b>розряд під розрядом</b> і не губи <b>перенос</b>.</p>
   </div>
 </section>
 
-<!-- 20 -->
-<section class="slide" data-t="До зустрічі">
-  <p class="eyebrow">Урок завершено</p>
-  <h1>Дякую за роботу!</h1>
-  <p class="lede" style="margin-top:clamp(14px,2.2vw,26px)">Наступного разу — функції: те, що ми повторювали, там уже працюватиме на повну.</p>
-  <div class="box pen" style="margin-top:clamp(16px,2.6vw,34px)">
-    <p class="big" style="margin:0">Питання щодо домашнього — пиши в чат зараз або мені особисто. Відповім усім.</p>
-  </div>
-</section>
 </div>
 
 <div id="bar">
@@ -1277,7 +1157,7 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
   </div>
   <div id="rail" aria-hidden="true"></div>
   <div id="tip">пробіл — показати відповідь</div>
-  <div id="count">1 / 20</div>
+  <div id="count">1 / 19</div>
   <button id="fs" type="button" aria-label="На весь екран">⛶</button>
 </div>
 </div>
@@ -1613,6 +1493,7 @@ function applyState(i, revealAll){
 
 function go(i, revealAll){
   if(i < 0 || i >= slides.length || i === cur) { if(i===cur){ paint(); } return; }
+  lesAuto();
   stopTick(); resetTimer(slides[cur]);
   clearInk();
   var run = function(){ applyState(i, revealAll); };
@@ -1625,6 +1506,7 @@ function go(i, revealAll){
 }
 
 function next(){
+  lesAuto();
   var h = hiddenOf(cur);
   if(h.length){
     h[0].classList.add('on');
@@ -1858,7 +1740,8 @@ help.innerHTML =
      '<span class="k"><kbd>пробіл</kbd> <kbd>→</kbd></span><span>показати наступне / далі</span>' +
      '<span class="k"><kbd>←</kbd></span><span>сховати останнє / назад</span>' +
      '<span class="k"><kbd>O</kbd></span><span>огляд усіх слайдів</span>' +
-     '<span class="k"><kbd>T</kbd></span><span>таймер: почати / пауза</span>' +
+     '<span class="k"><kbd>T</kbd></span><span>таймер завдання: почати / пауза</span>' +
+     '<span class="k"><kbd>U</kbd></span><span>таймер уроку (Shift+U — спочатку)</span>' +
      '<span class="k"><kbd>D</kbd></span><span>маркер — писати по слайду</span>' +
      '<span class="k"><kbd>L</kbd></span><span>лазерна цятка</span>' +
      '<span class="k"><kbd>C</kbd></span><span>стерти намальоване</span>' +
@@ -2428,6 +2311,84 @@ $$('.qr').forEach(function(box){
 });
 
 /* ─────────────────────────────────────────────────────────────────────
+   A11 · загальний таймер уроку
+   Урок фактично 40 хв (вчитель, 18.09.2026: «не встигаємо»), тому основна
+   лінія планується на 35 хв, а тут видно, скільки лишилось до дзвінка.
+   Інша тривалість — атрибутом data-lesson="35" на <html>.
+   Клік по чипу або U — почати / пауза; подвійний клік або Shift+U — спочатку.
+   Час рахуємо від мітки Date.now(), а не лічильником тиків: у фоновій
+   вкладці setInterval гальмує, і чип відставав би від справжнього дзвінка.
+   ───────────────────────────────────────────────────────────────────── */
+var LES_MIN  = parseFloat(root.dataset.lesson) || 40;
+var LES_ALL  = LES_MIN * 60;
+var LES_WARN = 300;                       /* останні 5 хв — бурштин */
+var LES_KEY  = KEY + ':lesson';
+var lesBox = null, lesAcc = 0, lesT0 = 0, lesRun = false, lesInt = null, lesTouched = false;
+
+function lesSpent(){ return lesAcc + (lesRun ? (Date.now() - lesT0) / 1000 : 0); }
+function lesPaint(){
+  if(!lesBox) return;
+  var left = LES_ALL - lesSpent(), over = left < -0.5, a = Math.abs(Math.round(left));
+  $('.m', lesBox).textContent = (over ? '−' : '') + Math.floor(a / 60);
+  $('.s', lesBox).textContent = ('0' + (a % 60)).slice(-2);
+  $('.cap', lesBox).textContent = (!lesRun && lesTouched) ? 'пауза' : 'урок';
+  lesBox.classList.toggle('run',  lesRun);
+  lesBox.classList.toggle('idle', !lesTouched);
+  lesBox.classList.toggle('warn', !over && left <= LES_WARN);
+  lesBox.classList.toggle('over', over);
+}
+function lesSave(){
+  ls(LES_KEY, JSON.stringify({ a: Math.round(lesSpent()), r: lesRun ? 1 : 0, at: Date.now() }));
+}
+function lesBeat(go){
+  if(lesInt){ clearInterval(lesInt); lesInt = null; }
+  if(go) lesInt = setInterval(function(){ lesPaint(); lesSave(); }, 500);
+}
+function lesStart(){
+  if(lesRun || !lesBox) return;
+  lesRun = true; lesTouched = true; lesT0 = Date.now();
+  lesBeat(true); lesPaint(); lesSave();
+}
+function lesPause(){
+  if(!lesRun) return;
+  lesAcc = lesSpent(); lesRun = false; lesT0 = 0;
+  lesBeat(false); lesPaint(); lesSave();
+}
+function lesToggle(){ if(lesRun) lesPause(); else lesStart(); }
+function lesReset(){
+  lesAcc = 0; lesT0 = 0; lesRun = false; lesTouched = false;
+  lesBeat(false); lesPaint(); lsDel(LES_KEY);
+}
+/* Перший рух по слайдах = урок почався: вчителеві не треба пам'ятати
+   ще про одну клавішу перед класом. */
+function lesAuto(){ if(lesBox && !lesTouched) lesStart(); }
+
+(function(){
+  var host = topic || bar;
+  if(!host) return;
+  lesBox = el('button','lesson');
+  lesBox.id = 'lesson';
+  lesBox.type = 'button';
+  lesBox.title = 'Таймер уроку · ' + LES_MIN + ' хв (U) — клік: почати / пауза, подвійний клік: спочатку';
+  lesBox.innerHTML = '<span class="cap">урок</span>' +
+    '<span class="cl"><b class="m">0</b><i>:</i><b class="s">00</b></span>';
+  host.appendChild(lesBox);
+  on(lesBox,'click',function(e){ e.stopPropagation(); lesToggle(); });
+  on(lesBox,'dblclick',function(e){ e.stopPropagation(); lesReset(); });
+  try{
+    var st = JSON.parse(ls(LES_KEY) || 'null');
+    /* Відкрили той самий дек іншого дня — старий відлік не тягнемо. */
+    if(st && Date.now() - st.at < 3 * 3600e3){
+      lesTouched = true;
+      lesAcc = st.a + (st.r ? (Date.now() - st.at) / 1000 : 0);
+      if(st.r){ lesRun = true; lesT0 = Date.now(); lesBeat(true); }
+    } else if(st) lsDel(LES_KEY);
+  }catch(err){}
+  lesPaint();
+})();
+on(D,'visibilitychange',function(){ if(!D.hidden) lesPaint(); });
+
+/* ─────────────────────────────────────────────────────────────────────
    керування
    ───────────────────────────────────────────────────────────────────── */
 function fsToggle(){
@@ -2472,6 +2433,7 @@ on(D,'keydown',function(e){
   else if(k === 'End'){ e.preventDefault(); go(slides.length-1,true); }
   else if(k === 'KeyO'){ e.preventDefault(); toggleOv(); }
   else if(k === 'KeyT'){ var b = $('.timer', slides[cur]); if(b){ e.preventDefault(); toggleTimer(b); } }
+  else if(k === 'KeyU'){ e.preventDefault(); if(e.shiftKey) lesReset(); else lesToggle(); }
   else if(k === 'KeyF'){ e.preventDefault(); fsToggle(); }
   else if(k === 'KeyD'){ e.preventDefault(); setInk(inkMode === 'pen' ? 'off' : 'pen'); }
   else if(k === 'KeyL'){ e.preventDefault(); setInk(inkMode === 'laser' ? 'off' : 'laser'); }
