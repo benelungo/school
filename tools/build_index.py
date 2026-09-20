@@ -30,6 +30,8 @@ INDEX = ROOT / "index.html"
 
 # файл, який бачать учні
 STUDENT_SUFFIX = " — презентація для класу.html"
+# Сторінки перевірочних робіт лежать ПОРУЧ З УРОКОМ, як і презентації.
+WORK_SUFFIXES = (" — контрольна для класу.html", " — самостійна для класу.html")
 # учительська хронокарта: сама не публікується, але позначає урок як очний
 TEACHER_SUFFIX = " — презентація.html"
 
@@ -111,6 +113,47 @@ def read_ktp(subject_dir):
     return themes, by_num
 
 
+def read_work(path):
+    """Витягає з HTML роботи її тип, назву й тривалість.
+
+    Читаємо саме блок РОБОТА зі сторінки: він — єдине джерело правди про те,
+    що це за робота. Дедлайн звідси НЕ беремо: чи робота відкрита, вирішує
+    приймач, бо статичний сайт часу не знає.
+    """
+    try:
+        text = path.read_text(encoding="utf-8", errors="ignore")[:40000]
+    except OSError:
+        return None
+
+    def field(name, default=""):
+        m = re.search(name + r"\s*:\s*'([^']*)'", text)
+        return m.group(1).strip() if m else default
+
+    def number(name, default=0):
+        m = re.search(name + r"\s*:\s*(\d+)", text)
+        return int(m.group(1)) if m else default
+
+    kind = field("тип")
+    if kind not in ("контрольна", "самостійна"):
+        # Тип не прочитався — вгадуємо з імені файлу, щоб робота не зникла.
+        kind = "самостійна" if "самостійна" in path.name else "контрольна"
+
+    title = field("назва")
+    if not title:
+        rod = "Самостійна робота" if kind == "самостійна" else "Контрольна робота"
+        num = number("номер", 0)
+        title = f"{rod} № {num}" if num else rod
+
+    return {
+        "kind": kind,
+        "title": title,
+        "subject": field("предмет"),
+        "theme": field("тема"),
+        "minutes": number("хвилин", 0),
+        "href": href_for(path),
+    }
+
+
 def class_sort_key(name):
     """5-З → (5, 'З'); якщо номер не розпізнано — у кінець списку."""
     m = re.match(r"^\s*(\d+)\s*-\s*(.*)$", name)
@@ -172,7 +215,7 @@ def href_for(path):
 
 
 def collect():
-    lessons = []
+    lessons, works, plans_out = [], [], []
     gdates = git_dates()
     now = time.time()
     for class_dir in sorted(
@@ -198,6 +241,20 @@ def collect():
                     # запасний варіант: будь-який «…для класу.html» у папці
                     found = sorted(lesson_dir.glob("*" + STUDENT_SUFFIX))
                     deck = found[0] if found else None
+
+                # Перевірочні роботи лежать поруч з уроком, окремими файлами.
+                for suffix in WORK_SUFFIXES:
+                    for wpath in sorted(lesson_dir.glob("*" + suffix)):
+                        w = read_work(wpath)
+                        if not w:
+                            continue
+                        w["cls"] = class_dir.name
+                        w["subject"] = w["subject"] or subject_dir.name
+                        w["lesson"] = lesson_dir.name
+                        # Ключ той самий, що в приймачі, — за ним сайт
+                        # дізнається, чи робота відкрита зараз.
+                        w["key"] = f'{w["cls"]} | {w["subject"]} | {w["title"]}'
+                        works.append(w)
 
                 item = {
                     "cls": class_dir.name,
@@ -240,29 +297,30 @@ def collect():
                 lessons.append(item)
                 done_numbers.append(item["n"])
 
-            # найближчі заплановані уроки з КТП — щоб було видно, що далі
-            if ktp and done_numbers:
-                nxt = max(done_numbers)
-                added = 0
-                n = nxt + 1
-                while added < PLANNED_AHEAD and n in ktp:
+            # Майбутні уроки в списку НЕ показуємо: у 5-З математиці їх
+            # 173, і проведені загубилися б. Замість цього — окрема панель
+            # «показати майбутні» з темами й назвами уроків із КТП.
+            if ktp:
+                done = set(done_numbers)
+                by_theme = {}
+                for n in sorted(ktp):
                     theme, title = ktp[n]
-                    lessons.append({
-                        "cls": class_dir.name,
-                        "subject": subject_dir.name,
-                        "n": n,
-                        "lesson": f"Урок {n}",
-                        "title": title,
-                        "theme": theme,
-                        "themeTotal": theme_size.get(theme, 0),
-                        "planned": True,
-                    })
-                    added += 1
-                    n += 1
-    return lessons
+                    if not theme:
+                        continue
+                    b = by_theme.setdefault(theme, {"theme": theme, "lessons": []})
+                    b["lessons"].append({"n": n, "title": title, "done": n in done})
+                order = {t: i for i, t in enumerate(themes)}
+                plans_out.append({
+                    "cls": class_dir.name,
+                    "subject": subject_dir.name,
+                    "themes": sorted(by_theme.values(),
+                                     key=lambda t: order.get(t["theme"], 10**6)),
+                })
+
+    return {"lessons": lessons, "works": works, "plans": plans_out}
 
 
-def write_index(lessons):
+def write_index(data):
     if not INDEX.is_file():
         sys.exit("Немає index.html у корені проєкту — спершу створи його.")
 
@@ -270,7 +328,7 @@ def write_index(lessons):
     if START not in html or END not in html:
         sys.exit("В index.html немає міток BUILD:LESSONS — вставити список нікуди.")
 
-    payload = json.dumps(lessons, ensure_ascii=False, indent=1)
+    payload = json.dumps(data, ensure_ascii=False, indent=1)
     block = (
         START
         + '\n<script id="lessons" type="application/json">\n'
@@ -292,14 +350,15 @@ def write_index(lessons):
 
 
 def main():
-    lessons = collect()
-    changed = write_index(lessons)
+    data = collect()
+    changed = write_index(data)
 
+    lessons = data["lessons"]
     by_class = {}
     for item in lessons:
         by_class.setdefault(item["cls"], []).append(item)
 
-    online = sum(1 for i in lessons if not i.get("offline") and not i.get("planned"))
+    online = sum(1 for i in lessons if not i.get("offline"))
     offline = len(lessons) - online
     print(f"Презентацій для класу: {online}"
           + (f"; очних уроків без презентації: {offline}" if offline else ""))
@@ -307,10 +366,18 @@ def main():
         names = ", ".join(
             f"{i['subject']} {i['lesson'].lower()}"
             + (" [ОЧНО]" if i.get("offline") else "")
-            + (" [ПЛАН]" if i.get("planned") else "")
             for i in by_class[cls]
         )
         print(f"  {cls}: {names}")
+
+    if data["works"]:
+        print(f"Перевірочних робіт: {len(data['works'])}")
+        for w in data["works"]:
+            print(f"  {w['key']}  ({w['minutes']} хв)  {w['href']}")
+    else:
+        print("Перевірочних робіт не знайдено.")
+    тем = sum(len(p["themes"]) for p in data["plans"])
+    print(f"Планів із КТП: {len(data['plans'])} (тем усього {тем}).")
     print("index.html оновлено." if changed else "index.html і так актуальний.")
 
 

@@ -208,30 +208,147 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 }
+
+/* ── вхід за кодом ── */
+#gate{max-width:34rem}
+.gatebox{background:var(--card);border:1px solid var(--edge);border-radius:14px;
+  padding:22px;box-shadow:0 4px 14px -8px rgba(0,0,0,.18);margin-top:18px}
+.gatebox label{display:block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:8px}
+#kod{width:100%;padding:16px 18px;border:2px solid var(--edge);border-radius:14px;
+  background:var(--card);color:var(--ink);box-shadow:var(--sh1);
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:clamp(20px,3.4vw,30px);
+  font-weight:700;letter-spacing:.34em;text-transform:uppercase;text-align:center}
+#kod::placeholder{letter-spacing:.06em;font-size:.6em;color:var(--soft);text-transform:none}
+#kod:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 4px var(--pen-soft)}
+.gatebtns{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0;align-items:center}
+
+/* Кнопки в одному ладу з наявними чипами: та сама гарнітура, та сама
+   пігулкова форма, та сама тінь. Інакше ворота виглядали б чужими. */
+.btn{cursor:pointer;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(13px,1.4vw,16px);letter-spacing:.03em;line-height:1;
+  padding:14px 26px;border-radius:99px;box-shadow:var(--sh1);
+  border:2px solid var(--pen);background:var(--pen);color:var(--on-pen);
+  transition:background .15s,border-color .15s,color .15s,transform .1s,box-shadow .15s}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:var(--sh3)}
+.btn:active:not(:disabled){transform:translateY(1px);box-shadow:var(--sh1)}
+.btn:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+.btn.ghost{background:var(--card);color:var(--ink);border-color:var(--edge)}
+.btn.ghost:hover{border-color:var(--pen);color:var(--pen)}
+.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.note{color:var(--soft);font-size:.9rem;margin:10px 0 0}
+.note.bad{color:#c0392b;font-weight:700}
+.note.ok{color:#1b7f4b;font-weight:700}
+.linkish{background:none;border:0;color:var(--pen);cursor:pointer;font:inherit;
+  text-decoration:underline;text-underline-offset:3px;padding:0}
+.linkish:hover{text-decoration-thickness:2px}
+
+/* «Майбутні уроки» — тон у тон із перемикачем теми поруч. */
+#plan-btn{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,1.3vw,15px);letter-spacing:.03em;line-height:1;cursor:pointer;
+  border:2px solid var(--edge);border-radius:99px;background:var(--card);color:var(--ink);
+  padding:11px 18px;box-shadow:var(--sh1);white-space:nowrap;
+  transition:border-color .15s,color .15s,transform .1s}
+#plan-btn:hover{border-color:var(--pen);color:var(--pen)}
+#plan-btn:active{transform:translateY(1px)}
+#plan-btn:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+#plan-btn[aria-expanded="true"]{background:var(--pen);border-color:var(--pen);color:var(--on-pen)}
+
+/* ── смуга робіт ── */
+.sect{font-size:1.05rem;margin:26px 0 10px}
+#works-list{display:grid;gap:10px}
+.work{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;
+  border:2px solid var(--pen);background:var(--card);text-decoration:none;color:inherit;
+  box-shadow:var(--sh1);transition:transform .16s,box-shadow .16s,border-color .16s}
+.work:hover{transform:translateY(-3px);box-shadow:var(--sh3)}
+.work .kind{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:#fff;background:var(--pen);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.work .grow{flex:1 1 auto;min-width:0}
+.work .mins{color:var(--soft);font-size:.86rem;white-space:nowrap}
+.work.done{border-color:var(--edge)}
+.work.done .kind{background:var(--soft)}
+
+/* ── картка уроку в плоскому списку ──
+   Стара картка була вертикальною (з прев'ю теми зверху). Тепер список
+   плоский і довгий, тож рядок читається краще: номер — назва — позначки. */
+#list{display:grid;gap:8px}
+#list .card{flex-direction:row;align-items:center;gap:14px;padding:12px 16px}
+#list .card .num{color:var(--soft);font-size:.85rem;white-space:nowrap;min-width:5.2rem}
+#list .card .grow{flex:1 1 auto;min-width:0}
+#list .card .tag{white-space:nowrap}
+#list .card.offline{border-style:dashed}
+@media (max-width:520px){
+  #list .card{flex-wrap:wrap;gap:6px 12px}
+  #list .card .grow{flex-basis:100%;order:3}
+}
+
+/* ── панель майбутніх ── */
+#plan{margin:18px 0 6px;padding:18px;border:1px dashed var(--edge);border-radius:14px}
+#plan h3{margin:14px 0 6px;font-size:1rem}
+#plan ol{margin:0;padding-left:1.4em;color:var(--soft)}
+#plan li.done{color:var(--ink);text-decoration:line-through;opacity:.55}
 </style>
 </head>
 <body>
 <div class="wrap">
 
+<!-- ── ворота: код учня ─────────────────────────────────────────────── -->
+<section id="gate">
+  <header>
+    <p class="eyebrow">Онлайн-уроки</p>
+    <h1>Вхід</h1>
+    <p class="lede">Введи свій код учня — вісім знаків, які дав учитель.
+    За ним відкриються уроки твого класу, самостійні й контрольні.
+    Код запамʼятається, вдруге вводити не доведеться.</p>
+  </header>
+
+  <div class="gatebox">
+    <label for="kod">Код учня</label>
+    <input id="kod" type="text" maxlength="8" autocomplete="off" spellcheck="false"
+           autocapitalize="characters" placeholder="8 знаків">
+    <p class="note" id="kod-note"></p>
+    <p class="gatebtns">
+      <button class="btn" id="enter" type="button" disabled>Увійти</button>
+      <button class="btn ghost" id="skip" type="button">Пропустити</button>
+    </p>
+    <p class="note">Без коду можна дивитися уроки, але самостійні й контрольні не відкриються.</p>
+  </div>
+</section>
+
+<!-- ── основне ──────────────────────────────────────────────────────── -->
+<div id="app" hidden>
 <header>
-  <p class="eyebrow">Онлайн-уроки</p>
+  <p class="eyebrow"><span id="who">—</span></p>
   <h1>Уроки</h1>
-  <p class="lede">Обери свій клас — і відкривай презентацію того уроку, який тобі потрібен.
+  <p class="lede">Відкривай презентацію того уроку, який тобі потрібен.
   Усі відповіді в них відкриті, тож удома можна повторити все, що ми робили.</p>
 </header>
 
+<section id="works" hidden>
+  <h2 class="sect">Роботи</h2>
+  <p class="note" id="works-note" hidden></p>
+  <div id="works-list"></div>
+</section>
+
+<div class="controls" id="clsrow" hidden>
+  <div class="chips" id="classes" role="group" aria-label="Клас"></div>
+</div>
+
 <div class="controls">
-  <div class="chips" id="chips" role="group" aria-label="Клас"></div>
+  <div class="chips" id="tabs" role="group" aria-label="Предмет"></div>
   <div class="search">
     <input id="q" type="search" placeholder="Пошук за темою…" aria-label="Пошук за темою" autocomplete="off">
     <kbd>/</kbd>
   </div>
   <span id="found" aria-live="polite"></span>
+  <button id="plan-btn" type="button">Майбутні уроки</button>
   <button id="theme" type="button" aria-label="Змінити тему">◐</button>
 </div>
 
+<section id="plan" hidden></section>
+
 <main id="list"></main>
-<p id="empty">За таким запитом нічого немає. Спробуй інше слово або вибери «Усі класи».</p>
+<p id="empty">За таким запитом нічого немає. Спробуй інше слово.</p>
 
 <footer>
   <p style="margin:0">Відкривати можна з телефона, планшета чи ноутбука. Усередині презентації:
@@ -239,629 +356,3746 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   <kbd>O</kbd> — усі слайди, <kbd>F</kbd> — на весь екран, <kbd>?</kbd> — решта клавіш.</p>
   <p style="margin:10px 0 0">Позначка <b>ОЧНО</b> — урок, який ми проводили в класі: він є в списку,
   щоб не збилася нумерація, але презентації для нього немає.
-  Позначка <b>БУДЕ</b> — урок, який ще попереду.</p>
+  <button class="linkish" id="logout" type="button">Змінити код</button></p>
 </footer>
+</div>
 
 </div>
 
 <!-- BUILD:LESSONS -->
 <script id="lessons" type="application/json">
-[
- {
-  "cls": "5-З",
-  "subject": "Інформатика",
-  "n": 1,
-  "lesson": "Урок 1",
-  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
-  "themeTotal": 9,
-  "title": "Інформація та повідомлення",
-  "slides": 22,
-  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Інформатика",
-  "n": 2,
-  "lesson": "Урок 2",
-  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
-  "themeTotal": 9,
-  "title": "Інформаційні процеси і технології",
-  "slides": 23,
-  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Інформатика",
-  "n": 3,
-  "lesson": "Урок 3",
-  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
-  "themeTotal": 9,
-  "title": "Використання комп'ютерів",
-  "slides": 18,
-  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Інформатика",
-  "n": 4,
-  "lesson": "Урок 4",
-  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
-  "themeTotal": 9,
-  "title": "Комп'ютер як інформаційна система. Складові комп'ютера",
-  "slides": 20,
-  "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Інформатика",
-  "n": 5,
-  "lesson": "Урок 5",
-  "title": "Інструктаж з БЖД. Операційна система та її інтерфейс",
-  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
-  "themeTotal": 9,
-  "planned": true
- },
- {
-  "cls": "5-З",
-  "subject": "Інформатика",
-  "n": 6,
-  "lesson": "Урок 6",
-  "title": "Інструктаж з БЖД. Практикум. Робота з вікнами, значками та ярликами",
-  "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
-  "themeTotal": 9,
-  "planned": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 1,
-  "lesson": "Урок 1",
-  "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
-  "themeTotal": 3,
-  "title": "Натуральні числа та їх запис",
-  "slides": 20,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 2,
-  "lesson": "Урок 2",
-  "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
-  "themeTotal": 3,
-  "title": "Арифметичні дії з натуральними числами",
-  "slides": 18,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 3,
-  "lesson": "Урок 3",
-  "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
-  "themeTotal": 3,
-  "title": "Величини. Розв’язування текстових задач",
-  "slides": 18,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 4,
-  "lesson": "Урок 4",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "title": "Натуральні числа. Цифри. Число нуль",
-  "slides": 22,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 5,
-  "lesson": "Урок 5",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "title": "Десятковий запис натурального числа",
-  "slides": 23,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 6,
-  "lesson": "Урок 6",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "title": "Розв’язування вправ. Натуральні числа",
-  "slides": 21,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 7,
-  "lesson": "Урок 7",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "title": "Порівняння натуральних чисел",
-  "slides": 21,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 8,
-  "lesson": "Урок 8",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "title": "Розв’язування вправ. Порівняння натуральних чисел",
-  "slides": 20,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%208/%D0%A3%D1%80%D0%BE%D0%BA%208%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 9,
-  "lesson": "Урок 9",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "title": "Округлення натуральних чисел",
-  "slides": 23,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%209/%D0%A3%D1%80%D0%BE%D0%BA%209%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 10,
-  "lesson": "Урок 10",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "title": "Розвʼязування вправ. Округлення натуральних чисел",
-  "slides": 19,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2010/%D0%A3%D1%80%D0%BE%D0%BA%2010%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 11,
-  "lesson": "Урок 11",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "title": "Додавання натуральних чисел",
-  "slides": 20,
-  "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 12,
-  "lesson": "Урок 12",
-  "title": "Додавання натуральних чисел. Властивості додавання",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "planned": true
- },
- {
-  "cls": "5-З",
-  "subject": "Математика",
-  "n": 13,
-  "lesson": "Урок 13",
-  "title": "Додавання натуральних чисел. Властивості додавання",
-  "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
-  "themeTotal": 17,
-  "planned": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 1,
-  "lesson": "Урок 1",
-  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
-  "themeTotal": 5,
-  "title": "Числа, які ми вже вміємо",
-  "slides": 21,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 2,
-  "lesson": "Урок 2",
-  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
-  "themeTotal": 5,
-  "title": "Дроби: десяткові та звичайні",
-  "slides": 19,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 3,
-  "lesson": "Урок 3",
-  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
-  "themeTotal": 5,
-  "title": "Відношення і пропорції",
-  "slides": 21,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 4,
-  "lesson": "Урок 4",
-  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
-  "themeTotal": 5,
-  "title": "Раціональні числа і дії з ними",
-  "slides": 20,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 5,
-  "lesson": "Урок 5",
-  "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
-  "themeTotal": 5,
-  "title": "Самостійна робота № 1",
-  "slides": 18,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 6,
-  "lesson": "Урок 6",
-  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
-  "themeTotal": 10,
-  "title": "Загальні відомості про рівняння",
-  "slides": 22,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 7,
-  "lesson": "Урок 7",
-  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
-  "themeTotal": 10,
-  "title": "Лінійне рівняння з однією змінною",
-  "slides": 22,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 8,
-  "lesson": "Урок 8",
-  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
-  "themeTotal": 10,
-  "title": "Лінійне рівняння з однією змінною. Розвʼязування рівнянь",
-  "slides": 19,
-  "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%208/%D0%A3%D1%80%D0%BE%D0%BA%208%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 9,
-  "lesson": "Урок 9",
-  "title": "Лінійне рівняння з однією змінною",
-  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
-  "themeTotal": 10,
-  "planned": true
- },
- {
-  "cls": "7-І",
-  "subject": "Алгебра",
-  "n": 10,
-  "lesson": "Урок 10",
-  "title": "Розв’язування задач за допомогою лінійних рівнянь. Рівняння як математична модель задачі",
-  "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
-  "themeTotal": 10,
-  "planned": true
- },
- {
-  "cls": "7-І",
-  "subject": "Геометрія",
-  "n": 1,
-  "lesson": "Урок 1",
-  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
-  "themeTotal": 12,
-  "title": "Геометричні фігури. Точка, пряма, промінь",
-  "offline": true
- },
- {
-  "cls": "7-І",
-  "subject": "Геометрія",
-  "n": 2,
-  "lesson": "Урок 2",
-  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
-  "themeTotal": 12,
-  "title": "Відрізок і його довжина",
-  "slides": 22,
-  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Геометрія",
-  "n": 3,
-  "lesson": "Урок 3",
-  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
-  "themeTotal": 12,
-  "title": "Вимірювання відрізків",
-  "slides": 18,
-  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Геометрія",
-  "n": 4,
-  "lesson": "Урок 4",
-  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
-  "themeTotal": 12,
-  "title": "Кут. Вимірювання кутів. Бісектриса",
-  "slides": 22,
-  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Геометрія",
-  "n": 5,
-  "lesson": "Урок 5",
-  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
-  "themeTotal": 12,
-  "title": "Кути й бісектриса — розвʼязування задач",
-  "slides": 17,
-  "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "7-І",
-  "subject": "Геометрія",
-  "n": 6,
-  "lesson": "Урок 6",
-  "title": "Самостійна робота № 1. Елементарні геометричні фігури та їхні властивості",
-  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
-  "themeTotal": 12,
-  "planned": true
- },
- {
-  "cls": "7-І",
-  "subject": "Геометрія",
-  "n": 7,
-  "lesson": "Урок 7",
-  "title": "Аксіоми, теореми, означення",
-  "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
-  "themeTotal": 12,
-  "planned": true
- },
- {
-  "cls": "8-К",
-  "subject": "Алгебра",
-  "n": 1,
-  "lesson": "Урок 1",
-  "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
-  "themeTotal": 4,
-  "title": "Рівняння виду ax = b",
-  "slides": 25,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Алгебра",
-  "n": 2,
-  "lesson": "Урок 2",
-  "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
-  "themeTotal": 4,
-  "title": "Цілі вирази — повторення за 7 клас",
-  "slides": 21,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Алгебра",
-  "n": 3,
-  "lesson": "Урок 3",
-  "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
-  "themeTotal": 4,
-  "title": "Функції — повторення 7 класу",
-  "slides": 21,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Алгебра",
-  "n": 4,
-  "lesson": "Урок 4",
-  "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
-  "themeTotal": 4,
-  "title": "Системи лінійних рівнянь — повторення 7 класу",
-  "slides": 21,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Алгебра",
-  "n": 5,
-  "lesson": "Урок 5",
-  "theme": "Тема 1. Раціональні дроби. Додавання і віднімання дробів (16 год)",
-  "themeTotal": 16,
-  "title": "Раціональні вирази. Раціональні дроби",
-  "slides": 21,
-  "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Алгебра",
-  "n": 6,
-  "lesson": "Урок 6",
-  "title": "Раціональні вирази. Раціональні дроби",
-  "theme": "Тема 1. Раціональні дроби. Додавання і віднімання дробів (16 год)",
-  "themeTotal": 16,
-  "planned": true
- },
- {
-  "cls": "8-К",
-  "subject": "Алгебра",
-  "n": 7,
-  "lesson": "Урок 7",
-  "title": "Раціональні вирази. Раціональні дроби",
-  "theme": "Тема 1. Раціональні дроби. Додавання і віднімання дробів (16 год)",
-  "themeTotal": 16,
-  "planned": true
- },
- {
-  "cls": "8-К",
-  "subject": "Геометрія",
-  "n": 1,
-  "lesson": "Урок 1",
-  "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
-  "themeTotal": 3,
-  "title": "Елементарні фігури. Прямі на площині",
-  "offline": true
- },
- {
-  "cls": "8-К",
-  "subject": "Геометрія",
-  "n": 2,
-  "lesson": "Урок 2",
-  "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
-  "themeTotal": 3,
-  "title": "Три ознаки рівності",
-  "slides": 20,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Геометрія",
-  "n": 3,
-  "lesson": "Урок 3",
-  "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
-  "themeTotal": 3,
-  "title": "Коло і круг",
-  "slides": 21,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Геометрія",
-  "n": 4,
-  "lesson": "Урок 4",
-  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
-  "themeTotal": 9,
-  "title": "Чотирикутник і сума його кутів",
-  "slides": 22,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Геометрія",
-  "n": 5,
-  "lesson": "Урок 5",
-  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
-  "themeTotal": 9,
-  "title": "Паралелограм, його властивості й ознаки",
-  "slides": 21,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Геометрія",
-  "n": 6,
-  "lesson": "Урок 6",
-  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
-  "themeTotal": 9,
-  "title": "Паралелограм, його властивості й ознаки (розвʼязування задач)",
-  "slides": 20,
-  "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "8-К",
-  "subject": "Геометрія",
-  "n": 7,
-  "lesson": "Урок 7",
-  "title": "Прямокутник і його властивості",
-  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
-  "themeTotal": 9,
-  "planned": true
- },
- {
-  "cls": "8-К",
-  "subject": "Геометрія",
-  "n": 8,
-  "lesson": "Урок 8",
-  "title": "Прямокутник і його властивості",
-  "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
-  "themeTotal": 9,
-  "planned": true
- },
- {
-  "cls": "9-А",
-  "subject": "Інформатика",
-  "n": 0,
-  "lesson": "Урок 0",
-  "title": "Знайомство. Обираємо, що вчимо цього року",
-  "slides": 23,
-  "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%200/%D0%A3%D1%80%D0%BE%D0%BA%200%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "9-А",
-  "subject": "Інформатика",
-  "n": 1,
-  "lesson": "Урок 1",
-  "title": "Як бачить око і як «бачить» машина",
-  "slides": 25,
-  "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- },
- {
-  "cls": "9-А",
-  "subject": "Інформатика",
-  "n": 2,
-  "lesson": "Урок 2",
-  "title": "Піксель. Яскравість. Зображення як таблиця чисел",
-  "slides": 25,
-  "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
-  "fresh": true
- }
-]
+{
+ "lessons": [
+  {
+   "cls": "5-З",
+   "subject": "Інформатика",
+   "n": 1,
+   "lesson": "Урок 1",
+   "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+   "themeTotal": 9,
+   "title": "Інформація та повідомлення",
+   "slides": 22,
+   "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Інформатика",
+   "n": 2,
+   "lesson": "Урок 2",
+   "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+   "themeTotal": 9,
+   "title": "Інформаційні процеси і технології",
+   "slides": 23,
+   "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Інформатика",
+   "n": 3,
+   "lesson": "Урок 3",
+   "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+   "themeTotal": 9,
+   "title": "Використання комп'ютерів",
+   "slides": 18,
+   "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Інформатика",
+   "n": 4,
+   "lesson": "Урок 4",
+   "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+   "themeTotal": 9,
+   "title": "Комп'ютер як інформаційна система. Складові комп'ютера",
+   "slides": 20,
+   "href": "5-%D0%97/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 1,
+   "lesson": "Урок 1",
+   "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
+   "themeTotal": 3,
+   "title": "Натуральні числа та їх запис",
+   "slides": 20,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 2,
+   "lesson": "Урок 2",
+   "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
+   "themeTotal": 3,
+   "title": "Арифметичні дії з натуральними числами",
+   "slides": 18,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 3,
+   "lesson": "Урок 3",
+   "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
+   "themeTotal": 3,
+   "title": "Величини. Розв’язування текстових задач",
+   "slides": 18,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 4,
+   "lesson": "Урок 4",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Натуральні числа. Цифри. Число нуль",
+   "slides": 22,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 5,
+   "lesson": "Урок 5",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Десятковий запис натурального числа",
+   "slides": 23,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 6,
+   "lesson": "Урок 6",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Розв’язування вправ. Натуральні числа",
+   "slides": 21,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 7,
+   "lesson": "Урок 7",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Порівняння натуральних чисел",
+   "slides": 21,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 8,
+   "lesson": "Урок 8",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Розв’язування вправ. Порівняння натуральних чисел",
+   "slides": 20,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%208/%D0%A3%D1%80%D0%BE%D0%BA%208%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 9,
+   "lesson": "Урок 9",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Округлення натуральних чисел",
+   "slides": 23,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%209/%D0%A3%D1%80%D0%BE%D0%BA%209%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 10,
+   "lesson": "Урок 10",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Розвʼязування вправ. Округлення натуральних чисел",
+   "slides": 19,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2010/%D0%A3%D1%80%D0%BE%D0%BA%2010%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 11,
+   "lesson": "Урок 11",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Додавання натуральних чисел",
+   "slides": 20,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 1,
+   "lesson": "Урок 1",
+   "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+   "themeTotal": 5,
+   "title": "Числа, які ми вже вміємо",
+   "slides": 21,
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 2,
+   "lesson": "Урок 2",
+   "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+   "themeTotal": 5,
+   "title": "Дроби: десяткові та звичайні",
+   "slides": 19,
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 3,
+   "lesson": "Урок 3",
+   "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+   "themeTotal": 5,
+   "title": "Відношення і пропорції",
+   "slides": 21,
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 4,
+   "lesson": "Урок 4",
+   "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+   "themeTotal": 5,
+   "title": "Раціональні числа і дії з ними",
+   "slides": 20,
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 5,
+   "lesson": "Урок 5",
+   "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+   "themeTotal": 5,
+   "title": "Самостійна робота № 1",
+   "slides": 18,
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 6,
+   "lesson": "Урок 6",
+   "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+   "themeTotal": 10,
+   "title": "Загальні відомості про рівняння",
+   "slides": 22,
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 7,
+   "lesson": "Урок 7",
+   "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+   "themeTotal": 10,
+   "title": "Лінійне рівняння з однією змінною",
+   "slides": 22,
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 8,
+   "lesson": "Урок 8",
+   "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+   "themeTotal": 10,
+   "title": "Лінійне рівняння з однією змінною. Розвʼязування рівнянь",
+   "slides": 19,
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%208/%D0%A3%D1%80%D0%BE%D0%BA%208%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Геометрія",
+   "n": 1,
+   "lesson": "Урок 1",
+   "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+   "themeTotal": 12,
+   "title": "Геометричні фігури. Точка, пряма, промінь",
+   "offline": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Геометрія",
+   "n": 2,
+   "lesson": "Урок 2",
+   "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+   "themeTotal": 12,
+   "title": "Відрізок і його довжина",
+   "slides": 22,
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Геометрія",
+   "n": 3,
+   "lesson": "Урок 3",
+   "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+   "themeTotal": 12,
+   "title": "Вимірювання відрізків",
+   "slides": 18,
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Геометрія",
+   "n": 4,
+   "lesson": "Урок 4",
+   "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+   "themeTotal": 12,
+   "title": "Кут. Вимірювання кутів. Бісектриса",
+   "slides": 22,
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Геометрія",
+   "n": 5,
+   "lesson": "Урок 5",
+   "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+   "themeTotal": 12,
+   "title": "Кути й бісектриса — розвʼязування задач",
+   "slides": 17,
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Алгебра",
+   "n": 1,
+   "lesson": "Урок 1",
+   "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+   "themeTotal": 4,
+   "title": "Рівняння виду ax = b",
+   "slides": 25,
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Алгебра",
+   "n": 2,
+   "lesson": "Урок 2",
+   "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+   "themeTotal": 4,
+   "title": "Цілі вирази — повторення за 7 клас",
+   "slides": 21,
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Алгебра",
+   "n": 3,
+   "lesson": "Урок 3",
+   "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+   "themeTotal": 4,
+   "title": "Функції — повторення 7 класу",
+   "slides": 21,
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Алгебра",
+   "n": 4,
+   "lesson": "Урок 4",
+   "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+   "themeTotal": 4,
+   "title": "Системи лінійних рівнянь — повторення 7 класу",
+   "slides": 21,
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Алгебра",
+   "n": 5,
+   "lesson": "Урок 5",
+   "theme": "Тема 1. Раціональні дроби. Додавання і віднімання дробів (16 год)",
+   "themeTotal": 16,
+   "title": "Раціональні вирази. Раціональні дроби",
+   "slides": 21,
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Геометрія",
+   "n": 1,
+   "lesson": "Урок 1",
+   "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
+   "themeTotal": 3,
+   "title": "Елементарні фігури. Прямі на площині",
+   "offline": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Геометрія",
+   "n": 2,
+   "lesson": "Урок 2",
+   "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
+   "themeTotal": 3,
+   "title": "Три ознаки рівності",
+   "slides": 20,
+   "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Геометрія",
+   "n": 3,
+   "lesson": "Урок 3",
+   "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
+   "themeTotal": 3,
+   "title": "Коло і круг",
+   "slides": 21,
+   "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Геометрія",
+   "n": 4,
+   "lesson": "Урок 4",
+   "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+   "themeTotal": 9,
+   "title": "Чотирикутник і сума його кутів",
+   "slides": 22,
+   "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Геометрія",
+   "n": 5,
+   "lesson": "Урок 5",
+   "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+   "themeTotal": 9,
+   "title": "Паралелограм, його властивості й ознаки",
+   "slides": 21,
+   "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "8-К",
+   "subject": "Геометрія",
+   "n": 6,
+   "lesson": "Урок 6",
+   "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+   "themeTotal": 9,
+   "title": "Паралелограм, його властивості й ознаки (розвʼязування задач)",
+   "slides": 20,
+   "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%206/%D0%A3%D1%80%D0%BE%D0%BA%206%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "9-А",
+   "subject": "Інформатика",
+   "n": 0,
+   "lesson": "Урок 0",
+   "title": "Знайомство. Обираємо, що вчимо цього року",
+   "slides": 23,
+   "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%200/%D0%A3%D1%80%D0%BE%D0%BA%200%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "9-А",
+   "subject": "Інформатика",
+   "n": 1,
+   "lesson": "Урок 1",
+   "title": "Як бачить око і як «бачить» машина",
+   "slides": 25,
+   "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "9-А",
+   "subject": "Інформатика",
+   "n": 2,
+   "lesson": "Урок 2",
+   "title": "Піксель. Яскравість. Зображення як таблиця чисел",
+   "slides": 25,
+   "href": "9-%D0%90/%D0%86%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  }
+ ],
+ "works": [],
+ "plans": [
+  {
+   "cls": "5-З",
+   "subject": "Інформатика",
+   "themes": [
+    {
+     "theme": "Розділ 1. Інформаційні процеси та системи (9 год)",
+     "lessons": [
+      {
+       "n": 1,
+       "title": "Первинний інструктаж з ОП та БЖД. Інформація та повідомлення. Правила роботи за комп’ютером",
+       "done": true
+      },
+      {
+       "n": 2,
+       "title": "Інструктаж з БЖД. Інформаційні процеси. Інформаційні технології",
+       "done": true
+      },
+      {
+       "n": 3,
+       "title": "Інструктаж з БЖД. Використання комп’ютерів",
+       "done": true
+      },
+      {
+       "n": 4,
+       "title": "Інструктаж з БЖД. Комп’ютер як інформаційна система. Складові комп’ютера",
+       "done": true
+      },
+      {
+       "n": 5,
+       "title": "Інструктаж з БЖД. Операційна система та її інтерфейс",
+       "done": false
+      },
+      {
+       "n": 6,
+       "title": "Інструктаж з БЖД. Практикум. Робота з вікнами, значками та ярликами",
+       "done": false
+      },
+      {
+       "n": 7,
+       "title": "Інструктаж з БЖД. Операції над файлами та папками",
+       "done": false
+      },
+      {
+       "n": 8,
+       "title": "Інструктаж з БЖД. Практикум. Створення та впорядкування файлів і папок",
+       "done": false
+      },
+      {
+       "n": 9,
+       "title": "Інструктаж з БЖД. Практична робота № 1 «Виконання операцій над файлами та папками»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Розділ 2. Мережеві технології та інтернет (7 год)",
+     "lessons": [
+      {
+       "n": 10,
+       "title": "Інструктаж з БЖД. Комп’ютерні мережі. Локальна мережа",
+       "done": false
+      },
+      {
+       "n": 11,
+       "title": "Інструктаж з БЖД. Глобальна комп’ютерна мережа",
+       "done": false
+      },
+      {
+       "n": 12,
+       "title": "Інструктаж з БЖД. Практикум. Робота з браузером і вебсторінками",
+       "done": false
+      },
+      {
+       "n": 13,
+       "title": "Інструктаж з БЖД. Безпечне використання інтернету. Спілкування в інтернеті",
+       "done": false
+      },
+      {
+       "n": 14,
+       "title": "Інструктаж з БЖД. Пошук відомостей в інтернеті. Авторське право",
+       "done": false
+      },
+      {
+       "n": 15,
+       "title": "Інструктаж з БЖД. Практикум. Пошукові запити та збереження знайдених матеріалів",
+       "done": false
+      },
+      {
+       "n": 16,
+       "title": "Інструктаж з БЖД. Практична робота № 2 «Пошук інформації в інтернеті»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Розділи 3–4. Комп’ютерні презентації. Опрацювання текстових даних (17 год)",
+     "lessons": [
+      {
+       "n": 17,
+       "title": "Інструктаж з БЖД. Створення та опрацювання комп’ютерних презентацій",
+       "done": false
+      },
+      {
+       "n": 18,
+       "title": "Інструктаж з БЖД. Практикум. Слайди, текстові та графічні об’єкти презентації",
+       "done": false
+      },
+      {
+       "n": 19,
+       "title": "Інструктаж з БЖД. Оформлення комп’ютерних презентацій",
+       "done": false
+      },
+      {
+       "n": 20,
+       "title": "Інструктаж з БЖД. Виступи з показом презентації",
+       "done": false
+      },
+      {
+       "n": 21,
+       "title": "Інструктаж з БЖД. Практикум. Підготовка та проведення виступу",
+       "done": false
+      },
+      {
+       "n": 22,
+       "title": "Інструктаж з БЖД. Практична робота № 3 «Проєктування та розроблення власної презентації»",
+       "done": false
+      },
+      {
+       "n": 23,
+       "title": "Інструктаж з БЖД. Основні об’єкти текстового документа",
+       "done": false
+      },
+      {
+       "n": 24,
+       "title": "Інструктаж з БЖД. Практикум. Створення, збереження та відкривання документа",
+       "done": false
+      },
+      {
+       "n": 25,
+       "title": "Інструктаж з БЖД. Робота з фрагментами тексту. Редагування та форматування символів",
+       "done": false
+      },
+      {
+       "n": 26,
+       "title": "Інструктаж з БЖД. Практикум. Копіювання, переміщення та форматування символів",
+       "done": false
+      },
+      {
+       "n": 27,
+       "title": "Інструктаж з БЖД. Практична робота № 4 «Форматування символів текстового документа»",
+       "done": false
+      },
+      {
+       "n": 28,
+       "title": "Інструктаж з БЖД. Форматування абзаців",
+       "done": false
+      },
+      {
+       "n": 29,
+       "title": "Інструктаж з БЖД. Практикум. Форматування абзаців за зразком",
+       "done": false
+      },
+      {
+       "n": 30,
+       "title": "Інструктаж з БЖД. Практична робота № 5 «Форматування абзаців текстового документа»",
+       "done": false
+      },
+      {
+       "n": 31,
+       "title": "Інструктаж з БЖД. Практична робота № 6 «Створення текстового документа»",
+       "done": false
+      },
+      {
+       "n": 32,
+       "title": "Інструктаж з БЖД. Опрацювання об’єктів текстового документа",
+       "done": false
+      },
+      {
+       "n": 33,
+       "title": "Інструктаж з БЖД. Практикум. Пошук і заміна. Зображення в документі. Документ з об’єктами різних типів",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Розділ 5 (частина 1). Алгоритми та програми: середовище Python, лінійні програми (13 год)",
+     "lessons": [
+      {
+       "n": 34,
+       "title": "Інструктаж з БЖД. Алгоритм і його властивості. Виконавці алгоритмів",
+       "done": false
+      },
+      {
+       "n": 35,
+       "title": "Інструктаж з БЖД. Практикум. Виконавці алгоритмів та системи їхніх команд",
+       "done": false
+      },
+      {
+       "n": 36,
+       "title": "Інструктаж з БЖД. Способи опису алгоритму. Алгоритмічні структури",
+       "done": false
+      },
+      {
+       "n": 37,
+       "title": "Інструктаж з БЖД. Практикум. Опис алгоритмів різними способами. Блок-схеми",
+       "done": false
+      },
+      {
+       "n": 38,
+       "title": "Інструктаж з БЖД. Середовище опису та виконання алгоритмів",
+       "done": false
+      },
+      {
+       "n": 39,
+       "title": "Інструктаж з БЖД. Практикум. Перші програми в середовищі Python",
+       "done": false
+      },
+      {
+       "n": 40,
+       "title": "Інструктаж з БЖД. Основні поняття мови програмування Python",
+       "done": false
+      },
+      {
+       "n": 41,
+       "title": "Інструктаж з БЖД. Практикум. Змінні, типи даних та введення даних",
+       "done": false
+      },
+      {
+       "n": 42,
+       "title": "Інструктаж з БЖД. Лінійні алгоритми",
+       "done": false
+      },
+      {
+       "n": 43,
+       "title": "Інструктаж з БЖД. Практикум. Складання лінійних програм з обчисленнями",
+       "done": false
+      },
+      {
+       "n": 44,
+       "title": "Інструктаж з БЖД. Математичні оператори мови Python",
+       "done": false
+      },
+      {
+       "n": 45,
+       "title": "Інструктаж з БЖД. Практикум. Арифметичні операції, цілочисельне ділення та остача",
+       "done": false
+      },
+      {
+       "n": 46,
+       "title": "Інструктаж з БЖД. Практична робота № 7 «Складання лінійних алгоритмів»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Розділ 5 (частина 2). Алгоритми та програми: «черепашача» графіка, розгалуження, повторення (16 год)",
+     "lessons": [
+      {
+       "n": 47,
+       "title": "Інструктаж з БЖД. «Черепашача» графіка",
+       "done": false
+      },
+      {
+       "n": 48,
+       "title": "Інструктаж з БЖД. Практикум. Малювання за командами виконавця",
+       "done": false
+      },
+      {
+       "n": 49,
+       "title": "Інструктаж з БЖД. Алгоритми створення зображень",
+       "done": false
+      },
+      {
+       "n": 50,
+       "title": "Інструктаж з БЖД. Практикум. Кольорові зображення за алгоритмом",
+       "done": false
+      },
+      {
+       "n": 51,
+       "title": "Інструктаж з БЖД. Практична робота № 8 «Створення зображень за алгоритмами»",
+       "done": false
+      },
+      {
+       "n": 52,
+       "title": "Інструктаж з БЖД. Логічні вирази",
+       "done": false
+      },
+      {
+       "n": 53,
+       "title": "Інструктаж з БЖД. Практикум. Обчислення значень логічних виразів",
+       "done": false
+      },
+      {
+       "n": 54,
+       "title": "Інструктаж з БЖД. Алгоритми з розгалуженнями. Команда if",
+       "done": false
+      },
+      {
+       "n": 55,
+       "title": "Інструктаж з БЖД. Алгоритми з розгалуженнями. Команда if...else",
+       "done": false
+      },
+      {
+       "n": 56,
+       "title": "Інструктаж з БЖД. Практикум. Програми з розгалуженнями",
+       "done": false
+      },
+      {
+       "n": 57,
+       "title": "Інструктаж з БЖД. Практична робота № 9 «Складання та виконання алгоритмів із розгалуженнями»",
+       "done": false
+      },
+      {
+       "n": 58,
+       "title": "Інструктаж з БЖД. Алгоритми з повтореннями. Цикл із параметром",
+       "done": false
+      },
+      {
+       "n": 59,
+       "title": "Інструктаж з БЖД. Практикум. Програми з циклом for",
+       "done": false
+      },
+      {
+       "n": 60,
+       "title": "Інструктаж з БЖД. Використання циклів для побудови зображень",
+       "done": false
+      },
+      {
+       "n": 61,
+       "title": "Інструктаж з БЖД. Практикум. Малювання циклом: многокутники та орнаменти",
+       "done": false
+      },
+      {
+       "n": 62,
+       "title": "Інструктаж з БЖД. Практична робота № 10 «Складання та виконання алгоритмів із повтореннями»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Розділ 6. Практикум з використання інформаційних технологій (7 год)",
+     "lessons": [
+      {
+       "n": 63,
+       "title": "Інструктаж з БЖД. Практична робота № 11 «Створення словника комп’ютерних термінів»",
+       "done": false
+      },
+      {
+       "n": 64,
+       "title": "Інструктаж з БЖД. Практична робота № 12 «Передавання інформації за допомогою графічних символів»",
+       "done": false
+      },
+      {
+       "n": 65,
+       "title": "Інструктаж з БЖД. Практична робота № 13 «Створення зображень засобами «черепашачої» графіки»",
+       "done": false
+      },
+      {
+       "n": 66,
+       "title": "Інструктаж з БЖД. Практична робота № 14 «Складання алгоритмів із розгалуженнями та повтореннями»",
+       "done": false
+      },
+      {
+       "n": 67,
+       "title": "Інструктаж з БЖД. Практична робота № 15 «Складання алгоритмів із повтореннями»",
+       "done": false
+      },
+      {
+       "n": 68,
+       "title": "Інструктаж з БЖД. Узагальнення й систематизація знань за рік. Підсумковий урок",
+       "done": false
+      },
+      {
+       "n": 69,
+       "title": "Інструктаж з БЖД. Підсумкова контрольна робота за курс інформатики 5 класу",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "themes": [
+    {
+     "theme": "Повторення і систематизація знань за курс математики початкової школи (3 год)",
+     "lessons": [
+      {
+       "n": 1,
+       "title": "Повторення. Натуральні числа та їх запис. Порівняння чисел",
+       "done": true
+      },
+      {
+       "n": 2,
+       "title": "Повторення. Арифметичні дії з натуральними числами",
+       "done": true
+      },
+      {
+       "n": 3,
+       "title": "Повторення. Величини. Розв’язування текстових задач",
+       "done": true
+      }
+     ]
+    },
+    {
+     "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+     "lessons": [
+      {
+       "n": 4,
+       "title": "Натуральні числа. Цифри. Число нуль",
+       "done": true
+      },
+      {
+       "n": 5,
+       "title": "Десятковий запис натурального числа",
+       "done": true
+      },
+      {
+       "n": 6,
+       "title": "Розв’язування вправ. Натуральні числа",
+       "done": true
+      },
+      {
+       "n": 7,
+       "title": "Порівняння натуральних чисел",
+       "done": true
+      },
+      {
+       "n": 8,
+       "title": "Розв’язування вправ. Порівняння натуральних чисел",
+       "done": true
+      },
+      {
+       "n": 9,
+       "title": "Округлення натуральних чисел",
+       "done": true
+      },
+      {
+       "n": 10,
+       "title": "Розв’язування вправ. Округлення натуральних чисел",
+       "done": true
+      },
+      {
+       "n": 11,
+       "title": "Додавання натуральних чисел",
+       "done": true
+      },
+      {
+       "n": 12,
+       "title": "Додавання натуральних чисел. Властивості додавання",
+       "done": false
+      },
+      {
+       "n": 13,
+       "title": "Додавання натуральних чисел. Властивості додавання",
+       "done": false
+      },
+      {
+       "n": 14,
+       "title": "Віднімання натуральних чисел. Властивості віднімання",
+       "done": false
+      },
+      {
+       "n": 15,
+       "title": "Віднімання натуральних чисел. Властивості віднімання",
+       "done": false
+      },
+      {
+       "n": 16,
+       "title": "Віднімання натуральних чисел. Властивості віднімання",
+       "done": false
+      },
+      {
+       "n": 17,
+       "title": "Віднімання натуральних чисел. Властивості віднімання",
+       "done": false
+      },
+      {
+       "n": 18,
+       "title": "Узагальнення й систематизація знань з теми «Натуральні числа. Додавання і віднімання натуральних чисел»",
+       "done": false
+      },
+      {
+       "n": 19,
+       "title": "Контрольна робота № 1 з теми «Натуральні числа. Додавання і віднімання натуральних чисел»",
+       "done": false
+      },
+      {
+       "n": 20,
+       "title": "Аналіз контрольної роботи. Робота над помилками",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 2. Множення натуральних чисел. Степінь натурального числа (11 год)",
+     "lessons": [
+      {
+       "n": 21,
+       "title": "Множення натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 22,
+       "title": "Множення натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 23,
+       "title": "Множення натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 24,
+       "title": "Властивості множення",
+       "done": false
+      },
+      {
+       "n": 25,
+       "title": "Властивості множення",
+       "done": false
+      },
+      {
+       "n": 26,
+       "title": "Властивості множення",
+       "done": false
+      },
+      {
+       "n": 27,
+       "title": "Властивості множення",
+       "done": false
+      },
+      {
+       "n": 28,
+       "title": "Степінь натурального числа. Квадрат і куб натурального числа",
+       "done": false
+      },
+      {
+       "n": 29,
+       "title": "Степінь натурального числа. Квадрат і куб натурального числа",
+       "done": false
+      },
+      {
+       "n": 30,
+       "title": "Степінь натурального числа. Квадрат і куб натурального числа",
+       "done": false
+      },
+      {
+       "n": 31,
+       "title": "Контрольна робота № 2 з теми «Множення натуральних чисел. Степінь натурального числа»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 3. Ділення натуральних чисел. Ділення з остачею (10 год)",
+     "lessons": [
+      {
+       "n": 32,
+       "title": "Аналіз контрольної роботи. Ділення натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 33,
+       "title": "Ділення натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 34,
+       "title": "Ділення натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 35,
+       "title": "Ділення натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 36,
+       "title": "Ділення з остачею",
+       "done": false
+      },
+      {
+       "n": 37,
+       "title": "Ділення з остачею",
+       "done": false
+      },
+      {
+       "n": 38,
+       "title": "Розв’язування вправ на всі дії з натуральними числами",
+       "done": false
+      },
+      {
+       "n": 39,
+       "title": "Узагальнення й систематизація знань з теми «Ділення натуральних чисел. Ділення з остачею»",
+       "done": false
+      },
+      {
+       "n": 40,
+       "title": "Контрольна робота № 3 з теми «Ділення натуральних чисел. Ділення з остачею»",
+       "done": false
+      },
+      {
+       "n": 41,
+       "title": "Аналіз контрольної роботи. Робота над помилками",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 4. Числові та буквені вирази. Рівняння (8 год)",
+     "lessons": [
+      {
+       "n": 42,
+       "title": "Числові вирази. Буквені вирази та формули",
+       "done": false
+      },
+      {
+       "n": 43,
+       "title": "Числові вирази. Буквені вирази та формули",
+       "done": false
+      },
+      {
+       "n": 44,
+       "title": "Числові вирази. Буквені вирази та формули",
+       "done": false
+      },
+      {
+       "n": 45,
+       "title": "Рівняння",
+       "done": false
+      },
+      {
+       "n": 46,
+       "title": "Рівняння",
+       "done": false
+      },
+      {
+       "n": 47,
+       "title": "Рівняння",
+       "done": false
+      },
+      {
+       "n": 48,
+       "title": "Рівняння",
+       "done": false
+      },
+      {
+       "n": 49,
+       "title": "Контрольна робота № 4 з теми «Числові та буквені вирази. Рівняння»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 5. Текстові задачі. Задачі на всі дії з натуральними числами (13 год)",
+     "lessons": [
+      {
+       "n": 50,
+       "title": "Аналіз контрольної роботи. Текстові задачі на рух",
+       "done": false
+      },
+      {
+       "n": 51,
+       "title": "Текстові задачі на рух",
+       "done": false
+      },
+      {
+       "n": 52,
+       "title": "Текстові задачі на рух",
+       "done": false
+      },
+      {
+       "n": 53,
+       "title": "Текстові задачі на рух",
+       "done": false
+      },
+      {
+       "n": 54,
+       "title": "Текстові задачі економічного змісту",
+       "done": false
+      },
+      {
+       "n": 55,
+       "title": "Текстові задачі економічного змісту",
+       "done": false
+      },
+      {
+       "n": 56,
+       "title": "Текстові задачі економічного змісту",
+       "done": false
+      },
+      {
+       "n": 57,
+       "title": "Задачі та вправи на всі дії з натуральними числами",
+       "done": false
+      },
+      {
+       "n": 58,
+       "title": "Задачі та вправи на всі дії з натуральними числами",
+       "done": false
+      },
+      {
+       "n": 59,
+       "title": "Задачі та вправи на всі дії з натуральними числами",
+       "done": false
+      },
+      {
+       "n": 60,
+       "title": "Узагальнення й систематизація знань з теми «Текстові задачі. Задачі на всі дії з натуральними числами»",
+       "done": false
+      },
+      {
+       "n": 61,
+       "title": "Контрольна робота № 5 з теми «Текстові задачі. Задачі на всі дії з натуральними числами»",
+       "done": false
+      },
+      {
+       "n": 62,
+       "title": "Аналіз контрольної роботи. Робота над помилками",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 6. Відрізок. Промінь. Пряма. Координатний промінь. Діаграми (11 год)",
+     "lessons": [
+      {
+       "n": 63,
+       "title": "Відрізок. Довжина відрізка",
+       "done": false
+      },
+      {
+       "n": 64,
+       "title": "Відрізок. Довжина відрізка",
+       "done": false
+      },
+      {
+       "n": 65,
+       "title": "Відрізок. Довжина відрізка",
+       "done": false
+      },
+      {
+       "n": 66,
+       "title": "Промінь і пряма",
+       "done": false
+      },
+      {
+       "n": 67,
+       "title": "Промінь і пряма",
+       "done": false
+      },
+      {
+       "n": 68,
+       "title": "Координатний промінь. Шкала",
+       "done": false
+      },
+      {
+       "n": 69,
+       "title": "Координатний промінь. Шкала",
+       "done": false
+      },
+      {
+       "n": 70,
+       "title": "Координатний промінь. Шкала",
+       "done": false
+      },
+      {
+       "n": 71,
+       "title": "Лінійні та стовпчасті діаграми",
+       "done": false
+      },
+      {
+       "n": 72,
+       "title": "Лінійні та стовпчасті діаграми",
+       "done": false
+      },
+      {
+       "n": 73,
+       "title": "Контрольна робота № 6 з теми «Відрізок. Промінь. Пряма. Координатний промінь. Діаграми»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 7. Кут. Трикутник (10 год)",
+     "lessons": [
+      {
+       "n": 74,
+       "title": "Аналіз контрольної роботи. Кут. Види кутів",
+       "done": false
+      },
+      {
+       "n": 75,
+       "title": "Кут. Види кутів",
+       "done": false
+      },
+      {
+       "n": 76,
+       "title": "Кут. Види кутів",
+       "done": false
+      },
+      {
+       "n": 77,
+       "title": "Величина кута. Вимірювання і побудова кутів",
+       "done": false
+      },
+      {
+       "n": 78,
+       "title": "Величина кута. Вимірювання і побудова кутів",
+       "done": false
+      },
+      {
+       "n": 79,
+       "title": "Величина кута. Вимірювання і побудова кутів",
+       "done": false
+      },
+      {
+       "n": 80,
+       "title": "Трикутник і його периметр. Види трикутників",
+       "done": false
+      },
+      {
+       "n": 81,
+       "title": "Трикутник і його периметр. Види трикутників",
+       "done": false
+      },
+      {
+       "n": 82,
+       "title": "Контрольна робота № 7 з теми «Кут. Трикутник»",
+       "done": false
+      },
+      {
+       "n": 83,
+       "title": "Узагальнення й систематизація знань за І семестр",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 8. Прямокутник і квадрат. Рівність фігур. Площа прямокутника і квадрата (9 год)",
+     "lessons": [
+      {
+       "n": 84,
+       "title": "Аналіз контрольної роботи. Прямокутник. Квадрат",
+       "done": false
+      },
+      {
+       "n": 85,
+       "title": "Прямокутник. Квадрат",
+       "done": false
+      },
+      {
+       "n": 86,
+       "title": "Рівність фігур",
+       "done": false
+      },
+      {
+       "n": 87,
+       "title": "Площа прямокутника і квадрата",
+       "done": false
+      },
+      {
+       "n": 88,
+       "title": "Площа прямокутника і квадрата",
+       "done": false
+      },
+      {
+       "n": 89,
+       "title": "Площа прямокутника і квадрата",
+       "done": false
+      },
+      {
+       "n": 90,
+       "title": "Узагальнення й систематизація знань з теми «Прямокутник і квадрат. Рівність фігур. Площа прямокутника і квадрата»",
+       "done": false
+      },
+      {
+       "n": 91,
+       "title": "Контрольна робота № 8 з теми «Прямокутник і квадрат. Рівність фігур. Площа прямокутника і квадрата»",
+       "done": false
+      },
+      {
+       "n": 92,
+       "title": "Аналіз контрольної роботи. Робота над помилками",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 9. Подільність натуральних чисел (18 год)",
+     "lessons": [
+      {
+       "n": 93,
+       "title": "Дільники і кратні натурального числа",
+       "done": false
+      },
+      {
+       "n": 94,
+       "title": "Дільники і кратні натурального числа",
+       "done": false
+      },
+      {
+       "n": 95,
+       "title": "Ознаки подільності на 10, 5 і 2",
+       "done": false
+      },
+      {
+       "n": 96,
+       "title": "Ознаки подільності на 10, 5 і 2",
+       "done": false
+      },
+      {
+       "n": 97,
+       "title": "Ознаки подільності на 9 і 3",
+       "done": false
+      },
+      {
+       "n": 98,
+       "title": "Ознаки подільності на 9 і 3",
+       "done": false
+      },
+      {
+       "n": 99,
+       "title": "Прості і складені числа",
+       "done": false
+      },
+      {
+       "n": 100,
+       "title": "Прості і складені числа",
+       "done": false
+      },
+      {
+       "n": 101,
+       "title": "Розкладання чисел на прості множники",
+       "done": false
+      },
+      {
+       "n": 102,
+       "title": "Розкладання чисел на прості множники",
+       "done": false
+      },
+      {
+       "n": 103,
+       "title": "Найбільший спільний дільник",
+       "done": false
+      },
+      {
+       "n": 104,
+       "title": "Найбільший спільний дільник",
+       "done": false
+      },
+      {
+       "n": 105,
+       "title": "Найбільший спільний дільник",
+       "done": false
+      },
+      {
+       "n": 106,
+       "title": "Найменше спільне кратне",
+       "done": false
+      },
+      {
+       "n": 107,
+       "title": "Найменше спільне кратне",
+       "done": false
+      },
+      {
+       "n": 108,
+       "title": "Узагальнення й систематизація знань з теми «Подільність натуральних чисел»",
+       "done": false
+      },
+      {
+       "n": 109,
+       "title": "Контрольна робота № 9 з теми «Подільність натуральних чисел»",
+       "done": false
+      },
+      {
+       "n": 110,
+       "title": "Аналіз контрольної роботи. Робота над помилками",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 10. Звичайні дроби. Порівняння дробів (8 год)",
+     "lessons": [
+      {
+       "n": 111,
+       "title": "Звичайні дроби",
+       "done": false
+      },
+      {
+       "n": 112,
+       "title": "Звичайні дроби",
+       "done": false
+      },
+      {
+       "n": 113,
+       "title": "Звичайні дроби",
+       "done": false
+      },
+      {
+       "n": 114,
+       "title": "Дріб як частка двох натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 115,
+       "title": "Дріб як частка двох натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 116,
+       "title": "Порівняння звичайних дробів з однаковими знаменниками",
+       "done": false
+      },
+      {
+       "n": 117,
+       "title": "Порівняння звичайних дробів з однаковими знаменниками",
+       "done": false
+      },
+      {
+       "n": 118,
+       "title": "Контрольна робота № 10 з теми «Звичайні дроби. Порівняння дробів»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 11. Правильні і неправильні дроби. Мішані числа. Додавання і віднімання звичайних дробів і мішаних чисел (14 год)",
+     "lessons": [
+      {
+       "n": 119,
+       "title": "Аналіз контрольної роботи. Правильні і неправильні дроби",
+       "done": false
+      },
+      {
+       "n": 120,
+       "title": "Правильні і неправильні дроби",
+       "done": false
+      },
+      {
+       "n": 121,
+       "title": "Мішані числа",
+       "done": false
+      },
+      {
+       "n": 122,
+       "title": "Мішані числа",
+       "done": false
+      },
+      {
+       "n": 123,
+       "title": "Мішані числа",
+       "done": false
+      },
+      {
+       "n": 124,
+       "title": "Додавання і віднімання звичайних дробів з однаковими знаменниками",
+       "done": false
+      },
+      {
+       "n": 125,
+       "title": "Додавання і віднімання звичайних дробів з однаковими знаменниками",
+       "done": false
+      },
+      {
+       "n": 126,
+       "title": "Додавання і віднімання звичайних дробів з однаковими знаменниками",
+       "done": false
+      },
+      {
+       "n": 127,
+       "title": "Додавання і віднімання мішаних чисел",
+       "done": false
+      },
+      {
+       "n": 128,
+       "title": "Додавання і віднімання мішаних чисел",
+       "done": false
+      },
+      {
+       "n": 129,
+       "title": "Додавання і віднімання мішаних чисел",
+       "done": false
+      },
+      {
+       "n": 130,
+       "title": "Узагальнення й систематизація знань з теми «Правильні і неправильні дроби. Мішані числа. Додавання і віднімання звичайних дробів і мішаних чисел»",
+       "done": false
+      },
+      {
+       "n": 131,
+       "title": "Контрольна робота № 11 з теми «Правильні і неправильні дроби. Мішані числа. Додавання і віднімання звичайних дробів і мішаних чисел»",
+       "done": false
+      },
+      {
+       "n": 132,
+       "title": "Аналіз контрольної роботи. Робота над помилками",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 12. Десяткові дроби. Порівняння й округлення десяткових дробів (8 год)",
+     "lessons": [
+      {
+       "n": 133,
+       "title": "Десятковий дріб. Запис десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 134,
+       "title": "Десятковий дріб. Запис десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 135,
+       "title": "Десятковий дріб. Запис десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 136,
+       "title": "Порівняння десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 137,
+       "title": "Порівняння десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 138,
+       "title": "Округлення десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 139,
+       "title": "Округлення десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 140,
+       "title": "Контрольна робота № 12 з теми «Десяткові дроби. Порівняння й округлення десяткових дробів»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 13. Дії з десятковими дробами (16 год)",
+     "lessons": [
+      {
+       "n": 141,
+       "title": "Аналіз контрольної роботи. Додавання і віднімання десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 142,
+       "title": "Додавання і віднімання десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 143,
+       "title": "Додавання і віднімання десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 144,
+       "title": "Множення десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 145,
+       "title": "Множення десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 146,
+       "title": "Множення десяткових дробів",
+       "done": false
+      },
+      {
+       "n": 147,
+       "title": "Властивості множення. Окремі випадки множення",
+       "done": false
+      },
+      {
+       "n": 148,
+       "title": "Властивості множення. Окремі випадки множення",
+       "done": false
+      },
+      {
+       "n": 149,
+       "title": "Ділення десяткового дробу на натуральне число",
+       "done": false
+      },
+      {
+       "n": 150,
+       "title": "Ділення десяткового дробу на натуральне число",
+       "done": false
+      },
+      {
+       "n": 151,
+       "title": "Ділення десяткового дробу на натуральне число",
+       "done": false
+      },
+      {
+       "n": 152,
+       "title": "Ділення на десятковий дріб",
+       "done": false
+      },
+      {
+       "n": 153,
+       "title": "Ділення на десятковий дріб",
+       "done": false
+      },
+      {
+       "n": 154,
+       "title": "Ділення на десятковий дріб",
+       "done": false
+      },
+      {
+       "n": 155,
+       "title": "Ділення на десятковий дріб",
+       "done": false
+      },
+      {
+       "n": 156,
+       "title": "Контрольна робота № 13 з теми «Дії з десятковими дробами»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 14. Середнє арифметичне. Задачі на всі дії з натуральними числами і десятковими дробами (9 год)",
+     "lessons": [
+      {
+       "n": 157,
+       "title": "Аналіз контрольної роботи. Середнє арифметичне. Середнє значення величини",
+       "done": false
+      },
+      {
+       "n": 158,
+       "title": "Середнє арифметичне. Середнє значення величини",
+       "done": false
+      },
+      {
+       "n": 159,
+       "title": "Середнє арифметичне. Середнє значення величини",
+       "done": false
+      },
+      {
+       "n": 160,
+       "title": "Задачі та вправи на всі дії з натуральними числами і десятковими дробами",
+       "done": false
+      },
+      {
+       "n": 161,
+       "title": "Задачі та вправи на всі дії з натуральними числами і десятковими дробами",
+       "done": false
+      },
+      {
+       "n": 162,
+       "title": "Задачі та вправи на всі дії з натуральними числами і десятковими дробами",
+       "done": false
+      },
+      {
+       "n": 163,
+       "title": "Узагальнення й систематизація знань з теми «Середнє арифметичне. Задачі на всі дії з натуральними числами і десятковими дробами»",
+       "done": false
+      },
+      {
+       "n": 164,
+       "title": "Контрольна робота № 14 з теми «Середнє арифметичне. Задачі на всі дії з натуральними числами і десятковими дробами»",
+       "done": false
+      },
+      {
+       "n": 165,
+       "title": "Аналіз контрольної роботи. Робота над помилками",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Повторення і систематизація навчального матеріалу за рік (8 год)",
+     "lessons": [
+      {
+       "n": 166,
+       "title": "Повторення. Натуральні числа і дії з ними",
+       "done": false
+      },
+      {
+       "n": 167,
+       "title": "Повторення. Вирази. Рівняння. Текстові задачі",
+       "done": false
+      },
+      {
+       "n": 168,
+       "title": "Повторення. Геометричні фігури і величини",
+       "done": false
+      },
+      {
+       "n": 169,
+       "title": "Повторення. Подільність натуральних чисел",
+       "done": false
+      },
+      {
+       "n": 170,
+       "title": "Повторення. Звичайні дроби",
+       "done": false
+      },
+      {
+       "n": 171,
+       "title": "Повторення. Десяткові дроби і дії з ними",
+       "done": false
+      },
+      {
+       "n": 172,
+       "title": "Підсумкова контрольна робота за курс математики 5 класу",
+       "done": false
+      },
+      {
+       "n": 173,
+       "title": "Аналіз підсумкової контрольної роботи. Підсумковий урок",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "themes": [
+    {
+     "theme": "Повторення і систематизація знань за курс математики 5–6 класів (5 год)",
+     "lessons": [
+      {
+       "n": 1,
+       "title": "Натуральні числа. Арифметичні дії з натуральними числами. Подільність натуральних чисел",
+       "done": true
+      },
+      {
+       "n": 2,
+       "title": "Десяткові та звичайні дроби. Арифметичні дії з дробами. Відсотки",
+       "done": true
+      },
+      {
+       "n": 3,
+       "title": "Відношення і пропорції",
+       "done": true
+      },
+      {
+       "n": 4,
+       "title": "Раціональні числа та дії з ними",
+       "done": true
+      },
+      {
+       "n": 5,
+       "title": "Самостійна робота № 1. Раціональні числа та дії з ними",
+       "done": true
+      }
+     ]
+    },
+    {
+     "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+     "lessons": [
+      {
+       "n": 6,
+       "title": "Загальні відомості про рівняння",
+       "done": true
+      },
+      {
+       "n": 7,
+       "title": "Лінійне рівняння з однією змінною",
+       "done": true
+      },
+      {
+       "n": 8,
+       "title": "Лінійне рівняння з однією змінною",
+       "done": true
+      },
+      {
+       "n": 9,
+       "title": "Лінійне рівняння з однією змінною",
+       "done": false
+      },
+      {
+       "n": 10,
+       "title": "Розв’язування задач за допомогою лінійних рівнянь. Рівняння як математична модель задачі",
+       "done": false
+      },
+      {
+       "n": 11,
+       "title": "Розв’язування задач за допомогою лінійних рівнянь. Рівняння як математична модель задачі",
+       "done": false
+      },
+      {
+       "n": 12,
+       "title": "Розв’язування задач за допомогою лінійних рівнянь. Рівняння як математична модель задачі",
+       "done": false
+      },
+      {
+       "n": 13,
+       "title": "Розв’язування задач за допомогою лінійних рівнянь. Рівняння як математична модель задачі",
+       "done": false
+      },
+      {
+       "n": 14,
+       "title": "Узагальнення й систематизація знань з теми «Лінійні рівняння з однією змінною»",
+       "done": false
+      },
+      {
+       "n": 15,
+       "title": "Контрольна робота № 1 з теми «Лінійні рівняння з однією змінною»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 2. Вирази зі змінними. Тотожності. Степінь з натуральним показником. Одночлени (17 год)",
+     "lessons": [
+      {
+       "n": 16,
+       "title": "Аналіз контрольної роботи. Вирази зі змінними. Цілі раціональні вирази. Числове значення виразу",
+       "done": false
+      },
+      {
+       "n": 17,
+       "title": "Вирази зі змінними. Цілі раціональні вирази. Числове значення виразу",
+       "done": false
+      },
+      {
+       "n": 18,
+       "title": "Тотожні вирази. Тотожність. Тотожне перетворення виразу. Доведення тотожностей",
+       "done": false
+      },
+      {
+       "n": 19,
+       "title": "Тотожні вирази. Тотожність. Тотожне перетворення виразу. Доведення тотожностей",
+       "done": false
+      },
+      {
+       "n": 20,
+       "title": "Тотожні вирази. Тотожність. Тотожне перетворення виразу. Доведення тотожностей",
+       "done": false
+      },
+      {
+       "n": 21,
+       "title": "Степінь з натуральним показником",
+       "done": false
+      },
+      {
+       "n": 22,
+       "title": "Степінь з натуральним показником",
+       "done": false
+      },
+      {
+       "n": 23,
+       "title": "Властивості степеня з натуральним показником",
+       "done": false
+      },
+      {
+       "n": 24,
+       "title": "Властивості степеня з натуральним показником",
+       "done": false
+      },
+      {
+       "n": 25,
+       "title": "Властивості степеня з натуральним показником",
+       "done": false
+      },
+      {
+       "n": 26,
+       "title": "Одночлен. Стандартний вигляд одночлена",
+       "done": false
+      },
+      {
+       "n": 27,
+       "title": "Одночлен. Стандартний вигляд одночлена",
+       "done": false
+      },
+      {
+       "n": 28,
+       "title": "Множення одночленів. Піднесення одночлена до степеня",
+       "done": false
+      },
+      {
+       "n": 29,
+       "title": "Множення одночленів. Піднесення одночлена до степеня",
+       "done": false
+      },
+      {
+       "n": 30,
+       "title": "Множення одночленів. Піднесення одночлена до степеня",
+       "done": false
+      },
+      {
+       "n": 31,
+       "title": "Узагальнення й систематизація знань з теми «Вирази зі змінними. Тотожності. Степінь з натуральним показником. Одночлени»",
+       "done": false
+      },
+      {
+       "n": 32,
+       "title": "Контрольна робота № 2 з теми «Вирази зі змінними. Тотожності. Степінь з натуральним показником. Одночлени»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 3. Многочлени. Дії з многочленами (18 год)",
+     "lessons": [
+      {
+       "n": 33,
+       "title": "Аналіз контрольної роботи. Многочлен. Подібні члени многочлена та їх зведення. Степінь многочлена",
+       "done": false
+      },
+      {
+       "n": 34,
+       "title": "Многочлен. Подібні члени многочлена та їх зведення. Степінь многочлена",
+       "done": false
+      },
+      {
+       "n": 35,
+       "title": "Додавання і віднімання многочленів",
+       "done": false
+      },
+      {
+       "n": 36,
+       "title": "Додавання і віднімання многочленів",
+       "done": false
+      },
+      {
+       "n": 37,
+       "title": "Множення одночлена на многочлен",
+       "done": false
+      },
+      {
+       "n": 38,
+       "title": "Множення одночлена на многочлен",
+       "done": false
+      },
+      {
+       "n": 39,
+       "title": "Розкладання многочлена на множники способом винесення спільного множника за дужки",
+       "done": false
+      },
+      {
+       "n": 40,
+       "title": "Розкладання многочлена на множники способом винесення спільного множника за дужки",
+       "done": false
+      },
+      {
+       "n": 41,
+       "title": "Розкладання многочлена на множники способом винесення спільного множника за дужки",
+       "done": false
+      },
+      {
+       "n": 42,
+       "title": "Множення многочлена на многочлен",
+       "done": false
+      },
+      {
+       "n": 43,
+       "title": "Множення многочлена на многочлен",
+       "done": false
+      },
+      {
+       "n": 44,
+       "title": "Множення многочлена на многочлен",
+       "done": false
+      },
+      {
+       "n": 45,
+       "title": "Розкладання многочлена на множники способом групування",
+       "done": false
+      },
+      {
+       "n": 46,
+       "title": "Розкладання многочлена на множники способом групування",
+       "done": false
+      },
+      {
+       "n": 47,
+       "title": "Розкладання многочлена на множники способом групування",
+       "done": false
+      },
+      {
+       "n": 48,
+       "title": "Узагальнення й систематизація знань з теми «Многочлени. Дії з многочленами»",
+       "done": false
+      },
+      {
+       "n": 49,
+       "title": "Контрольна робота № 3 з теми «Многочлени. Дії з многочленами»",
+       "done": false
+      },
+      {
+       "n": 50,
+       "title": "Узагальнення й систематизація знань за І семестр",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 4. Формули скороченого множення (18 год)",
+     "lessons": [
+      {
+       "n": 51,
+       "title": "Аналіз контрольної роботи. Квадрат суми і квадрат різниці",
+       "done": false
+      },
+      {
+       "n": 52,
+       "title": "Квадрат суми і квадрат різниці",
+       "done": false
+      },
+      {
+       "n": 53,
+       "title": "Квадрат суми і квадрат різниці",
+       "done": false
+      },
+      {
+       "n": 54,
+       "title": "Розкладання многочленів на множники за допомогою формул квадрата суми і квадрата різниці",
+       "done": false
+      },
+      {
+       "n": 55,
+       "title": "Розкладання многочленів на множники за допомогою формул квадрата суми і квадрата різниці",
+       "done": false
+      },
+      {
+       "n": 56,
+       "title": "Множення різниці двох виразів на їх суму",
+       "done": false
+      },
+      {
+       "n": 57,
+       "title": "Множення різниці двох виразів на їх суму",
+       "done": false
+      },
+      {
+       "n": 58,
+       "title": "Розкладання на множники різниці квадратів двох виразів",
+       "done": false
+      },
+      {
+       "n": 59,
+       "title": "Розкладання на множники різниці квадратів двох виразів",
+       "done": false
+      },
+      {
+       "n": 60,
+       "title": "Сума і різниця кубів",
+       "done": false
+      },
+      {
+       "n": 61,
+       "title": "Сума і різниця кубів",
+       "done": false
+      },
+      {
+       "n": 62,
+       "title": "Сума і різниця кубів",
+       "done": false
+      },
+      {
+       "n": 63,
+       "title": "Застосування кількох способів розкладання многочленів на множники",
+       "done": false
+      },
+      {
+       "n": 64,
+       "title": "Застосування кількох способів розкладання многочленів на множники",
+       "done": false
+      },
+      {
+       "n": 65,
+       "title": "Застосування кількох способів розкладання многочленів на множники",
+       "done": false
+      },
+      {
+       "n": 66,
+       "title": "Застосування кількох способів розкладання многочленів на множники",
+       "done": false
+      },
+      {
+       "n": 67,
+       "title": "Узагальнення й систематизація знань з теми «Формули скороченого множення»",
+       "done": false
+      },
+      {
+       "n": 68,
+       "title": "Контрольна робота № 4 з теми «Формули скороченого множення»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 5. Функції (10 год)",
+     "lessons": [
+      {
+       "n": 69,
+       "title": "Аналіз контрольної роботи. Функція. Область визначення та область значень функції. Способи задання функцій. Функціональна залежність між величинами як математична модель реальних процесів",
+       "done": false
+      },
+      {
+       "n": 70,
+       "title": "Функція. Область визначення та область значень функції. Способи задання функцій. Функціональна залежність між величинами як математична модель реальних процесів",
+       "done": false
+      },
+      {
+       "n": 71,
+       "title": "Функція. Область визначення та область значень функції. Способи задання функцій. Функціональна залежність між величинами як математична модель реальних процесів",
+       "done": false
+      },
+      {
+       "n": 72,
+       "title": "Графік функції. Графічний спосіб задання функції",
+       "done": false
+      },
+      {
+       "n": 73,
+       "title": "Графік функції. Графічний спосіб задання функції",
+       "done": false
+      },
+      {
+       "n": 74,
+       "title": "Лінійна функція, її графік та властивості",
+       "done": false
+      },
+      {
+       "n": 75,
+       "title": "Лінійна функція, її графік та властивості",
+       "done": false
+      },
+      {
+       "n": 76,
+       "title": "Лінійна функція, її графік та властивості",
+       "done": false
+      },
+      {
+       "n": 77,
+       "title": "Узагальнення й систематизація знань з теми «Функції»",
+       "done": false
+      },
+      {
+       "n": 78,
+       "title": "Контрольна робота № 5 з теми «Функції»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 6. Системи лінійних рівнянь з двома змінними (16 год)",
+     "lessons": [
+      {
+       "n": 79,
+       "title": "Аналіз контрольної роботи. Лінійне рівняння з двома змінними",
+       "done": false
+      },
+      {
+       "n": 80,
+       "title": "Лінійне рівняння з двома змінними",
+       "done": false
+      },
+      {
+       "n": 81,
+       "title": "Графік лінійного рівняння з двома змінними",
+       "done": false
+      },
+      {
+       "n": 82,
+       "title": "Графік лінійного рівняння з двома змінними",
+       "done": false
+      },
+      {
+       "n": 83,
+       "title": "Система двох лінійних рівнянь з двома змінними та її розв’язок. Розв’язування систем лінійних рівнянь з двома змінними графічно",
+       "done": false
+      },
+      {
+       "n": 84,
+       "title": "Система двох лінійних рівнянь з двома змінними та її розв’язок. Розв’язування систем лінійних рівнянь з двома змінними графічно",
+       "done": false
+      },
+      {
+       "n": 85,
+       "title": "Розв’язування систем двох лінійних рівнянь з двома змінними способом підстановки",
+       "done": false
+      },
+      {
+       "n": 86,
+       "title": "Розв’язування систем двох лінійних рівнянь з двома змінними способом підстановки",
+       "done": false
+      },
+      {
+       "n": 87,
+       "title": "Розв’язування систем двох лінійних рівнянь з двома змінними способом додавання",
+       "done": false
+      },
+      {
+       "n": 88,
+       "title": "Розв’язування систем двох лінійних рівнянь з двома змінними способом додавання",
+       "done": false
+      },
+      {
+       "n": 89,
+       "title": "Розв’язування систем двох лінійних рівнянь з двома змінними способом додавання",
+       "done": false
+      },
+      {
+       "n": 90,
+       "title": "Розв’язування задач за допомогою систем лінійних рівнянь",
+       "done": false
+      },
+      {
+       "n": 91,
+       "title": "Розв’язування задач за допомогою систем лінійних рівнянь",
+       "done": false
+      },
+      {
+       "n": 92,
+       "title": "Розв’язування задач за допомогою систем лінійних рівнянь",
+       "done": false
+      },
+      {
+       "n": 93,
+       "title": "Узагальнення й систематизація знань з теми «Системи лінійних рівнянь з двома змінними»",
+       "done": false
+      },
+      {
+       "n": 94,
+       "title": "Контрольна робота № 6 з теми «Системи лінійних рівнянь з двома змінними»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Повторення і систематизація навчального матеріалу за рік (10 год)",
+     "lessons": [
+      {
+       "n": 95,
+       "title": "Аналіз контрольної роботи. Лінійні рівняння з однією змінною",
+       "done": false
+      },
+      {
+       "n": 96,
+       "title": "Цілі вирази. Степінь з натуральним показником. Одночлени і многочлени",
+       "done": false
+      },
+      {
+       "n": 97,
+       "title": "Тотожні перетворення виразів. Доведення тотожностей",
+       "done": false
+      },
+      {
+       "n": 98,
+       "title": "Формули скороченого множення. Розкладання многочленів на множники",
+       "done": false
+      },
+      {
+       "n": 99,
+       "title": "Функції. Способи задання функції. Графік функції",
+       "done": false
+      },
+      {
+       "n": 100,
+       "title": "Лінійна функція. Побудова графіка лінійної функції",
+       "done": false
+      },
+      {
+       "n": 101,
+       "title": "Розв’язування систем лінійних рівнянь з двома змінними різними способами (графічним, підстановки, додавання)",
+       "done": false
+      },
+      {
+       "n": 102,
+       "title": "Розв’язування задач за допомогою систем лінійних рівнянь",
+       "done": false
+      },
+      {
+       "n": 103,
+       "title": "Підсумкова контрольна робота за курс алгебри 7 класу",
+       "done": false
+      },
+      {
+       "n": 104,
+       "title": "Аналіз підсумкової контрольної роботи. Підсумковий урок",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "cls": "7-І",
+   "subject": "Геометрія",
+   "themes": [
+    {
+     "theme": "Тема 1. Елементарні геометричні фігури. Суміжні та вертикальні кути (12 год)",
+     "lessons": [
+      {
+       "n": 1,
+       "title": "Геометричні фігури. Точка, пряма, промінь",
+       "done": true
+      },
+      {
+       "n": 2,
+       "title": "Відрізок. Вимірювання відрізків. Відстань між двома точками",
+       "done": true
+      },
+      {
+       "n": 3,
+       "title": "Відрізок. Вимірювання відрізків. Відстань між двома точками",
+       "done": true
+      },
+      {
+       "n": 4,
+       "title": "Кут. Вимірювання кутів. Бісектриса кута",
+       "done": true
+      },
+      {
+       "n": 5,
+       "title": "Кут. Вимірювання кутів. Бісектриса кута",
+       "done": true
+      },
+      {
+       "n": 6,
+       "title": "Самостійна робота № 1. Елементарні геометричні фігури та їхні властивості",
+       "done": false
+      },
+      {
+       "n": 7,
+       "title": "Аксіоми, теореми, означення",
+       "done": false
+      },
+      {
+       "n": 8,
+       "title": "Суміжні кути",
+       "done": false
+      },
+      {
+       "n": 9,
+       "title": "Вертикальні кути. Кут між двома прямими, що перетинаються",
+       "done": false
+      },
+      {
+       "n": 10,
+       "title": "Вертикальні кути. Кут між двома прямими, що перетинаються",
+       "done": false
+      },
+      {
+       "n": 11,
+       "title": "Узагальнення й систематизація знань з теми «Елементарні геометричні фігури. Суміжні та вертикальні кути»",
+       "done": false
+      },
+      {
+       "n": 12,
+       "title": "Контрольна робота № 1 з теми «Елементарні геометричні фігури. Суміжні та вертикальні кути»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 2. Перпендикулярні та паралельні прямі (10 год)",
+     "lessons": [
+      {
+       "n": 13,
+       "title": "Аналіз контрольної роботи. Перпендикулярні прямі. Перпендикуляр. Відстань від точки до прямої",
+       "done": false
+      },
+      {
+       "n": 14,
+       "title": "Перпендикулярні прямі. Перпендикуляр. Відстань від точки до прямої",
+       "done": false
+      },
+      {
+       "n": 15,
+       "title": "Паралельні прямі",
+       "done": false
+      },
+      {
+       "n": 16,
+       "title": "Паралельні прямі",
+       "done": false
+      },
+      {
+       "n": 17,
+       "title": "Кути, утворені при перетині двох прямих січною. Ознаки паралельності прямих",
+       "done": false
+      },
+      {
+       "n": 18,
+       "title": "Кути, утворені при перетині двох прямих січною. Ознаки паралельності прямих",
+       "done": false
+      },
+      {
+       "n": 19,
+       "title": "Властивість паралельних прямих. Властивості кутів, утворених при перетині паралельних прямих січною",
+       "done": false
+      },
+      {
+       "n": 20,
+       "title": "Властивість паралельних прямих. Властивості кутів, утворених при перетині паралельних прямих січною",
+       "done": false
+      },
+      {
+       "n": 21,
+       "title": "Узагальнення й систематизація знань з теми «Перпендикулярні та паралельні прямі»",
+       "done": false
+      },
+      {
+       "n": 22,
+       "title": "Контрольна робота № 2 з теми «Перпендикулярні та паралельні прямі»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 3. Трикутники. Ознаки рівності трикутників (12 год)",
+     "lessons": [
+      {
+       "n": 23,
+       "title": "Аналіз контрольної роботи. Трикутник і його елементи",
+       "done": false
+      },
+      {
+       "n": 24,
+       "title": "Рівність геометричних фігур",
+       "done": false
+      },
+      {
+       "n": 25,
+       "title": "Перша та друга ознаки рівності трикутників",
+       "done": false
+      },
+      {
+       "n": 26,
+       "title": "Перша та друга ознаки рівності трикутників",
+       "done": false
+      },
+      {
+       "n": 27,
+       "title": "Рівнобедрений трикутник",
+       "done": false
+      },
+      {
+       "n": 28,
+       "title": "Рівнобедрений трикутник",
+       "done": false
+      },
+      {
+       "n": 29,
+       "title": "Медіана, бісектриса і висота трикутника. Властивість бісектриси рівнобедреного трикутника",
+       "done": false
+      },
+      {
+       "n": 30,
+       "title": "Медіана, бісектриса і висота трикутника. Властивість бісектриси рівнобедреного трикутника",
+       "done": false
+      },
+      {
+       "n": 31,
+       "title": "Третя ознака рівності трикутників",
+       "done": false
+      },
+      {
+       "n": 32,
+       "title": "Узагальнення й систематизація знань з теми «Трикутники. Ознаки рівності трикутників»",
+       "done": false
+      },
+      {
+       "n": 33,
+       "title": "Контрольна робота № 3 з теми «Трикутники. Ознаки рівності трикутників»",
+       "done": false
+      },
+      {
+       "n": 34,
+       "title": "Узагальнення й систематизація знань за І семестр",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 4. Сума кутів трикутника. Прямокутні трикутники (11 год)",
+     "lessons": [
+      {
+       "n": 35,
+       "title": "Аналіз контрольної роботи. Сума кутів трикутника",
+       "done": false
+      },
+      {
+       "n": 36,
+       "title": "Сума кутів трикутника",
+       "done": false
+      },
+      {
+       "n": 37,
+       "title": "Зовнішній кут трикутника та його властивості. Співвідношення між сторонами і кутами трикутника",
+       "done": false
+      },
+      {
+       "n": 38,
+       "title": "Зовнішній кут трикутника та його властивості. Співвідношення між сторонами і кутами трикутника",
+       "done": false
+      },
+      {
+       "n": 39,
+       "title": "Прямокутні трикутники. Властивості та ознаки рівності прямокутних трикутників",
+       "done": false
+      },
+      {
+       "n": 40,
+       "title": "Прямокутні трикутники. Властивості та ознаки рівності прямокутних трикутників",
+       "done": false
+      },
+      {
+       "n": 41,
+       "title": "Прямокутні трикутники. Властивості та ознаки рівності прямокутних трикутників",
+       "done": false
+      },
+      {
+       "n": 42,
+       "title": "Нерівність трикутника",
+       "done": false
+      },
+      {
+       "n": 43,
+       "title": "Нерівність трикутника",
+       "done": false
+      },
+      {
+       "n": 44,
+       "title": "Узагальнення й систематизація знань з теми «Сума кутів трикутника. Прямокутні трикутники»",
+       "done": false
+      },
+      {
+       "n": 45,
+       "title": "Контрольна робота № 4 з теми «Сума кутів трикутника. Прямокутні трикутники»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 5. Коло і круг (16 год)",
+     "lessons": [
+      {
+       "n": 46,
+       "title": "Аналіз контрольної роботи. Коло і круг",
+       "done": false
+      },
+      {
+       "n": 47,
+       "title": "Коло і круг",
+       "done": false
+      },
+      {
+       "n": 48,
+       "title": "Дотична до кола, її властивості",
+       "done": false
+      },
+      {
+       "n": 49,
+       "title": "Дотична до кола, її властивості",
+       "done": false
+      },
+      {
+       "n": 50,
+       "title": "Коло, вписане в трикутник",
+       "done": false
+      },
+      {
+       "n": 51,
+       "title": "Коло, вписане в трикутник",
+       "done": false
+      },
+      {
+       "n": 52,
+       "title": "Коло, описане навколо трикутника",
+       "done": false
+      },
+      {
+       "n": 53,
+       "title": "Коло, описане навколо трикутника",
+       "done": false
+      },
+      {
+       "n": 54,
+       "title": "Центральні та вписані кути",
+       "done": false
+      },
+      {
+       "n": 55,
+       "title": "Центральні та вписані кути",
+       "done": false
+      },
+      {
+       "n": 56,
+       "title": "Взаємне розміщення двох кіл",
+       "done": false
+      },
+      {
+       "n": 57,
+       "title": "Основні задачі на побудову та їх розв’язування",
+       "done": false
+      },
+      {
+       "n": 58,
+       "title": "Основні задачі на побудову та їх розв’язування",
+       "done": false
+      },
+      {
+       "n": 59,
+       "title": "Основні задачі на побудову та їх розв’язування",
+       "done": false
+      },
+      {
+       "n": 60,
+       "title": "Узагальнення й систематизація знань з теми «Коло і круг»",
+       "done": false
+      },
+      {
+       "n": 61,
+       "title": "Контрольна робота № 5 з теми «Коло і круг»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Повторення і систематизація навчального матеріалу за рік (9 год)",
+     "lessons": [
+      {
+       "n": 62,
+       "title": "Аналіз контрольної роботи. Елементарні геометричні фігури та їхні властивості. Суміжні і вертикальні кути",
+       "done": false
+      },
+      {
+       "n": 63,
+       "title": "Перпендикулярність і паралельність прямих. Ознаки і властивості паралельних прямих",
+       "done": false
+      },
+      {
+       "n": 64,
+       "title": "Трикутник та його елементи. Види трикутників. Ознаки рівності трикутників",
+       "done": false
+      },
+      {
+       "n": 65,
+       "title": "Рівнобедрений трикутник. Медіана, бісектриса і висота трикутника",
+       "done": false
+      },
+      {
+       "n": 66,
+       "title": "Сума кутів трикутника. Прямокутні трикутники",
+       "done": false
+      },
+      {
+       "n": 67,
+       "title": "Коло і круг",
+       "done": false
+      },
+      {
+       "n": 68,
+       "title": "Основні задачі на побудову",
+       "done": false
+      },
+      {
+       "n": 69,
+       "title": "Підсумкова контрольна робота за курс геометрії 7 класу",
+       "done": false
+      },
+      {
+       "n": 70,
+       "title": "Аналіз підсумкової контрольної роботи. Підсумковий урок",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "cls": "8-К",
+   "subject": "Алгебра",
+   "themes": [
+    {
+     "theme": "Повторення і систематизація знань за курс алгебри 7 класу (4 год)",
+     "lessons": [
+      {
+       "n": 1,
+       "title": "Повторення і узагальнення матеріалу 7 класу. Лінійні рівняння з однією змінною",
+       "done": true
+      },
+      {
+       "n": 2,
+       "title": "Повторення і узагальнення матеріалу 7 класу. Цілі вирази",
+       "done": true
+      },
+      {
+       "n": 3,
+       "title": "Повторення і узагальнення матеріалу 7 класу. Функції",
+       "done": true
+      },
+      {
+       "n": 4,
+       "title": "Повторення і узагальнення матеріалу 7 класу. Системи лінійних рівнянь із двома змінними",
+       "done": true
+      }
+     ]
+    },
+    {
+     "theme": "Тема 1. Раціональні дроби. Додавання і віднімання дробів (16 год)",
+     "lessons": [
+      {
+       "n": 5,
+       "title": "Раціональні вирази. Раціональні дроби",
+       "done": true
+      },
+      {
+       "n": 6,
+       "title": "Раціональні вирази. Раціональні дроби",
+       "done": false
+      },
+      {
+       "n": 7,
+       "title": "Раціональні вирази. Раціональні дроби",
+       "done": false
+      },
+      {
+       "n": 8,
+       "title": "Основна властивість раціонального дробу",
+       "done": false
+      },
+      {
+       "n": 9,
+       "title": "Основна властивість раціонального дробу",
+       "done": false
+      },
+      {
+       "n": 10,
+       "title": "Основна властивість раціонального дробу",
+       "done": false
+      },
+      {
+       "n": 11,
+       "title": "Додавання та віднімання дробів з однаковими знаменниками",
+       "done": false
+      },
+      {
+       "n": 12,
+       "title": "Додавання та віднімання дробів з однаковими знаменниками",
+       "done": false
+      },
+      {
+       "n": 13,
+       "title": "Додавання та віднімання дробів з однаковими знаменниками",
+       "done": false
+      },
+      {
+       "n": 14,
+       "title": "Додавання та віднімання дробів з різними знаменниками",
+       "done": false
+      },
+      {
+       "n": 15,
+       "title": "Додавання та віднімання дробів з різними знаменниками",
+       "done": false
+      },
+      {
+       "n": 16,
+       "title": "Додавання та віднімання дробів з різними знаменниками",
+       "done": false
+      },
+      {
+       "n": 17,
+       "title": "Додавання та віднімання дробів з різними знаменниками",
+       "done": false
+      },
+      {
+       "n": 18,
+       "title": "Додавання та віднімання дробів з різними знаменниками",
+       "done": false
+      },
+      {
+       "n": 19,
+       "title": "Узагальнення й систематизація знань з теми «Раціональні дроби. Додавання і віднімання дробів»",
+       "done": false
+      },
+      {
+       "n": 20,
+       "title": "Контрольна робота № 1 з теми «Раціональні дроби. Додавання і віднімання дробів»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 2. Множення і ділення дробів. Раціональні рівняння (16 год)",
+     "lessons": [
+      {
+       "n": 21,
+       "title": "Аналіз контрольної роботи. Множення дробів. Піднесення дробу до степеня",
+       "done": false
+      },
+      {
+       "n": 22,
+       "title": "Множення дробів. Піднесення дробу до степеня",
+       "done": false
+      },
+      {
+       "n": 23,
+       "title": "Множення дробів. Піднесення дробу до степеня",
+       "done": false
+      },
+      {
+       "n": 24,
+       "title": "Ділення дробів",
+       "done": false
+      },
+      {
+       "n": 25,
+       "title": "Ділення дробів",
+       "done": false
+      },
+      {
+       "n": 26,
+       "title": "Ділення дробів",
+       "done": false
+      },
+      {
+       "n": 27,
+       "title": "Множення та ділення дробів",
+       "done": false
+      },
+      {
+       "n": 28,
+       "title": "Тотожні перетворення раціональних виразів",
+       "done": false
+      },
+      {
+       "n": 29,
+       "title": "Тотожні перетворення раціональних виразів",
+       "done": false
+      },
+      {
+       "n": 30,
+       "title": "Тотожні перетворення раціональних виразів",
+       "done": false
+      },
+      {
+       "n": 31,
+       "title": "Раціональні рівняння",
+       "done": false
+      },
+      {
+       "n": 32,
+       "title": "Раціональні рівняння",
+       "done": false
+      },
+      {
+       "n": 33,
+       "title": "Раціональні рівняння",
+       "done": false
+      },
+      {
+       "n": 34,
+       "title": "Раціональні рівняння",
+       "done": false
+      },
+      {
+       "n": 35,
+       "title": "Узагальнення й систематизація знань з теми «Множення і ділення дробів. Раціональні рівняння»",
+       "done": false
+      },
+      {
+       "n": 36,
+       "title": "Контрольна робота № 2 з теми «Множення і ділення дробів. Раціональні рівняння»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 3. Степінь із цілим показником. Функція y = k/x (13 год)",
+     "lessons": [
+      {
+       "n": 37,
+       "title": "Аналіз контрольної роботи. Степінь із цілим показником",
+       "done": false
+      },
+      {
+       "n": 38,
+       "title": "Степінь із цілим показником",
+       "done": false
+      },
+      {
+       "n": 39,
+       "title": "Властивості степеня із цілим показником",
+       "done": false
+      },
+      {
+       "n": 40,
+       "title": "Властивості степеня із цілим показником",
+       "done": false
+      },
+      {
+       "n": 41,
+       "title": "Властивості степеня із цілим показником",
+       "done": false
+      },
+      {
+       "n": 42,
+       "title": "Стандартний вигляд числа",
+       "done": false
+      },
+      {
+       "n": 43,
+       "title": "Стандартний вигляд числа",
+       "done": false
+      },
+      {
+       "n": 44,
+       "title": "Функція y = k/x, її графік і властивості",
+       "done": false
+      },
+      {
+       "n": 45,
+       "title": "Функція y = k/x, її графік і властивості",
+       "done": false
+      },
+      {
+       "n": 46,
+       "title": "Функція y = k/x, її графік і властивості",
+       "done": false
+      },
+      {
+       "n": 47,
+       "title": "Узагальнення й систематизація знань з теми «Степінь із цілим показником. Функція y = k/x»",
+       "done": false
+      },
+      {
+       "n": 48,
+       "title": "Контрольна робота № 3 з теми «Степінь із цілим показником. Функція y = k/x»",
+       "done": false
+      },
+      {
+       "n": 49,
+       "title": "Узагальнення й систематизація знань за І семестр",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 4. Квадратні корені. Дійсні числа (19 год)",
+     "lessons": [
+      {
+       "n": 50,
+       "title": "Аналіз контрольної роботи. Функція y = x², її графік і властивості",
+       "done": false
+      },
+      {
+       "n": 51,
+       "title": "Функція y = x², її графік і властивості",
+       "done": false
+      },
+      {
+       "n": 52,
+       "title": "Арифметичний квадратний корінь",
+       "done": false
+      },
+      {
+       "n": 53,
+       "title": "Арифметичний квадратний корінь",
+       "done": false
+      },
+      {
+       "n": 54,
+       "title": "Арифметичний квадратний корінь",
+       "done": false
+      },
+      {
+       "n": 55,
+       "title": "Множина. Числові множини",
+       "done": false
+      },
+      {
+       "n": 56,
+       "title": "Множина. Числові множини",
+       "done": false
+      },
+      {
+       "n": 57,
+       "title": "Тотожність (√a)² = a, a ≥ 0. Рівняння x² = a",
+       "done": false
+      },
+      {
+       "n": 58,
+       "title": "Тотожність (√a)² = a, a ≥ 0. Рівняння x² = a",
+       "done": false
+      },
+      {
+       "n": 59,
+       "title": "Властивості арифметичного квадратного кореня",
+       "done": false
+      },
+      {
+       "n": 60,
+       "title": "Властивості арифметичного квадратного кореня",
+       "done": false
+      },
+      {
+       "n": 61,
+       "title": "Властивості арифметичного квадратного кореня",
+       "done": false
+      },
+      {
+       "n": 62,
+       "title": "Тотожні перетворення виразів, що містять квадратні корені",
+       "done": false
+      },
+      {
+       "n": 63,
+       "title": "Тотожні перетворення виразів, що містять квадратні корені",
+       "done": false
+      },
+      {
+       "n": 64,
+       "title": "Тотожні перетворення виразів, що містять квадратні корені",
+       "done": false
+      },
+      {
+       "n": 65,
+       "title": "Функція y = √x, її графік і властивості",
+       "done": false
+      },
+      {
+       "n": 66,
+       "title": "Функція y = √x, її графік і властивості",
+       "done": false
+      },
+      {
+       "n": 67,
+       "title": "Узагальнення й систематизація знань з теми «Квадратні корені. Дійсні числа»",
+       "done": false
+      },
+      {
+       "n": 68,
+       "title": "Контрольна робота № 4 з теми «Квадратні корені. Дійсні числа»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 5. Квадратні рівняння. Теорема Вієта (15 год)",
+     "lessons": [
+      {
+       "n": 69,
+       "title": "Аналіз контрольної роботи. Квадратні рівняння. Неповні квадратні рівняння",
+       "done": false
+      },
+      {
+       "n": 70,
+       "title": "Квадратні рівняння. Неповні квадратні рівняння",
+       "done": false
+      },
+      {
+       "n": 71,
+       "title": "Квадратні рівняння. Неповні квадратні рівняння",
+       "done": false
+      },
+      {
+       "n": 72,
+       "title": "Формула коренів квадратного рівняння",
+       "done": false
+      },
+      {
+       "n": 73,
+       "title": "Формула коренів квадратного рівняння",
+       "done": false
+      },
+      {
+       "n": 74,
+       "title": "Формула коренів квадратного рівняння",
+       "done": false
+      },
+      {
+       "n": 75,
+       "title": "Формула коренів квадратного рівняння",
+       "done": false
+      },
+      {
+       "n": 76,
+       "title": "Теорема Вієта та обернена до неї теорема",
+       "done": false
+      },
+      {
+       "n": 77,
+       "title": "Теорема Вієта та обернена до неї теорема",
+       "done": false
+      },
+      {
+       "n": 78,
+       "title": "Теорема Вієта та обернена до неї теорема",
+       "done": false
+      },
+      {
+       "n": 79,
+       "title": "Квадратне рівняння як математична модель текстових і прикладних задач",
+       "done": false
+      },
+      {
+       "n": 80,
+       "title": "Квадратне рівняння як математична модель текстових і прикладних задач",
+       "done": false
+      },
+      {
+       "n": 81,
+       "title": "Квадратне рівняння як математична модель текстових і прикладних задач",
+       "done": false
+      },
+      {
+       "n": 82,
+       "title": "Узагальнення й систематизація знань з теми «Квадратні рівняння. Теорема Вієта»",
+       "done": false
+      },
+      {
+       "n": 83,
+       "title": "Контрольна робота № 5 з теми «Квадратні рівняння. Теорема Вієта»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 6. Квадратний тричлен. Рівняння, які зводяться до квадратних (13 год)",
+     "lessons": [
+      {
+       "n": 84,
+       "title": "Аналіз контрольної роботи. Квадратний тричлен. Розкладання квадратного тричлена на лінійні множники",
+       "done": false
+      },
+      {
+       "n": 85,
+       "title": "Квадратний тричлен. Розкладання квадратного тричлена на лінійні множники",
+       "done": false
+      },
+      {
+       "n": 86,
+       "title": "Квадратний тричлен. Розкладання квадратного тричлена на лінійні множники",
+       "done": false
+      },
+      {
+       "n": 87,
+       "title": "Розв’язування рівнянь, які зводяться до квадратних",
+       "done": false
+      },
+      {
+       "n": 88,
+       "title": "Розв’язування рівнянь, які зводяться до квадратних",
+       "done": false
+      },
+      {
+       "n": 89,
+       "title": "Розв’язування рівнянь, які зводяться до квадратних",
+       "done": false
+      },
+      {
+       "n": 90,
+       "title": "Розв’язування рівнянь, які зводяться до квадратних",
+       "done": false
+      },
+      {
+       "n": 91,
+       "title": "Розв’язування задач за допомогою дробових раціональних рівнянь",
+       "done": false
+      },
+      {
+       "n": 92,
+       "title": "Розв’язування задач за допомогою дробових раціональних рівнянь",
+       "done": false
+      },
+      {
+       "n": 93,
+       "title": "Розв’язування задач за допомогою дробових раціональних рівнянь",
+       "done": false
+      },
+      {
+       "n": 94,
+       "title": "Розв’язування задач за допомогою дробових раціональних рівнянь",
+       "done": false
+      },
+      {
+       "n": 95,
+       "title": "Узагальнення й систематизація знань з теми «Квадратний тричлен. Рівняння, які зводяться до квадратних»",
+       "done": false
+      },
+      {
+       "n": 96,
+       "title": "Контрольна робота № 6 з теми «Квадратний тричлен. Рівняння, які зводяться до квадратних»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Повторення і систематизація навчального матеріалу за рік (7 год)",
+     "lessons": [
+      {
+       "n": 97,
+       "title": "Аналіз контрольної роботи. Раціональні вирази",
+       "done": false
+      },
+      {
+       "n": 98,
+       "title": "Квадратні корені. Дійсні числа",
+       "done": false
+      },
+      {
+       "n": 99,
+       "title": "Квадратні рівняння",
+       "done": false
+      },
+      {
+       "n": 100,
+       "title": "Степінь із цілим показником. Функція y = k/x",
+       "done": false
+      },
+      {
+       "n": 101,
+       "title": "Узагальнення й систематизація знань за курс алгебри 8 класу",
+       "done": false
+      },
+      {
+       "n": 102,
+       "title": "Підсумкова контрольна робота за курс алгебри 8 класу",
+       "done": false
+      },
+      {
+       "n": 103,
+       "title": "Аналіз підсумкової контрольної роботи. Підсумковий урок",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "cls": "8-К",
+   "subject": "Геометрія",
+   "themes": [
+    {
+     "theme": "Повторення і систематизація знань за курс геометрії 7 класу (3 год)",
+     "lessons": [
+      {
+       "n": 1,
+       "title": "Елементарні геометричні фігури та їх властивості. Взаємне розміщення прямих на площині",
+       "done": true
+      },
+      {
+       "n": 2,
+       "title": "Трикутники. Ознаки рівності трикутників",
+       "done": true
+      },
+      {
+       "n": 3,
+       "title": "Коло і круг",
+       "done": true
+      }
+     ]
+    },
+    {
+     "theme": "Тема 1. Чотирикутник. Паралелограм і його види (9 год)",
+     "lessons": [
+      {
+       "n": 4,
+       "title": "Чотирикутник, його елементи. Сума кутів чотирикутника",
+       "done": true
+      },
+      {
+       "n": 5,
+       "title": "Паралелограм, його властивості й ознаки",
+       "done": true
+      },
+      {
+       "n": 6,
+       "title": "Паралелограм, його властивості й ознаки",
+       "done": true
+      },
+      {
+       "n": 7,
+       "title": "Прямокутник і його властивості",
+       "done": false
+      },
+      {
+       "n": 8,
+       "title": "Прямокутник і його властивості",
+       "done": false
+      },
+      {
+       "n": 9,
+       "title": "Ромб і його властивості",
+       "done": false
+      },
+      {
+       "n": 10,
+       "title": "Ромб і його властивості",
+       "done": false
+      },
+      {
+       "n": 11,
+       "title": "Квадрат і його властивості",
+       "done": false
+      },
+      {
+       "n": 12,
+       "title": "Контрольна робота № 1 з теми «Чотирикутник. Паралелограм і його види»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 2. Трапеція. Теорема Фалеса. Середні лінії трикутника і трапеції (9 год)",
+     "lessons": [
+      {
+       "n": 13,
+       "title": "Аналіз контрольної роботи. Трапеція",
+       "done": false
+      },
+      {
+       "n": 14,
+       "title": "Трапеція",
+       "done": false
+      },
+      {
+       "n": 15,
+       "title": "Вписані та описані чотирикутники",
+       "done": false
+      },
+      {
+       "n": 16,
+       "title": "Теорема Фалеса",
+       "done": false
+      },
+      {
+       "n": 17,
+       "title": "Середня лінія трикутника, її властивість",
+       "done": false
+      },
+      {
+       "n": 18,
+       "title": "Середня лінія трикутника, її властивість",
+       "done": false
+      },
+      {
+       "n": 19,
+       "title": "Середня лінія трапеції, її властивість",
+       "done": false
+      },
+      {
+       "n": 20,
+       "title": "Узагальнення й систематизація знань з теми «Трапеція. Теорема Фалеса. Середні лінії трикутника і трапеції»",
+       "done": false
+      },
+      {
+       "n": 21,
+       "title": "Контрольна робота № 2 з теми «Трапеція. Теорема Фалеса. Середні лінії трикутника і трапеції»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 3. Подібність трикутників (12 год)",
+     "lessons": [
+      {
+       "n": 22,
+       "title": "Аналіз контрольної роботи. Узагальнена теорема Фалеса",
+       "done": false
+      },
+      {
+       "n": 23,
+       "title": "Подібні трикутники",
+       "done": false
+      },
+      {
+       "n": 24,
+       "title": "Ознаки подібності трикутників",
+       "done": false
+      },
+      {
+       "n": 25,
+       "title": "Ознаки подібності трикутників",
+       "done": false
+      },
+      {
+       "n": 26,
+       "title": "Середні пропорційні відрізки у прямокутному трикутнику",
+       "done": false
+      },
+      {
+       "n": 27,
+       "title": "Середні пропорційні відрізки у прямокутному трикутнику",
+       "done": false
+      },
+      {
+       "n": 28,
+       "title": "Властивість бісектриси трикутника",
+       "done": false
+      },
+      {
+       "n": 29,
+       "title": "Застосування подібності трикутників до розв’язування задач",
+       "done": false
+      },
+      {
+       "n": 30,
+       "title": "Застосування подібності трикутників до розв’язування задач",
+       "done": false
+      },
+      {
+       "n": 31,
+       "title": "Узагальнення й систематизація знань з теми «Подібність трикутників»",
+       "done": false
+      },
+      {
+       "n": 32,
+       "title": "Контрольна робота № 3 з теми «Подібність трикутників»",
+       "done": false
+      },
+      {
+       "n": 33,
+       "title": "Узагальнення й систематизація знань за І семестр",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 4. Розв’язування прямокутних трикутників (14 год)",
+     "lessons": [
+      {
+       "n": 34,
+       "title": "Аналіз контрольної роботи. Теорема Піфагора",
+       "done": false
+      },
+      {
+       "n": 35,
+       "title": "Теорема Піфагора",
+       "done": false
+      },
+      {
+       "n": 36,
+       "title": "Теорема Піфагора",
+       "done": false
+      },
+      {
+       "n": 37,
+       "title": "Перпендикуляр і похила, їхні властивості",
+       "done": false
+      },
+      {
+       "n": 38,
+       "title": "Перпендикуляр і похила, їхні властивості",
+       "done": false
+      },
+      {
+       "n": 39,
+       "title": "Синус, косинус і тангенс гострого кута прямокутного трикутника. Співвідношення між сторонами та кутами прямокутного трикутника",
+       "done": false
+      },
+      {
+       "n": 40,
+       "title": "Синус, косинус і тангенс гострого кута прямокутного трикутника. Співвідношення між сторонами та кутами прямокутного трикутника",
+       "done": false
+      },
+      {
+       "n": 41,
+       "title": "Синус, косинус і тангенс гострого кута прямокутного трикутника. Співвідношення між сторонами та кутами прямокутного трикутника",
+       "done": false
+      },
+      {
+       "n": 42,
+       "title": "Синус, косинус і тангенс гострого кута прямокутного трикутника. Співвідношення між сторонами та кутами прямокутного трикутника",
+       "done": false
+      },
+      {
+       "n": 43,
+       "title": "Розв’язування прямокутних трикутників",
+       "done": false
+      },
+      {
+       "n": 44,
+       "title": "Розв’язування прямокутних трикутників",
+       "done": false
+      },
+      {
+       "n": 45,
+       "title": "Розв’язування прямокутних трикутників",
+       "done": false
+      },
+      {
+       "n": 46,
+       "title": "Узагальнення й систематизація знань з теми «Розв’язування прямокутних трикутників»",
+       "done": false
+      },
+      {
+       "n": 47,
+       "title": "Контрольна робота № 4 з теми «Розв’язування прямокутних трикутників»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Тема 5. Многокутники. Площі многокутників (13 год)",
+     "lessons": [
+      {
+       "n": 48,
+       "title": "Аналіз контрольної роботи. Многокутник і його елементи. Сума кутів опуклого многокутника. Многокутник, вписаний у коло, і многокутник, описаний навколо кола",
+       "done": false
+      },
+      {
+       "n": 49,
+       "title": "Многокутник і його елементи. Сума кутів опуклого многокутника. Многокутник, вписаний у коло, і многокутник, описаний навколо кола",
+       "done": false
+      },
+      {
+       "n": 50,
+       "title": "Поняття площі многокутника. Площа прямокутника",
+       "done": false
+      },
+      {
+       "n": 51,
+       "title": "Поняття площі многокутника. Площа прямокутника",
+       "done": false
+      },
+      {
+       "n": 52,
+       "title": "Площа паралелограма",
+       "done": false
+      },
+      {
+       "n": 53,
+       "title": "Площа паралелограма",
+       "done": false
+      },
+      {
+       "n": 54,
+       "title": "Площа трикутника",
+       "done": false
+      },
+      {
+       "n": 55,
+       "title": "Площа трикутника",
+       "done": false
+      },
+      {
+       "n": 56,
+       "title": "Площа трикутника",
+       "done": false
+      },
+      {
+       "n": 57,
+       "title": "Площа трапеції",
+       "done": false
+      },
+      {
+       "n": 58,
+       "title": "Площа трапеції",
+       "done": false
+      },
+      {
+       "n": 59,
+       "title": "Узагальнення й систематизація знань з теми «Многокутники. Площі многокутників»",
+       "done": false
+      },
+      {
+       "n": 60,
+       "title": "Контрольна робота № 5 з теми «Многокутники. Площі многокутників»",
+       "done": false
+      }
+     ]
+    },
+    {
+     "theme": "Повторення і систематизація навчального матеріалу за рік (9 год)",
+     "lessons": [
+      {
+       "n": 61,
+       "title": "Аналіз контрольної роботи. Чотирикутники",
+       "done": false
+      },
+      {
+       "n": 62,
+       "title": "Трапеція. Теорема Фалеса. Середні лінії трикутника і трапеції",
+       "done": false
+      },
+      {
+       "n": 63,
+       "title": "Подібність трикутників",
+       "done": false
+      },
+      {
+       "n": 64,
+       "title": "Розв’язування прямокутних трикутників",
+       "done": false
+      },
+      {
+       "n": 65,
+       "title": "Розв’язування прямокутних трикутників",
+       "done": false
+      },
+      {
+       "n": 66,
+       "title": "Многокутники. Площі многокутників",
+       "done": false
+      },
+      {
+       "n": 67,
+       "title": "Площі паралелограма, трикутника і трапеції",
+       "done": false
+      },
+      {
+       "n": 68,
+       "title": "Підсумкова контрольна робота за курс геометрії 8 класу",
+       "done": false
+      },
+      {
+       "n": 69,
+       "title": "Аналіз підсумкової контрольної роботи. Підсумковий урок",
+       "done": false
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
 </script>
 <!-- /BUILD:LESSONS -->
 
@@ -869,16 +4103,26 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 (function(){
   "use strict";
   var D = document;
-  var data = [];
-  try { data = JSON.parse(D.getElementById('lessons').textContent) || []; } catch(e) { data = []; }
 
-  var list = D.getElementById('list'), chips = D.getElementById('chips');
-  var empty = D.getElementById('empty'), q = D.getElementById('q'), found = D.getElementById('found');
+  /* ── приймач. Порожній url = сайт працює без нього: уроки видно,
+        роботи — ні, бо перевірити код нічим. ── */
+  var ПРИЙМАЧ = { url: '', токен: 'fowenf93nuf3eeno3ef9u3f' };
+
+  var ДАНІ = { lessons: [], works: [], plans: [] };
+  try {
+    var сире = JSON.parse(D.getElementById('lessons').textContent);
+    if (Array.isArray(сире)) ДАНІ.lessons = сире;      // старий формат
+    else ДАНІ = Object.assign(ДАНІ, сире || {});
+  } catch(e){}
+
+  var ЗНАК_КЛАС = { 'A':'5-З', 'B':'7-І', 'C':'8-К', 'D':'9-А' };
+  var HUE = { 'Математика':258, 'Алгебра':300, 'Геометрія':150, 'Інформатика':40 };
+  function hueOf(s){ return HUE[s] != null ? HUE[s] : 258; }
 
   function store(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
   function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 
-  /* ---- тема ---- */
+  /* ── тема оформлення ── */
   var themeBtn = D.getElementById('theme');
   var saved = load('theme');
   if (saved === 'dark' || saved === 'light') D.documentElement.dataset.theme = saved;
@@ -890,9 +4134,9 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
     store('theme', next);
   });
 
-  /* ---- що учень уже відкривав ---- */
+  /* ── що вже відкривали ── */
   var seen = {};
-  try { seen = JSON.parse(load('seen') || '{}') || {}; } catch(e) { seen = {}; }
+  try { seen = JSON.parse(load('seen') || '{}') || {}; } catch(e){ seen = {}; }
 
   function plural(n, one, few, many){
     var a = Math.abs(n) % 100, b = a % 10;
@@ -902,186 +4146,283 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
     return many;
   }
 
-  /* тон предмета — той самий, що в самій презентації */
-  var HUE = { 'Математика':258, 'Алгебра':300, 'Геометрія':150, 'Інформатика':40 };
-  function hueOf(s){ return HUE[s] != null ? HUE[s] : 258; }
-
-  /* ---- фільтри ---- */
-  var classes = [];
-  data.forEach(function(d){ if (classes.indexOf(d.cls) < 0) classes.push(d.cls); });
-  var active = load('cls');
-  if (active !== null && active !== '*' && classes.indexOf(active) < 0) active = null;
-  if (active === null) active = '*';
-
-  function makeChip(value, label){
-    var b = D.createElement('button');
-    b.type = 'button'; b.className = 'chip'; b.textContent = label; b.dataset.v = value;
-    b.setAttribute('aria-pressed', String(value === active));
-    b.addEventListener('click', function(){
-      active = value; store('cls', value);
-      [].forEach.call(chips.children, function(c){
-        c.setAttribute('aria-pressed', String(c.dataset.v === active));
-      });
-      render();
-    });
-    return b;
-  }
-  if (classes.length > 1) chips.appendChild(makeChip('*', 'Усі класи'));
-  classes.forEach(function(c){ chips.appendChild(makeChip(c, c)); });
-
-  /* ---- дрібні помічники ---- */
-  function el(tag, cls, text){
-    var n = D.createElement(tag);
-    if (cls) n.className = cls;
-    if (text != null) n.textContent = text;
-    return n;
-  }
-  /* D3 · підсвітка знайденого. Через textContent, а не innerHTML:
-     назви уроків приходять із <title> файлів і не мають ставати розміткою. */
-  function hilite(node, text, term){
-    node.textContent = '';
-    if (!term) { node.textContent = text; return; }
-    var low = String(text).toLowerCase(), from = 0, i;
-    while ((i = low.indexOf(term, from)) >= 0){
-      if (i > from) node.appendChild(D.createTextNode(text.slice(from, i)));
-      node.appendChild(el('mark', null, text.slice(i, i + term.length)));
-      from = i + term.length;
+  /* ─────────────────── JSONP ──────────────────────────────────────────
+     Тег <script src> не підпадає під CORS узагалі. fetch до Apps Script
+     іде через редірект на googleusercontent.com і в частині браузерів
+     мовчки падає, тож для читання це найнадійніший канал. */
+  function jsonp(параметри, коли){
+    if (!ПРИЙМАЧ.url) return коли(null);
+    var імʼя = 'кб' + Math.random().toString(36).slice(2);
+    var тег = D.createElement('script');
+    var годинник = setTimeout(function(){ прибрати(null); }, 8000);
+    function прибрати(від){
+      try { delete window[імʼя]; } catch(e){ window[імʼя] = undefined; }
+      тег.remove(); clearTimeout(годинник); коли(від);
     }
-    node.appendChild(D.createTextNode(text.slice(from)));
-  }
-  function themeShort(t){ return String(t || '').replace(/\s*\(\d+\s*год\)\s*$/, ''); }
-
-  function render(){
-    var term = q.value.trim().toLowerCase();
-    var rows = data.filter(function(d){
-      if (active !== '*' && d.cls !== active) return false;
-      if (!term) return true;
-      return (d.title + ' ' + d.subject + ' ' + d.cls + ' ' + d.lesson + ' ' + (d.theme || ''))
-             .toLowerCase().indexOf(term) >= 0;
-    });
-
-    list.textContent = '';
-    empty.classList.toggle('on', rows.length === 0);
-    var real = rows.filter(function(d){ return !d.planned; }).length;
-    found.textContent = term ? (real + ' ' + plural(real, 'урок', 'уроки', 'уроків')) : '';
-    if (!rows.length) return;
-
-    var order = [], groups = {};
-    rows.forEach(function(d){
-      if (!groups[d.cls]) { groups[d.cls] = { order: [], subj: {} }; order.push(d.cls); }
-      var g = groups[d.cls];
-      if (!g.subj[d.subject]) { g.subj[d.subject] = []; g.order.push(d.subject); }
-      g.subj[d.subject].push(d);
-    });
-
-    order.forEach(function(cls){
-      var g = groups[cls], total = 0, off = 0;
-      g.order.forEach(function(s){
-        g.subj[s].forEach(function(d){
-          if (d.planned) return;
-          total++;
-          if (d.offline) off++;
-        });
-      });
-
-      var box = el('section', 'cls');
-      box.appendChild(el('h2', null, cls + ' клас'));
-      box.appendChild(el('p', 'sub',
-        g.order.join(' · ') + ' — ' + total + ' ' + plural(total, 'урок', 'уроки', 'уроків') +
-        (off ? ' · ' + off + ' очно' : '')));
-
-      g.order.forEach(function(subject){
-        var sec = el('section', 'subj');
-        sec.style.setProperty('--h', hueOf(subject));
-        var h3 = el('h3');
-        h3.appendChild(el('span', 'swatch'));
-        h3.appendChild(D.createTextNode(subject));
-        sec.appendChild(h3);
-
-        /* D6 · розкладаємо по темах КТП, зберігаючи порядок */
-        var tOrder = [], byTheme = {};
-        g.subj[subject].forEach(function(d){
-          var key = d.theme || '';
-          if (!byTheme[key]) { byTheme[key] = []; tOrder.push(key); }
-          byTheme[key].push(d);
-        });
-
-        tOrder.forEach(function(key){
-          var items = byTheme[key];
-          var wrap = el('div', 'theme');
-          if (key){
-            var totalInTheme = items[0].themeTotal || items.length;
-            var doneInTheme = items.filter(function(d){ return !d.planned; }).length;
-            var th = el('div', 'th');
-            var nm = el('span', 'nm'); hilite(nm, themeShort(key), term); th.appendChild(nm);
-            th.appendChild(el('span', 'cnt', doneInTheme + ' / ' + totalInTheme));
-            wrap.appendChild(th);
-            var bar = el('div', 'bar');
-            var d1 = el('i'); d1.className = 'd'; d1.style.flex = doneInTheme;
-            bar.appendChild(d1);
-            var rest = Math.max(0, totalInTheme - doneInTheme);
-            if (rest) { var d2 = el('i'); d2.style.flex = rest; bar.appendChild(d2); }
-            wrap.appendChild(bar);
-          }
-
-          var cards = el('div', 'cards');
-          items.forEach(function(d){
-            var offline = !!d.offline, planned = !!d.planned;
-            var open = !offline && !planned;
-            var card = D.createElement(open ? 'a' : 'div');
-            card.className = 'card' + (offline ? ' off' : '') + (planned ? ' soon' : '');
-            if (open) card.href = d.href; else card.setAttribute('aria-disabled', 'true');
-
-            var thumb = el('span', 'thumb');
-            thumb.appendChild(el('span', 'glow'));
-            var mini = el('span', 'mini');
-            mini.appendChild(el('b', null, d.title));
-            var i1 = el('i'); i1.style.width = '72%'; mini.appendChild(i1);
-            var i2 = el('i'); i2.style.width = '46%'; mini.appendChild(i2);
-            thumb.appendChild(mini);
-            card.appendChild(thumb);
-
-            var inner = el('span', 'in');
-            var k = el('span', 'k');
-            k.appendChild(el('span', null, d.lesson));
-            if (offline) k.appendChild(el('span', 'flag live', 'Очно'));
-            else if (planned) k.appendChild(el('span', 'flag soon', 'Буде'));
-            else if (seen[d.href]) k.appendChild(el('span', 'flag seen', 'Переглянуто'));
-            else if (d.fresh) k.appendChild(el('span', 'flag new', 'Новий'));
-            inner.appendChild(k);
-
-            var t = el('span', 't'); hilite(t, d.title, term); inner.appendChild(t);
-            inner.appendChild(el('span', 'm', offline ? subject + ' · проведено очно'
-              : planned ? subject + ' · ще попереду'
-              : subject + (d.slides ? ' · ' + d.slides + ' ' +
-                  plural(d.slides, 'слайд', 'слайди', 'слайдів') : '')));
-            card.appendChild(inner);
-
-            if (open) card.addEventListener('click', function(){
-              seen[d.href] = 1;
-              store('seen', JSON.stringify(seen));
-            });
-            cards.appendChild(card);
-          });
-          wrap.appendChild(cards);
-          sec.appendChild(wrap);
-        });
-        box.appendChild(sec);
-      });
-      list.appendChild(box);
-    });
+    window[імʼя] = прибрати;
+    тег.onerror = function(){ прибрати(null); };
+    var q = [];
+    параметри.токен = ПРИЙМАЧ.токен; параметри.кб = імʼя;
+    for (var k in параметри) q.push(encodeURIComponent(k) + '=' + encodeURIComponent(параметри[k]));
+    тег.src = ПРИЙМАЧ.url + '?' + q.join('&');
+    D.head.appendChild(тег);
   }
 
-  q.addEventListener('input', render);
-  D.addEventListener('keydown', function(e){
-    if (e.key === '/' && D.activeElement !== q &&
-        !/^(INPUT|TEXTAREA|SELECT)$/.test(D.activeElement && D.activeElement.tagName)){
-      e.preventDefault(); q.focus(); q.select();
-    } else if (e.key === 'Escape' && D.activeElement === q){
-      q.value = ''; render(); q.blur();
-    }
+  /* ─────────────────── ВОРОТА: код учня ───────────────────────────── */
+  var gate = D.getElementById('gate'), app = D.getElementById('app');
+  var kod = D.getElementById('kod'), kodNote = D.getElementById('kod-note');
+  var стан = { код:'', клас:'', учень:'', роботи:null, offline:false };
+
+  var чистий = function(к){ return String(к||'').toUpperCase().replace(/[^0-9A-Z]/g,'').slice(0,8); };
+  var класЗКоду = function(к){ return ЗНАК_КЛАС[(к||'')[0]] || ''; };
+
+  function нота(т, кл){ kodNote.className = 'note' + (кл ? ' ' + кл : ''); kodNote.textContent = т || ''; }
+
+  kod.addEventListener('input', function(){
+    var к = чистий(kod.value);
+    if (kod.value !== к) kod.value = к;
+    D.getElementById('enter').disabled = к.length !== 8;
+    нота(к.length && к.length < 8 ? 'Ще ' + (8 - к.length) + ' ' + plural(8-к.length,'знак','знаки','знаків') : '');
   });
-  render();
+  D.getElementById('enter').addEventListener('click', function(){ увійти(чистий(kod.value)); });
+  kod.addEventListener('keydown', function(e){ if (e.key === 'Enter' && чистий(kod.value).length === 8) увійти(чистий(kod.value)); });
+  D.getElementById('skip').addEventListener('click', function(){
+    store('пропущено', '1');
+    відкрити('', load('клас') || '', '');
+  });
+  D.getElementById('logout').addEventListener('click', function(){
+    store('код',''); store('хто',''); store('пропущено',''); store('клас','');
+    location.reload();
+  });
+
+  function увійти(код){
+    var клас = класЗКоду(код);
+    if (!клас){ нота('Такого коду не буває — перевірте перший знак.', 'bad'); return; }
+
+    /* Код зберігаємо ОДРАЗУ, щойно він структурно дійсний, — не чекаючи на
+       приймач. Інакше при порожньому `ПРИЙМАЧ.url` (а локально він саме
+       такий) `store` не викликався б ніколи, і сторінка питала б код
+       щоразу. Сам код не таємниця: він і так лежить у браузері учня. */
+    store('код', код);
+    var кеш = null;
+    try { кеш = JSON.parse(load('хто') || 'null'); } catch(e){}
+    if (кеш && кеш.код === код){ відкрити(код, кеш.клас, кеш.учень); }
+
+    нота('Перевіряємо код…');
+    jsonp({ дія:'вхід', код: код }, function(від){
+      if (від && від.ок){
+        store('код', код);
+        store('хто', JSON.stringify({ код: код, клас: від.клас, учень: від.учень }));
+        відкрити(код, від.клас, від.учень, від.роботи);
+        return;
+      }
+      if (кеш && кеш.код === код) return;                 // уже відкрили з кешу
+      if (!від){
+        // мережі немає: уроки показуємо, роботи — з попередженням
+        відкрити(код, клас, '', null, true);
+        return;
+      }
+      нота(від.помилка || 'Код не знайдено.', 'bad');
+    });
+  }
+
+  /* Уроки видно й без коду — вони й так публічні. Роботи без коду не
+     показуємо: перевірити, хто це, нічим. */
+  function відкрити(код, клас, учень, роботи, offline){
+    стан.код = код; стан.клас = клас; стан.учень = учень;
+    стан.роботи = роботи || null; стан.offline = !!offline;
+    gate.hidden = true; app.hidden = false;
+    D.getElementById('who').textContent =
+      учень ? (учень + ' · ' + клас)
+            : (код ? (клас + ' · код ' + код)
+                   : (клас ? (клас + ' · без коду') : 'Без коду — тільки уроки'));
+    побудувати();
+  }
+
+  /* ─────────────────── СПИСОК ─────────────────────────────────────── */
+  var list = D.getElementById('list'), empty = D.getElementById('empty');
+  var q = D.getElementById('q'), found = D.getElementById('found');
+  var tabs = D.getElementById('tabs');
+  var предмет = '';
+
+  function уроки(){
+    return ДАНІ.lessons.filter(function(l){ return !стан.клас || l.cls === стан.клас; });
+  }
+
+  function побудувати(){
+    /* Без коду класу ми не знаємо, а змішувати предмети чотирьох класів
+       не можна: «Інформатика» є і в 5-З, і в 9-А. Тому в режимі
+       «пропустити» спершу з'являється вибір класу. */
+    var рядок = D.getElementById('clsrow'), чіпи = D.getElementById('classes');
+    if (!стан.код){
+      рядок.hidden = false;
+      if (!чіпи.childNodes.length){
+        var класи = [];
+        ДАНІ.lessons.forEach(function(l){ if (класи.indexOf(l.cls) < 0) класи.push(l.cls); });
+        класи.sort();
+        класи.forEach(function(к){
+          var b = D.createElement('button');
+          b.type = 'button'; b.textContent = к; b.className = 'chip';
+          b.addEventListener('click', function(){
+            стан.клас = к; предмет = '';
+            store('клас', к);
+            D.getElementById('who').textContent = к + ' · без коду';
+            побудувати();
+          });
+          чіпи.appendChild(b);
+        });
+      }
+      [].forEach.call(чіпи.childNodes, function(b){
+        b.setAttribute('aria-pressed', b.textContent === стан.клас ? 'true' : 'false');
+      });
+      if (!стан.клас){
+        tabs.innerHTML = ''; list.innerHTML = '';
+        D.getElementById('works').hidden = true;
+        D.getElementById('plan').hidden = true;
+        empty.hidden = false;
+        empty.textContent = 'Обери свій клас, щоб побачити уроки.';
+        found.textContent = '';
+        return;
+      }
+      empty.textContent = 'За таким запитом нічого немає. Спробуй інше слово.';
+    } else {
+      рядок.hidden = true;
+    }
+
+    var мої = уроки();
+    var предмети = [];
+    мої.forEach(function(l){ if (предмети.indexOf(l.subject) < 0) предмети.push(l.subject); });
+    if (предмети.indexOf(предмет) < 0) предмет = предмети[0] || '';
+
+    tabs.innerHTML = '';
+    предмети.forEach(function(п){
+      var b = D.createElement('button');
+      b.type = 'button'; b.textContent = п;
+      b.className = 'chip';
+      b.setAttribute('aria-pressed', п === предмет ? 'true' : 'false');
+      b.style.setProperty('--h', hueOf(п));
+      b.addEventListener('click', function(){ предмет = п; побудувати(); });
+      tabs.appendChild(b);
+    });
+
+    малюватиРоботи();
+    малюватиУроки(мої.filter(function(l){ return l.subject === предмет; }));
+    малюватиПлан();
+  }
+
+  function малюватиРоботи(){
+    var box = D.getElementById('works'), сп = D.getElementById('works-list');
+    var нота2 = D.getElementById('works-note');
+    сп.innerHTML = ''; нота2.hidden = true;
+
+    if (!стан.код || !стан.клас){ box.hidden = true; return; }
+
+    var мої = ДАНІ.works.filter(function(w){ return w.cls === стан.клас; });
+    if (стан.роботи){                       // приймач сказав, що відкрито
+      мої = мої.filter(function(w){ return стан.роботи.indexOf(w.key) >= 0; });
+    } else {
+      нота2.hidden = false;
+      нота2.className = 'note bad';
+      нота2.textContent = 'Немає звʼязку з журналом — список робіт може бути неточним.';
+    }
+    if (!мої.length){ box.hidden = true; return; }
+
+    box.hidden = false;
+    мої.forEach(function(w){
+      var a = D.createElement('a');
+      a.className = 'work' + (seen['w:' + w.key] ? ' done' : '');
+      a.href = w.href + (стан.код ? '?код=' + encodeURIComponent(стан.код) : '');
+      a.style.setProperty('--h', hueOf(w.subject));
+      a.innerHTML = '<span class="kind">' + (w.kind === 'самостійна' ? 'Самостійна' : 'Контрольна') + '</span>' +
+        '<span class="grow"><b>' + esc(w.title) + '</b><br><span class="mins">' +
+        esc(w.subject) + (w.theme ? ' · ' + esc(w.theme) : '') + '</span></span>' +
+        '<span class="mins">' + (w.minutes ? w.minutes + ' хв' : '') +
+        (seen['w:' + w.key] ? ' · ✓ пройдено' : '') + '</span>';
+      a.addEventListener('click', function(){
+        seen['w:' + w.key] = 1; store('seen', JSON.stringify(seen));
+      });
+      сп.appendChild(a);
+    });
+  }
+
+  function esc(t){ return String(t == null ? '' : t)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function малюватиУроки(мої){
+    // Від нових до старих: найсвіжіший урок угорі.
+    мої = мої.slice().sort(function(a,b){ return (b.n||0) - (a.n||0); });
+    var сл = q.value.trim().toLowerCase();
+    if (сл) мої = мої.filter(function(l){
+      return ((l.title||'') + ' ' + (l.lesson||'') + ' ' + (l.subject||'')).toLowerCase().indexOf(сл) >= 0;
+    });
+
+    list.innerHTML = '';
+    мої.forEach(function(l){
+      var карта = D.createElement(l.href ? 'a' : 'div');
+      карта.className = 'card' + (l.offline ? ' offline' : '');
+      карта.style.setProperty('--h', hueOf(l.subject));
+      if (l.href){
+        карта.href = l.href;
+        карта.addEventListener('click', function(){
+          seen[l.href] = 1; store('seen', JSON.stringify(seen));
+        });
+      }
+      var мітки = '';
+      if (l.offline) мітки += '<span class="tag">Очно</span>';
+      if (l.fresh && !l.offline) мітки += '<span class="tag new">Новий</span>';
+      if (l.href && seen[l.href]) мітки += '<span class="tag">Переглянуто</span>';
+      карта.innerHTML = '<span class="num">' + esc(l.lesson || '') + '</span>' +
+        '<span class="grow"><b>' + esc(l.title || '') + '</b></span>' + мітки;
+      list.appendChild(карта);
+    });
+    empty.hidden = мої.length > 0;
+    found.textContent = мої.length
+      ? мої.length + ' ' + plural(мої.length, 'урок', 'уроки', 'уроків')
+      : '';
+  }
+
+  q.addEventListener('input', function(){ побудувати(); });
+  D.addEventListener('keydown', function(e){
+    if (e.key === '/' && D.activeElement !== q && !app.hidden){ e.preventDefault(); q.focus(); }
+  });
+
+  /* ── майбутні уроки: теми й назви з КТП, без посилань ── */
+  var planOpen = false;
+  D.getElementById('plan-btn').addEventListener('click', function(){
+    planOpen = !planOpen; малюватиПлан();
+  });
+
+  function малюватиПлан(){
+    var box = D.getElementById('plan');
+    var pb = D.getElementById('plan-btn');
+    pb.textContent = planOpen ? 'Сховати план' : 'Майбутні уроки';
+    pb.setAttribute('aria-expanded', planOpen ? 'true' : 'false');
+    if (!planOpen){ box.hidden = true; return; }
+    var п = ДАНІ.plans.filter(function(x){
+      return x.cls === стан.клас && x.subject === предмет; })[0];
+    box.hidden = false;
+    if (!п){
+      box.innerHTML = '<p class="note">Для цього предмета плану немає — клас іде за власним курсом.</p>';
+      return;
+    }
+    var h = '<p class="note">Це весь план із КТП. Проведені уроки закреслені, посилань тут немає.</p>';
+    п.themes.forEach(function(t){
+      var зроблено = t.lessons.filter(function(u){ return u.done; }).length;
+      h += '<h3>' + esc(t.theme) + ' <span class="mins">' + зроблено + ' з ' + t.lessons.length + '</span></h3><ol>';
+      t.lessons.forEach(function(u){
+        h += '<li value="' + u.n + '"' + (u.done ? ' class="done"' : '') + '>' + esc(u.title) + '</li>';
+      });
+      h += '</ol>';
+    });
+    box.innerHTML = h;
+  }
+
+  /* ── старт: код із памʼяті ── */
+  (function(){
+    var к = чистий(load('код') || '');
+    if (к.length === 8){ kod.value = к; D.getElementById('enter').disabled = false; увійти(к); return; }
+    if (load('пропущено') === '1') відкрити('', load('клас') || '', '');
+  })();
 })();
 </script>
 </body>
