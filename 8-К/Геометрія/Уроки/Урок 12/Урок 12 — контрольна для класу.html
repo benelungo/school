@@ -1,0 +1,2197 @@
+<!doctype html>
+<html lang="uk" data-subject="geometry">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,noimageindex">
+<title>Контрольна робота № 1 — Геометрія, 8-К</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     МОДУЛЬ КОНТРОЛЬНОЇ РОБОТИ — окрема сторінка, від деків незалежна.
+     Нічого з проєкту не використовує і нічого в ньому не міняє.
+
+     ЩО ТУТ Є
+       · один клік по відповіді — і він остаточний;
+       · завдання малюються в canvas (у DOM тексту немає) — не виділяється,
+         не копіюється, не читається програмою для зачитування екрана;
+       · анти-фото: викривлення літер, фонові «привиди» формул, рухома
+         штрихова маска, розбиття на два кадри (див. РІВНІ ЗАХИСТУ нижче);
+       · водяний знак із прізвищем — і в DOM, і всередині самого canvas;
+       · вкладка втратила фокус / PrintScreen → завдання миттєво зникає,
+         лічильник виходів росте й потрапляє у звіт;
+       · контекстне меню, виділення, копіювання, друк, перетягування — вимкнені.
+
+     ЧОГО ТУТ НЕМАЄ І БУТИ НЕ МОЖЕ
+       Скріншот засобами операційної системи браузер заблокувати не може —
+       ні на комп'ютері, ні на телефоні. Знімок робиться раніше, ніж сторінка
+       дізнається про втрату фокусу. Так само фото іншим телефоном лишається
+       можливим завжди. Усе нижче лише підвищує ціну списування й робить
+       кожен знімок іменним — гарантії не дає ніщо.
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<style>
+/*═════════════════════════ палітра (та сама, що в деках) ═════════════════*/
+:root{
+  --h:150;                       /* геометрія; алгебра 300, математика 258 */
+  --u:min(1vw,1.55vh);
+  --rad:12px;
+
+  --paper:oklch(98.4% .006 var(--h));
+  --card:oklch(100% 0 0);
+  --grid:oklch(89% .024 var(--h));
+  --ink:oklch(24% .035 var(--h));
+  --soft:oklch(51% .028 var(--h));
+  --edge:oklch(90% .015 var(--h));
+
+  --pen:oklch(50% .19 var(--h));   --pen-soft:oklch(95.5% .036 var(--h));
+  --on-pen:oklch(100% 0 0);
+  --check:oklch(52% .14 150);      --check-soft:oklch(95.5% .04 150);
+  --marker:oklch(55% .21 22);      --marker-soft:oklch(95.5% .04 22);
+  --sun:oklch(58% .13 78);         --sun-soft:oklch(96% .05 88);
+
+  --sh1:0 1px 2px oklch(24% .04 var(--h)/.06);
+  --sh2:0 4px 10px -3px oklch(24% .04 var(--h)/.10), 0 2px 4px -2px oklch(24% .04 var(--h)/.06);
+  --sh3:0 18px 40px -16px oklch(24% .04 var(--h)/.24);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  color-scheme:dark;
+  --paper:oklch(17% .022 var(--h)); --card:oklch(21.5% .025 var(--h));
+  --grid:oklch(30% .03 var(--h));   --ink:oklch(95% .015 var(--h));
+  --soft:oklch(72% .025 var(--h));  --edge:oklch(31% .028 var(--h));
+  --pen:oklch(78% .13 var(--h));    --pen-soft:oklch(29% .07 var(--h)); --on-pen:oklch(17% .02 var(--h));
+  --check:oklch(80% .16 150);       --check-soft:oklch(28% .06 150);
+  --marker:oklch(74% .16 22);       --marker-soft:oklch(29% .07 22);
+  --sun:oklch(84% .14 88);          --sun-soft:oklch(29% .06 78);
+  --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
+}}
+@supports not (color: oklch(50% .1 200)){
+  :root{--paper:#FBFAF7;--card:#fff;--grid:#C9D8E8;--ink:#1B2430;--soft:#5B6879;--edge:#DDE4EC;
+        --pen:#6B2FC9;--pen-soft:#F0E9FC;--on-pen:#fff;--check:#1B7F4B;--check-soft:#E4F3EA;
+        --marker:#D7263D;--marker-soft:#FCEAEC;--sun:#B57C00;--sun-soft:#FDF3DC}
+}
+
+/*═════════════════════════ база ══════════════════════════════════════════*/
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;height:100%}
+body{
+  margin:0;min-height:100%;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:30px 30px;
+  color:var(--ink);
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  padding:env(safe-area-inset-top,0) 16px env(safe-area-inset-bottom,0);
+}
+@media (prefers-color-scheme: dark){ body{background-image:
+  linear-gradient(oklch(30% .03 var(--h)/.5) 1px,transparent 1px),
+  linear-gradient(90deg,oklch(30% .03 var(--h)/.5) 1px,transparent 1px)} }
+
+/*───── заборона виділення й довгого натиску (п. «не копіювати», «без меню») ─*/
+body,body *{
+  -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;
+  -webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent;
+}
+input,textarea{-webkit-user-select:text;user-select:text}
+img,canvas{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+
+h1,h2{font-family:"Unbounded","Manrope",sans-serif;letter-spacing:-.02em;margin:0}
+h1{font-weight:800;font-size:clamp(22px,calc(3.6*var(--u)),40px);line-height:1.06}
+h2{font-weight:600;font-size:clamp(17px,calc(2.4*var(--u)),27px);line-height:1.16}
+p{margin:0 0 10px;font-size:clamp(14px,calc(1.6*var(--u)),19px);line-height:1.5}
+.eyebrow{font-family:"Unbounded",sans-serif;font-weight:600;color:var(--soft);
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase}
+.lede{font-size:clamp(15px,calc(1.9*var(--u)),22px);color:var(--soft);line-height:1.4;max-width:60ch}
+b{font-weight:800}
+
+.wrap{max-width:1080px;margin:0 auto;padding-block:22px}
+[hidden]{display:none!important}
+
+/*═════════════════════════ екран входу ═══════════════════════════════════*/
+.card{background:var(--card);border:1px solid var(--edge);border-radius:var(--rad);
+  box-shadow:var(--sh2);padding:clamp(18px,calc(2.6*var(--u)),30px)}
+.card+.card{margin-top:16px}
+.rules{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:9px}
+.rules li{display:flex;gap:10px;align-items:flex-start;
+  font-size:clamp(14px,calc(1.55*var(--u)),18px);line-height:1.42}
+.rules li::before{content:"";flex:0 0 auto;width:9px;height:9px;margin-top:.45em;
+  border-radius:3px;background:var(--pen)}
+.rules li.no::before{background:var(--marker)}
+
+label{display:block;font-family:"Unbounded",sans-serif;font-weight:600;color:var(--soft);
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
+  margin:0 0 6px}
+input[type=text],select{
+  width:100%;padding:12px 14px;border:2px solid var(--edge);border-radius:10px;
+  background:var(--paper);color:var(--ink);font:inherit;
+  font-size:clamp(16px,calc(1.9*var(--u)),21px);font-weight:600}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 4px var(--pen-soft)}
+select:disabled{opacity:.55}
+#fam-note{margin-top:8px}
+#hint{display:block}
+.field+.field{margin-top:14px}
+
+.btn{display:inline-flex;align-items:center;gap:10px;cursor:pointer;
+  font-family:"Unbounded",sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  font-size:clamp(12px,calc(1.3*var(--u)),15px);
+  padding:14px 26px;border-radius:10px;border:2px solid var(--pen);
+  background:var(--pen);color:var(--on-pen);box-shadow:var(--sh1);
+  transition:transform .12s, box-shadow .12s}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--sh2)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--pen)}
+
+/*═════════════════════════ шапка роботи ══════════════════════════════════*/
+#bar{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:10px 0;background:color-mix(in oklab,var(--paper) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--edge);
+  padding-top:calc(10px + env(safe-area-inset-top,0px))}
+.chip{display:inline-flex;align-items:center;gap:7px;
+  border:1.5px solid var(--edge);background:var(--card);border-radius:999px;
+  padding:6px 13px;font-family:"Unbounded",sans-serif;font-weight:600;
+  font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase}
+.chip .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
+  letter-spacing:0;font-size:1.12em}
+#clock.warn{border-color:var(--sun);color:var(--sun);background:var(--sun-soft)}
+#clock.hot{border-color:var(--marker);color:var(--marker);background:var(--marker-soft)}
+#esc{border-color:var(--edge);color:var(--soft)}
+#esc.on{border-color:var(--marker);color:var(--marker);background:var(--marker-soft)}
+#bar .sp{flex:1 1 auto}
+
+#rail{display:flex;gap:4px;margin:12px 0 18px}
+#rail i{flex:1 1 0;height:6px;border-radius:3px;background:var(--edge)}
+#rail i.done{background:var(--pen)}
+#rail i.now{background:var(--pen);box-shadow:0 0 0 3px var(--pen-soft)}
+
+/*═════════════════════════ завдання ══════════════════════════════════════*/
+#qcard{position:relative;background:var(--card);border:1px solid var(--edge);
+  border-radius:var(--rad);box-shadow:var(--sh2);overflow:hidden}
+#qcard::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--pen)}
+.qhead{display:flex;align-items:baseline;gap:12px;padding:20px 22px 0}
+.qno{font-family:"Unbounded",sans-serif;font-weight:800;color:var(--pen);
+  font-size:clamp(20px,calc(2.6*var(--u)),30px);line-height:1}
+.qbal{font-family:"Unbounded",sans-serif;font-weight:600;color:var(--soft);
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase}
+
+/* Полотно завдання. Тексту в DOM немає — тільки пікселі.
+   .pane — обов'язковий відносний контейнер: другий кадр лежить ПОВЕРХ
+   першого, інакше він стає під ним і блок виходить удвічі вищим. */
+.stage{margin:14px 0 4px;padding:0 22px}
+.pane{position:relative;line-height:0;width:100%;overflow:hidden}
+.pane .lay{display:block;width:100%;height:auto}
+.pane .lay.b{position:absolute;left:0;top:0}
+/* Перекриття — рухомий візерунок, що ховає частину штриха в кожен момент.
+   Тут тільки місце й розмір: сам візерунок, його тип і рух задає скрипт
+   (секція «ПЕРЕКРИТТЯ»), бо типів дев'ять і вибір між ними — справа вчителя.
+   Жодного фону в CSS навмисно: інакше при перевдяганні на інший тип
+   проблискували б смужки з цього правила. */
+/* Кожен набір смуг — власний шар, і рухається він transform'ом, а не
+   background-position. Причина не в швидкодії, а в правильності: у градієнта
+   плитка дорівнює розміру елемента, тож зсув фону показує СУСІДНЮ плитку,
+   де візерунок починається спочатку, — і на стику циклу видно ривок.
+   Шар навмисно більший за картку (inset:-150px), тому зсув до 150px ніколи
+   не оголює його край, а зсув рівно на період дає піксель у піксель те саме.
+   Зайве обрізає .pane своїм overflow:hidden. */
+/* Смужка накриває лише прямокутник прикладу — координати ставить скрипт.
+   overflow:hidden тут обов'язковий: шар зі смугами навмисно більший за
+   рамку (inset:-150px), інакше зсув оголював би його край. */
+.pane .veil{position:absolute;pointer-events:none;overflow:hidden;border-radius:4px}
+.pane .veil i{position:absolute;inset:-150px;display:block;will-change:transform}
+
+
+/*───── варіанти: один клік — і все ─────*/
+#opts{display:grid;gap:10px;padding:16px 22px 22px}
+@media (min-width:760px){ #opts{grid-template-columns:1fr 1fr} }
+.opt{position:relative;display:flex;align-items:center;gap:14px;cursor:pointer;
+  border:2px solid var(--edge);background:var(--paper);border-radius:10px;
+  padding:12px 16px;text-align:left;font:inherit;color:inherit;width:100%;
+  transition:border-color .12s, background .12s, transform .1s}
+.opt .k{flex:0 0 auto;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  background:var(--card);border:1.5px solid var(--edge);
+  font-family:"Unbounded",sans-serif;font-weight:800;font-size:15px;color:var(--soft)}
+.opt canvas{flex:1 1 auto;max-width:100%}
+.opt:not(:disabled):hover{border-color:var(--pen);background:var(--pen-soft)}
+.opt:not(:disabled):hover .k{border-color:var(--pen);color:var(--pen)}
+.opt.sel{border-color:var(--pen);background:var(--pen-soft);transform:scale(.995)}
+.opt.sel .k{background:var(--pen);border-color:var(--pen);color:var(--on-pen)}
+.opt:disabled{cursor:default}
+#opts.locked .opt:not(.sel){opacity:.4}
+
+.note{display:flex;gap:9px;align-items:center;margin:14px 2px 0;color:var(--soft);
+  font-size:clamp(12px,calc(1.3*var(--u)),15px)}
+.note b{color:var(--marker)}
+
+/*───── панель підбирання смужки (тільки для вчителя) ─────*/
+.tune{margin-top:22px;padding-top:20px;border-top:2px dashed var(--edge)}
+.tune input[type=range]{width:100%;margin:10px 0 0;accent-color:var(--pen);height:26px}
+.tune label{text-transform:none;letter-spacing:.04em;color:var(--ink);
+  font-family:"Manrope",sans-serif;font-weight:600;
+  font-size:clamp(13px,calc(1.5*var(--u)),17px)}
+.tune label b{color:var(--pen);font-family:"JetBrains Mono",monospace;
+  font-variant-numeric:tabular-nums;font-size:1.15em}
+.tune .note{display:block}
+#d-sent.ok{color:var(--check);font-weight:700}
+#d-sent.bad{color:var(--marker);font-weight:700}
+#sp-note.bad{color:var(--marker);font-weight:700}
+#sp-note.ok{color:var(--check)}
+
+/*═════════════════════════ щит: втрата фокусу / PrintScreen ══════════════*/
+#shield{position:fixed;inset:0;z-index:900;display:grid;place-items:center;
+  background:var(--paper);text-align:center;padding:24px}
+#shield .in{max-width:34ch}
+#shield .big{font-family:"Unbounded",sans-serif;font-weight:800;color:var(--marker);
+  font-size:clamp(24px,calc(3.6*var(--u)),42px);line-height:1.1;margin:0 0 12px}
+/* коли щит піднято — під ним нічого не видно й нічого не клікнути */
+body.guard #app{filter:blur(26px) saturate(.25);pointer-events:none}
+body:not(.guard) #shield{display:none}
+
+/*═════════════════════════ водяний знак ══════════════════════════════════*/
+/* Косі рядки, що вкривають усе вікно: прізвище потрапляє на будь-який
+   знімок і на будь-яке фото, з якого боку його не роби. */
+#wm{position:fixed;inset:-40%;z-index:800;pointer-events:none;overflow:hidden;
+  opacity:.06;transform:rotate(-24deg);
+  display:flex;flex-direction:column;justify-content:center;gap:1.9em}
+#wm span{font-family:"Unbounded",sans-serif;font-weight:800;white-space:nowrap;
+  font-size:clamp(15px,calc(1.9*var(--u)),23px);letter-spacing:.14em;
+  line-height:1;text-align:center}
+#wm span:nth-child(even){transform:translateX(-7%)}
+
+/*═════════════════════════ підсумок ══════════════════════════════════════*/
+.score{font-family:"Unbounded",sans-serif;font-weight:800;color:var(--pen);
+  font-size:clamp(46px,calc(8*var(--u)),96px);line-height:1;letter-spacing:-.03em}
+.codebox{margin-top:16px;padding:14px 16px;border:2px dashed var(--pen);border-radius:10px;
+  background:var(--pen-soft);font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(13px,calc(1.5*var(--u)),18px);word-break:break-all;
+  -webkit-user-select:text;user-select:text}
+
+/*───── розбір помилок (приходить від приймача, тільки самостійна) ─────
+  Текст тут ВИДІЛЯЄТЬСЯ і копіюється, на відміну від решти сторінки:
+  робота вже здана, і переписати кроки в зошит — саме те, чого ми хочемо.
+  Тон — «сонячний», не червоний: це не докір, а пояснення.               */
+#d-fix{-webkit-user-select:text;user-select:text}
+.fix{margin-top:14px;padding:14px 18px;border-radius:10px;
+  background:var(--sun-soft);border:1px solid var(--edge)}
+.fixno{margin:0 0 8px;font-family:"Unbounded",sans-serif;font-weight:700;
+  color:var(--sun);font-size:clamp(14px,calc(1.7*var(--u)),20px);letter-spacing:-.01em}
+.fix ol{margin:0;padding-left:1.45em;display:grid;gap:7px}
+.fix li{font-size:clamp(14px,calc(1.6*var(--u)),19px);line-height:1.45;color:var(--ink)}
+.fix li::marker{color:var(--soft);font-weight:700}
+/* останній крок — це «Відповідь: …», і його шукають очима першим */
+.fix li:last-child{font-weight:800;color:var(--check)}
+.fix li:last-child::marker{color:var(--check)}
+
+/*═════════════════════════ друк заборонено ═══════════════════════════════*/
+@media print{ html,body{display:none!important;visibility:hidden!important} }
+</style>
+</head>
+<body class="lvl-max">
+
+<!-- ═══════════════════════ РОЗМІТКА ═══════════════════════════════════ -->
+<div id="wm" hidden></div>
+
+<div id="shield"><div class="in">
+  <p class="big">Поверніться до роботи</p>
+  <p class="lede" id="shieldwhy">Ви вийшли з вікна. Завдання сховано.</p>
+  <p class="eyebrow" style="margin-top:14px">клікніть тут, щоб продовжити</p>
+</div></div>
+
+<div id="app">
+
+<!--── екран входу ───────────────────────────────────────────────────────-->
+<section id="start" class="wrap">
+  <p class="eyebrow" id="s-meta">—</p>
+  <h1 id="s-title" style="margin:6px 0 12px">—</h1>
+
+  <div class="card">
+    <h2>Як це працює</h2>
+    <!-- наповнюється з ТИПИ_РОБІТ[тип].правила: формулювання різні
+         для контрольної й самостійної -->
+    <ul class="rules" id="rules"></ul>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label for="kod">Код учня</label>
+      <input type="text" id="kod" maxlength="8" autocomplete="off" spellcheck="false"
+             autocapitalize="characters" placeholder="8 знаків" style="letter-spacing:.22em;text-transform:uppercase">
+      <p class="note" id="kod-note"></p>
+    </div>
+    <p class="lede" id="hto" hidden style="margin:14px 0 0"></p>
+    <p style="margin:18px 0 0"><button class="btn" id="go" disabled>Почати роботу</button></p>
+    <p class="note" style="margin-top:12px">Після натискання відлік починається одразу.</p>
+  </div>
+
+  <!-- панель учителя: тільки щоб підібрати рівень захисту очима -->
+  </section>
+
+<!--── робота ────────────────────────────────────────────────────────────-->
+<section id="exam" class="wrap" hidden>
+  <div id="bar">
+    <span class="chip" id="who">—</span>
+    <span class="chip" id="step">Питання <b class="v" id="step-n">1</b> / <b class="v" id="step-all">1</b></span>
+    <span class="sp"></span>
+    <span class="chip" id="esc">Виходів з вікна <b class="v" id="esc-n">0</b></span>
+    <span class="chip" id="clock"><b class="v" id="clock-v">--:--</b></span>
+  </div>
+
+  <div id="rail"></div>
+
+  <div id="qcard">
+    <div class="qhead"><span class="qno" id="q-no">1</span><span class="qbal" id="q-bal">1 бал</span></div>
+    <div class="stage" id="q-stage"></div>
+    <div id="opts"></div>
+  </div>
+
+  <p class="note" id="hint">Наведіть і <b>клікніть один раз</b> — відповідь зарахується одразу.</p>
+</section>
+
+<!--── підсумок ──────────────────────────────────────────────────────────-->
+<section id="done" class="wrap" hidden>
+  <div class="card">
+    <p class="eyebrow">Роботу завершено</p>
+    <h1 style="margin:6px 0 16px" id="d-name">—</h1>
+    <div id="d-score" hidden>
+      <p class="score"><span id="d-ball">—</span><span style="font-size:.4em;color:var(--soft)"> / <span id="d-max">—</span></span></p>
+      <p class="lede" id="d-word" style="margin-top:8px"></p>
+      <p class="lede" id="d-wrong" style="margin-top:4px"></p>
+    </div>
+    <p class="lede" id="d-sent">Готуємо результат…</p>
+    <p class="eyebrow" style="margin-top:22px">Код-звіт — надішліть його в чат</p>
+    <div class="codebox" id="d-code">—</div>
+    <p class="note" style="margin-top:14px">Виходів з вікна: <b id="d-esc">0</b> · Витрачено часу: <b id="d-time">—</b></p>
+  </div>
+
+  <!--─ розбір помилок ───────────────────────────────────────────────────
+    Приходить ГОТОВИМ від приймача: тільки самостійна, тільки перша спроба,
+    тільки ті задачі, у яких учень помилився. Сторінка розв'язань не знає —
+    інакше їх прочитали б через «переглянути код» до початку роботи.
+    Окрема картка, бо блок довгий: результат нагорі не мусить від нього
+    з'їжджати. Код-звіт нижче цьому не заважає — якщо показ дійшов, то
+    результат збережено й код-звіт уже ні до чого.                      -->
+  <div class="card" id="d-fix" hidden>
+    <p class="eyebrow">Розбір</p>
+    <h2 style="margin:6px 0 10px">Як слід було розв'язати</h2>
+    <p class="lede" style="margin:0">Прочитай зараз, поки задача ще в голові. У контрольній числа будуть інші, тож запам'ятовувати треба <b>спосіб</b>, а не відповідь.</p>
+    <div id="d-fix-list"></div>
+  </div>
+</section>
+
+</div><!-- /#app -->
+
+<script>
+"use strict";
+/*═══════════════════════════════════════════════════════════════════════════
+  1 · НАЛАШТУВАННЯ РОБОТИ
+      Учитель міняє тільки цей блок.
+═══════════════════════════════════════════════════════════════════════════*/
+
+/* ТИПИ РОБІТ — значення за замовчуванням. Робота перевизначає лише те,
+   що відхиляється від типового.
+
+   Тут НЕМАЄ ні назви теки в Drive, ні прапорця «показувати бал»: і те, і
+   те вирішує приймач за своїм білим списком. Якби вони лежали тут, учень
+   підмінив би їх у консолі — а так підміняти нíчого.
+
+   Числа взято з власних рекомендацій учителя в генераторі «На Урок»:
+   самостійна — 12 питань, 30 хвилин, одна спроба. */
+const ТИПИ_РОБІТ = {
+  контрольна: {
+    рід: 'Контрольна робота', захист: 'max', хвилин: 40,
+    повнийЕкран: true,  другийЕкран: true,
+    правила: [
+      ['',   '<b>Один клік — остаточна відповідь.</b> Змінити її або повернутись назад не можна.'],
+      ['',   'Питання йдуть по одному, час на всю роботу — <b id="s-min">—</b> хв.'],
+      ['no', 'Копіювання, друк і контекстне меню вимкнені, завдання захищене від знімка.'],
+      ['no', 'Кожен вихід із вікна ховає завдання й рахується. Лічильник іде в звіт учителю.'],
+      ['',   'Прізвище видно на екрані весь час — воно потрапляє на будь-який знімок.']
+    ]
+  },
+  самостійна: {
+    рід: 'Самостійна робота', захист: 'mid', хвилин: 30,
+    // удома повний екран не потрібен, а другий монітор — не порушення
+    повнийЕкран: false, другийЕкран: false,
+    правила: [
+      ['',   '<b>Один клік — остаточна відповідь.</b> Змінити її або повернутись назад не можна.'],
+      ['',   'Питання йдуть по одному, час на всю роботу — <b id="s-min">—</b> хв.'],
+      ['no', '<b>Роби за один раз.</b> Якщо закрити сторінку, робота почнеться спочатку.'],
+      ['',   'Після завершення одразу побачиш бал, номери задач, де помилився, і покроковий розбір саме цих задач.'],
+      ['',   'Завдання контрольної будуть узяті з цих самих. Списавши сьогодні, ти купуєш оцінку нині й втрачаєш її на контрольній, де списати не вийде.']
+    ]
+  }
+};
+
+const РОБОТА = {
+  тип:     'контрольна',
+  номер:   1,
+  назва:   '',                   // порожньо → складеться «Контрольна робота № 1»
+  предмет: 'Геометрія',
+  тема:    'Чотирикутник. Паралелограм і його види',
+  // 35 хв замість типових 40: урок 40 хв, 5 хв — на організацію
+  // (роздати код, увійти). Захист типовий для контрольної — max.
+  хвилин: 35,
+
+  приймач: {
+    url:   'https://script.google.com/macros/s/AKfycbzazR__pCCYXgsBWx-hCJW01NVw1sD55LaJRcE-WkFsDPlGUIythESh7M35TJnkKdk9/exec',
+    токен: 'fowenf93nuf3eeno3ef9u3f'
+  },
+
+  розподілВаріанта: 'за прізвищем',
+
+  /* ДВА варіанти: робота пишеться в класі. Завдання йдуть у тому самому
+     порядку за змістом, що й у самостійній № 1 (урок 11) — вона була
+     тренуванням, — але числа інші й кожен крок на одну дію довший. */
+  варіанти: [
+    { мітка: 'Варіант 1', завдання: [
+      { q:'Укажіть пару відрізків, які є діагоналями чотирикутника MNPK.',
+        a:['MN і PK','MP і NK','NP і MK','MN і NP'] },
+
+      { q:'Кути чотирикутника пропорційні числам [2, 3, 4 і 6]. Знайдіть найбільший кут цього чотирикутника.',
+        a:['96°','24°','144°','120°'] },
+
+      { q:'Два кути паралелограма, прилеглі до однієї сторони, відрізняються на [40°]. Знайдіть менший з кутів паралелограма.',
+        a:['110°','140°','70°','80°'] },
+
+      { q:'Периметр квадрата на [12 см] більший за периметр квадрата зі стороною [5 см]. Знайдіть сторону більшого квадрата.',
+        a:['8 см','17 см','6,5 см','9 см'] },
+
+      { q:'Периметр прямокутника дорівнює [40 см], а його сторони відносяться як [2 : 3]. Знайдіть більшу сторону прямокутника.',
+        a:['8 см','24 см','12 см','16 см'] },
+
+      { q:'Периметр паралелограма дорівнює [56 см], а одна з його сторін на [4 см] менша за другу. Знайдіть більшу сторону паралелограма.',
+        a:['12 см','16 см','14 см','30 см'] },
+
+      { q:'ABCD — ромб, кут ABD дорівнює [35°]. Знайдіть кути ромба.',
+        a:['35° і 145°','55° і 125°','70° і 110°','140° і 40°'] },
+
+      { q:'Діагоналі прямокутника ABCD перетинаються в точці O. Кут ABO на [24°] менший за кут AOB. Знайдіть кут AOB.',
+        a:['52°','76°','104°','68°'] },
+
+      { q:'Укажіть ХИБНЕ твердження.',
+        a:['Діагоналі ромба ділять його кути навпіл','Діагоналі прямокутника точкою перетину діляться навпіл','Якщо діагоналі паралелограма взаємно перпендикулярні, то він є ромбом','Якщо діагоналі чотирикутника рівні, то він є прямокутником'] },
+
+      { q:'У чотирикутнику ABCD діагоналі перетинаються в точці O, причому AO = OC, BO = OD, а до того ж AC перпендикулярна до BD. Якою фігурою є ABCD?',
+        a:['прямокутником','ромбом','трапецією','квадратом'] },
+
+      { q:'Бісектриса кута A паралелограма ABCD ділить сторону BC на відрізки BK і KC так, що [BK : KC = 3 : 1]. Периметр паралелограма дорівнює [70 см]. Знайдіть сторону AB.',
+        a:['20 см','17,5 см','15 см','10 см'] },
+
+      { q:'З вершини тупого кута B ромба ABCD проведено висоту BK до сторони AD. Кут ABK дорівнює [30°], а периметр ромба — [48 см]. Знайдіть відрізок AK.',
+        a:['12 см','3 см','24 см','6 см'] }
+    ]},
+
+    { мітка: 'Варіант 2', завдання: [
+      { q:'Укажіть пару відрізків, які є діагоналями чотирикутника ABCD.',
+        a:['AB і CD','BC і AD','AC і BD','AB і BC'] },
+
+      { q:'Кути чотирикутника пропорційні числам [3, 4, 5 і 6]. Знайдіть найбільший кут цього чотирикутника.',
+        a:['120°','60°','100°','108°'] },
+
+      { q:'Два кути паралелограма, прилеглі до однієї сторони, відрізняються на [50°]. Знайдіть менший з кутів паралелограма.',
+        a:['115°','65°','130°','75°'] },
+
+      { q:'Периметр квадрата на [16 см] більший за периметр квадрата зі стороною [7 см]. Знайдіть сторону більшого квадрата.',
+        a:['23 см','9 см','11 см','12 см'] },
+
+      { q:'Периметр прямокутника дорівнює [36 см], а його сторони відносяться як [4 : 5]. Знайдіть більшу сторону прямокутника.',
+        a:['8 см','10 см','20 см','16 см'] },
+
+      { q:'Периметр паралелограма дорівнює [64 см], а одна з його сторін на [6 см] менша за другу. Знайдіть меншу сторону паралелограма.',
+        a:['19 см','29 см','13 см','16 см'] },
+
+      { q:'ABCD — ромб, кут ACD дорівнює [28°]. Знайдіть кути ромба.',
+        a:['28° і 152°','56° і 124°','62° і 118°','112° і 68°'] },
+
+      { q:'Діагоналі прямокутника ABCD перетинаються в точці O. Кут ABO на [30°] менший за кут AOB. Знайдіть кут AOB.',
+        a:['50°','100°','80°','65°'] },
+
+      { q:'Укажіть ХИБНЕ твердження.',
+        a:['Кожен квадрат є ромбом','Кожен прямокутник є паралелограмом','Кожен ромб є квадратом','Точка перетину діагоналей прямокутника рівновіддалена від усіх його вершин'] },
+
+      { q:'У чотирикутнику MNPK діагоналі перетинаються в точці O, причому MO = OP, NO = OK і MP = NK. Якою фігурою є MNPK?',
+        a:['ромбом','прямокутником','квадратом','довільним паралелограмом'] },
+
+      { q:'Бісектриса кута M паралелограма MNPK ділить сторону NP на відрізки NE і EP так, що [NE : EP = 2 : 1]. Периметр паралелограма дорівнює [60 см]. Знайдіть сторону MN.',
+        a:['18 см','12 см','15 см','10 см'] },
+
+      { q:'З вершини тупого кута C ромба ABCD проведено висоту CM до сторони AD. Кут DCM дорівнює [30°], а периметр ромба — [56 см]. Знайдіть відрізок MD.',
+        a:['14 см','7 см','28 см','3,5 см'] }
+    ]}
+  ]
+};
+
+/* Сумісність зі старими файлами: один плаский список завдань
+   перетворюємо на єдиний варіант. */
+if (!РОБОТА.варіанти && РОБОТА.завдання){
+  РОБОТА.варіанти = [{ мітка:'Єдиний варіант', завдання: РОБОТА.завдання }];
+}
+
+/* Т — зведені налаштування: типові значення, перекриті полями роботи.
+   Далі в коді читаємо ТІЛЬКИ Т, не РОБОТА і не ТИПИ_РОБІТ.
+
+   Фільтр саме по undefined, а не по «порожнє»: `приймач.url: ''` —
+   осмислено порожній (режим репетиції), і перекривати його типовим не можна.
+   Назва — окремий випадок: порожній рядок означає «склади сам».
+
+   Заморожувати Т не можна: панель учителя міняє рівень захисту на льоту,
+   а файл у strict mode — запис у заморожений об'єкт кинув би TypeError. */
+const Т = (function звести(р){
+  const б = ТИПИ_РОБІТ[р.тип];
+  if (!б) throw new Error('Невідомий тип роботи: ' + р.тип);
+  const зв = Object.assign({}, б);
+  Object.keys(р).forEach(к => { if (р[к] !== undefined) зв[к] = р[к]; });
+  зв.назва = String(р.назва || '').trim() || `${б.рід} № ${р.номер}`;
+  return зв;
+})(РОБОТА);
+
+/*═══════════════════════════════════════════════════════════════════════════
+  2 · ДРІБНИЦІ
+═══════════════════════════════════════════════════════════════════════════*/
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const КОД_ЛІТЕРИ = ['А','Б','В','Г','Д','Е'];
+const ПІД = 'кр-сіль-2026';                     // сіль для контрольної суми
+
+function сума(рядок){                            // коротка контрольна сума
+  let h = 0x811c9dc5;
+  for (const ch of (рядок + ПІД)){
+    h ^= ch.codePointAt(0);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(16).toUpperCase().padStart(8,'0').slice(-4);
+}
+const двоцифра = n => String(n).padStart(2,'0');
+const час = с => `${двоцифра(Math.floor(с/60))}:${двоцифра(с%60)}`;
+
+/*═══════════════════════════════════════════════════════════════════════════
+  3 · МАЛЮВАННЯ ТЕКСТУ ЗАВДАННЯ В CANVAS
+      У DOM тексту немає взагалі — тільки пікселі. Звідси одразу:
+      нічого не виділяється, нічого не копіюється, «зачитування екрана»
+      і пошук по сторінці нічого не знаходять.
+═══════════════════════════════════════════════════════════════════════════*/
+
+/*── 3.1 розбір мініатюрного мат.синтаксису ─────────────────────────────*/
+function розібрати(s){
+  let i = 0;
+  const група = () => { i++; const r = послідовність('}'); i++; return r; };  // s[i] === '{'
+  function послідовність(стоп){
+    const out = []; let буфер = '';
+    const злити = () => { if (буфер){ out.push({t:'txt',v:буфер}); буфер=''; } };
+    while (i < s.length){
+      const c = s[i];
+      if (стоп && c === стоп) break;
+      if (c === '\\' && (s[i+1] === 'f' || s[i+1] === 's')){
+        злити();
+        const вид = s[i+1]; i += 2;
+        if (вид === 'f') out.push({ t:'frac', n:група(), d:група() });
+        else             out.push({ t:'sqrt', c:група() });
+        continue;
+      }
+      if (c === '^' || c === '_'){
+        злити();
+        const вид = c === '^' ? 'sup' : 'sub'; i++;
+        out.push({ t:вид, c: s[i] === '{' ? група() : (i++, [{t:'txt',v:s[i-1]}]) });
+        continue;
+      }
+      // [ … ] — ПРИКЛАД: те єдине, що ховається під перекриттям.
+      // Він же неподільний при переносі рядка: розрізаний навпіл приклад
+      // читається гірше за будь-яке перекриття.
+      if (c === '['){
+        злити(); i++;
+        const вміст = послідовність(']'); i++;
+        out.push({ t:'ex', c:вміст });
+        continue;
+      }
+      буфер += c; i++;
+    }
+    злити();
+    return out;
+  }
+  return послідовність(null);
+}
+
+/*── 3.2 розміри ─────────────────────────────────────────────────────────*/
+function шрифт(ctx, px, курсив){
+  ctx.font = `${курсив?'italic ':''}600 ${px}px "Manrope","Segoe UI",system-ui,sans-serif`;
+}
+function зміряти(ctx, вузли, px){
+  let w = 0, asc = px*0.74, desc = px*0.24;
+  for (const n of вузли){
+    if (n.t === 'txt'){ шрифт(ctx, px); w += ctx.measureText(n.v).width; }
+    else if (n.t === 'ex'){
+      const m = зміряти(ctx, n.c, px);
+      w += m.w; asc = Math.max(asc, m.asc); desc = Math.max(desc, m.desc);
+    }
+    else if (n.t === 'sup' || n.t === 'sub'){
+      const m = зміряти(ctx, n.c, px*0.66); w += m.w;
+      if (n.t === 'sup'){ asc  = Math.max(asc,  m.asc + px*0.36); }
+      else             { desc = Math.max(desc, m.desc + px*0.28); }
+    }
+    else if (n.t === 'frac'){
+      const a = зміряти(ctx, n.n, px*0.84), b = зміряти(ctx, n.d, px*0.84);
+      w   += Math.max(a.w, b.w) + px*0.34;
+      asc  = Math.max(asc,  px*0.28 + (a.asc + a.desc) + px*0.12);
+      desc = Math.max(desc, (b.asc + b.desc) + px*0.12 - px*0.28);
+    }
+    else if (n.t === 'sqrt'){
+      const a = зміряти(ctx, n.c, px);
+      w   += a.w + px*0.66;
+      asc  = Math.max(asc, a.asc + px*0.22);
+      desc = Math.max(desc, a.desc);
+    }
+  }
+  return { w, asc, desc };
+}
+
+/*── 3.3 власне малювання ────────────────────────────────────────────────*/
+/* Викривлення на рівні кожної літери: дрібний поворот, зсув, масштаб.
+   Для ока непомітно, для шаблонного зіставлення OCR — інший гліф щоразу. */
+/* Товщина обводки літер. Нуль — не обводити. Ставиться в полотно(),
+   бо залежить від режиму, а не від вузла. Перевіряти тут ctx.lineWidth не
+   можна: його типове значення — 1, і обводка вмикалась би завжди. */
+let обводка = 0;
+
+function літери(ctx, текст, x, y, px, кв){
+  шрифт(ctx, px);
+  const жирніше = обводка > 0;
+  for (const ch of текст){
+    const w = ctx.measureText(ch).width;
+    if (!кв || ch === ' '){
+      if (ch !== ' '){ ctx.fillText(ch, x, y); if (жирніше) ctx.strokeText(ch, x, y); }
+      x += w; continue;
+    }
+    ctx.save();
+    ctx.translate(x + w/2, y);
+    ctx.rotate((Math.random()*2 - 1) * 0.038);
+    ctx.scale(1 + (Math.random()*2-1)*0.045, 1 + (Math.random()*2-1)*0.055);
+    ctx.translate(0, (Math.random()*2-1) * px*0.035);
+    ctx.fillText(ch, -w/2, 0);
+    if (жирніше) ctx.strokeText(ch, -w/2, 0);
+    ctx.restore();
+    x += w * (1 + (Math.random()*2-1)*0.018);
+  }
+  return x;
+}
+/* Куди складати прямокутники прикладів. Не null лише на час малювання
+   завдання: варіанти й текст питання захисту не мають. */
+let ексБокси = null;
+
+function малювати(ctx, вузли, x, y, px, кв){
+  for (const n of вузли){
+    if (n.t === 'txt'){ x = літери(ctx, n.v, x, y, px, кв); }
+    else if (n.t === 'ex'){
+      const m = зміряти(ctx, n.c, px);
+      // Усередині прикладу — повний захист: викривлення літер і, у
+      // двокадровому режимі, обводка. Поза ним текст лишається звичайним.
+      const булаОбводка = обводка;
+      const бувКв = кв;
+      if (рівень.кадри){
+        ctx.save();
+        ctx.strokeStyle = ctx.fillStyle;
+        ctx.lineWidth = px*0.055; ctx.lineJoin = 'round';
+        обводка = ctx.lineWidth;
+      }
+      малювати(ctx, n.c, x, y, px, рівень.кв);
+      if (рівень.кадри){ ctx.restore(); обводка = булаОбводка; }
+      кв = бувКв;
+      if (ексБокси) ексБокси.push({ x, y, w:m.w, asc:m.asc, desc:m.desc });
+      x += m.w;
+    }
+    else if (n.t === 'sup'){ const s = px*0.66; малювати(ctx, n.c, x, y - px*0.36, s, кв); x += зміряти(ctx,n.c,s).w; }
+    else if (n.t === 'sub'){ const s = px*0.66; малювати(ctx, n.c, x, y + px*0.28, s, кв); x += зміряти(ctx,n.c,s).w; }
+    else if (n.t === 'frac'){
+      const s = px*0.84;
+      const a = зміряти(ctx, n.n, s), b = зміряти(ctx, n.d, s);
+      const w = Math.max(a.w, b.w), пад = px*0.17, риска = y - px*0.28;
+      малювати(ctx, n.n, x + пад + (w - a.w)/2, риска - px*0.12 - a.desc, s, кв);
+      малювати(ctx, n.d, x + пад + (w - b.w)/2, риска + px*0.12 + b.asc,  s, кв);
+      ctx.save();
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = Math.max(1.4, px*0.055);
+      ctx.beginPath(); ctx.moveTo(x + пад*0.5, риска); ctx.lineTo(x + пад*1.5 + w, риска); ctx.stroke();
+      ctx.restore();
+      x += w + px*0.34;
+    }
+    else if (n.t === 'sqrt'){
+      const a = зміряти(ctx, n.c, px), h = a.asc + px*0.16;
+      ctx.save();
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = Math.max(1.4, px*0.05);
+      ctx.beginPath();
+      ctx.moveTo(x, y - px*0.26);
+      ctx.lineTo(x + px*0.18, y + a.desc*0.6);
+      ctx.lineTo(x + px*0.40, y - h);
+      ctx.lineTo(x + px*0.52 + a.w + px*0.1, y - h);
+      ctx.stroke();
+      ctx.restore();
+      малювати(ctx, n.c, x + px*0.56, y, px, кв);
+      x += a.w + px*0.66;
+    }
+  }
+  return x;
+}
+
+/*── 3.4 «привиди»: хибні формули під справжньою ────────────────────────
+   Розпізнавач бачить два накладені вирази й не може розділити їх;
+   око відсіює бліде тло без зусиль. Саме це найсильніше збиває
+   Photomath та подібні: він знаходить рівняння, але не те.          */
+const ПРИВИДИ = ['3x^2+7=19','(a−b)^2','\\f{5}{9}','2y−14','\\s{81}','x^3·x^4','m^2−49','8k+3=27','\\f{x+1}{4}','6p^5'];
+/* Привиди сиплемо ТІЛЬКИ в межах прикладу: саме там вони й потрібні,
+   бо збивають розпізнавач із пантелику там, де є що розпізнавати.
+   Поза прикладом вони лише заважали б читати умову. */
+function привиди(ctx, бокс, скільки){
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(бокс.x, бокс.y, бокс.w, бокс.h);
+  ctx.clip();
+  for (let i = 0; i < скільки; i++){
+    const px = бокс.h * (0.34 + Math.random()*0.34);
+    // У двокадровому режимі привид у кожному кадрі свій, тому на фото він
+    // повної сили, а око усереднює його вдвічі — звідси вищий поріг.
+    ctx.globalAlpha = (рівень.кадри ? 0.11 : 0.07) + Math.random()*0.05;
+    ctx.save();
+    ctx.translate(бокс.x + Math.random()*бокс.w, бокс.y + бокс.h*(0.2 + Math.random()*0.7));
+    ctx.rotate((Math.random()*2 - 1) * 0.42);
+    малювати(ctx, розібрати(ПРИВИДИ[(Math.random()*ПРИВИДИ.length)|0]), 0, 0, px, true);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+/*═══════════════════════════════════════════════════════════════════════════
+  4 · РІВНІ ЗАХИСТУ
+      low  — звичайний текст у canvas + водяний знак. Нічого більше.
+      mid  — ТІЛЬКИ розбиття на два кадри. Рухомої смужки немає, привидів
+             немає, літери не викривлені: умова й приклад виглядають
+             звичайно, але знімок екрана чи фото з короткою витримкою
+             ловлять лише половину штрихів. Тихий режим.
+      max  — + рухома смужка, привиди, викривлення літер і шум.
+             Рух є ТІЛЬКИ тут: на mid екран нерухомий.
+
+      Про «два кадри» — і чому саме так.
+      Перша спроба була «яскравість = середнє ± шум»: не спрацювало. Щоб один
+      кадр став нечитабельним, шум мусить перебити сигнал, а тоді й око бачить
+      сіре на сірому. Око встигає скласти лише 3–5 кадрів, шум за ними падає
+      удвічі — цього замало.
+
+      Тому ділимо не яскравість, а САМІ ШТРИХИ. Плямиста маска (зерно ~6 px)
+      віддає кадру A одну частину літер, кадру B — іншу. Контраст у кожному
+      кадрі повний, тому око при 60 Гц бачить чіткий чорний текст. А камера
+      ловить ОДИН кадр — і в ньому кожна літера погризена плямами: розпізнавач
+      не може ані виділити символ, ані зіставити його з шаблоном.
+      Знімок екрана засобами системи так само зберігає один кадр.
+
+      Додатково «привиди» в кожному кадрі СВОЇ. На фото хибна формула має
+      повну силу й накладається на погризену справжню — саме це збиває
+      Photomath найнадійніше. Око ж усереднює привидів удвічі й не зважає.
+═══════════════════════════════════════════════════════════════════════════*/
+/* «смуга» відокремлена від «кв» навмисно: раніше один прапорець вирішував
+   і викривлення літер, і наявність рухомої смужки, тому тихий режим без
+   руху був неможливий. Тепер рух вмикає лише «смуга». */
+/* «зерно» зменшено 6 → 3: великі плями око ловить помітно краще за дрібні,
+   бо чутливість до мерехтіння падає з ростом просторової частоти. Дрібніше
+   робити не варто — тонке дизерування розпізнавач відновлює розмиттям. */
+/* ГЛИБИНА МЕРЕХТІННЯ — У КОЖНОГО РІВНЯ СВОЯ (рішення вчителя 21.09.2026).
+
+   Раніше число було спільне, 0.7, з міркування «це про очі, а не про рівень
+   захисту». Виявилось навпаки: рівень і є вибором між спокоєм очей і
+   захистом, тож глибині саме там місце.
+
+     1   — повне гасіння: комірка або повна, або порожня, підкладки немає.
+           Найсильніший захист від знімка й найпомітніше мерехтіння.
+     0.7 — у «темній» фазі лишається 30% штриха, розмах на третину менший.
+
+   І ПОМІРНИЙ, І МАКСИМАЛЬНИЙ ТРИМАЮТЬ 1 (учитель, 21.09.2026).
+   На mid це єдиний захист прикладу: екран нерухомий, літери не викривлені,
+   привидів і шуму немає — приглушити кадри означало б не залишити нічого.
+   На max спершу поставили 0.7 з міркування «там і так є смужка, привиди й
+   шум». Учитель вибрав повне гасіння й тут: рівень називається
+   максимальним, і половинчасте гасіння в ньому — просто слабше місце.
+
+   Число лишилось окремим у кожного рівня, хоч зараз збігається: воно й
+   далі про обмін «спокій очей ↔ захист», і колонка потрібна саме для того,
+   щоб приглушити ОДИН рівень, не чіпаючи іншого.
+
+   На low кадрів немає взагалі (`кадри:false`), тож число там ні на що не
+   впливає — стоїть лише щоб таблиця читалась без дірки. */
+const мерехт = { глибина: 1 };     // ЖИВЕ значення; засівається з рівня нижче
+
+const РІВНІ = {
+  //        викривлення привидів  кадри     рухома смуга   частка  зерно  шум    глибина
+  low: { кв:false, привидів:0, кадри:false, смуга:false, частка:1,    зерно:3, шум:0,  глибина:1 },
+  mid: { кв:false, привидів:0, кадри:true,  смуга:false, частка:0.50, зерно:3, шум:0,  глибина:1 },
+  max: { кв:true,  привидів:7, кадри:true,  смуга:true,  частка:0.50, зерно:3, шум:26, глибина:1 }
+};
+let рівень = РІВНІ[Т.захист] || РІВНІ.max;
+мерехт.глибина = рівень.глибина;
+
+/* Підписуємо кожне полотно прізвищем — водяний знак усередині пікселів,
+   його не прибрати видаленням елемента з DOM. */
+let підпис = '';
+
+/* Тло полотна беремо з ГОТОВОГО стилю контейнера, а не з --card: варіанти
+   лежать на --paper, і зашите --card давало б світлий прямокутник у картці. */
+function кольори(куди){
+  const cs = getComputedStyle(document.body);
+  let тло = '';
+  for (let el = куди; el && el !== document.documentElement; el = el.parentElement){
+    const bg = getComputedStyle(el).backgroundColor;
+    if (bg && !/^rgba\(0, 0, 0, 0\)$|transparent/.test(bg)){ тло = bg; break; }
+  }
+  return {
+    чорнило: cs.getPropertyValue('--ink').trim() || '#1B2430',
+    папір:   тло || cs.getPropertyValue('--card').trim() || '#ffffff'
+  };
+}
+
+
+/**
+ * Малює вираз у контейнер. Повертає функцію зупинки анімації.
+ * @param {HTMLElement} куди  контейнер (.stage або комірка варіанта)
+ * @param {string} вираз      текст у мат.синтаксисі
+ * @param {number} кегль      базовий розмір у px
+ */
+/* Плямиста маска: дрібне випадкове полотно, розтягнуте БЕЗ згладжування.
+   Виходять плями розміром «зерно», а не окремі пікселі, — саме вони
+   вигризають зі штриха шматки, які розпізнавач не вміє домислити.
+
+   ЧОМУ КАДРІВ РІВНО ДВА, А НЕ БІЛЬШЕ — І ЧОМУ ВОНИ СТРОГО ЧЕРГУЮТЬСЯ.
+   Була спроба крутити вісім кадрів у випадковому порядку, щоб «розмазати»
+   мерехтіння по спектру. Вийшло помітно ГІРШЕ, і це закономірно: чутливість
+   ока до мерехтіння має горб на 5–15 Гц і круто падає після 25–30 Гц.
+   Два кадри, що строго чергуються, дають на піксель рівно 30 Гц — тобто вже
+   на спаді. Випадковий порядок натомість заносить енергію в увесь діапазон,
+   зокрема в той самий горб, де око бачить найкраще.
+   Висновок: усю енергію треба тримати на НАЙВИЩІЙ доступній частоті, а вона
+   задана екраном — 60 Гц оновлення означає максимум 30 Гц на піксель.
+
+   Маски РІВНО ДОПОВНЮЮТЬ одна одну: що вимкнено в A, те увімкнено в B.
+   Тоді кожен піксель штриха присутній рівно в одному кадрі, око бачить
+   рівний напівтон без дірок, а знімок недоотримує половину штриха. */
+function маски(W, H, зерно, частка){
+  const мала = document.createElement('canvas');
+  мала.width  = Math.max(2, Math.ceil(W / зерно));
+  мала.height = Math.max(2, Math.ceil(H / зерно));
+  const mc = мала.getContext('2d');
+  const d = mc.createImageData(мала.width, мала.height);
+  const комірок = мала.width * мала.height;
+  const біти = new Uint8Array(комірок);
+  for (let k = 0; k < комірок; k++) біти[k] = Math.random() < частка ? 255 : 0;
+
+  const зробити = (інверсія) => {
+    for (let c = 0; c < комірок; c++){
+      const i = c*4;
+      d.data[i] = d.data[i+1] = d.data[i+2] = 255;
+      d.data[i+3] = інверсія ? 255 - біти[c] : біти[c];   // маска живе в альфі
+    }
+    mc.putImageData(d, 0, 0);
+    const m = document.createElement('canvas');
+    m.width = W; m.height = H;
+    const g = m.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.drawImage(мала, 0, 0, W, H);
+    return m;
+  };
+  return [зробити(false), зробити(true)];
+}
+
+/**
+ * @param {HTMLElement} куди   контейнер
+ * @param {string} вираз       текст у мат.синтаксисі
+ * @param {number} кегль       базовий розмір у px
+ * @param {boolean} [знак]     класти водяний знак у пікселі (для завдання так,
+ *                             для коротких варіантів ні — там він лише шумить)
+ * @param {boolean} [простий]  геть без захисту (варіанти відповідей)
+ * @returns {Function}         зупинка анімації
+ */
+function полотно(куди, вираз, кегль, знак = true, простий = false){
+  const збереженийРівень = рівень;
+  if (простий) рівень = РІВНІ.low;
+  try { return малюватиПолотно(куди, вираз, кегль, знак); }
+  finally { рівень = збереженийРівень; }
+}
+
+function малюватиПолотно(куди, вираз, кегль, знак){
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const ширина = Math.max(240, куди.clientWidth || куди.parentElement.clientWidth || 640);
+  const c = кольори(куди);
+
+  // ── 1. розкладка
+  const мір = document.createElement('canvas').getContext('2d');
+  шрифт(мір, кегль);
+  const рядки = перенести(мір, розібрати(вираз), кегль, ширина - кегль*0.6);
+  const міри  = рядки.map(р => зміряти(мір, р, кегль));
+  const крок  = кегль * 1.62;
+  const H     = Math.max(крок, міри.reduce((s,m) => s + Math.max(крок, m.asc + m.desc + кегль*0.3), 0)) + кегль*0.4;
+  const W     = Math.round(ширина * dpr), Hp = Math.round(H * dpr);
+
+  const шар = () => {
+    const el = document.createElement('canvas');
+    el.width = W; el.height = Hp;
+    const g = el.getContext('2d', { willReadFrequently:true });
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.textBaseline = 'alphabetic';
+    return [el, g];
+  };
+
+  // ── 2. сам текст — на прозорому тлі, повним контрастом.
+  // Захист вмикається лише всередині [ прикладів ] — решта рядка звичайна.
+  const [текст, tg] = шар();
+  tg.fillStyle = c.чорнило;
+  ексБокси = [];
+  let y = кегль*0.2;
+  рядки.forEach((р, k) => {
+    const m = міри[k];
+    y += Math.max(крок*0.78, m.asc + кегль*0.16);
+    малювати(tg, р, кегль*0.3, y, кегль, false);   // поза прикладом — без викривлення
+    y += m.desc + кегль*0.14;
+  });
+  обводка = 0;
+
+  // Прямокутники прикладів у CSS-пікселях, із невеликим полем навколо.
+  const поле = кегль*0.16;
+  const бокси = ексБокси.map(б => ({
+    x: Math.max(0, б.x - поле),
+    y: Math.max(0, б.y - б.asc - поле),
+    w: Math.min(ширина, б.w + поле*2),
+    h: б.asc + б.desc + поле*2
+  }));
+  ексБокси = null;
+
+  // ── 3. один кадр: папір → привиди → водяний знак → текст
+  const кадр = (сідПривидів) => {
+    const [el, g] = шар();
+    g.fillStyle = c.папір;   g.fillRect(0, 0, ширина, H);
+    g.fillStyle = c.чорнило;
+    if (рівень.привидів && сідПривидів)
+      бокси.forEach(б => привиди(g, б, рівень.привидів));
+    if (підпис && знак){
+      g.save();
+      g.globalAlpha = 0.085;
+      шрифт(g, Math.max(11, кегль*0.42));
+      g.translate(ширина/2, H/2); g.rotate(-0.34); g.textAlign = 'center';
+      g.fillText(підпис, 0, 0);
+      g.restore();
+    }
+    return [el, g];
+  };
+
+  куди.innerHTML = '';
+  const пан = document.createElement('div');
+  пан.className = 'pane';
+  куди.appendChild(пан);
+  const показати = кл => {
+    const el = document.createElement('canvas');
+    el.className = 'lay' + (кл ? ' ' + кл : '');
+    el.width = W; el.height = Hp;
+    el.style.aspectRatio = `${W} / ${Hp}`;
+    пан.appendChild(el);
+    return el;
+  };
+  // Шум — теж тільки по прикладах. Поза ними умова має лишатись чистою.
+  const зашуміти = (g) => {
+    if (!рівень.шум || !бокси.length) return;
+    g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+    бокси.forEach(б => {
+      const x = Math.round(б.x*dpr), y = Math.round(б.y*dpr);
+      const w = Math.min(W - x, Math.round(б.w*dpr));
+      const h = Math.min(Hp - y, Math.round(б.h*dpr));
+      if (w <= 0 || h <= 0) return;
+      const d = g.getImageData(x, y, w, h), p = d.data, N = рівень.шум;
+      for (let i = 0; i < p.length; i += 4){
+        const ш = (Math.random()*2 - 1) * N;
+        p[i]   = Math.max(0, Math.min(255, p[i]   + ш));
+        p[i+1] = Math.max(0, Math.min(255, p[i+1] + ш));
+        p[i+2] = Math.max(0, Math.min(255, p[i+2] + ш));
+      }
+      g.putImageData(d, x, y);
+    });
+    g.restore();
+  };
+
+  // Смужка лягає лише на прикладі — питання й варіанти лишаються відкритими.
+  const повіситиСмужки = () => {
+    if (рівень.смуга) бокси.forEach(б => завіса(пан, б));
+  };
+
+  // ── 4а. один кадр (low / mid)
+  if (!рівень.кадри || !бокси.length){
+    const [el, g] = кадр(true);
+    g.save(); g.setTransform(1,0,0,1,0,0); g.drawImage(текст, 0, 0); g.restore();
+    зашуміти(g);
+    показати().getContext('2d').drawImage(el, 0, 0);
+    повіситиСмужки();
+    return () => {};
+  }
+
+  // ── 4б. два кадри: кожен несе свою частину штрихів
+  /* ГЛИБИНА МЕРЕХТІННЯ — головний важіль проти втоми очей.
+     Кадр складається з двох шарів:
+       · підкладка — увесь штрих, але ослаблений до (1 − глибина);
+       · поверх неї — повний штрих у тих комірках, що «світяться».
+     При глибині 1 підкладки немає: комірка або повна, або порожня —
+     максимальний захист і максимальне мерехтіння. При глибині 0.6 у «темній»
+     фазі лишається 40% штриха, розмах коливання падає майже вдвічі, і око
+     заспокоюється — але й знімок недоотримує вже не половину штриха, а
+     лише його приглушену частину. Це чесний обмін, тому й винесено на
+     повзунок, а не зашито числом. */
+  const половина = (кеп) => {
+    const [шм, gm] = шар();
+    gm.save(); gm.setTransform(1, 0, 0, 1, 0, 0);
+    const залишок = 1 - мерехт.глибина;
+    if (залишок > 0.001){
+      gm.globalAlpha = залишок;
+      gm.drawImage(текст, 0, 0);
+      gm.globalAlpha = 1;
+    }
+    // повна частина — окремим полотном, інакше destination-in з'їв би підкладку
+    const [ч, gч] = шар();
+    gч.save(); gч.setTransform(1, 0, 0, 1, 0, 0);
+    gч.drawImage(текст, 0, 0);
+    gч.globalCompositeOperation = 'destination-in';
+    gч.drawImage(кеп, 0, 0);
+    gч.restore();
+    gm.drawImage(ч, 0, 0);
+    gm.restore();
+
+    const [el, g] = кадр(true);
+    g.save(); g.setTransform(1,0,0,1,0,0); g.drawImage(шм, 0, 0); g.restore();
+    зашуміти(g);
+    return el;
+  };
+  /* Маску робимо ОПАКОВОЮ скрізь, крім прикладів. Там, де вона опакова,
+     обидва кадри несуть однаковий повний текст — тобто ніякого розбиття,
+     повний контраст і жодного мерехтіння. Розбивається лише приклад. */
+  const обмежити = (м) => {
+    const el = document.createElement('canvas');
+    el.width = W; el.height = Hp;
+    const g = el.getContext('2d');
+    g.fillStyle = '#fff'; g.fillRect(0, 0, W, Hp);
+    бокси.forEach(б => {
+      const x = Math.round(б.x*dpr), yy = Math.round(б.y*dpr);
+      const w = Math.round(б.w*dpr), h = Math.round(б.h*dpr);
+      g.clearRect(x, yy, w, h);
+      g.drawImage(м, x, yy, w, h, x, yy, w, h);
+    });
+    return el;
+  };
+  const [мA, мB] = маски(W, Hp, рівень.зерно * dpr, рівень.частка);
+  const A = половина(обмежити(мA)), B = половина(обмежити(мB));
+
+  const cA = показати(), cB = показати('b');
+  cA.getContext('2d').drawImage(A, 0, 0);
+  cB.getContext('2d').drawImage(B, 0, 0);
+  cB.style.opacity = '0';
+
+  let жив = true, фаза = 0;
+  (function тік(){
+    if (!жив) return;
+    фаза ^= 1;                       // строге чергування = вся енергія на 30 Гц
+    cA.style.opacity = фаза ? '0' : '1';
+    cB.style.opacity = фаза ? '1' : '0';
+    requestAnimationFrame(тік);
+  })();
+
+  повіситиСмужки();
+  return () => { жив = false; };
+}
+
+/*═══════════════════════ ПЕРЕКРИТТЯ ═════════════════════════════════════
+  Поверх завдання йде ОДИН набір діагональних смуг під 115°, що повзе
+  вправо. У кожну мить він ховає частину штриха, тож один кадр (а знімок
+  і фото — це один кадр) несе неповну літеру. Око при 60 Гц складає кадри
+  й бачить текст цілим.
+
+  Покриття стале за побудовою: смуга завжди займає ту саму частку площі,
+  хоч би де стояла фаза. Змінюється лише РОЗТАШУВАННЯ закритого, не його
+  кількість, тож загальна яскравість екрана не блимає — інакше довелося б
+  рахуватися зі світлочутливою епілепсією.
+
+  Видимість тексту тут лінійна: видно = (період − ширина) / період.
+  (Два перехресні набори давали б квадрат, тобто вдвічі темніший текст за
+  тієї самої ширини — саме тому від них відмовились.)
+
+  Режими руху:
+   'рух'       — рівномірно, швидкість у циклах за секунду. Стеля тут не
+                 камера, а екран: візерунок не має проходити більш як чверть
+                 періоду за кадр, інакше аліасинг — і він «їде назад».
+   'випадкова' — фаза щокадру нова. Сусідні кадри некорельовані, відстежувати
+                 нíчого, око бачить рівне притемнення. Аліасингу не буває.
+   'стоп'      — завмирає (і сюди ж потрапляє системне «зменшити рух»).
+
+  Швидкість для фото не важить узагалі: кадр ловить візерунок там, де він
+  стоїть, і частка закритого штриха та сама на будь-якій швидкості.
+  Швидкість — це виключно про комфорт ока.
+══════════════════════════════════════════════════════════════════════════*/
+
+const ТОН = 'color-mix(in oklab, var(--card) 92%, transparent)';
+
+const КУТ = 115;                                  // як було від початку
+const ПРОЄКЦІЯ = Math.sin(КУТ * Math.PI / 180);   // 0.90631
+
+/* КРОК — зсув по X, за який набір стає рівно на наступний період.
+   Задаємо ЙОГО, а період виводимо з нього, а не навпаки. Причина практична:
+   шар із will-change растеризується з прив'язкою до цілого пікселя, тож
+   дробовий зсув (17.6px) округлювався до 18 і візерунок на стику циклу не
+   сходився — вимірювання показало мінімум розбіжності саме на 18.0, а не на
+   теоретичних 17.6. Цілий зсув знімає це питання назавжди.
+   19 px дає період 17.22 — практично ті самі 17, що були спочатку. */
+const КРОК = 19;
+
+
+const смужка = {
+  циклів: 9,          // циклів за секунду для режиму 'рух'
+  режим:  'рух',      // 'рух' | 'випадкова' | 'стоп'
+  ширина: 8           // товщина смуги, px
+};
+
+const крок   = () => КРОК;
+const період = () => КРОК * ПРОЄКЦІЯ;             // 17.22
+
+// Частка площі, крізь яку видно текст.
+const видимість = () => (період() - смужка.ширина) / період();
+
+function вдягнути(v){
+  v.innerHTML = '';
+  const i = document.createElement('i');
+  const W = смужка.ширина, P = період().toFixed(3);
+  i.style.backgroundImage =
+    `repeating-linear-gradient(${КУТ}deg, ${ТОН} 0 ${W}px, transparent ${W}px ${P}px)`;
+  v.appendChild(i);
+}
+
+function перевдягнути(){
+  веїли.forEach(v => { if (v.isConnected) вдягнути(v); });
+}
+
+const веїли = new Set();
+let веїлПрацює = false, фаза = 0, веїлЧас = 0, відлік = 0;
+
+function тік(t){
+  let дт = 0;
+  if (веїлЧас){
+    дт = Math.min(0.1, (t - веїлЧас) / 1000);         // стрибок після фону — обрізаємо
+    фаза = (фаза + смужка.циклів * дт) % 1;
+  }
+  веїлЧас = t;
+
+  const f = смужка.режим === 'випадкова' ? Math.random()
+          : смужка.режим === 'стоп'      ? 0
+          : фаза;
+  const зсув = `translateX(${(f*крок()).toFixed(3)}px)`;
+  веїли.forEach(v => {
+    if (!v.isConnected){ веїли.delete(v); return; }   // сам прибирає за собою
+    v.children[0].style.transform = зсув;
+  });
+
+  if (веїли.size) requestAnimationFrame(тік);
+  else { веїлПрацює = false; веїлЧас = 0; }
+}
+
+function запустити(){
+  if (веїлПрацює) return;
+  веїлПрацює = true; веїлЧас = 0;
+  requestAnimationFrame(тік);
+}
+
+function завіса(пан, бокс){
+  const v = document.createElement('div');
+  v.className = 'veil';
+  // Смужка накриває РІВНО прямокутник прикладу, а не всю картку:
+  // питання й варіанти лишаються відкритими.
+  v.style.left   = бокс.x + 'px';
+  v.style.top    = бокс.y + 'px';
+  v.style.width  = бокс.w + 'px';
+  v.style.height = бокс.h + 'px';
+  пан.appendChild(v);
+  вдягнути(v);
+  веїли.add(v);
+  запустити();
+}
+
+// Системне «зменшити рух» — смужка завмирає. Захист від фото тримається
+// не на ній, а на двох кадрах і привидах.
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) смужка.режим = 'стоп';
+
+/* Перенос рядків: ріжемо тільки текстові вузли по пробілах, формули цілі. */
+function перенести(ctx, вузли, px, макс){
+  const рядки = [[]];
+  let w = 0;
+  const влізе = дод => {
+    const ш = зміряти(ctx, [дод], px).w;
+    if (w + ш > макс && рядки.at(-1).length){ рядки.push([]); w = 0; }
+    рядки.at(-1).push(дод); w += ш;
+  };
+  for (const n of вузли){
+    if (n.t !== 'txt'){ влізе(n); continue; }
+    const шматки = n.v.split(/(\s+)/).filter(s => s !== '');
+    for (const ш of шматки) влізе({ t:'txt', v:ш });
+  }
+  return рядки.filter(р => р.length);
+}
+
+/*═══════════════════════════════════════════════════════════════════════════
+  5 · ЗАБОРОНИ: меню, копіювання, виділення, друк, перетягування
+═══════════════════════════════════════════════════════════════════════════*/
+const гасити = e => { e.preventDefault(); e.stopPropagation(); return false; };
+
+// контекстне меню — і мишею, і довгим натиском на телефоні
+document.addEventListener('contextmenu', гасити, { capture:true });
+document.addEventListener('selectstart', гасити, { capture:true });
+document.addEventListener('dragstart',   гасити, { capture:true });
+
+/* Довгий натиск на телефоні.
+   Тут був обробник touchstart, який через 320 мс викликав preventDefault().
+   Він НЕ працював і працювати не міг: подію на той час уже відправлено, а
+   preventDefault() із таймера ні на що не впливає. Прибрано, щоб не
+   створювати враження захисту, якого немає.
+
+   Реально довгий натиск глушать дві речі, і обидві вже є вище:
+     · CSS `-webkit-touch-callout:none` + `user-select:none` — на iOS;
+     · обробник `contextmenu` — на Android, де довгий натиск породжує
+       саме цю подію.                                                    */
+
+// копіювання: гасимо і на всяк випадок кладемо в буфер порожнечу
+['copy','cut'].forEach(t => document.addEventListener(t, e => {
+  // код-звіт і розбір помилок копіювати можна: перший треба переслати
+  // вчителю, другий — переписати в зошит
+  if (e.target.closest && e.target.closest('.codebox, #d-fix')) return;
+  e.preventDefault();
+  try { e.clipboardData.setData('text/plain', ''); } catch {}
+}, { capture:true }));
+
+// друк і збереження
+window.addEventListener('beforeprint', () => підняти('Друк заблоковано.'));
+
+document.addEventListener('keydown', e => {
+  const k = (e.key || '').toLowerCase();
+  const мод = e.ctrlKey || e.metaKey;
+
+  // PrintScreen · Win+Shift+S · Cmd+Shift+3/4/5
+  if (k === 'printscreen' || (e.shiftKey && мод && ['3','4','5','s'].includes(k))){
+    e.preventDefault();
+    try { navigator.clipboard && navigator.clipboard.writeText(' '); } catch {}
+    порушення('Спроба знімка екрана.');
+    return false;
+  }
+  // копіювання / збереження / друк / вихідний код
+  // Виняток: поки на екрані розбір помилок, Ctrl+C/A не гасимо — робота
+  // вже здана, а кроки учень має право забрати в зошит.
+  if (мод && ['c','x','a','s','p','u'].includes(k)){
+    const розбірВидно = $('#d-fix') && !$('#d-fix').hidden;
+    if (!(розбірВидно && ['c','x','a'].includes(k))) return гасити(e);
+  }
+  // інструменти розробника — заблокувати неможливо, але спроба фіксується
+  if (k === 'f12' || (мод && e.shiftKey && ['i','j','c'].includes(k))){
+    порушення('Спроба відкрити інструменти розробника.');
+    return гасити(e);
+  }
+}, { capture:true });
+
+/*═══════════════════════════════════════════════════════════════════════════
+  6 · ЩИТ: втрата фокусу, згорнута вкладка, знімок
+═══════════════════════════════════════════════════════════════════════════*/
+let виходів = 0, працює = false;
+
+function підняти(чому){
+  $('#shieldwhy').textContent = чому;
+  document.body.classList.add('guard');
+}
+function опустити(){ document.body.classList.remove('guard'); }
+
+function порушення(чому){
+  if (!працює) return;
+  виходів++;
+  $('#esc-n').textContent = виходів;
+  $('#esc').classList.add('on');
+  підняти(чому);
+}
+
+/* Рахуємо ПЕРЕХІД «був тут → пішов», а не кожну подію окремо.
+
+   Чому так: один Cmd+Tab (і один перехід між застосунками на телефоні)
+   породжує ДВІ події — `blur` і `visibilitychange`. Раніше кожна додавала
+   свою одиницю, і в звіт ішло два виходи замість одного.
+   Тепер стан один, і друга подія його вже не міняє. */
+let вдома = true;
+
+const присутній = () => !document.hidden && document.hasFocus();
+
+function відлучитись(чому){
+  if (!вдома) return;          // вже пішов — другу подію не рахуємо
+  вдома = false;
+  порушення(чому);
+}
+function повернутись(){
+  if (присутній()) вдома = true;
+  // Щит навмисно НЕ опускаємо самі: учень має прибрати його сам,
+  // щоб повернення до роботи було свідомим.
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) відлучитись('Ви перейшли в іншу вкладку або згорнули вікно.');
+  else повернутись();
+});
+window.addEventListener('blur',  () => відлучитись('Вікно втратило фокус.'));
+window.addEventListener('focus', повернутись);
+
+/* Курсор за межами вікна — ховаємо вміст, але НЕ рахуємо: це ще не вихід.
+   Тільки для миші: на сенсорному екрані ці події синтетичні й хибні. */
+const мишею = matchMedia('(pointer:fine)').matches;
+if (мишею){
+  document.addEventListener('mouseleave', e => {
+    if (працює && !e.relatedTarget) підняти('Курсор вийшов за межі вікна.');
+  });
+  document.addEventListener('mouseenter', () => { if (присутній() && вдома) опустити(); });
+}
+$('#shield').addEventListener('click', опустити);
+
+// другий екран — типовий спосіб «показати задачу комусь ще»
+/* Другий екран удома має половина сімей — для домашньої роботи це не
+   порушення, а норма, тож сигнал вмикається лише там, де має сенс. */
+if (Т.другийЕкран && window.screen && screen.isExtended) {
+  window.addEventListener('load', () => порушення('Виявлено другий екран.'));
+}
+
+/*═══════════════════════════════════════════════════════════════════════════
+  7 · ХІД РОБОТИ
+═══════════════════════════════════════════════════════════════════════════*/
+const стан = { i:0, відповіді:[], старт:0, лишилось:0, стоп:[], перехід:false,
+               варіант:0, квиток:'', стартО:'', мітчик:-1, показано:0, показаноО:'',
+               порядки:[] };
+
+/* Завдання обраного варіанта. Перевизначається в почати(); до старту
+   тримаємо перший, щоб демо на екрані входу мало що малювати. */
+let ЗАВДАННЯ = Т.варіанти[0].завдання;
+
+/* Варіант вираховуємо з прізвища й назви роботи — сталий для того самого
+   учня, тож перезавантаження сторінки не дає перекинути його на інший.
+   сума() — наявний FNV-1a, він добре перемішує, тож по класу виходить
+   приблизно порівну, а сусіди по парті майже напевно дістануть різні. */
+function обратиВаріант(пІ, кл){
+  const n = Т.варіанти.length;
+  if (n < 2) return 0;
+  if (Т.розподілВаріанта === 'випадково') return (Math.random() * n) | 0;
+  return parseInt(сума(`${кл}|${пІ}|${Т.назва}`), 16) % n;
+}
+let тікТак = null;
+
+function водяний(текст){
+  const box = $('#wm');
+  box.hidden = false;
+  box.innerHTML = '';
+  const рядок = Array(9).fill(текст).join('   •   ');
+  for (let i = 0; i < 18; i++){
+    const s = document.createElement('span');
+    s.textContent = рядок;
+    box.appendChild(s);
+  }
+}
+
+function рейка(){
+  const r = $('#rail'); r.innerHTML = '';
+  ЗАВДАННЯ.forEach((_, k) => {
+    const i = document.createElement('i');
+    if (k < стан.i) i.className = 'done';
+    if (k === стан.i) i.className = 'now';
+    r.appendChild(i);
+  });
+}
+
+function питання(){
+  стан.стоп.forEach(f => f()); стан.стоп = [];
+  const з = ЗАВДАННЯ[стан.i];
+
+  $('#q-no').textContent  = стан.i + 1;
+  $('#q-bal').textContent = '1 бал';
+  $('#step-n').textContent = стан.i + 1;
+  рейка();
+
+  const кегль = Math.max(19, Math.min(34, $('#q-stage').clientWidth * 0.036));
+  стан.стоп.push(полотно($('#q-stage'), з.q, кегль));
+
+  const opts = $('#opts');
+  opts.className = '';
+  opts.innerHTML = '';
+
+  /* Порядок варіантів перемішуємо, щоб знімки різних учнів не збігались,
+     але ФІКСУЄМО його на питання. Пастка суто мобільна: коли на телефоні
+     ховається чи виринає адресний рядок, це дає resize → перемальовку.
+     Якби порядок мішався щоразу, відповіді стрибали б просто під пальцем,
+     і учень тицьнув би не туди, а відповідь остаточна. */
+  if (!стан.порядки[стан.i]){
+    const п = з.a.map((_, k) => k);
+    for (let i = п.length - 1; i > 0; i--){
+      const j = (Math.random() * (i+1)) | 0;
+      [п[i], п[j]] = [п[j], п[i]];
+    }
+    стан.порядки[стан.i] = п;
+  }
+  const порядок = стан.порядки[стан.i];
+
+  порядок.forEach((справжній, місце) => {
+    const b = document.createElement('button');
+    b.className = 'opt'; b.type = 'button'; b.disabled = true;   // «зведення» — див. нижче
+    const k = document.createElement('span');
+    k.className = 'k'; k.textContent = КОД_ЛІТЕРИ[місце];
+    const полe = document.createElement('span');
+    полe.style.cssText = 'flex:1 1 auto;min-width:0';
+    b.append(k, полe);
+    opts.appendChild(b);
+    стан.стоп.push(полотно(полe, з.a[справжній], Math.max(16, кегль*0.74), false, true));
+
+    // ОДИН КЛІК — І ВСЕ. once:true плюс замок, щоб подвійне натискання
+    // або «клік + touch» не порахувались двічі.
+    let витрачено = false;
+    b.addEventListener('click', () => {
+      if (витрачено || opts.classList.contains('locked')) return;
+      витрачено = true;
+      обрати(b, справжній, місце);
+    }, { once:true });
+  });
+
+  // 550 мс «зведення»: швидкий подвійний клік по попередньому питанню
+  // не має влучити у щойно показане. Відповідь остаточна — ризику не лишаємо.
+  setTimeout(() => { $$('#opts .opt').forEach(b => b.disabled = false); }, 550);
+
+  /* Мітку часу ставимо при зміні НОМЕРА задачі, а не при кожному малюванні.
+     Пастка: питання() викликається повторно з обробника resize — при вході
+     в повноекранний режим, повороті планшета, появі екранної клавіатури.
+     Якби мітка оновлювалась тут щоразу, у таблицю пішли б неправдиві
+     «3 секунди на задачу».
+     performance.now() замість Date.now(): монотонний годинник не збивається,
+     якщо учень або система переведе час посеред роботи. */
+  if (стан.мітчик !== стан.i){
+    стан.мітчик   = стан.i;
+    стан.показано = performance.now();
+    стан.показаноО = new Date().toISOString();
+  }
+}
+
+function обрати(кнопка, індекс, місце){
+  // Подвійний захист від другої відповіді на те саме питання: замок на
+  // кнопці (once), замок на списку — і перевірка, що запису ще немає.
+  // Третя потрібна, бо перемальовка на resize створює нові кнопки.
+  if (стан.відповіді.some(в => в.n === стан.i + 1)) return;
+
+  const opts = $('#opts');
+  opts.classList.add('locked');
+  кнопка.classList.add('sel');
+  $$('#opts .opt').forEach(b => b.disabled = true);
+
+  стан.відповіді.push({
+    n:        стан.i + 1,
+    обрав:    індекс,
+    літера:   КОД_ЛІТЕРИ[місце],
+    текст:    ЗАВДАННЯ[стан.i].a[індекс],
+    секунд:   Math.round((performance.now() - стан.показано) / 100) / 10,
+    показано: стан.показаноО,
+    відповів: new Date().toISOString()
+  });
+
+  стан.перехід = true;
+  setTimeout(() => {
+    стан.перехід = false;
+    стан.i++;
+    if (стан.i >= ЗАВДАННЯ.length) завершити('усе');
+    else питання();
+  }, 420);
+}
+
+function годинник(){
+  стан.лишилось--;
+  $('#clock-v').textContent = час(Math.max(0, стан.лишилось));
+  const c = $('#clock');
+  c.classList.toggle('warn', стан.лишилось <= 300 && стан.лишилось > 60);
+  c.classList.toggle('hot',  стан.лишилось <= 60);
+  if (стан.лишилось <= 0) завершити('час');
+}
+
+function почати(){
+  if (!хто) return;
+  const пІ = хто.учень;
+  const кл = хто.клас;
+  // мітка «робота почалась»: якщо її застане наступний запуск — це обірвання
+  уСховище(ІДЕ_КЛЮЧ + ключРоботи(), Date.now());
+  підпис = `${пІ} · ${кл}`;
+  водяний(підпис);
+
+  // Варіант і квиток фіксуємо ОДИН раз на всю роботу.
+  // Квиток — щоб приймач відрізнив повторну доставку (мережа моргнула)
+  // від повторної спроби (учень пройшов роботу ще раз).
+  стан.варіант = обратиВаріант(пІ, кл);
+  ЗАВДАННЯ = Т.варіанти[стан.варіант].завдання;
+  стан.квиток = (crypto.randomUUID && crypto.randomUUID())
+              || (Date.now().toString(36) + Math.random().toString(36).slice(2));
+
+  $('#who').textContent = пІ;
+  $('#step-all').textContent = ЗАВДАННЯ.length;
+  $('#start').hidden = true;
+  $('#exam').hidden = false;
+  $('#teacher')?.remove();          // у бойовій копії панелі вже немає
+
+  /* «Наведіть» на сенсорному екрані беззмістовне — там немає курсора. */
+  $('#hint').innerHTML = мишею
+    ? 'Наведіть і <b>клікніть один раз</b> — відповідь зарахується одразу.'
+    : '<b>Торкніться відповіді один раз</b> — вона зарахується одразу, змінити не можна.';
+
+  працює = true;
+  стан.стартО = new Date().toISOString();
+  стан.старт = Date.now();
+  стан.лишилось = Т.хвилин * 60;
+  $('#clock-v').textContent = час(стан.лишилось);
+  тікТак = setInterval(годинник, 1000);
+
+  // повний екран: менше сусідніх вікон — менше спокуси
+  // Удома повний екран ні до чого: учень і так сам, а насильно розгорнуте
+  // вікно на ноутбуці радше дратує.
+  if (Т.повнийЕкран) document.documentElement.requestFullscreen?.().catch(() => {});
+  питання();
+}
+
+/*═══════════════════════════════════════════════════════════════════════════
+  8 · ЗАВЕРШЕННЯ І ВІДПРАВКА
+═══════════════════════════════════════════════════════════════════════════*/
+function завершити(причина){
+  if (!працює) return;
+  працює = false;
+  clearInterval(тікТак);
+  стан.стоп.forEach(f => f()); стан.стоп = [];
+  опустити();
+  document.exitFullscreen?.().catch(() => {});
+
+  const пІ  = хто ? хто.учень : '—';
+  const кл  = хто ? хто.клас : '—';
+  // робота дійшла до кінця — це вже не обірвання
+  try { localStorage.removeItem(ІДЕ_КЛЮЧ + ключРоботи()); } catch (e){}
+  const сек = Math.round((Date.now() - стан.старт) / 1000);
+
+  /* Задача, на якій застав дзвінок, теж має свій час: учень її бачив.
+     Без цього в таблиці була б дірка саме там, де найцікавіше. */
+  if (причина === 'час' && !стан.відповіді.some(в => в.n === стан.i + 1) && стан.i < ЗАВДАННЯ.length){
+    стан.відповіді.push({
+      n: стан.i + 1, обрав: null, літера: '—', текст: '',
+      секунд: Math.round((performance.now() - стан.показано) / 100) / 10,
+      показано: стан.показаноО, відповів: null
+    });
+  }
+
+  // рядок відповідей: «1:Б 2:А 3:Г …» — літера саме та, яку бачив учень
+  const рядок = стан.відповіді.map(в => `${в.n}:${в.літера}`).join(' ');
+
+  /* Бал тут НЕ рахується: ключів у сторінці немає, їх знає тільки приймач.
+     У коді-звіті теж немає бала — він лишився способом донести СИРІ дані,
+     якщо мережа підвела. */
+  const тіло = `${кл}|${пІ}|${Т.назва}|в${стан.варіант + 1}|${рядок}|в${виходів}|${час(сек)}`;
+  const код  = `${тіло}|#${сума(тіло)}`;
+
+  $('#exam').hidden = true;
+  $('#done').hidden = false;
+  $('#d-name').textContent = пІ;
+  $('#d-esc').textContent  = виходів;
+  $('#d-time').textContent = час(сек);
+  $('#d-code').textContent = код;
+  // Блок бала і розбір лишаються схованими, доки їх не відкриє САМЕ
+  // СЕРВЕР — див. показатиРезультат(). Сторінка про правильні відповіді
+  // й про розв'язання не знає нічого.
+  $('#d-score').hidden = true;
+  $('#d-fix').hidden = true;
+
+  const пакет = зібратиПакет(пІ, кл, сек, причина, код);
+  надіслатиРезультат(пакет);
+}
+
+/*───────────────────────── пакет для приймача ──────────────────────────*/
+function зібратиПакет(пІ, кл, сек, причина, код){
+  const в = Т.варіанти[стан.варіант];
+  return {
+    версія: 1,
+    токен:  Т.приймач.токен,
+    квиток: стан.квиток,
+    // NFC обов'язково: macOS віддає імена в розкладеній формі, Drive — у
+    // складеній, і без нормалізації «Олексія» ≠ «Олексія» у назві теки.
+    учень:  { прізвище: пІ.normalize('NFC'), клас: кл,
+              код: чистийКод(($('#kod') || {}).value || '') },
+    робота: { тип: Т.тип, назва: Т.назва, тема: Т.тема, предмет: Т.предмет,
+              варіант: стан.варіант + 1, мітка: в.мітка,
+              завдань: в.завдання.length, лімітХв: Т.хвилин },
+    час:    { старт: стан.стартО, кінець: new Date().toISOString(),
+              секунд: сек, причина },
+    виходів: виходів,
+    // тексти — щоб у таблиці учня було видно саму задачу, а не лише літеру
+    питання:  в.завдання.map(з => з.q.replace(/[\[\]]/g, '')),
+    варіанти: в.завдання.map(з => з.a),
+    відповіді: стан.відповіді,
+    код
+    // поля «бал» тут немає навмисно: рахує сервер, підробити нічого
+  };
+}
+
+/*───────────────────────── надсилання ──────────────────────────────────
+  Чотири рівні. Кожен наступний вмикається, коли попередній не дав
+  підтвердження — мовчазна втрата результату КР неприйнятна.           */
+async function надіслатиРезультат(пакет){
+  const сказати = (т, клас) => {
+    const e = $('#d-sent');
+    e.textContent = т;
+    e.className = 'lede' + (клас ? ' ' + клас : '');
+  };
+
+  if (!Т.приймач.url){
+    сказати('Надішліть код-звіт учителю.');
+    return;
+  }
+  сказати('Надсилаємо результат…');
+
+  // 1. fetch із читанням відповіді, три спроби з наростаючою паузою
+  for (let спроба = 0; спроба < 3; спроба++){
+    try {
+      const r = await fetch(Т.приймач.url, {
+        method: 'POST',
+        // text/plain — «простий» тип за CORS, тож браузер не шле OPTIONS.
+        // Apps Script на OPTIONS відповідає 405, і запит не йде взагалі.
+        // application/json тут використати НЕ можна.
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(пакет),
+        redirect: 'follow'
+      });
+      const від = await r.json();
+      if (від && від.ок){
+        сказати('✓ Результат збережено.', 'ok');
+        показатиРезультат(від.показ);
+        return;
+      }
+      if (від && від.помилка){
+        сказати('Приймач відмовив: ' + від.помилка + '. Покажіть код учителю.', 'bad');
+        зберегтиВЧергу(пакет);
+        return;
+      }
+    } catch (e){ /* пробуємо далі */ }
+    await нова_пауза([1000, 3000, 7000][спроба]);
+  }
+
+  // 2. «сліпий постріл»: доставка ймовірна, але підтвердити її неможливо
+  try {
+    await fetch(Т.приймач.url, {
+      method: 'POST', mode: 'no-cors', keepalive: true,
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(пакет)
+    });
+  } catch (e){ /* нічого не вдієш */ }
+
+  // 3. Питаємо через JSONP, чи дійшов квиток. Тег <script src> не підпадає
+  //    під CORS узагалі — це найнадійніший канал читання, який у нас є.
+  const від = await спитатиКвиток(стан.квиток);
+  if (від && від.є){
+    сказати('✓ Результат збережено.', 'ok');
+    показатиРезультат(від.показ);
+    return;
+  }
+
+  // 4. Не дійшло — пакет у чергу, дошлеться при наступному відкритті
+  зберегтиВЧергу(пакет);
+  сказати('Надіслати не вдалося. Обов\'язково покажіть цей код учителю.', 'bad');
+}
+
+/* Квитанція від сервера. Показуємо рівно те, що він дозволив: для
+   контрольної там завжди null, для самостійної — бал, номери задач із
+   помилками і покроковий розбір САМЕ цих задач.
+   Чого в квитанції немає й на самостійній: правильні літери до решти
+   задач і «що саме було обрано». Розбір приходить лише на помилки, тож
+   ключа з нього не скласти. */
+function показатиРезультат(показ){
+  if (!показ || показ.бал == null) return;
+  $('#d-ball').textContent = показ.бал;
+  $('#d-max').textContent  = показ.макс;
+  const ч = показ.бал / показ.макс;
+  $('#d-word').textContent = ч === 1 ? 'Усе правильно.'
+                           : ч >= .75 ? 'Дуже добре.'
+                           : ч >= .5  ? 'Є над чим попрацювати.'
+                           : 'Тему треба повторити — розберемо на уроці.';
+  const п = показ.помилки || [];
+  $('#d-wrong').textContent = п.length
+    ? (п.length === 1 ? 'Помилка в задачі № ' + п[0]
+                      : 'Помилки в задачах: № ' + п.join(', № '))
+    : '';
+  $('#d-score').hidden = false;
+  показатиРозбір(показ.розбори);
+}
+
+/* Розбір помилок. Будуємо через textContent, а не innerHTML: кроки
+   приходять із приймача як звичайний текст, і розбирати їх як розмітку
+   немає жодної причини. */
+function показатиРозбір(розбори){
+  const блок = $('#d-fix'), список = $('#d-fix-list');
+  if (!блок || !список) return;
+  список.textContent = '';
+  if (!розбори || !розбори.length){ блок.hidden = true; return; }
+
+  розбори.forEach(р => {
+    const карта = document.createElement('div');
+    карта.className = 'fix';
+
+    const шапка = document.createElement('p');
+    шапка.className = 'fixno';
+    шапка.textContent = 'Задача № ' + р.n;
+    карта.appendChild(шапка);
+
+    const кроки = document.createElement('ol');
+    (р.кроки || []).forEach(к => {
+      const li = document.createElement('li');
+      li.textContent = к;
+      кроки.appendChild(li);
+    });
+    карта.appendChild(кроки);
+    список.appendChild(карта);
+  });
+  блок.hidden = false;
+}
+
+const нова_пауза = мс => new Promise(r => setTimeout(r, мс));
+
+function спитатиКвиток(квиток){
+  return new Promise(готово => {
+    if (!квиток) return готово(null);
+    const імʼя = 'кб' + Math.random().toString(36).slice(2);
+    const тег  = document.createElement('script');
+    const прибрати = (від) => {          // резолвимо ВЕСЬ об'єкт: у ньому квитанція
+      delete window[імʼя];
+      тег.remove();
+      clearTimeout(годинник);
+      готово(від);
+    };
+    window[імʼя] = (від) => прибрати(від || null);
+    const годинник = setTimeout(() => прибрати(null), 8000);
+    тег.onerror = () => прибрати(null);
+    тег.src = Т.приймач.url
+            + '?токен=' + encodeURIComponent(Т.приймач.токен)
+            + '&квиток=' + encodeURIComponent(квиток)
+            + '&кб=' + імʼя;
+    document.head.appendChild(тег);
+  });
+}
+
+/* Черга недоставлених. Сама КР самодостатня й без мережі проходиться
+   повністю — падає лише доставка, тож губити результат через це не можна. */
+const ЧЕРГА = 'кр:черга';
+function зберегтиВЧергу(пакет){
+  try {
+    const ч = JSON.parse(localStorage.getItem(ЧЕРГА) || '[]');
+    // Конверт із адресою: сторінки КР і СР живуть на одному домені, тож
+    // черга спільна. Без адреси недоставлений пакет пішов би туди, куди
+    // шле та сторінка, яку відкрили наступною.
+    ч.push({ url: Т.приймач.url, пакет: пакет });
+    localStorage.setItem(ЧЕРГА, JSON.stringify(ч.slice(-20)));
+  } catch (e){ /* приватне вікно — лишається код-звіт */ }
+}
+
+async function дошлатиЧергу(){
+  let ч;
+  try { ч = JSON.parse(localStorage.getItem(ЧЕРГА) || '[]'); } catch (e){ return; }
+  if (!ч.length) return;
+  const лишились = [];
+  for (const запис of ч){
+    // старі записи були голим пакетом — приймаємо й такі
+    const конверт = запис && запис.пакет ? запис : { url: Т.приймач.url, пакет: запис };
+    if (!конверт.url){ лишились.push(конверт); continue; }
+    try {
+      const r = await fetch(конверт.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(конверт.пакет), redirect: 'follow'
+      });
+      const від = await r.json();
+      if (!(від && від.ок)) лишились.push(конверт);
+    } catch (e){ лишились.push(конверт); }
+  }
+  try { localStorage.setItem(ЧЕРГА, JSON.stringify(лишились)); } catch (e){}
+}
+
+
+/*═══════════════════════════════════════════════════════════════════════════
+  9 · ЗАПУСК
+═══════════════════════════════════════════════════════════════════════════*/
+document.documentElement.dataset.subject =
+  ({ 'Математика':'math', 'Алгебра':'algebra', 'Геометрія':'geometry', 'Інформатика':'informatics' })[Т.предмет] || 'math';
+
+$('#s-meta').textContent  = Т.предмет;
+$('#s-title').textContent = `${Т.назва}. ${Т.тема}`;
+
+/* Формулювання правил різні для типів.
+   Для контрольної раніше стояло «Скріншоти, фото екрана… заблоковані» —
+   на домашній самостійній це була б пряма неправда, яку учень спростує за
+   хвилину, а одна спростована заборона знецінює весь список. */
+function малюватиПравила(){
+  const ul = $('#rules');
+  ul.innerHTML = '';
+  (Т.правила || []).forEach(([клас, текст]) => {
+    const li = document.createElement('li');
+    if (клас) li.className = клас;
+    li.innerHTML = текст;
+    ul.appendChild(li);
+  });
+}
+малюватиПравила();
+$('#s-min').textContent   = Т.хвилин;
+document.title            = `${Т.назва} — ${Т.предмет}`;
+document.body.className   = 'lvl-' + (Т.захист || 'max');
+
+/* Клас — випадаючий список тих класів, що вчать цей предмет.
+   Предмет учень не обирає взагалі: він заданий самою роботою. */
+/*───────────────────── КОД УЧНЯ ─────────────────────────────────────────
+  Учень уводить 8-знаковий код. Прізвищ у сторінці немає взагалі й списки
+  в браузер не тягнуться — приймач віддає ім'я лише власника конкретного
+  коду. Клас читається з першого знака коду локально, тож сайт і сторінка
+  знають його навіть без мережі.
+
+  Розпізнане ім'я КЕШУЄТЬСЯ: якщо зв'язок зникне посеред уроку, робота все
+  одно почнеться, а результат ляже в чергу й дошлеться потім.          */
+const КОД_КЛЮЧ = 'робота:код';
+const ХТО_КЛЮЧ = 'робота:хто:';
+const ЗРИВ_КЛЮЧ = 'робота:зриви:';
+const ІДЕ_КЛЮЧ = 'робота:іде:';
+const ЗНАК_КЛАС = { 'A':'5-З', 'B':'7-І', 'C':'8-К', 'D':'9-А' };
+
+let хто = null;            // { учень, клас } — заповнюється приймачем або з кешу
+
+const чистийКод = к => String(к || '').toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 8);
+const класЗКоду = к => ЗНАК_КЛАС[(к || '')[0]] || '';
+
+function зСховища(ключ){
+  try { const в = localStorage.getItem(ключ); return в ? JSON.parse(в) : null; }
+  catch (e){ return null; }
+}
+function уСховище(ключ, знач){
+  try { localStorage.setItem(ключ, JSON.stringify(знач)); } catch (e){}
+}
+
+function сказатиПроКод(текст, клас){
+  const н = $('#kod-note');
+  н.className = 'note' + (клас ? ' ' + клас : '');
+  н.textContent = текст || '';
+}
+
+function показатиХто(){
+  const п = $('#hto');
+  if (!хто){ п.hidden = true; перевірити(); return; }
+  п.hidden = false;
+  п.innerHTML = `<b>${хто.учень}</b> · ${хто.клас}`;
+  перевірити();
+}
+
+/* Розпізнавання. Спершу кеш — щоб працювало без мережі, — потім приймач. */
+function впізнати(код){
+  хто = null;
+  const кеш = зСховища(ХТО_КЛЮЧ + код);
+  if (кеш){ хто = кеш; показатиХто(); }
+
+  if (код.length !== 8){ сказатиПроКод('Код має бути з 8 знаків.'); return; }
+  if (!класЗКоду(код)){ сказатиПроКод('Такого коду не буває — перевірте перший знак.', 'bad'); return; }
+  if (!Т.приймач.url){
+    // режим репетиції: приймача немає, довіряємо тому, що ввели
+    хто = хто || { учень: 'Код ' + код, клас: класЗКоду(код) };
+    сказатиПроКод('Приймач не налаштовано — режим репетиції.');
+    показатиХто();
+    return;
+  }
+
+  сказатиПроКод('Перевіряємо код…');
+  jsonp({ дія:'вхід', код }, (від) => {
+    if (від && від.ок){
+      хто = { учень: від.учень, клас: від.клас };
+      уСховище(ХТО_КЛЮЧ + код, хто);
+      уСховище(КОД_КЛЮЧ, код);
+      сказатиПроКод('');
+      показатиХто();
+      return;
+    }
+    if (кеш){                       // мережа мовчить, але ми його вже знали
+      сказатиПроКод('Немає зв\'язку — працюємо за збереженими даними.');
+      return;
+    }
+    хто = null;
+    показатиХто();
+    сказатиПроКод(від ? (від.помилка || 'Код не знайдено.')
+                      : 'Немає зв\'язку з приймачем.', 'bad');
+  });
+}
+
+/*───────────────────── ОБІРВАННЯ ───────────────────────────────────────
+  Обірвання = почав, не здав і почав ЗНОВУ. Саме «почав знову»: випадково
+  закрита вкладка, до якої учень не повернувся, нікому не шкодить і не
+  рахується. Мітка «іде» ставиться на старті й знімається при здачі.
+
+  Чесно про межу: лічильник живе в браузері, тож приватне вікно або
+  очищення даних його скидає. Він дисциплінує, а не забороняє — справжній
+  облік той, що потрапив у таблицю.                                     */
+const ключРоботи = () => Т.предмет + '|' + Т.назва;
+
+function зривів(){ return зСховища(ЗРИВ_КЛЮЧ + ключРоботи()) || 0; }
+
+function порахуватиЗрив(){
+  if (!зСховища(ІДЕ_КЛЮЧ + ключРоботи())) return зривів();
+  const н = зривів() + 1;
+  уСховище(ЗРИВ_КЛЮЧ + ключРоботи(), н);
+  try { localStorage.removeItem(ІДЕ_КЛЮЧ + ключРоботи()); } catch (e){}
+  if (н >= МАКС_ЗРИВІВ && Т.приймач.url && хто){
+    jsonp({ дія:'зрив', код: чистийКод($('#kod').value), клас: хто.клас,
+            предмет: Т.предмет, робота: Т.назва, зривів: н }, () => {});
+  }
+  return н;
+}
+const МАКС_ЗРИВІВ = 3;
+
+function перевірити(){
+  const н = зривів();
+  const заблоковано = н >= МАКС_ЗРИВІВ;
+  $('#go').disabled = !хто || заблоковано;
+  if (заблоковано){
+    сказатиПроЗрив(`Роботу відкривали ${н} рази й жодного разу не завершили. Старт закрито — підійдіть до вчителя.`);
+  }
+}
+function сказатиПроЗрив(текст){
+  const н = $('#kod-note');
+  н.className = 'note bad';
+  н.textContent = текст;
+}
+
+function jsonp(параметри, коли){
+  const імʼя = 'кб' + Math.random().toString(36).slice(2);
+  const тег = document.createElement('script');
+  const прибрати = (від) => {
+    delete window[імʼя]; тег.remove(); clearTimeout(годинник); коли(від);
+  };
+  window[імʼя] = прибрати;
+  const годинник = setTimeout(() => прибрати(null), 8000);
+  тег.onerror = () => прибрати(null);
+  const q = Object.entries(Object.assign({ токен: Т.приймач.токен, кб: імʼя }, параметри))
+    .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v)).join('&');
+  тег.src = Т.приймач.url + '?' + q;
+  document.head.appendChild(тег);
+}
+
+/*── запуск екрана входу ────────────────────────────────────────────────*/
+порахуватиЗрив();                       // не завершену минулого разу — зарахувати
+
+$('#kod').addEventListener('input', e => {
+  const к = чистийКод(e.target.value);
+  if (e.target.value !== к) e.target.value = к;
+  if (к.length === 8) впізнати(к); else { хто = null; показатиХто(); сказатиПроКод(''); }
+});
+$('#go').addEventListener('click', почати);
+
+// код із адреси (сайт передає ?код=…) або з минулого разу
+(function підставитиКод(){
+  const зАдреси = new URLSearchParams(location.search).get('код');
+  const збережений = зСховища(КОД_КЛЮЧ);
+  const к = чистийКод(зАдреси || збережений || '');
+  if (к.length === 8){ $('#kod').value = к; впізнати(к); }
+  else перевірити();
+})();
+
+// недоставлені результати з минулого разу — дошлемо тихо
+дошлатиЧергу();
+
+/*── демо для вчителя: подивитись рівні очима ───────────────────────────*/
+let стопДемо = () => {};
+function демо(){
+  стопДемо();
+  /* У бойовій копії картку #teacher вирізають цілком — разом із полотном
+     демо. Без цієї перевірки полотно(null) кинуло б помилку ще до входу,
+     і робота не відкрилась би взагалі. */
+  const п = $('#demo');
+  if (!п) return;
+  стопДемо = полотно(п, 'Розкладіть на множники:  [4x^2 − \\f{9}{25}]', 26);
+}
+/*── повзунок смужки ────────────────────────────────────────────────────
+  Підбір іде на телефоні вчителя, тому єдине, що може підказати сторінка, —
+  де починається аліасинг екрана. Поріг рахуємо від реальної частоти
+  оновлення (на ProMotion-екранах вона 120 Гц, і поріг удвічі вищий). */
+let Гц = 60;
+(function виміряти(){
+  let n = 0, t0 = 0;
+  const крок = t => {
+    if (!t0) t0 = t;
+    if (++n < 20) return requestAnimationFrame(крок);
+    const виміряно = 1000 * (n - 1) / (t - t0);
+    if (виміряно > 20 && виміряно < 400) Гц = Math.round(виміряно / 10) * 10;
+    підписСмужки();
+  };
+  requestAnimationFrame(крок);
+})();
+
+const СМ_КЛЮЧ = 'кр:смужка';
+
+/* Повзунок має різний діапазон для смужок і крапок. Значення ставимо лише
+   тоді, коли воно справді інше: інакше кожне оновлення підпису смикало б
+   повзунок під пальцем. */
+function pовЗначення(пов, val){
+  if (+пов.value !== val) пов.value = val;
+}
+
+function підписСмужки(){
+  const нота = $('#sp-note');
+  if (!нота) return;                       // панель уже прибрано (робота почалась)
+  $('#speedbox').hidden = смужка.режим !== 'рух';
+  $('#sp-v').textContent = смужка.циклів;
+  нота.className = 'note';
+
+  if (смужка.циклів === 0 || смужка.режим === 'стоп'){
+    нота.textContent = 'Візерунок стоїть.';
+  } else if (смужка.режим === 'випадкова'){
+    нота.classList.add('ok');
+    нота.textContent = 'Фаза щокадру нова — аліасингу тут не буває в принципі, швидкість ролі не грає.';
+  } else {
+    const К       = крок();
+    const пксКадр = смужка.циклів * К / Гц;
+    const чверть  = К / 4;                 // поріг помітного посмикування
+    const пів     = К / 2;                 // тут візерунок уже їде назад
+    if (пксКадр > пів){
+      нота.classList.add('bad');
+      нота.textContent = `${пксКадр.toFixed(1)} px за кадр при ${Гц} Гц — більше півперіоду: видно, як візерунок їде НАЗАД. Око помічає його сильніше, не слабше.`;
+    } else if (пксКадр > чверть){
+      нота.classList.add('bad');
+      нота.textContent = `${пксКадр.toFixed(1)} px за кадр при ${Гц} Гц — вище чверті періоду, можливе посмикування. Якщо помітно — «Випадкова фаза».`;
+    } else {
+      нота.classList.add('ok');
+      нота.textContent = `${пксКадр.toFixed(1)} px за кадр при ${Гц} Гц — рухається чисто, без аліасингу.`;
+    }
+  }
+
+  // щільність → видимість тексту
+  $('#sw-v').textContent = смужка.ширина;
+  $('#sw-p').textContent = період().toFixed(1);
+
+  const вид = видимість(), відс = Math.round(вид * 100);
+  const шн = $('#sw-note');
+  шн.className = 'note';
+  if (відс >= 82){
+    шн.classList.add('bad');
+    шн.textContent = `Видно ${відс}% — смуга заледве щось закриває, перекриття майже не працює.`;
+  } else if (відс >= 55){
+    шн.classList.add('ok');
+    шн.textContent = `Видно ${відс}% тексту. Робочий діапазон: і читається, і рве гліф.`;
+  } else if (відс >= 40){
+    шн.textContent = `Видно ${відс}% — уже помітно тьмяніше. Дивіться з тієї відстані, з якої сидить клас.`;
+  } else {
+    шн.classList.add('bad');
+    шн.textContent = `Видно всього ${відс}% — це надто темно, слабший зір цього не подужає.`;
+  }
+
+  // глибина мерехтіння
+  $('#fl-v').textContent = Math.round(мерехт.глибина * 100);
+  const фн = $('#fl-note');
+  фн.className = 'note';
+  if (мерехт.глибина >= 0.95){
+    фн.classList.add('bad');
+    фн.textContent = 'Повне гасіння — найсильніший захист від знімка, але й найпомітніше мерехтіння.';
+  } else if (мерехт.глибина >= 0.6){
+    фн.classList.add('ok');
+    фн.textContent = `У «темній» фазі лишається ${Math.round((1-мерехт.глибина)*100)}% штриха. Розмах коливання менший, знімок усе ще недоотримує більшість.`;
+  } else if (мерехт.глибина >= 0.25){
+    фн.textContent = `Лишається ${Math.round((1-мерехт.глибина)*100)}% штриха — очам спокійно, але на знімку літера вже вгадується.`;
+  } else {
+    фн.classList.add('bad');
+    фн.textContent = 'Майже без мерехтіння — і майже без захисту від знімка екрана.';
+  }
+
+  $('#sp-code').textContent =
+      (смужка.режим === 'рух'
+        ? `смужка.режим = 'рух';   смужка.циклів = ${смужка.циклів};`
+        : `смужка.режим = '${смужка.режим}';`)
+    + `\nсмужка.ширина = ${смужка.ширина};   // видно ${відс}% тексту`
+    + `\nРІВНІ.${Т.захист}.глибина = ${мерехт.глибина};`;
+
+  $$('#teacher [data-vmode]').forEach(b =>
+    b.classList.toggle('ghost', b.dataset.vmode !== смужка.режим));
+
+  try { localStorage.setItem(СМ_КЛЮЧ, JSON.stringify({ смужка, мерехт })); } catch {}
+}
+
+/* Відновлюємо ТІЛЬКИ смужку. Глибину — ні, і це навмисно: відколи вона
+   належить рівню, збережене колись число підмінило б рівневе, причому
+   лише в браузері вчителя. Учитель бачив би одне, клас — інше, і нічого
+   в коді на це не вказувало б. Повзунок працює в межах сеансу, а підібране
+   число вписують у РІВНІ (панель друкує готовий рядок). */
+try {
+  const з = JSON.parse(localStorage.getItem(СМ_КЛЮЧ) || 'null');
+  if (з && з.смужка) Object.assign(смужка, з.смужка);
+} catch {}
+
+/* Панель учителя живе ТІЛЬКИ в шаблоні. У бойовій копії картку #teacher
+   вирізають цілком (див. «Робота — як готувати.md»), і тоді вмикати
+   нічого: без цієї перевірки $('#sp') дорівнював би null, помилка впала б
+   ще до входу — і робота не відкрилась би взагалі.
+   Збережені налаштування смужки вище лишаються ПОЗА перевіркою: вони
+   визначають, як виглядає захист у справжній роботі. */
+if ($('#teacher')) {
+  $('#sp').value = смужка.циклів;
+  $('#sp').addEventListener('input', e => {
+    смужка.циклів = +e.target.value;
+    підписСмужки();
+  });
+  $$('#teacher [data-vmode]').forEach(b => b.addEventListener('click', () => {
+    смужка.режим = b.dataset.vmode;
+    підписСмужки();
+  }));
+
+  $('#fl').value = Math.round(мерехт.глибина * 100);
+  $('#fl').addEventListener('input', e => {
+    // пишемо і в живе значення, і в сам рівень: інакше перемкнув на max,
+    // повернувся на mid — і підібране число зникло
+    мерехт.глибина = рівень.глибина = +e.target.value / 100;
+    демо();                      // глибина зашита в самі кадри, тож перемальовуємо
+    підписСмужки();
+  });
+
+  $('#sw').value = смужка.ширина;
+  $('#sw').addEventListener('input', e => {
+    смужка.ширина = +e.target.value;
+    перевдягнути();            // і ширина смуги, і кількість крапок — у самій побудові
+    підписСмужки();
+  });
+
+
+
+  підписСмужки();
+
+  $$('#teacher [data-lvl]').forEach(b => b.addEventListener('click', () => {
+    рівень = РІВНІ[b.dataset.lvl];
+    Т.захист = b.dataset.lvl;   // локально: панель підбору, у пакет не йде
+    document.body.className = 'lvl-' + b.dataset.lvl;
+    $$('#teacher [data-lvl]').forEach(x => x.classList.toggle('ghost', x !== b));
+    // глибина в кожного рівня своя — повзунок мусить показати саме її
+    мерехт.глибина = рівень.глибина;
+    $('#fl').value = Math.round(мерехт.глибина * 100);
+    демо();
+    підписСмужки();
+  }));
+
+  window.addEventListener('load', () => {
+    $$('#teacher [data-lvl]').forEach(x => x.classList.toggle('ghost', x.dataset.lvl !== Т.захист));
+    демо();
+  });
+}
+let перемальовка = null;
+let остання_ширина = window.innerWidth;
+window.addEventListener('resize', () => {
+  /* Реагуємо тільки на зміну ШИРИНИ. На телефоні адресний рядок ховається
+     й виринає під час гортання, і кожен такий рух дає resize зі зміною
+     самої лише висоти. Перемальовувати на це — означає без потреби
+     перегенеровувати полотна десятки разів за урок. */
+  if (window.innerWidth === остання_ширина) return;
+  остання_ширина = window.innerWidth;
+
+  clearTimeout(перемальовка);
+  перемальовка = setTimeout(() => {
+    if (!працює){ демо(); return; }
+    // Під час переходу між питаннями не чіпаємо: інакше повернулись би
+    // кнопки вже відповіданого питання. Вхід у повний екран сам по собі
+    // дає resize, тож випадок не рідкісний.
+    if (стан.перехід || $('#opts').classList.contains('locked')) return;
+    питання();
+  }, 220);
+});
+</script>
+</body>
+</html>

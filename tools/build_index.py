@@ -121,9 +121,37 @@ def read_work(path):
     приймач, бо статичний сайт часу не знає.
     """
     try:
-        text = path.read_text(encoding="utf-8", errors="ignore")[:40000]
+        text = path.read_text(encoding="utf-8", errors="ignore")
     except OSError:
         return None
+
+    # Читати ТІЛЬКИ блок РОБОТА. Вище в сторінці лежить ТИПИ_РОБІТ шаблона, і
+    # там свої `хвилин:`, `тип:`, `назва:` — регулярка мовчки хапала перше
+    # входження, тому на сайті всі роботи були підписані «40 хв» (типове
+    # значення контрольної). Спіймано 24.09.2026.
+    whole = text
+    start = text.find("const РОБОТА = {")
+    if start >= 0:
+        end = text.find("\n};", start)
+        text = text[start:end if end > start else None]
+    else:
+        text = text[:40000]
+
+    def default_minutes(kind):
+        """Скільки хвилин дає типове налаштування, коли сторінка своїх не має.
+
+        `хвилин` у блоці РОБОТА не обовʼязкове: не вписали — робота бере
+        значення свого типу з ТИПИ_РОБІТ. Без цього запасу сайт писав «0 хв».
+        """
+        m = re.search(r"const ТИПИ_РОБІТ\s*=\s*\{", whole)
+        if not m:
+            return 0
+        блок = whole[m.end():]
+        m = re.search(kind + r"\s*:\s*\{(.*?)\n\s*\}", блок, re.S)
+        if not m:
+            return 0
+        m = re.search(r"хвилин\s*:\s*(\d+)", m.group(1))
+        return int(m.group(1)) if m else 0
 
     def field(name, default=""):
         m = re.search(name + r"\s*:\s*'([^']*)'", text)
@@ -149,7 +177,7 @@ def read_work(path):
         "title": title,
         "subject": field("предмет"),
         "theme": field("тема"),
-        "minutes": number("хвилин", 0),
+        "minutes": number("хвилин", 0) or default_minutes(kind),
         "href": href_for(path),
     }
 
