@@ -14,6 +14,7 @@
      .fx + .fx-leg    — розбирання формули
      .numline[data-from][data-to][data-value][data-round]
      .coladd[data-a][data-b]
+     .colsub[data-a][data-b]  — віднімання стовпчиком, крок = пробіл
      .quiz > button[data-ok]
      .roster
      .qr[data-url][data-code]
@@ -128,9 +129,9 @@ if(rail && !rail.classList.contains('chap')){
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   A10 · таймер 2.0 (кільце, +1 хв, сигнал)
+   A10 · таймер 2.0 (смуга, ±1 хв, сигнал)
    ───────────────────────────────────────────────────────────────────── */
-var R = 24, RBOX = 58, CIRC = 2 * Math.PI * R, ticking = null;
+var ticking = null;
 
 function placeSlot(s){
   /* Слот стає МІЖ умовою і відповідями — вимога «таймер не їде вниз». */
@@ -156,14 +157,12 @@ slides.forEach(function(s){
   var total = parseInt(s.dataset.timer,10) || 60;
   var box = el('div','timer');
   box.innerHTML =
-    '<svg class="ring" width="'+RBOX+'" height="'+RBOX+'" viewBox="0 0 '+RBOX+' '+RBOX+'" aria-hidden="true">' +
-      '<circle class="bg" cx="'+(RBOX/2)+'" cy="'+(RBOX/2)+'" r="'+R+'"></circle>' +
-      '<circle class="fg" cx="'+(RBOX/2)+'" cy="'+(RBOX/2)+'" r="'+R+'" stroke-dasharray="'+CIRC.toFixed(1)+'"></circle>' +
-      '<circle class="tick" cx="'+(RBOX/2)+'" cy="'+(RBOX/2-R)+'" r="4"></circle>' +
-    '</svg>' +
     '<div class="clock"><b class="m">0</b><i class="c">:</i><b class="s">00</b></div><p class="lab"></p>' +
     '<button type="button" class="go"></button>' +
-    '<button type="button" class="more">+1 хв</button>';
+    '<button type="button" class="less">\u22121 хв</button>' +
+    '<button type="button" class="more">+1 хв</button>' +
+    /* Смуга — не для скрінрідера: те саме число вже сказане годинником. */
+    '<div class="bar" aria-hidden="true"><span class="fill"></span></div>';
   box.dataset.total = total; box.dataset.left = total; box.dataset.run = '0';
   placeSlot(s).appendChild(box);
 });
@@ -191,6 +190,16 @@ function beep(){
     tone(t0, 880); tone(t0 + 0.26, 660);      /* дві ноти — чути з іншого кінця класу */
   }catch(e){}
 }
+/* Поділки на смузі. Крок — хвилина, але не більш як 12 поділок: на завданні
+   в пів години хвилинні риски злилися б у штрихування. Коротші за 2 хв
+   завдання лишаємо без поділок — ділити там нічого. */
+function segment(b){
+  var bar = $('.bar', b); if(!bar) return;
+  var total = +b.dataset.total, step = 60 * Math.ceil(total / 720);
+  if(total < 120){ bar.classList.remove('seg'); return; }
+  bar.style.setProperty('--seg', (100 * step / total).toFixed(3) + '%');
+  bar.classList.add('seg');
+}
 function fmt(sec){ sec = Math.max(0,sec); return Math.floor(sec/60) + ':' + ('0'+(sec%60)).slice(-2); }
 function setClock(b, sec){
   sec = Math.max(0, sec);
@@ -201,24 +210,26 @@ function drawTimer(b, jump){
   var total = +b.dataset.total, left = +b.dataset.left, run = b.dataset.run === '1';
   setClock(b, left);
   /* Двокрапка блимає раз на секунду, поки таймер іде. Це головний сигнал
-     «годинник працює»: стрілка за секунду проходить лише ~2 px, а блимання
-     видно з будь-якої парти. */
+     «годинник працює»: смуга за секунду коротшає менш ніж на піксель, а
+     блимання видно з будь-якої парти. */
   b.classList.toggle('run', run && left > 0);
-  $('.ring .fg',b).style.strokeDashoffset = (CIRC * (1 - left/total)).toFixed(1);
-  /* Дуга показує, скільки лишилось, але на довгому завданні вона за секунду
-     змінюється менш ніж на відсоток — здається нерухомою. Тому ще й стрілка:
-     6° за секунду, повний оберт за хвилину — видно, що час іде. */
-  var tick = $('.ring .tick', b), arc = $('.ring .fg', b);
-  if(jump){ tick.style.transition = 'none'; arc.style.transition = 'none'; }
-  tick.style.transform = 'rotate(' + ((total - left) * 6) + 'deg)';
+  /* Заповнення повзе рівно (transition .95s linear), тож між секундами
+     смуга не стоїть, а тече. jump — коли час стрибнув («±1 хв», «Ще раз»):
+     тоді перехід на мить вимикаємо, щоб смуга не їхала назад через
+     півекрана. */
+  var fill = $('.bar .fill', b);
+  if(jump) fill.style.transition = 'none';
+  fill.style.width = (100 * Math.max(0, left) / total).toFixed(3) + '%';
   if(jump){
-    void tick.offsetWidth;                       /* примусовий перерахунок */
-    tick.style.transition = ''; arc.style.transition = '';
+    void fill.offsetWidth;                       /* примусовий перерахунок */
+    fill.style.transition = '';
   }
   b.classList.toggle('warn', left > 0 && left <= 30);
   b.classList.toggle('over', left === 0);
   $('.lab',b).textContent = left === 0 ? 'Час вийшов' : (run ? 'Працюємо' : 'на це завдання');
   $('.go',b).textContent  = left === 0 ? 'Ще раз'    : (run ? 'Пауза'    : 'Почати');
+  /* Зрізати хвилину нема з чого, коли час уже вийшов. */
+  var less = $('.less',b); if(less) less.disabled = left === 0;
 }
 function stopTick(){ if(ticking){ clearInterval(ticking); ticking = null; } }
 function toggleTimer(b){
@@ -226,9 +237,7 @@ function toggleTimer(b){
   var restarted = false;
   if(+b.dataset.left === 0){
     b.dataset.left = b.dataset.total; b.classList.remove('ding');
-    /* Стрілку повертаємо на 12 миттєво. Без цього вона відкручувалась би назад
-       через усе коло — на таймері 5 хв це 30 обертів. */
-    restarted = true;
+    restarted = true;                            /* смугу доливаємо миттєво */
   }
   audio();                       /* розбудити звук, поки триває жест користувача */
   b.dataset.run = '1'; stopTick();
@@ -243,17 +252,28 @@ function toggleTimer(b){
 function resetTimer(s){
   var b = s && $('.timer',s); if(!b) return;
   b.dataset.left = b.dataset.total; b.dataset.run = '0';
-  b.classList.remove('ding'); drawTimer(b, true);
+  b.classList.remove('ding'); segment(b); drawTimer(b, true);
 }
 on(D,'click',function(e){
-  var t = e.target.closest && e.target.closest('.timer .go, .timer .more');
-  if(!t) return;
+  var t = e.target.closest && e.target.closest('.timer .go, .timer .more, .timer .less');
+  if(!t || t.disabled) return;
   e.stopPropagation();
   var b = t.parentNode;
   if(t.classList.contains('more')){
     b.dataset.total = +b.dataset.total + 60;
     b.dataset.left  = +b.dataset.left  + 60;
-    b.classList.remove('over','ding'); drawTimer(b, true); fit();
+    b.classList.remove('over','ding'); segment(b); drawTimer(b, true); fit();
+  } else if(t.classList.contains('less')){
+    /* «−1 хв» — коли клас упорався швидше. Разом із рештою меншає й загальний
+       час: інакше смуга показувала б частку від хвилин, яких уже немає.
+       Коротше за хвилину таймер не робимо, а якщо зрізали все — це той самий
+       кінець часу, що й природний, із сигналом. */
+    var tot = Math.max(60, +b.dataset.total - 60);
+    var lf  = Math.min(Math.max(0, +b.dataset.left - 60), tot);
+    var was = b.dataset.run === '1';
+    b.dataset.total = tot; b.dataset.left = lf;
+    if(lf === 0 && was){ b.dataset.run = '0'; stopTick(); b.classList.add('ding'); beep(); }
+    segment(b); drawTimer(b, true); fit();
   } else toggleTimer(b);
 }, true);
 
@@ -374,6 +394,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
+  $$('.colsub', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -788,6 +809,122 @@ $$('.coladd').forEach(function(box){
     b2.dataset.a === 'go' ? step() : reset();
   });
   reset();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C4b · віднімання стовпчиком: кожна цифра — окремий крок по пробілу
+   <div class="colsub" data-a="381064" data-b="27569"></div>
+   Кроки — це .hide-рядки журналу, тож їх гортає звичайний пробіл/←,
+   а стан стовпчика малюється з того, скільки рядків уже відкрито.
+   Позика — окремий крок перед відніманням: спершу «звідки взяли»,
+   потім «що від чого віднімаємо». data-check="0" — без перевірки.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.colsub').forEach(function(box){
+  var a = String(box.dataset.a||'').replace(/\D/g,''), b = String(box.dataset.b||'').replace(/\D/g,'');
+  if(!a || !b || +a < +b) return;
+  var n = a.length, R = String(+a - +b);
+  var NOM = ['Одиниці','Десятки','Сотні','Тисячі','Десятки тисяч','Сотні тисяч','Мільйони','Десятки мільйонів'];
+  var ONE = ['1 одиницю','1 десяток','1 сотню','1 тисячу','1 десяток тисяч','1 сотню тисяч','1 мільйон','1 десяток мільйонів'];
+  var TEN = ['10 одиниць','10 десятків','10 сотень','10 тисяч','10 десятків тисяч','10 сотень тисяч','10 мільйонів'];
+  var INS = ['одиницями','десятками','сотнями','тисячами','десятками тисяч','сотнями тисяч','мільйонами','десятками мільйонів'];
+  var LOC = ['в одиницях','у десятках','у сотнях','у тисячах','у десятках тисяч','у сотнях тисяч','у мільйонах','у десятках мільйонів'];
+  function nm(k,arr){ return arr[k] || ('розряд ' + (k+1)); }
+  function fmt(s){ return String(s).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
+
+  var A = [], B = [];                     /* індекс = розряд справа, 0 — одиниці */
+  for(var k=0;k<n;k++){ A[k] = +a[n-1-k]; B[k] = k < b.length ? +b[b.length-1-k] : null; }
+  var w = A.slice(), res = [], snaps = [], log = [];
+  function snap(hi, lend, sh, lg){
+    snaps.push({ w:w.slice(), res:res.slice(), hi:hi, lend:lend||[] });
+    log.push({ sh:sh, lg:lg });
+  }
+  snap(-1, [], 'Записали розряд під розрядом',
+    'Більше число — зверху. Одиниці пишемо під одиницями, десятки під десятками і так далі. ' +
+    'Віднімаємо справа наліво: починаємо з одиниць.');
+
+  for(k=0;k<n;k++){
+    var y = B[k] == null ? 0 : B[k], was = w[k] !== A[k];
+    if(w[k] < y){
+      var j = k+1; while(w[j] === 0) j++;
+      var lg = nm(k,NOM) + ': зверху ' + w[k] + ', знизу ' + y + '. З ' + w[k] + ' відняти ' + y +
+               ' не можна — зверху менше. Позичаємо в сусіда зліва. ';
+      if(j > k+1){
+        lg += 'Але ' + LOC[k+1] + ' — 0, позичати нічого' +
+              (j > k+2 ? ', і далі теж нулі' : '') + '. Ідемо лівіше, поки не знайдемо не нуль: ' +
+              LOC[j] + ' є ' + w[j] + '. ';
+      }
+      var lend = [];
+      for(var t=j; t>k; t--){
+        lend.push(t);
+        lg += 'Беремо ' + nm(t,ONE) + ' = ' + nm(t-1,TEN) + ': ' + LOC[t] + ' ' + w[t] + ' → ' + (w[t]-1) +
+              ', ' + LOC[t-1] + ' ' + w[t-1] + ' → ' + (w[t-1]+10) + '. ';
+        w[t] -= 1; w[t-1] += 10;
+      }
+      if(j > k+1) lg += 'Бачиш: кожен нуль спершу став 10, а потім віддав 1 праворуч — тому він стає 9. ';
+      lg += 'У зошиті ставимо крапку над цифрою, у якої позичили.';
+      snap(k, lend, nm(k,NOM) + ': ' + (w[k]-10) + ' − ' + y + ' не можна → позичаємо', lg);
+    }
+    var d = w[k] - y, lead = k >= R.length;
+    res[k] = lead ? null : d;
+    var sh = nm(k,NOM) + ': ' + w[k] + ' − ' + y + ' = ' + d;
+    var txt = nm(k,NOM) + ': ';
+    if(w[k] >= 10) txt += 'після позики зверху ' + w[k] + ', ';
+    else if(was) txt += 'тут було ' + A[k] + ', але звідси позичили — лишилось ' + w[k] + '; ';
+    else txt += 'зверху ' + w[k] + ', ';
+    txt += B[k] == null ? 'знизу цифри немає — віднімаємо 0. ' : ('знизу ' + y + '. ');
+    txt += w[k] + ' − ' + y + ' = ' + d + '. ';
+    txt += lead ? 'Це найлівіша цифра, і вийшов 0 — нуль на початку числа не пишемо.'
+                : 'Пишемо ' + d + ' під ' + nm(k,INS) + '.';
+    if(lead) sh += ' — не пишемо';
+    snap(k, [], sh, txt);
+  }
+  if(box.dataset.check !== '0'){
+    snap(-1, [], 'Перевірка: ' + fmt(R) + ' + ' + fmt(b) + ' = ' + fmt(a) + ' ✓',
+      'Відповідь: ' + fmt(R) + '. Перевіряємо додаванням: різниця + відʼємник = зменшуване. ' +
+      fmt(R) + ' + ' + fmt(b) + ' = ' + fmt(+R + +b) + ' — збіглося з тим, від чого віднімали. Правильно!');
+  }
+
+  /* таблиця: рядок позик, зменшуване, відʼємник, різниця */
+  var tb = el('table','cl');
+  function row(cls){ var r = el('tr', cls); tb.appendChild(r); return r; }
+  var rw = row('w'), r1 = row(''), r2 = row(''), r3 = row('r');
+  var cells = { w:[], a:[], b:[], r:[] };
+  [rw,r1,r2,r3].forEach(function(r,i){
+    var op = el('td','op'); if(i === 1){ op.textContent = '−'; op.rowSpan = 2; r.appendChild(op); }
+    else if(i !== 2) r.appendChild(op);
+  });
+  for(var i=n-1;i>=0;i--){
+    var cw = el('td'), ca = el('td'), cb = el('td','d'), cr = el('td','d');
+    ca.textContent = A[i]; cb.textContent = B[i] == null ? '' : B[i];
+    cells.w[i]=cw; cells.a[i]=ca; cells.b[i]=cb; cells.r[i]=cr;
+    rw.appendChild(cw); r1.appendChild(ca); r2.appendChild(cb); r3.appendChild(cr);
+  }
+  /* лінія лише під цифрами відповіді й відʼємника — як у зошиті */
+  var say = el('div','say');
+  var ol = el('ol','cs-log');
+  log.forEach(function(L,i){ var li = el('li', i ? 'hide' : '', L.sh); ol.appendChild(li); });
+  var left = el('div','cs-l'); left.appendChild(tb); left.appendChild(say);
+  box.appendChild(left); box.appendChild(ol);
+
+  box.__paint = function(){
+    var lis = $$('li', ol), shown = 0;
+    lis.forEach(function(li,i){ if(!i || li.classList.contains('on')) shown = i+1; });
+    var s = snaps[shown-1];
+    lis.forEach(function(li,i){ li.classList.toggle('now', i === shown-1); li.classList.toggle('past', i < shown-1); });
+    for(var k=0;k<n;k++){
+      var ch = s.w[k] !== A[k];
+      cells.w[k].textContent = ch ? s.w[k] : '';
+      cells.a[k].classList.toggle('x', ch);
+      cells.r[k].textContent = s.res[k] == null ? '' : s.res[k];
+      [cells.a[k],cells.b[k],cells.r[k],cells.w[k]].forEach(function(c){
+        c.classList.toggle('hi', k === s.hi);
+        c.classList.toggle('lend', s.lend.indexOf(k) >= 0);
+      });
+    }
+    say.textContent = log[shown-1].lg.replace(/ ([−=→+]) /g,'\u00a0$1\u00a0');
+    fit();
+  };
+  box.__paint();
 });
 
 /* ─────────────────────────────────────────────────────────────────────
