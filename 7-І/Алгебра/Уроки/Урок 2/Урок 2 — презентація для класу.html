@@ -566,6 +566,27 @@ table.cl td.op{color:var(--soft);padding-right:.25em;vertical-align:middle}
 .coladd .say{text-align:center;color:var(--soft);margin-top:clamp(8px,1.2vw,14px);
   font-size:clamp(13px,calc(1.5*var(--u)),19px);min-height:1.5em}
 
+/* ───────────────────────── C4b · віднімання стовпчиком по кроках ────────── */
+.colsub{display:flex;flex-wrap:wrap;gap:clamp(12px,2vw,28px);align-items:flex-start}
+.colsub .cs-l{flex:1 1 clamp(220px,34vw,460px);min-width:0}
+.colsub table.cl{font-size:clamp(24px,calc(3.6*var(--u)),46px)}
+.colsub table.cl td{border-radius:6px;padding:0 .12em}
+.colsub table.cl tr.w td{font-size:.6em;color:var(--pen);height:1.2em;vertical-align:bottom;font-weight:800}
+.colsub table.cl td.x{text-decoration:line-through;text-decoration-color:var(--pen);text-decoration-thickness:.09em;color:var(--soft)}
+.colsub table.cl td.hi{background:var(--sun-soft)}
+.colsub table.cl tr:not(.w) td.hi{color:var(--sun)}
+.colsub table.cl td.x.hi{color:var(--soft)}
+.colsub table.cl td.lend{background:var(--pen-soft)}
+.colsub .say{margin-top:clamp(8px,1.2vw,14px);min-height:4.4em;line-height:1.4;
+  font-size:clamp(14px,calc(1.7*var(--u)),21px);border-left:4px solid var(--sun);
+  padding:clamp(6px,.8vw,10px) clamp(9px,1.2vw,14px);background:var(--sun-soft);border-radius:0 8px 8px 0}
+.colsub .cs-log{flex:1 1 clamp(200px,26vw,340px);margin:0;padding-left:1.6em;
+  font-family:"JetBrains Mono",monospace;font-weight:600;font-variant-numeric:tabular-nums;
+  font-size:clamp(12px,calc(1.35*var(--u)),17px);line-height:1.5}
+.colsub .cs-log li{transition:opacity .3s,color .3s}
+.colsub .cs-log li.past{color:var(--soft)}
+.colsub .cs-log li.now{color:var(--pen);font-weight:800}
+
 /* ───────────────────────── C5 · вибір відповіді ────────────────────────── */
 .quiz{display:grid;gap:clamp(8px,1.1vw,13px);grid-template-columns:repeat(auto-fit,minmax(clamp(140px,17vw,230px),1fr))}
 .quiz button{text-align:left;display:flex;gap:clamp(9px,1.2vw,14px);align-items:center;
@@ -666,9 +687,9 @@ details.hint .in{padding:0 clamp(11px,1.4vw,16px) clamp(11px,1.4vw,16px);
   padding:clamp(11px,1.4vw,16px) clamp(13px,1.7vw,19px);text-decoration:none;color:inherit;
   box-shadow:var(--sh1);transition:border-color .16s,transform .16s}
 .nextl:hover{border-color:var(--pen);transform:translateY(-2px)}
-.nextl .k{font-family:"Unbounded",sans-serif;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+.nextl .k{display:block;font-family:"Unbounded",sans-serif;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
   font-size:clamp(9px,calc(.95*var(--u)),12px);color:var(--soft)}
-.nextl .t{font-family:"Unbounded",sans-serif;font-weight:600;
+.nextl .t{display:block;font-family:"Unbounded",sans-serif;font-weight:600;
   font-size:clamp(14px,calc(1.8*var(--u)),22px);line-height:1.25;margin-top:3px}
 .nextl .go{font-size:clamp(18px,calc(2.4*var(--u)),30px);color:var(--pen);flex:none}
 
@@ -1473,6 +1494,7 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
      .fx + .fx-leg    — розбирання формули
      .numline[data-from][data-to][data-value][data-round]
      .coladd[data-a][data-b]
+     .colsub[data-a][data-b]  — віднімання стовпчиком, крок = пробіл
      .quiz > button[data-ok]
      .roster
      .qr[data-url][data-code]
@@ -1852,6 +1874,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
+  $$('.colsub', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -2266,6 +2289,122 @@ $$('.coladd').forEach(function(box){
     b2.dataset.a === 'go' ? step() : reset();
   });
   reset();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C4b · віднімання стовпчиком: кожна цифра — окремий крок по пробілу
+   <div class="colsub" data-a="381064" data-b="27569"></div>
+   Кроки — це .hide-рядки журналу, тож їх гортає звичайний пробіл/←,
+   а стан стовпчика малюється з того, скільки рядків уже відкрито.
+   Позика — окремий крок перед відніманням: спершу «звідки взяли»,
+   потім «що від чого віднімаємо». data-check="0" — без перевірки.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.colsub').forEach(function(box){
+  var a = String(box.dataset.a||'').replace(/\D/g,''), b = String(box.dataset.b||'').replace(/\D/g,'');
+  if(!a || !b || +a < +b) return;
+  var n = a.length, R = String(+a - +b);
+  var NOM = ['Одиниці','Десятки','Сотні','Тисячі','Десятки тисяч','Сотні тисяч','Мільйони','Десятки мільйонів'];
+  var ONE = ['1 одиницю','1 десяток','1 сотню','1 тисячу','1 десяток тисяч','1 сотню тисяч','1 мільйон','1 десяток мільйонів'];
+  var TEN = ['10 одиниць','10 десятків','10 сотень','10 тисяч','10 десятків тисяч','10 сотень тисяч','10 мільйонів'];
+  var INS = ['одиницями','десятками','сотнями','тисячами','десятками тисяч','сотнями тисяч','мільйонами','десятками мільйонів'];
+  var LOC = ['в одиницях','у десятках','у сотнях','у тисячах','у десятках тисяч','у сотнях тисяч','у мільйонах','у десятках мільйонів'];
+  function nm(k,arr){ return arr[k] || ('розряд ' + (k+1)); }
+  function fmt(s){ return String(s).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
+
+  var A = [], B = [];                     /* індекс = розряд справа, 0 — одиниці */
+  for(var k=0;k<n;k++){ A[k] = +a[n-1-k]; B[k] = k < b.length ? +b[b.length-1-k] : null; }
+  var w = A.slice(), res = [], snaps = [], log = [];
+  function snap(hi, lend, sh, lg){
+    snaps.push({ w:w.slice(), res:res.slice(), hi:hi, lend:lend||[] });
+    log.push({ sh:sh, lg:lg });
+  }
+  snap(-1, [], 'Записали розряд під розрядом',
+    'Більше число — зверху. Одиниці пишемо під одиницями, десятки під десятками і так далі. ' +
+    'Віднімаємо справа наліво: починаємо з одиниць.');
+
+  for(k=0;k<n;k++){
+    var y = B[k] == null ? 0 : B[k], was = w[k] !== A[k];
+    if(w[k] < y){
+      var j = k+1; while(w[j] === 0) j++;
+      var lg = nm(k,NOM) + ': зверху ' + w[k] + ', знизу ' + y + '. З ' + w[k] + ' відняти ' + y +
+               ' не можна — зверху менше. Позичаємо в сусіда зліва. ';
+      if(j > k+1){
+        lg += 'Але ' + LOC[k+1] + ' — 0, позичати нічого' +
+              (j > k+2 ? ', і далі теж нулі' : '') + '. Ідемо лівіше, поки не знайдемо не нуль: ' +
+              LOC[j] + ' є ' + w[j] + '. ';
+      }
+      var lend = [];
+      for(var t=j; t>k; t--){
+        lend.push(t);
+        lg += 'Беремо ' + nm(t,ONE) + ' = ' + nm(t-1,TEN) + ': ' + LOC[t] + ' ' + w[t] + ' → ' + (w[t]-1) +
+              ', ' + LOC[t-1] + ' ' + w[t-1] + ' → ' + (w[t-1]+10) + '. ';
+        w[t] -= 1; w[t-1] += 10;
+      }
+      if(j > k+1) lg += 'Бачиш: кожен нуль спершу став 10, а потім віддав 1 праворуч — тому він стає 9. ';
+      lg += 'У зошиті ставимо крапку над цифрою, у якої позичили.';
+      snap(k, lend, nm(k,NOM) + ': ' + (w[k]-10) + ' − ' + y + ' не можна → позичаємо', lg);
+    }
+    var d = w[k] - y, lead = k >= R.length;
+    res[k] = lead ? null : d;
+    var sh = nm(k,NOM) + ': ' + w[k] + ' − ' + y + ' = ' + d;
+    var txt = nm(k,NOM) + ': ';
+    if(w[k] >= 10) txt += 'після позики зверху ' + w[k] + ', ';
+    else if(was) txt += 'тут було ' + A[k] + ', але звідси позичили — лишилось ' + w[k] + '; ';
+    else txt += 'зверху ' + w[k] + ', ';
+    txt += B[k] == null ? 'знизу цифри немає — віднімаємо 0. ' : ('знизу ' + y + '. ');
+    txt += w[k] + ' − ' + y + ' = ' + d + '. ';
+    txt += lead ? 'Це найлівіша цифра, і вийшов 0 — нуль на початку числа не пишемо.'
+                : 'Пишемо ' + d + ' під ' + nm(k,INS) + '.';
+    if(lead) sh += ' — не пишемо';
+    snap(k, [], sh, txt);
+  }
+  if(box.dataset.check !== '0'){
+    snap(-1, [], 'Перевірка: ' + fmt(R) + ' + ' + fmt(b) + ' = ' + fmt(a) + ' ✓',
+      'Відповідь: ' + fmt(R) + '. Перевіряємо додаванням: різниця + відʼємник = зменшуване. ' +
+      fmt(R) + ' + ' + fmt(b) + ' = ' + fmt(+R + +b) + ' — збіглося з тим, від чого віднімали. Правильно!');
+  }
+
+  /* таблиця: рядок позик, зменшуване, відʼємник, різниця */
+  var tb = el('table','cl');
+  function row(cls){ var r = el('tr', cls); tb.appendChild(r); return r; }
+  var rw = row('w'), r1 = row(''), r2 = row(''), r3 = row('r');
+  var cells = { w:[], a:[], b:[], r:[] };
+  [rw,r1,r2,r3].forEach(function(r,i){
+    var op = el('td','op'); if(i === 1){ op.textContent = '−'; op.rowSpan = 2; r.appendChild(op); }
+    else if(i !== 2) r.appendChild(op);
+  });
+  for(var i=n-1;i>=0;i--){
+    var cw = el('td'), ca = el('td'), cb = el('td','d'), cr = el('td','d');
+    ca.textContent = A[i]; cb.textContent = B[i] == null ? '' : B[i];
+    cells.w[i]=cw; cells.a[i]=ca; cells.b[i]=cb; cells.r[i]=cr;
+    rw.appendChild(cw); r1.appendChild(ca); r2.appendChild(cb); r3.appendChild(cr);
+  }
+  /* лінія лише під цифрами відповіді й відʼємника — як у зошиті */
+  var say = el('div','say');
+  var ol = el('ol','cs-log');
+  log.forEach(function(L,i){ var li = el('li', i ? 'hide' : '', L.sh); ol.appendChild(li); });
+  var left = el('div','cs-l'); left.appendChild(tb); left.appendChild(say);
+  box.appendChild(left); box.appendChild(ol);
+
+  box.__paint = function(){
+    var lis = $$('li', ol), shown = 0;
+    lis.forEach(function(li,i){ if(!i || li.classList.contains('on')) shown = i+1; });
+    var s = snaps[shown-1];
+    lis.forEach(function(li,i){ li.classList.toggle('now', i === shown-1); li.classList.toggle('past', i < shown-1); });
+    for(var k=0;k<n;k++){
+      var ch = s.w[k] !== A[k];
+      cells.w[k].textContent = ch ? s.w[k] : '';
+      cells.a[k].classList.toggle('x', ch);
+      cells.r[k].textContent = s.res[k] == null ? '' : s.res[k];
+      [cells.a[k],cells.b[k],cells.r[k],cells.w[k]].forEach(function(c){
+        c.classList.toggle('hi', k === s.hi);
+        c.classList.toggle('lend', s.lend.indexOf(k) >= 0);
+      });
+    }
+    say.textContent = log[shown-1].lg.replace(/ ([−=→+]) /g,'\u00a0$1\u00a0');
+    fit();
+  };
+  box.__paint();
 });
 
 /* ─────────────────────────────────────────────────────────────────────
