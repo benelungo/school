@@ -387,8 +387,9 @@ body:not(.guard) #shield{display:none}
 <script>
 /* ES5 НАВМИСНО, і ОКРЕМИМ тегом <script>.
 
-   Основний скрипт сторінки — сучасний JS (?., .at()). У старому браузері
-   він не РОЗБИРАЄТЬСЯ взагалі, і сторінка лишається такою, як у розмітці:
+   Основний скрипт сторінки великий і сучасний. Досить ОДНОЇ конструкції,
+   якої браузер не знає, — і він не РОЗБЕРЕ скрипт узагалі: жоден рядок не
+   виконається, а сторінка лишиться такою, як у розмітці:
    замість назви роботи «—», картка «Як це працює» порожня, «Почати роботу»
    сіра (disabled стоїть просто в HTML), під полем нічого. Ззовні це
    виглядає рівно як «кнопка не працює», і жодної підказки учень не має.
@@ -412,6 +413,19 @@ body:not(.guard) #shield{display:none}
 </script>
 
 <script>
+
+/* ── ПРО СИНТАКСИС НА ЦІЙ СТОРІНЦІ ───────────────────────────────────────
+   Роботу учні відкривають з чого завгодно, зокрема зі старих телефонів і
+   шкільних планшетів. Помилка РОЗБОРУ не псує один рядок — вона вбиває
+   весь скрипт, і сторінка застигає такою, як у розмітці: назва «—»,
+   кнопка «Почати роботу» сіра. Саме на це 24.09.2026 натрапив учень 7-І.
+
+   Тому тут свідомо НЕ вживаємо того, що зʼявилось після 2018-го:
+     ?.  (Safari 13.4, 2020)   →  const x = ...; if (x) ...
+     .at(-1)  (Safari 15.4, 2022) →  масив[масив.length - 1]
+     ??, .replaceAll, .flat, Object.fromEntries, числові роздільники.
+   Стеля сторінки — приблизно Safari 11 / Chrome 66. Додаєте новіше —
+   спершу подумайте, з чого цю роботу писатиме найбідніший пристрій. */
 "use strict";
 /*═══════════════════════════════════════════════════════════════════════════
   1 · НАЛАШТУВАННЯ РОБОТИ
@@ -1212,8 +1226,8 @@ function перенести(ctx, вузли, px, макс){
   let w = 0;
   const влізе = дод => {
     const ш = зміряти(ctx, [дод], px).w;
-    if (w + ш > макс && рядки.at(-1).length){ рядки.push([]); w = 0; }
-    рядки.at(-1).push(дод); w += ш;
+    if (w + ш > макс && рядки[рядки.length - 1].length){ рядки.push([]); w = 0; }
+    рядки[рядки.length - 1].push(дод); w += ш;
   };
   for (const n of вузли){
     if (n.t !== 'txt'){ влізе(n); continue; }
@@ -1250,7 +1264,7 @@ document.addEventListener('dragstart',   гасити, { capture:true });
   // вчителю, другий — переписати в зошит
   if (e.target.closest && e.target.closest('.codebox, #d-fix')) return;
   e.preventDefault();
-  try { e.clipboardData.setData('text/plain', ''); } catch {}
+  try { e.clipboardData.setData('text/plain', ''); } catch (хиба) {}
 }, { capture:true }));
 
 // друк і збереження
@@ -1263,7 +1277,7 @@ document.addEventListener('keydown', e => {
   // PrintScreen · Win+Shift+S · Cmd+Shift+3/4/5
   if (k === 'printscreen' || (e.shiftKey && мод && ['3','4','5','s'].includes(k))){
     e.preventDefault();
-    try { navigator.clipboard && navigator.clipboard.writeText(' '); } catch {}
+    try { navigator.clipboard && navigator.clipboard.writeText(' '); } catch (хиба) {}
     порушення('Спроба знімка екрана.');
     return false;
   }
@@ -1521,7 +1535,8 @@ function почати(){
   $('#step-all').textContent = ЗАВДАННЯ.length;
   $('#start').hidden = true;
   $('#exam').hidden = false;
-  $('#teacher')?.remove();          // у бойовій копії панелі вже немає
+  const панель = $('#teacher');     // у бойовій копії панелі вже немає
+  if (панель) панель.remove();
 
   /* «Наведіть» на сенсорному екрані беззмістовне — там немає курсора. */
   $('#hint').innerHTML = мишею
@@ -1538,7 +1553,14 @@ function почати(){
   // повний екран: менше сусідніх вікон — менше спокуси
   // Удома повний екран ні до чого: учень і так сам, а насильно розгорнуте
   // вікно на ноутбуці радше дратує.
-  if (Т.повнийЕкран) document.documentElement.requestFullscreen?.().catch(() => {});
+  /* До Chrome 71 метод нічого не ПОВЕРТАЄ, і .catch на ньому кинув би
+     виняток просто посеред старту — робота не почалась би взагалі.
+     Обіцянки може не бути; це нормально, повний екран тут не критичний. */
+  const кореневий = document.documentElement;
+  if (Т.повнийЕкран && кореневий.requestFullscreen){
+    const обіцянка = кореневий.requestFullscreen();
+    if (обіцянка && обіцянка.catch) обіцянка.catch(() => {});
+  }
   питання();
 }
 
@@ -1551,7 +1573,10 @@ function завершити(причина){
   clearInterval(тікТак);
   стан.стоп.forEach(f => f()); стан.стоп = [];
   опустити();
-  document.exitFullscreen?.().catch(() => {});
+  if (document.exitFullscreen){
+    const обіцянка = document.exitFullscreen();     // до Chrome 71 — undefined
+    if (обіцянка && обіцянка.catch) обіцянка.catch(() => {});
+  }
 
   const пІ  = хто ? хто.учень : '—';
   const кл  = хто ? хто.клас : '—';
@@ -2135,7 +2160,7 @@ function підписСмужки(){
   $$('#teacher [data-vmode]').forEach(b =>
     b.classList.toggle('ghost', b.dataset.vmode !== смужка.режим));
 
-  try { localStorage.setItem(СМ_КЛЮЧ, JSON.stringify({ смужка, мерехт })); } catch {}
+  try { localStorage.setItem(СМ_КЛЮЧ, JSON.stringify({ смужка, мерехт })); } catch (хиба) {}
 }
 
 /* Відновлюємо ТІЛЬКИ смужку. Глибину — ні, і це навмисно: відколи вона
@@ -2146,7 +2171,7 @@ function підписСмужки(){
 try {
   const з = JSON.parse(localStorage.getItem(СМ_КЛЮЧ) || 'null');
   if (з && з.смужка) Object.assign(смужка, з.смужка);
-} catch {}
+} catch (хиба) {}
 
 /* Панель учителя живе ТІЛЬКИ в шаблоні. У бойовій копії картку #teacher
    вирізають цілком (див. «Робота — як готувати.md»), і тоді вмикати
