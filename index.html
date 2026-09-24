@@ -4441,17 +4441,32 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   var gate = D.getElementById('gate'), app = D.getElementById('app');
   var kod = D.getElementById('kod'), kodNote = D.getElementById('kod-note');
   var стан = { код:'', клас:'', учень:'', роботи:null, offline:false };
+  /* Кирилицю фільтр стирає ще до нас, тож у полі її вже немає — прапорець
+     тримає підказку на екрані й після того, як знак зник. */
+  var кирилицю = false;
 
   var чистий = function(к){ return String(к||'').toUpperCase().replace(/[^0-9A-Z]/g,'').slice(0,8); };
+
+  /* Фільтр вище викидає кирилицю МОВЧКИ: з українською розкладкою учень
+     друкує, а в полі не з'являється нічого, і «Увійти» лишається сірою без
+     жодного пояснення (24.09.2026, 7-І). Самі розкладку не виправляємо:
+     «К» — це і латинська K, і R на тій самій клавіші, тож автозаміна
+     мовчки зібрала б чужий код. Кажемо вголос. */
+  var КИРИЛИЦЯ = /[\u0400-\u04FF]/;
   var класЗКоду = function(к){ return ЗНАК_КЛАС[(к||'')[0]] || ''; };
 
   function нота(т, кл){ kodNote.className = 'note' + (кл ? ' ' + кл : ''); kodNote.textContent = т || ''; }
 
   kod.addEventListener('input', function(){
-    var к = чистий(kod.value);
+    var сире = kod.value;                 // ДО фільтра: після нього кирилиці вже немає
+    var к = чистий(сире);
     if (kod.value !== к) kod.value = к;
     D.getElementById('enter').disabled = к.length !== 8;
-    нота(к.length && к.length < 8 ? 'Ще ' + (8 - к.length) + ' ' + plural(8-к.length,'знак','знаки','знаків') : '');
+    if (КИРИЛИЦЯ.test(сире) || (кирилицю && !к.length))
+      нота('Це українські літери. Перемкни клавіатуру на англійську — Alt+Shift (на Mac Ctrl+Пробіл) — і набери код ще раз.', 'bad');
+    else
+      нота(к.length && к.length < 8 ? 'Ще ' + (8 - к.length) + ' ' + plural(8-к.length,'знак','знаки','знаків') : '');
+    кирилицю = КИРИЛИЦЯ.test(сире);
   });
   D.getElementById('enter').addEventListener('click', function(){ увійти(чистий(kod.value)); });
   kod.addEventListener('keydown', function(e){ if (e.key === 'Enter' && чистий(kod.value).length === 8) увійти(чистий(kod.value)); });
