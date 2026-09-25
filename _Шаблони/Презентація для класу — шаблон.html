@@ -1180,6 +1180,30 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
   fill:var(--pen);text-anchor:middle;transition:x .5s cubic-bezier(.4,0,.2,1)}
 .jump svg .dotl.hit{fill:var(--check)}
 
+/* C24 · .sgn — мінус виходить зі знаменника: a − b і b − a */
+.sgn .sgm{display:none}
+.sgn .sview{text-align:center;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,calc(2.8*var(--u)),36px);line-height:1.5;
+  min-height:3.4em;padding:clamp(4px,.8vw,10px) 0;
+  display:flex;flex-wrap:wrap;gap:.35em;align-items:center;justify-content:center}
+.sgn .sview .lead{display:inline-block;color:var(--marker);min-width:.5em;
+  opacity:0;transform:scale(.3);transition:opacity .4s,transform .4s cubic-bezier(.22,1.5,.4,1)}
+.sgn .sview .lead.on{opacity:1;transform:none}
+.sgn .sview .eq{color:var(--soft);margin:0 .1em}
+.sgn .sview .fr{font-family:inherit}
+.sgn .tok{display:inline-block;border-radius:8px;padding:0 .16em;
+  transition:transform .5s cubic-bezier(.4,0,.2,1),color .4s,background .4s}
+.sgn .tok.act{color:var(--pen);background:var(--pen-soft)}
+.sgn .tok.nw{color:var(--check);background:var(--check-soft);
+  animation:sg-pop .5s cubic-bezier(.22,1.5,.4,1) both}
+.sgn .den{display:inline-block;position:relative;transition:color .4s}
+.sgn .den.neg{color:var(--marker)}
+.sgn .rule{font-family:"Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--soft);
+  text-align:center;line-height:1.45;margin-top:clamp(4px,.7vw,9px);min-height:1.45em}
+.sgn .rule b{color:var(--marker)}
+@keyframes sg-pop{from{transform:scale(.35);opacity:0}to{transform:none;opacity:1}}
+
 /* ───────────────────────── A6 · друк у PDF ─────────────────────────────── */
 @media print{
   @page{size:A4 landscape;margin:12mm}
@@ -1463,6 +1487,12 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
   <h2>Що буде, якщо видалити <span class="mut">(.lnk — анімація)</span></h2>
   <div class="modes"><span class="mode want"><span class="dot"></span>відповідає бажаючий</span></div>
   <div class="lnk" data-file="Море.png" data-place="Фото"></div>
+</section>
+
+<section class="slide" data-t="Протилежні знаменники" data-chapter="Нова тема">
+  <h2>Знаменники відрізняються лише знаком <span class="mut">(.sgn — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="sgn" data-num="5" data-den="1 − x"></div>
 </section>
 
 <!-- ═════ таймер + B7 число, що набігає ═════ -->
@@ -1945,7 +1975,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.colsub,.ordops,.frm,.sqdiag,.subst', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.colsub,.ordops,.frm,.sqdiag,.subst,.sgn', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -4203,6 +4233,95 @@ $$('.jump').forEach(function(box){
   });
   redraw();
   say.textContent = 'Починаємо з ' + anum(st0) + '. Який знак замість першої зірочки?';
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C24 · .sgn — мінус виходить зі знаменника
+   <div class="sgn" data-num="5" data-den="1 − x"></div>
+   Два кроки пробілом. Перший: доданки в знаменнику міняються місцями, і
+   за це перед дужкою стає мінус. Другий: мінус виходить зі знаменника
+   перед дріб. Учень має побачити, чому a − b і b − a — це той самий
+   знаменник з точністю до знака, і чому після цього дроби можна додавати.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.sgn').forEach(function(box){
+  var num   = box.dataset.num || 'a',
+      den   = box.dataset.den || '1 − x',
+      parts = den.split(/\s*[−–—-]\s*/);
+  if(parts.length < 2) return;
+  var A = parts[0].trim(), B = parts[1].trim();
+
+  box.textContent = '';
+  var view = el('div','sview');
+  view.innerHTML =
+    '<span class="lead">−</span>' +
+    '<span class="fr"><span class="n">' + num + '</span>' +
+    '<span class="d"><span class="den">' +
+      '<span class="mn"></span><span class="br"></span>' +
+      '<span class="tok ta"></span><span class="op"> − </span><span class="tok tb"></span>' +
+      '<span class="br2"></span>' +
+    '</span></span></span>';
+  box.appendChild(view);
+
+  var rule = el('div','rule');
+  rule.innerHTML = A + ' − ' + B + ' = <b>−(' + B + ' − ' + A + ')</b>';
+  box.appendChild(rule);
+
+  var say = asay(box);
+
+  /* два порожні кроки: пробіл відкриває їх по одному, як будь-яку відповідь */
+  var marks = el('div','sgm');
+  marks.innerHTML = '<i class="hide"></i><i class="hide"></i>';
+  box.appendChild(marks);
+
+  var lead = $('.lead', view), mn = $('.mn', view), br = $('.br', view),
+      br2 = $('.br2', view), dn = $('.den', view),
+      ta = $('.ta', view), tb = $('.tb', view);
+
+  var TXT = [
+    'Знаменник ' + A + ' − ' + B + ', а в сусідньому дробі — ' + B + ' − ' + A + '. Знаменники протилежні.',
+    'Міняємо доданки місцями. Щоб вираз не змінився, перед дужкою ставимо мінус.',
+    'Мінус зі знаменника виносимо перед дріб — тепер знаменники однакові.'
+  ];
+
+  box.__at = -1;
+  box.__paint = function(){
+    var n = 0;
+    $$('i.hide', marks).forEach(function(i){ if(i.classList.contains('on')) n++; });
+    if(n === box.__at) return;
+    var was = box.__at;
+    box.__at = n;
+
+    var o1 = ta.getBoundingClientRect(), o2 = tb.getBoundingClientRect();
+
+    ta.textContent = n >= 1 ? B : A;
+    tb.textContent = n >= 1 ? A : B;
+    mn.textContent  = n === 1 ? '−' : '';
+    br.textContent  = n === 1 ? '(' : '';
+    br2.textContent = n === 1 ? ')' : '';
+    dn.classList.toggle('neg', n === 1);
+    lead.classList.toggle('on', n >= 2);
+    ta.classList.toggle('act', n === 1);
+    tb.classList.toggle('act', n === 1);
+    ta.classList.toggle('nw', n >= 2);
+    tb.classList.toggle('nw', n >= 2);
+    say.textContent = TXT[n > 2 ? 2 : n];
+
+    /* доданки справді переїжджають місцями, а не просто перемальовуються */
+    if(was === 0 && n === 1 && o1.width){
+      var n1 = ta.getBoundingClientRect(), n2 = tb.getBoundingClientRect();
+      ta.style.transition = 'none'; tb.style.transition = 'none';
+      ta.style.transform = 'translateX(' + (o2.left - n1.left) + 'px)';
+      tb.style.transform = 'translateX(' + (o1.left - n2.left) + 'px)';
+      requestAnimationFrame(function(){
+        ta.style.transition = ''; tb.style.transition = '';
+        ta.style.transform = '';  tb.style.transform = '';
+      });
+    } else {
+      ta.style.transform = ''; tb.style.transform = '';
+    }
+    fit();
+  };
+  box.__paint();
 });
 
 /* ─────────────────────────────────────────────────────────────────────

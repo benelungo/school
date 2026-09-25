@@ -100,6 +100,8 @@ function __report(){
     backBoxes:document.querySelectorAll('.back').length,
     jump:document.querySelectorAll('.jump svg .ax').length ? document.querySelectorAll('.jump').length : 0,
     jumpBoxes:document.querySelectorAll('.jump').length,
+    sgn:document.querySelectorAll('.sgn .sview .fr').length ? document.querySelectorAll('.sgn').length : 0,
+    sgnBoxes:document.querySelectorAll('.sgn').length,
     sqdiag:document.querySelectorAll('.sqdiag svg').length,
     sqdiagBoxes:document.querySelectorAll('.sqdiag').length,
     lnk:document.querySelectorAll('.lnk .fchip').length ? document.querySelectorAll('.lnk').length : 0,
@@ -206,7 +208,7 @@ def main():
                                  ("cnv", "cnvBoxes"), ("back", "backBoxes"),
                                  ("sqdiag", "sqdiagBoxes"), ("lnk", "lnkBoxes"),
                                  ("regroup", "regroupBoxes"), ("subst", "substBoxes"),
-                                 ("jump", "jumpBoxes")):
+                                 ("jump", "jumpBoxes"), ("sgn", "sgnBoxes")):
                     if data[box] and data[key] < data[box]:
                         miss.append(f"{key}: {data[key]}/{data[box]}")
                 if miss:

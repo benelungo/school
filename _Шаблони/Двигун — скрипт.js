@@ -392,7 +392,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.colsub,.ordops,.frm,.sqdiag,.subst', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.colsub,.ordops,.frm,.sqdiag,.subst,.sgn', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -2650,6 +2650,95 @@ $$('.jump').forEach(function(box){
   });
   redraw();
   say.textContent = 'Починаємо з ' + anum(st0) + '. Який знак замість першої зірочки?';
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C24 · .sgn — мінус виходить зі знаменника
+   <div class="sgn" data-num="5" data-den="1 − x"></div>
+   Два кроки пробілом. Перший: доданки в знаменнику міняються місцями, і
+   за це перед дужкою стає мінус. Другий: мінус виходить зі знаменника
+   перед дріб. Учень має побачити, чому a − b і b − a — це той самий
+   знаменник з точністю до знака, і чому після цього дроби можна додавати.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.sgn').forEach(function(box){
+  var num   = box.dataset.num || 'a',
+      den   = box.dataset.den || '1 − x',
+      parts = den.split(/\s*[−–—-]\s*/);
+  if(parts.length < 2) return;
+  var A = parts[0].trim(), B = parts[1].trim();
+
+  box.textContent = '';
+  var view = el('div','sview');
+  view.innerHTML =
+    '<span class="lead">−</span>' +
+    '<span class="fr"><span class="n">' + num + '</span>' +
+    '<span class="d"><span class="den">' +
+      '<span class="mn"></span><span class="br"></span>' +
+      '<span class="tok ta"></span><span class="op"> − </span><span class="tok tb"></span>' +
+      '<span class="br2"></span>' +
+    '</span></span></span>';
+  box.appendChild(view);
+
+  var rule = el('div','rule');
+  rule.innerHTML = A + ' − ' + B + ' = <b>−(' + B + ' − ' + A + ')</b>';
+  box.appendChild(rule);
+
+  var say = asay(box);
+
+  /* два порожні кроки: пробіл відкриває їх по одному, як будь-яку відповідь */
+  var marks = el('div','sgm');
+  marks.innerHTML = '<i class="hide"></i><i class="hide"></i>';
+  box.appendChild(marks);
+
+  var lead = $('.lead', view), mn = $('.mn', view), br = $('.br', view),
+      br2 = $('.br2', view), dn = $('.den', view),
+      ta = $('.ta', view), tb = $('.tb', view);
+
+  var TXT = [
+    'Знаменник ' + A + ' − ' + B + ', а в сусідньому дробі — ' + B + ' − ' + A + '. Знаменники протилежні.',
+    'Міняємо доданки місцями. Щоб вираз не змінився, перед дужкою ставимо мінус.',
+    'Мінус зі знаменника виносимо перед дріб — тепер знаменники однакові.'
+  ];
+
+  box.__at = -1;
+  box.__paint = function(){
+    var n = 0;
+    $$('i.hide', marks).forEach(function(i){ if(i.classList.contains('on')) n++; });
+    if(n === box.__at) return;
+    var was = box.__at;
+    box.__at = n;
+
+    var o1 = ta.getBoundingClientRect(), o2 = tb.getBoundingClientRect();
+
+    ta.textContent = n >= 1 ? B : A;
+    tb.textContent = n >= 1 ? A : B;
+    mn.textContent  = n === 1 ? '−' : '';
+    br.textContent  = n === 1 ? '(' : '';
+    br2.textContent = n === 1 ? ')' : '';
+    dn.classList.toggle('neg', n === 1);
+    lead.classList.toggle('on', n >= 2);
+    ta.classList.toggle('act', n === 1);
+    tb.classList.toggle('act', n === 1);
+    ta.classList.toggle('nw', n >= 2);
+    tb.classList.toggle('nw', n >= 2);
+    say.textContent = TXT[n > 2 ? 2 : n];
+
+    /* доданки справді переїжджають місцями, а не просто перемальовуються */
+    if(was === 0 && n === 1 && o1.width){
+      var n1 = ta.getBoundingClientRect(), n2 = tb.getBoundingClientRect();
+      ta.style.transition = 'none'; tb.style.transition = 'none';
+      ta.style.transform = 'translateX(' + (o2.left - n1.left) + 'px)';
+      tb.style.transform = 'translateX(' + (o1.left - n2.left) + 'px)';
+      requestAnimationFrame(function(){
+        ta.style.transition = ''; tb.style.transition = '';
+        ta.style.transform = '';  tb.style.transform = '';
+      });
+    } else {
+      ta.style.transform = ''; tb.style.transform = '';
+    }
+    fit();
+  };
+  box.__paint();
 });
 
 /* ─────────────────────────────────────────────────────────────────────

@@ -1154,6 +1154,30 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
   fill:var(--pen);text-anchor:middle;transition:x .5s cubic-bezier(.4,0,.2,1)}
 .jump svg .dotl.hit{fill:var(--check)}
 
+/* C24 · .sgn — мінус виходить зі знаменника: a − b і b − a */
+.sgn .sgm{display:none}
+.sgn .sview{text-align:center;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,calc(2.8*var(--u)),36px);line-height:1.5;
+  min-height:3.4em;padding:clamp(4px,.8vw,10px) 0;
+  display:flex;flex-wrap:wrap;gap:.35em;align-items:center;justify-content:center}
+.sgn .sview .lead{display:inline-block;color:var(--marker);min-width:.5em;
+  opacity:0;transform:scale(.3);transition:opacity .4s,transform .4s cubic-bezier(.22,1.5,.4,1)}
+.sgn .sview .lead.on{opacity:1;transform:none}
+.sgn .sview .eq{color:var(--soft);margin:0 .1em}
+.sgn .sview .fr{font-family:inherit}
+.sgn .tok{display:inline-block;border-radius:8px;padding:0 .16em;
+  transition:transform .5s cubic-bezier(.4,0,.2,1),color .4s,background .4s}
+.sgn .tok.act{color:var(--pen);background:var(--pen-soft)}
+.sgn .tok.nw{color:var(--check);background:var(--check-soft);
+  animation:sg-pop .5s cubic-bezier(.22,1.5,.4,1) both}
+.sgn .den{display:inline-block;position:relative;transition:color .4s}
+.sgn .den.neg{color:var(--marker)}
+.sgn .rule{font-family:"Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--soft);
+  text-align:center;line-height:1.45;margin-top:clamp(4px,.7vw,9px);min-height:1.45em}
+.sgn .rule b{color:var(--marker)}
+@keyframes sg-pop{from{transform:scale(.35);opacity:0}to{transform:none;opacity:1}}
+
 /* ───────────────────────── A6 · друк у PDF ─────────────────────────────── */
 @media print{
   @page{size:A4 landscape;margin:12mm}
