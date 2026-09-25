@@ -185,6 +185,14 @@ ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px)
 li{margin:.32em 0}
 li::marker{color:var(--pen)}
 .lab{font-size:clamp(11px,calc(1.25*var(--u)),16px);color:var(--soft);margin:6px 0 0;line-height:1.35}
+/* умова задачі — її має бути видно з останньої парти. Не підпис і не ремарка:
+   це головний текст слайда, тож не .lab. Кольорами nb/oral не позначаємо. */
+.cond{font-size:clamp(16px,calc(2.15*var(--u)),26px);line-height:1.38;color:var(--ink);
+  margin:0 0 clamp(8px,1.2vw,14px);max-width:64ch;
+  border-left:5px solid var(--pen);padding-left:clamp(9px,1.3vw,16px)}
+.cond b{font-weight:800}
+.cond .n{font-weight:800;color:var(--pen);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cond .q{font-weight:800;color:var(--marker)}
 .mut{color:var(--soft);font-weight:400;font-size:.62em;letter-spacing:0}
 
 .row{display:grid;gap:clamp(9px,1.3vw,16px)}
@@ -627,7 +635,6 @@ table.cl td.op{color:var(--soft);padding-right:.25em;vertical-align:middle}
   color:var(--pen);border-radius:var(--rad);padding:clamp(10px,1.4vw,16px) clamp(16px,2.4vw,30px);
   min-width:min(320px,100%);text-align:center;box-shadow:var(--sh2)}
 .roster.spin .win{color:var(--soft);border-color:var(--edge);background:var(--card)}
-.roster .left{font-size:clamp(11px,calc(1.25*var(--u)),15px);color:var(--soft)}
 
 /* ───────────────────────── C9 · QR ─────────────────────────────────────── */
 .qr{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(16px,3vw,40px)}
@@ -747,11 +754,7 @@ button[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:
 #rail.chap .ch .seg i{flex:1 1 0;height:7px}
 @media(max-width:900px){#rail.chap .ch .cap{display:none}}
 
-#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
-  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
-#tip{font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:700;color:var(--pen);
-  white-space:nowrap;opacity:0;transition:opacity .2s;font-variant-numeric:tabular-nums}
-#tip.on{opacity:1}
+#count,#tip{display:none}   /* прибрані лічильники, 25.09.2026 */
 @media(max-width:760px){
   #count{display:none}
   #bar .hide-sm{display:none}
@@ -845,6 +848,337 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 :root[data-proj="1"] p,:root[data-proj="1"] ul,:root[data-proj="1"] ol{font-weight:500}
 :root[data-proj="1"] .box::before{height:6px}
 :root[data-proj="1"] .lede{color:#2a2a2a}
+
+/* ───────────────────────── C10 · АНІМАЦІЇ ──────────────────────────────
+   Спільні кнопки й підпис під анімацією. Усе, що нижче, — компоненти
+   з каталогу (tools/components.py --анімації): анімація показує те, що
+   учень має зрозуміти, а не просто рухається.
+   ──────────────────────────────────────────────────────────────────────*/
+.arow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:clamp(7px,1vw,12px)}
+.ab{font:inherit;font-weight:600;font-size:clamp(11px,calc(1.3*var(--u)),15px);
+  padding:6px 13px;border-radius:999px;cursor:pointer;
+  border:var(--bw) solid var(--pen);background:var(--pen-soft);color:var(--pen);
+  transition:box-shadow .15s,transform .1s,background .15s}
+.ab:hover{box-shadow:0 0 0 3px var(--pen-soft)}
+.ab:active{transform:translateY(1px)}
+.ab[aria-pressed="true"]{background:var(--pen);color:var(--on-pen)}
+.ab.q{border-color:var(--edge);background:var(--card);color:var(--soft)}
+.asay{color:var(--soft);font-size:clamp(11px,calc(1.3*var(--u)),15px);line-height:1.4;
+  margin-top:clamp(5px,.8vw,9px);min-height:1.4em}
+
+/* C11 · .ordops — вираз згортається по одній дії */
+.ordops .oe{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(18px,calc(3*var(--u)),38px);line-height:1.9;letter-spacing:.02em;
+  padding:clamp(5px,.9vw,12px) 0}
+.ordops .oe span{display:inline-block;
+  transition:transform .34s cubic-bezier(.4,0,.2,1),opacity .34s,color .34s}
+.ordops .oe span.o{margin:0 .3em;color:var(--soft)}
+.ordops .oe .act{color:var(--pen);background:var(--pen-soft);border-radius:9px;padding:0 .2em}
+.ordops .oe .nw{color:var(--check);background:var(--check-soft);border-radius:9px;padding:0 .2em;
+  animation:op-pop .5s cubic-bezier(.22,1.5,.4,1) both}
+.ordops .oe .fin{color:var(--check)}
+@keyframes op-pop{from{transform:scale(.35);opacity:0}to{transform:none;opacity:1}}
+.ordops .olog{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px;
+  justify-content:center;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(11px,calc(1.35*var(--u)),16px);color:var(--soft)}
+
+/* C12 · .frm — ланцюжок перетворень запису */
+.frm ol{display:none}
+.frm .fview{text-align:center;font-size:clamp(17px,calc(2.6*var(--u)),34px);line-height:2;
+  min-height:2.6em;padding:clamp(4px,.8vw,10px) 0}
+.frm .fview .fr{font-family:"JetBrains Mono",monospace;font-weight:700}
+.frm .fview .op{margin:0 .35em;color:var(--soft)}
+.frm .fview .res{color:var(--check)}
+.frm .fview .hint{display:block;font-family:"Manrope",sans-serif;font-weight:500;
+  font-size:.42em;color:var(--soft);line-height:1.4;margin-top:.2em}
+.frm .cf{position:relative;display:inline-block;transition:opacity .45s .45s}
+.frm .cf::after{content:"";position:absolute;left:-.06em;right:-.06em;top:50%;height:.1em;
+  background:var(--marker);border-radius:2px;transform:scaleX(0);transform-origin:left center;
+  transition:transform .42s cubic-bezier(.4,0,.2,1)}
+.frm .fview.cut .cf::after{transform:scaleX(1)}
+.frm .fview.cut .cf{opacity:.3}
+
+/* C13 · .fls — копіювати чи перемістити */
+.fls .flw{position:relative;display:flex;gap:clamp(10px,2.5vw,36px);justify-content:center;
+  align-items:stretch}
+.fls .fold{flex:1;max-width:330px;border:var(--bw) dashed var(--edge);border-radius:var(--rad);
+  background:var(--card);padding:9px;display:flex;flex-direction:column;gap:7px}
+.fls .nm{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(11px,calc(1.35*var(--u)),16px);display:flex;align-items:center;gap:7px}
+.fls .nm i{width:1.5em;height:1.15em;border-radius:3px 7px 7px 7px;background:var(--sun);
+  box-shadow:inset 0 .28em 0 -.2em var(--card);flex:none}
+.fls .slot{flex:1;border-radius:8px;background:var(--paper);display:flex;flex-wrap:wrap;gap:7px;
+  align-content:flex-start;padding:7px;min-height:3.8em}
+.fls .fchip{display:inline-flex;align-items:center;gap:7px;font-weight:600;
+  font-size:clamp(11px,calc(1.3*var(--u)),15px);background:var(--card);
+  border:var(--bw) solid var(--pen);color:var(--pen);border-radius:8px;padding:5px 10px;
+  box-shadow:var(--sh1)}
+.fls .fchip .ic{width:.85em;height:1.1em;border:2px solid currentColor;border-radius:2px;
+  border-top-right-radius:.4em;flex:none}
+.fls .fly{position:absolute;margin:0;z-index:2;
+  transition:left .85s cubic-bezier(.4,0,.2,1),top .85s cubic-bezier(.4,0,.2,1)}
+.fls .farr{align-self:center;color:var(--soft);flex:none;
+  font-size:clamp(16px,calc(2.2*var(--u)),28px)}
+
+/* C14 · .mv — задача на рух */
+.mv .mvs{max-width:min(100%,calc(62*var(--u)));margin:0 auto}
+/* стеля ширини: інакше дорога на весь слайд тягне за собою висоту */
+.mv svg{width:100%;height:auto;display:block}
+.mv .rd{stroke:var(--edge);stroke-width:3}
+.mv .tick{stroke:var(--edge);stroke-width:2}
+.mv .lbl{font-family:"Manrope",sans-serif;font-size:13px;fill:var(--soft)}
+.mv .lbl.b{font-weight:700;fill:var(--ink)}
+.mv .vlbl{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700}
+.mv .meet{stroke:var(--check);stroke-width:2;stroke-dasharray:5 5;opacity:0;transition:opacity .3s}
+.mv.done .meet{opacity:1}
+.mv .b1{fill:var(--pen);opacity:.85} .mv .b2{fill:var(--marker);opacity:.85}
+.mv .o1,.mv .o2{fill:var(--on-pen)}
+.mv .g1 rect,.mv .g1 path{fill:var(--pen)} .mv .g1 circle{fill:var(--ink)}
+.mv .g1 .vlbl{fill:var(--pen)}
+.mv .g2 rect,.mv .g2 path{fill:var(--marker)} .mv .g2 circle{fill:var(--ink)}
+.mv .g2 .vlbl{fill:var(--marker)}
+.mv .mvi{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px;
+  font-size:clamp(12px,calc(1.4*var(--u)),16px)}
+.mv .mvclock{font-family:"JetBrains Mono",monospace;font-weight:700;
+  border:var(--bw) solid var(--edge);border-radius:999px;padding:4px 13px;background:var(--card)}
+.mv .mvclock b{color:var(--pen)}
+.mv .mvgap b{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--marker)}
+.mv .mvall{color:var(--soft)}
+.mv .mvres{opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
+.mv.done .mvres{opacity:1;transform:none}
+.mv .mvsl{flex:1;min-width:140px;accent-color:var(--pen)}
+
+/* C15 · .vang — вертикальні кути */
+.vang{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,20px);align-items:center}
+.vang .vsvg{flex:1 1 280px;min-width:230px;max-width:min(100%,calc(26*var(--u)))}
+.vang svg{width:100%;height:auto;display:block;touch-action:none;cursor:grab}
+.vang svg:active{cursor:grabbing}
+.vang .ln{stroke:var(--ink);stroke-width:2.5;stroke-linecap:round}
+.vang .dot{fill:var(--ink)}
+.vang .p1{fill:var(--pen-soft);stroke:var(--pen);stroke-width:2.5}
+.vang .p2{fill:var(--marker-soft);stroke:var(--marker);stroke-width:2.5}
+.vang .an{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:700;
+  text-anchor:middle;dominant-baseline:middle;stroke:none}
+.vang .an.p1{fill:var(--pen)} .vang .an.p2{fill:var(--marker)}
+.vang .pt{font-family:"Unbounded","Manrope",sans-serif;font-size:15px;font-weight:700;
+  fill:var(--ink);text-anchor:middle}
+.vang .hnd{fill:var(--card);stroke:var(--pen);stroke-width:3}
+.vang .vside{flex:1 1 210px;min-width:200px}
+.vang .vside p{margin:0 0 5px;font-size:clamp(11px,calc(1.35*var(--u)),16px)}
+.vang .vside .ok{color:var(--check)}
+.vang .eq{font-family:"JetBrains Mono",monospace;font-weight:700}
+.vang .eq.p1{color:var(--pen);fill:none;stroke:none}
+.vang .eq.p2{color:var(--marker);fill:none;stroke:none}
+
+/* C16 · .qfam — родина чотирикутників */
+.qfam{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,20px);align-items:center}
+.qfam .qsvg{flex:1 1 280px;min-width:230px;max-width:min(100%,calc(30*var(--u)))}
+.qfam svg{width:100%;height:auto;display:block}
+.qfam .sh{fill:var(--pen-soft);stroke:var(--pen);stroke-width:3;stroke-linejoin:round}
+.qfam .dg{stroke:var(--note);stroke-width:2;stroke-dasharray:6 5;opacity:0;transition:opacity .3s}
+.qfam.diag .dg{opacity:1}
+.qfam .ra{fill:none;stroke:var(--check);stroke-width:2.5;opacity:0;transition:opacity .35s}
+.qfam.ang .ra{opacity:1}
+.qfam .tk{stroke:var(--marker);stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .35s}
+.qfam.eq .tk{opacity:1}
+.qfam .nm{font-family:"Unbounded","Manrope",sans-serif;font-size:19px;font-weight:700;
+  fill:var(--pen);text-anchor:middle}
+.qfam .qside{flex:1 1 220px;min-width:210px}
+.qfam .prop{list-style:none;margin:0;padding:0;font-size:clamp(12px,calc(1.4*var(--u)),16px)}
+.qfam .prop li{display:flex;gap:9px;align-items:baseline;padding:3px 0;
+  border-bottom:1px solid var(--edge);color:var(--soft)}
+.qfam .prop li b{font-family:"JetBrains Mono",monospace;flex:none;width:1.3em;text-align:center}
+.qfam .prop li.on{color:var(--ink)} .qfam .prop li.on b{color:var(--check)}
+
+/* C17 · .cnv — згортка */
+.cnv .cnw{display:flex;flex-wrap:wrap;gap:clamp(10px,2vw,24px);align-items:flex-start}
+.cnv .col{flex:1 1 190px;min-width:170px}
+.cnv .col.ker{flex:0 1 180px}
+.cnv .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(10px,calc(1.25*var(--u)),14px);margin:0 0 5px;color:var(--soft)}
+.cnv .gr{display:grid;gap:2px;max-width:min(100%,calc(30*var(--u)))}
+/* стеля ширини сітки — щоб слайд зі згорткою влазив у 1280×720 */
+.cnv .cl{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:3px;
+  font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(7px,calc(1*var(--u)),12px)}
+.cnv .cl.win{outline:3px solid var(--pen);outline-offset:-1px;z-index:1}
+.cnv .cl.ctr{outline-color:var(--marker)}
+.cnv .cl.empty{background:var(--paper);border:1px dashed var(--edge);color:transparent}
+.cnv .kg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:180px}
+.cnv .kg div{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:5px;
+  font-family:"JetBrains Mono",monospace;font-weight:700;border:var(--bw) solid var(--edge);
+  background:var(--card);font-size:clamp(9px,calc(1.25*var(--u)),15px)}
+.cnv .kg div.plus{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+.cnv .kg div.minus{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.cnv .sum{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(11px,calc(1.45*var(--u)),17px);margin:8px 0 0;line-height:1.6}
+.cnv .sum b{color:var(--pen)} .cnv .sum .big{color:var(--check)}
+
+
+/* C18 · .back — назад у часі: вагон, фігурки й лічильник над дахом */
+.back .bcar{display:block;width:100%;max-width:min(100%,calc(52*var(--u)));margin:0 auto;height:auto}
+.back .bcar .car{fill:var(--card);stroke:var(--ink);stroke-width:3}
+.back .bcar .win{fill:var(--pen-soft);stroke:var(--ink);stroke-width:2}
+.back .bcar .door{fill:var(--paper);stroke:var(--ink);stroke-width:2}
+.back .bcar .rail{stroke:var(--edge);stroke-width:4;stroke-linecap:round}
+.back .bcar .wh{fill:var(--ink)}
+.back .bcar .fill{fill:var(--pen);opacity:.22;transition:width .5s cubic-bezier(.4,0,.2,1),x .5s}
+.back .bcar .bnum{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;fill:var(--pen);
+  font-size:46px;text-anchor:middle;font-variant-numeric:tabular-nums}
+.back .bcar .bwhat,.back .bcar .bunit{font-family:"Manrope",sans-serif;font-weight:600;
+  fill:var(--soft);font-size:17px;text-anchor:middle}
+.back .bcar .pp{transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .4s}
+.back .bcar .pp path,.back .bcar .pp circle{fill:var(--ink);stroke:none}
+.back .bcar .pp.go path,.back .bcar .pp.go circle{fill:var(--marker)}
+.back .bcar .pp.come path,.back .bcar .pp.come circle{fill:var(--check)}
+.back .bcar .pp.off{opacity:0}
+.back .bcar .bmark{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:26px;
+  text-anchor:middle;opacity:0;transition:opacity .3s}
+.back .bcar .bmark.on{opacity:1}
+.back .bcar .bmark.go{fill:var(--marker)} .back .bcar .bmark.come{fill:var(--check)}
+.back .btrack{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;
+  margin-top:clamp(6px,1vw,12px)}
+.back .bstep{border:var(--bw) solid var(--edge);border-radius:var(--rad);background:var(--card);
+  padding:5px 12px;text-align:center;transition:border-color .2s,background .2s,transform .2s,opacity .2s}
+.back .bstep b{display:block;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(13px,calc(1.7*var(--u)),20px)}
+.back .bstep .bi{font-size:clamp(9px,calc(1.05*var(--u)),12px);color:var(--soft)}
+.back .bstep.bend b{color:var(--check)}
+.back .bstep.undone{opacity:.42;border-style:dashed}
+.back .bstep.undone b{text-decoration:line-through}
+.back .bstep.now{border-color:var(--pen);background:var(--pen-soft);transform:translateY(-2px);opacity:1}
+.back .bstep.now b{color:var(--pen);text-decoration:none}
+.back .bstep.now .bi{color:var(--pen)}
+
+/* C19 · .sqdiag — діагоналі квадрата */
+.sqdiag{display:flex;flex-wrap:wrap;gap:clamp(8px,1.6vw,18px);align-items:center;
+  justify-content:center}
+.sqdiag .sqw{flex:0 1 auto;max-width:min(100%,calc(26*var(--u)))}
+.sqdiag svg{width:100%;height:auto;display:block}
+.sqdiag .sq{fill:var(--pen-soft);stroke:var(--pen);stroke-width:3}
+.sqdiag .dg{stroke:var(--marker);stroke-width:2.5;opacity:0;transition:opacity .4s}
+.sqdiag .ra{fill:none;stroke:var(--check);stroke-width:2.5}
+.sqdiag .o{fill:var(--ink)}
+.sqdiag .tri path{fill:var(--check-soft);stroke:var(--check);stroke-width:2;opacity:0;
+  transition:opacity .4s}
+.sqdiag .an{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:700;
+  fill:var(--marker);text-anchor:middle;opacity:0;transition:opacity .4s}
+.sqdiag .an.o{fill:var(--check)}
+.sqdiag .pt{font-family:"Unbounded","Manrope",sans-serif;font-size:15px;font-weight:700;
+  fill:var(--ink);text-anchor:middle}
+.sqdiag .g1,.sqdiag .g2,.sqdiag .g3{opacity:0}
+.sqdiag.s1 .g1,.sqdiag.s2 .g1,.sqdiag.s3 .g1{opacity:1}
+.sqdiag.s2 .g2,.sqdiag.s3 .g2{opacity:1}
+.sqdiag.s3 .g3{opacity:1}
+.sqdiag .sqlog{display:none}
+
+/* C20 · .lnk — ярлик і файл */
+.lnk .lnw{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,28px);justify-content:center;
+  align-items:stretch}
+.lnk .lbox{flex:1;max-width:320px;border:var(--bw) dashed var(--edge);border-radius:var(--rad);
+  background:var(--card);padding:9px;display:flex;flex-direction:column;gap:7px}
+.lnk .nm{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(11px,calc(1.3*var(--u)),15px);display:flex;align-items:center;gap:7px}
+.lnk .nm i{width:1.5em;height:1.15em;border-radius:3px 7px 7px 7px;background:var(--sun);
+  box-shadow:inset 0 .28em 0 -.2em var(--card);flex:none}
+.lnk .nm i.d{border-radius:3px;background:var(--note)}
+.lnk .slot{flex:1;border-radius:8px;background:var(--paper);padding:7px;min-height:3.4em}
+.lnk .fchip{display:inline-flex;align-items:center;gap:7px;font-weight:600;position:relative;
+  font-size:clamp(11px,calc(1.3*var(--u)),15px);background:var(--card);
+  border:var(--bw) solid var(--pen);color:var(--pen);border-radius:8px;padding:5px 10px;
+  transition:opacity .45s,transform .45s,border-color .3s,color .3s}
+.lnk .fchip .ic{width:.85em;height:1.1em;border:2px solid currentColor;border-radius:2px;
+  border-top-right-radius:.4em;flex:none}
+.lnk .fchip .badge{position:absolute;left:-7px;bottom:-7px;width:1.25em;height:1.25em;
+  border-radius:4px;background:var(--note);color:var(--on-pen);font-size:.72em;
+  display:flex;align-items:center;justify-content:center;line-height:1}
+.lnk .short.bad{border-color:var(--marker);color:var(--marker);text-decoration:line-through}
+.lnk .short.bad .badge{background:var(--marker)}
+.lnk.nofile .file{opacity:.12;transform:translateY(10px) scale(.9)}
+.lnk.noshort .short{opacity:.12;transform:translateY(10px) scale(.9)}
+.lnk .larr{align-self:center;color:var(--note);font-weight:700;flex:none;
+  font-size:clamp(16px,calc(2.2*var(--u)),28px)}
+
+
+/* C21 · .regroup — що куди переїхало */
+.regroup{position:relative}
+.regroup .rline{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(16px,calc(2.6*var(--u)),32px);line-height:1.5;white-space:nowrap}
+.regroup .rline span{display:inline-block}
+.regroup .rline .op{margin:0 .3em;color:var(--soft)}
+.regroup .rline .n{padding:0 .05em}
+.regroup .to{color:var(--check);transition:opacity .45s}
+.regroup .to span{opacity:.18;transition:opacity .45s}
+.regroup.done .to span{opacity:1}
+.regroup.done .to{opacity:1}
+.regroup.done .from{opacity:.3}
+.regroup .from{transition:opacity .45s}
+.regroup .to .chg{color:var(--marker);background:var(--marker-soft);border-radius:6px;
+  padding:0 .18em}
+.regroup .rarr{height:clamp(26px,calc(3.4*var(--u)),44px)}
+.regroup .rarr svg{position:absolute;overflow:visible;pointer-events:none}
+.regroup .rp{fill:none;stroke:var(--pen);stroke-width:2.5;stroke-linecap:round;
+  stroke-dasharray:1000;stroke-dashoffset:1000;
+  animation:rg-draw .7s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes rg-draw{to{stroke-dashoffset:0}}
+.regroup .rans{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(15px,calc(2.2*var(--u)),28px);color:var(--check);
+  opacity:0;transition:opacity .4s .3s}
+.regroup.done .rans{opacity:1}
+.regroup .ghost{position:absolute;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(16px,calc(2.6*var(--u)),32px);line-height:1.5;color:var(--pen);
+  transition:transform .8s cubic-bezier(.4,0,.2,1);z-index:2;pointer-events:none}
+
+
+/* C22 · .subst — буква зникає, число стає на її місце */
+.subst .sv{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(17px,calc(2.8*var(--u)),34px);line-height:1.6;padding:clamp(3px,.6vw,8px) 0}
+.subst .sv span{display:inline-block;transition:transform .26s,opacity .26s,color .26s}
+.subst .sv .o{margin:0 .3em;color:var(--soft)}
+.subst .sv .v{color:var(--marker);background:var(--marker-soft);border-radius:7px;padding:0 .2em}
+.subst.gone .sv .v{transform:scale(.3) rotate(-12deg);opacity:0}
+.subst .sv .nw{color:var(--check);background:var(--check-soft);border-radius:7px;padding:0 .2em;
+  animation:op-pop .5s cubic-bezier(.22,1.5,.4,1) both}
+.subst .sv .act{color:var(--pen);background:var(--pen-soft);border-radius:7px;padding:0 .2em}
+.subst .sv .fin{color:var(--check)}
+.subst .slab{font-family:"Unbounded","Manrope",sans-serif;font-weight:700;text-align:center;
+  font-size:clamp(11px,calc(1.35*var(--u)),16px);color:var(--pen);letter-spacing:.04em}
+.subst .olog{display:none}
+
+/* C23 · .jump — стрибки по числовій прямій: обираємо знак, дивимось, куди прилетіли */
+.jump .jx{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(16px,calc(2.5*var(--u)),32px);line-height:1.7;letter-spacing:.02em}
+.jump .jx span{display:inline-block;transition:color .25s,background .25s}
+.jump .jx .st{color:var(--marker);background:var(--marker-soft);border-radius:8px;
+  padding:0 .28em;margin:0 .12em}
+.jump .jx .st.act{color:var(--pen);background:var(--pen-soft);animation:jb 1.1s ease-in-out infinite}
+.jump .jx .sg{color:var(--pen);padding:0 .28em;margin:0 .12em}
+.jump .jx .sg.bad{color:var(--marker)}
+.jump .jx .tg{color:var(--check)}
+@keyframes jb{0%,100%{transform:none}50%{transform:translateY(-3px)}}
+.jump svg{display:block;width:100%;max-width:min(100%,calc(50*var(--u)));height:auto;
+  margin:clamp(2px,.6vw,7px) auto 0}
+.jump svg .ax{stroke:var(--ink);stroke-width:2.5;fill:none}
+.jump svg .tk{stroke:var(--edge);stroke-width:2}
+.jump svg .tl{font-family:"Manrope",sans-serif;font-size:15px;fill:var(--soft);text-anchor:middle}
+.jump svg .arc{stroke:var(--pen);stroke-width:3.5;fill:none;opacity:0;
+  transition:opacity .3s;stroke-dasharray:var(--len);stroke-dashoffset:var(--len)}
+.jump svg .arc.on{opacity:1;animation:jarc .55s cubic-bezier(.4,0,.2,1) forwards}
+.jump svg .arc.back{stroke:var(--marker)}
+@keyframes jarc{to{stroke-dashoffset:0}}
+.jump svg .ah{fill:var(--pen);opacity:0;transition:opacity .25s .4s}
+.jump svg .ah.on{opacity:1} .jump svg .ah.back{fill:var(--marker)}
+.jump svg .alab{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:17px;
+  fill:var(--pen);text-anchor:middle;opacity:0;transition:opacity .25s .35s}
+.jump svg .alab.on{opacity:1} .jump svg .alab.back{fill:var(--marker)}
+.jump svg .goal{stroke:var(--check);stroke-width:3;stroke-dasharray:6 5}
+.jump svg .goalt{font-family:"Unbounded","Manrope",sans-serif;font-weight:700;font-size:18px;
+  fill:var(--check);text-anchor:middle}
+.jump svg .dot{fill:var(--pen);transition:cx .5s cubic-bezier(.4,0,.2,1)}
+.jump svg .dot.hit{fill:var(--check)}
+.jump svg .dotl{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:19px;
+  fill:var(--pen);text-anchor:middle;transition:x .5s cubic-bezier(.4,0,.2,1)}
+.jump svg .dotl.hit{fill:var(--check)}
 
 /* ───────────────────────── A6 · друк у PDF ─────────────────────────────── */
 @media print{
@@ -996,6 +1330,139 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
   <p class="lab">Точку можна тягнути мишею або пальцем; з data-round показує округлення.</p>
   <div class="numline" data-from="4200" data-to="4400" data-step="10" data-big="100"
        data-value="4327" data-round="100" style="margin-top:10px"></div>
+</section>
+
+<!-- ═════ C11 · анімація: порядок дій ═════ -->
+<section class="slide" data-t="Порядок дій" data-chapter="Нова тема">
+  <h2>Порядок дій <span class="mut">(.ordops — анімація)</span></h2>
+  <div class="modes">
+    <span class="mode oral"><span class="dot"></span>усно — не записуємо</span>
+    <span class="mode pick"><span class="dot"></span>випадковий номер</span>
+  </div>
+  <p class="lab">Один пробіл — одна дія. Кроки рахує сам двигун: дужки → · та : → + і −.</p>
+  <div class="ordops" data-expr="54 + (32 − 17) − (43 − 11)"></div>
+</section>
+
+<!-- ═════ C12 · анімація: ланцюжок перетворень ═════ -->
+<section class="slide" data-t="Ланцюжок перетворень" data-chapter="Нова тема">
+  <h2>Перетворення запису <span class="mut">(.frm — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="frm">
+    <ol>
+      <li data-say="Знаменники однакові — дію робимо з чисельниками.">
+        <span class="fr"><span class="n">a²</span><span class="d">a + 3</span></span>
+        <span class="op">−</span>
+        <span class="fr"><span class="n">9</span><span class="d">a + 3</span></span></li>
+      <li data-say="Одна риска. Знаменник переписуємо без змін.">
+        <span class="fr"><span class="n">a² − 9</span><span class="d">a + 3</span></span></li>
+      <li data-say="Розклали чисельник: різниця квадратів.">
+        <span class="fr"><span class="n">(a − 3)<span class="cf">(a + 3)</span></span><span class="d"><span class="cf">a + 3</span></span></span>
+        <span class="hint">a² − 9 = (a − 3)(a + 3)</span></li>
+      <li class="cut" data-say="Скорочуємо однаковий МНОЖНИК — згори й знизу.">
+        <span class="res">a − 3</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ═════ C13 · анімація: копіювати чи перемістити ═════ -->
+<section class="slide" data-t="Копіювати чи перемістити" data-chapter="Нова тема">
+  <h2>Копіювати чи перемістити <span class="mut">(.fls — анімація)</span></h2>
+  <div class="modes">
+    <span class="mode want"><span class="dot"></span>відповідає бажаючий</span>
+  </div>
+  <p class="lab">Питання одне: скільки файлів лишилось після дії.</p>
+  <div class="fls" data-file="Казка.docx" data-from="Мої документи" data-to="Флешка"></div>
+</section>
+
+<!-- ═════ C14 · анімація: задача на рух ═════ -->
+<section class="slide" data-t="Задача на рух" data-chapter="Нова тема">
+  <h2>Рух назустріч <span class="mut">(.mv — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="mv" data-s="310" data-v="60,80" data-start="0,0.5"
+       data-names="Вантажівка · x" data-mode="meet"
+       data-eq="2,5x + 2(x + 20) = 310 &nbsp;→&nbsp; 4,5x = 270 &nbsp;→&nbsp; x = 60"></div>
+</section>
+
+<!-- ═════ C15 · анімація: вертикальні кути ═════ -->
+<section class="slide" data-t="Вертикальні кути" data-chapter="Нова тема">
+  <h2>Вертикальні кути <span class="mut">(.vang — анімація)</span></h2>
+  <p class="lab">Пряму можна тягнути: числа біжать, рівність лишається.</p>
+  <div class="vang" data-angle="55" data-ratio="4:5"></div>
+</section>
+
+<!-- ═════ C16 · анімація: родина чотирикутників ═════ -->
+<section class="slide" data-t="Родина чотирикутників" data-chapter="Нова тема">
+  <h2>Від паралелограма до квадрата <span class="mut">(.qfam — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="qfam"></div>
+</section>
+
+<!-- ═════ C17 · анімація: згортка ═════ -->
+<section class="slide" data-t="Згортка" data-chapter="Нова тема">
+  <h2>Ядро їде по картинці <span class="mut">(.cnv — анімація)</span></h2>
+  <p class="lab">Вертикальне ядро світиться на бічних межах і мовчить на верхній і нижній.</p>
+  <div class="cnv" data-k="1,0,-1,2,0,-2,1,0,-1"></div>
+</section>
+
+<!-- ═════ C22 · анімація: підстановка ═════ -->
+<section class="slide" data-t="Підстановка" data-chapter="Нова тема">
+  <h2>Буква зникає — число стає на її місце <span class="mut">(.subst — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <p class="lab">Пробіл: спершу підстановка, далі кроки обчислення.</p>
+  <div class="subst" data-var="a" data-value="6" data-expr="9a − 7"></div>
+  <p class="lab" style="margin-top:10px">Кілька виразів одного завдання — <code>data-list</code>:
+     пробіл рахує наступний, третім полем можна вказати клітинку, куди вписати відповідь.</p>
+  <div class="subst" data-var="a" data-value="6"
+       data-list="Василь|9a − 7; Михайло|95 − 10a; Олександра|8a + 1"></div>
+</section>
+
+<!-- ═════ C21 · анімація: перегрупування ═════ -->
+<section class="slide" data-t="Перегрупування" data-chapter="Нова тема">
+  <h2>Що куди переїхало <span class="mut">(.regroup — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="regroup" data-from="6238 − (5238 + 120)" data-to="(6238 − 5238) − 120"></div>
+</section>
+
+<!-- ═════ C18 · анімація: назад у часі ═════ -->
+<section class="slide" data-t="Назад у часі" data-chapter="Нова тема">
+  <h2>Скільки було спочатку <span class="mut">(.back — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <p class="lab">Ідемо від кінця: кожну дію замінюємо на протилежну. «Перевірити вперед» — контроль.</p>
+  <div class="back" data-end="68" data-steps="-15,+23,-17,+12"
+       data-what="У вагоні" data-unit="пасажирів"
+       data-labels="1-ша зупинка,1-ша зупинка,2-га зупинка,2-га зупинка"></div>
+</section>
+
+<!-- ═════ C23 · анімація: стрибки по числовій прямій ═════ -->
+<section class="slide" data-t="Знак замість зірочки" data-chapter="Нова тема">
+  <h2>Постав + чи − замість зірочок <span class="mut">(.jump — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <p class="cond">Постав замість зірочок «+» чи «−», щоб рівність була правильною:
+     <span class="n">120 ✳ 50 ✳ 70 ✳ 30 ✳ 100 = 170</span></p>
+  <div class="jump" data-start="120" data-steps="50,70,30,100" data-target="170"></div>
+</section>
+
+<!-- ═════ C14б · анімація: рух туди й назад ═════ -->
+<section class="slide" data-t="Туди й назад" data-chapter="Нова тема">
+  <h2>Туди швидше, назад повільніше <span class="mut">(.mv, data-mode="there-back")</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <p class="lab">Смуги під дорогою — це <b>час</b>, а не кілометри: разом вони дають увесь час у дорозі.</p>
+  <div class="mv" data-mode="there-back" data-v="4,3" data-t="7" data-unit="км"
+       data-names="турист"></div>
+</section>
+
+<!-- ═════ C19 · анімація: діагоналі квадрата ═════ -->
+<section class="slide" data-t="Діагоналі квадрата" data-chapter="Нова тема">
+  <h2>Діагоналі квадрата по кроках <span class="mut">(.sqdiag — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="sqdiag"></div>
+</section>
+
+<!-- ═════ C20 · анімація: ярлик і файл ═════ -->
+<section class="slide" data-t="Ярлик і файл" data-chapter="Нова тема">
+  <h2>Що буде, якщо видалити <span class="mut">(.lnk — анімація)</span></h2>
+  <div class="modes"><span class="mode want"><span class="dot"></span>відповідає бажаючий</span></div>
+  <div class="lnk" data-file="Море.png" data-place="Фото"></div>
 </section>
 
 <!-- ═════ таймер + B7 число, що набігає ═════ -->
@@ -1401,12 +1868,10 @@ function paint(){
     c.className = i < cur ? 'done' : (i === cur ? 'cur' : '');
   });
 
-  if(count) count.textContent = (cur+1) + ' / ' + slides.length;
-  if(tip){
-    var all = $$('.hide', s).length, shown = shownOf(cur).length;
-    if(all){ tip.textContent = 'показано ' + shown + ' з ' + all; tip.classList.add('on'); }
-    else { tip.textContent = ''; tip.classList.remove('on'); }
-  }
+  /* Лічильники «3 / 18» і «показано 2 з 5» прибрано 25.09.2026 (вчитель:
+     «додаткові лічильники прибрати звідусіль»): позицію показує рейка слайдів,
+     а що вже відкрито — видно на самому слайді. Розмітку в деках не чіпаємо —
+     елементи просто сховані стилями. */
   if(topic){
     var ch = s.__chapter;
     var slot = $('.step-of', topic);
@@ -1480,7 +1945,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.colsub', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.colsub,.ordops,.frm,.sqdiag,.subst', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -2089,14 +2554,14 @@ $$('.roster').forEach(function(box){
   var win = el('div','win'); win.textContent = '?';
   var go2 = el('button'); go2.type = 'button'; go2.textContent = 'Витягнути';
   var again = el('button'); again.type = 'button'; again.textContent = 'Почати коло';
-  var left = el('div','left');
-  box.appendChild(win); box.appendChild(go2); box.appendChild(again); box.appendChild(left);
+  box.appendChild(win); box.appendChild(go2); box.appendChild(again);
 
   var all = [], pool = [];
   for(var n = from; n <= to; n++) all.push(n);
-  function fresh(){ pool = all.slice(); say(); }
-  function say(){ left.textContent = 'ще не питали: ' + pool.length + ' з ' + all.length +
-                                    ' (№ ' + from + '–' + to + ')'; }
+  function fresh(){ pool = all.slice(); }
+  /* Лічильник «ще не питали» прибрано 25.09.2026 (вчитель: «дублюючий»):
+     скільки номерів лишилось у колі, на уроці не потрібно — важливий сам номер. */
+  function say(){}
   on(go2,'click',function(e){
     e.stopPropagation();
     if(!pool.length) fresh();
@@ -2364,6 +2829,1380 @@ $$('.qr').forEach(function(box){
   $('.lab',side).textContent = url.replace(/^https?:\/\//,'');
   box.insertBefore(pic, box.firstChild);
   box.appendChild(side);
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C10 · АНІМАЦІЇ — спільне
+   Правило для всіх: початковий стан малюється СИНХРОННО, без rAF.
+   У headless Chrome (tools/check_decks.py) анімації не крутяться, і
+   компонент, який малюється тільки в анімації, там виглядав би порожнім.
+   Рух додається зверху й нічого не вирішує.
+   Каталог і пошук «чи є анімація під задачу» — tools/components.py --під.
+   ───────────────────────────────────────────────────────────────────── */
+function abtn(row, txt, cls, fn){
+  var b = el('button', 'ab' + (cls ? ' ' + cls : ''));
+  b.type = 'button'; b.textContent = txt;
+  on(b,'click',function(e){ e.stopPropagation(); fn(b); });
+  row.appendChild(b);
+  return b;
+}
+function arow(box){ var r = el('div','arow'); box.appendChild(r); return r; }
+function asay(box){ var s = el('div','asay'); box.appendChild(s); return s; }
+/* Число для показу: ціле — з пробілами по тисячах, дробове — з комою. */
+function anum(v){
+  if(Math.abs(v - Math.round(v)) < 1e-9) return spaceNum(Math.round(v));
+  return String(Math.round(v*1000)/1000).replace('.', ',');
+}
+/* Плавний перехід величини від from до to; кожен кадр — cb(значення).
+   Якщо кадрів немає (headless), значення однаково стане кінцевим. */
+function atween(box, from, to, ms, cb){
+  if(box.__tw) cancelAnimationFrame(box.__tw);
+  var t0 = 0;
+  cb(from);
+  function go(ts){
+    if(!t0) t0 = ts;
+    var k = Math.min(1, (ts - t0)/ms);
+    cb(from + (to - from)*(1 - Math.pow(1 - k, 3)));
+    if(k < 1) box.__tw = requestAnimationFrame(go);
+  }
+  box.__tw = requestAnimationFrame(go);
+  setTimeout(function(){ if(box.__tw) cancelAnimationFrame(box.__tw); cb(to); }, ms + 90);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   C11 · .ordops — вираз згортається по одній дії
+   <div class="ordops" data-expr="54 + (32 − 17) − (43 − 11)"></div>
+   Кроки рахує скрипт: спочатку дужки, потім · та :, потім + і − зліва
+   направо. Крок відкривається пробілом, як і будь-яка інша відповідь.
+   ───────────────────────────────────────────────────────────────────── */
+function opTok(s){
+  var t = [], i = 0, n = s.length;
+  while(i < n){
+    var c = s.charAt(i);
+    if(c === ' '){ i++; continue; }
+    if(c >= '0' && c <= '9'){
+      var j = i;
+      while(j < n && /[0-9.,]/.test(s.charAt(j))) j++;
+      t.push({k:'n', v: parseFloat(s.slice(i,j).replace(',','.'))});
+      i = j; continue;
+    }
+    if(c === '(' || c === ')'){ t.push({k:c}); i++; continue; }
+    if('+-−·*×:/÷'.indexOf(c) >= 0){ t.push({k:'o', v:c}); i++; continue; }
+    return null;                      /* незрозумілий символ — не беремось */
+  }
+  return t.length ? t : null;
+}
+function opPrec(o){ return (o === '+' || o === '-' || o === '−') ? 1 : 2; }
+function opCalc(a, o, b){
+  if(o === '+') return a + b;
+  if(o === '-' || o === '−') return a - b;
+  if(o === ':' || o === '/' || o === '÷') return a / b;
+  return a * b;
+}
+function opText(t){ return t.k === 'n' ? anum(t.v) : (t.k === 'o' ? t.v : t.k); }
+/* Дужки тримаються свого вмісту: «(32 − 17)», а не «( 32 − 17 )». */
+function opJoin(t, from, to){
+  var s = '';
+  for(var i = from; i <= to; i++){
+    var c = opText(t[i]);
+    if(s && c !== ')' && s.charAt(s.length-1) !== '(') s += ' ';
+    s += c;
+  }
+  return s;
+}
+/* Один крок: що рахуємо (від..до) і на що це заміниться. */
+function opStep(t){
+  var open = -1, close = -1, i;
+  for(i = 0; i < t.length; i++){
+    if(t[i].k === '(') open = i;
+    else if(t[i].k === ')'){ close = i; break; }
+  }
+  var from = open >= 0 ? open + 1 : 0, to = close >= 0 ? close - 1 : t.length - 1;
+  var best = -1, prec = 0;
+  for(i = from; i <= to; i++){
+    if(t[i].k === 'o' && opPrec(t[i].v) > prec){ prec = opPrec(t[i].v); best = i; }
+  }
+  if(best < 0){                       /* у дужках лишилось одне число — знімаємо дужки */
+    if(open < 0) return null;
+    return {cut:[open, close], val:t[from].v, act:[open, close], paren:true, bare:true};
+  }
+  var a = t[best-1], b = t[best+1];
+  if(!a || !b || a.k !== 'n' || b.k !== 'n') return null;
+  var val = opCalc(a.v, t[best].v, b.v);
+  var whole = (open >= 0 && best - 1 === from && best + 1 === to);
+  return {
+    cut:  whole ? [open, close] : [best-1, best+1],
+    act:  whole ? [open, close] : [best-1, best+1],
+    val:  val, paren: whole || open >= 0, prec: prec,
+    log:  (whole ? '(' : '') + anum(a.v) + ' ' + t[best].v + ' ' + anum(b.v) + (whole ? ')' : '') +
+          ' = ' + anum(val)
+  };
+}
+function opFrames(t){
+  var F = [], guard = 0;
+  while(guard++ < 40){
+    var st = opStep(t);
+    if(!st){ F.push({t:t, act:null, nw:-1}); break; }
+    F.push({t:t, act:st.act, nw:-1, say:
+      st.paren ? 'Спочатку — те, що в дужках.'
+               : (st.prec === 2 ? 'Множення й ділення — раніше за додавання.'
+                                : 'Дужок немає — рахуємо зліва направо.')});
+    var next = t.slice(0, st.cut[0]).concat([{k:'n', v:st.val}], t.slice(st.cut[1] + 1));
+    F[F.length-1].log = st.log;
+    t = next;
+    if(t.length === 1){
+      F.push({t:t, act:null, nw:0, say:'Відповідь: ' + anum(t[0].v) + '.'});
+      break;
+    }
+    F[F.length-1].nwNext = st.cut[0];
+  }
+  /* позначити в кожному кадрі число, яке щойно стало на місце дії */
+  for(var i = 1; i < F.length; i++) if(F[i].nw < 0) F[i].nw = F[i-1].nwNext;
+  return F;
+}
+$$('.ordops').forEach(function(box){
+  var src = (box.dataset.expr || box.textContent || '').trim();
+  var toks = opTok(src);
+  box.textContent = '';
+  if(!toks){ box.textContent = src; return; }
+  var F = opFrames(toks);
+  var view = el('div','oe'); box.appendChild(view);
+  var say  = asay(box);
+  var ol   = el('ol','olog'); box.appendChild(ol);
+  F.forEach(function(f,i){
+    if(!i) return;
+    var li = el('li','hide'); li.textContent = F[i-1].log || ''; ol.appendChild(li);
+  });
+  box.__at = -1;
+  box.__paint = function(){
+    var shown = 0;
+    $$('li', ol).forEach(function(li){ if(li.classList.contains('on')) shown++; });
+    if(shown >= F.length) shown = F.length - 1;
+    var f = F[shown], pop = (shown !== box.__at);
+    box.__at = shown;
+    view.textContent = '';
+    var i = 0;
+    while(i < f.t.length){
+      var e;
+      if(f.act && i === f.act[0]){
+        e = el('span','act');
+        e.textContent = opJoin(f.t, f.act[0], f.act[1]);
+        i = f.act[1] + 1;
+      } else {
+        e = el('span', f.t[i].k === 'o' ? 'o' : '');
+        if(i === f.nw && pop) e.className += ' nw';
+        if(f.t.length === 1) e.className += ' fin';
+        e.textContent = opText(f.t[i]);
+        i++;
+      }
+      view.appendChild(e);
+    }
+    say.textContent = f.say || '';
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C12 · .frm — ланцюжок тотожних перетворень запису
+   <div class="frm"><ol>
+     <li data-say="Знаменники однакові">…html кроку…</li>
+     <li class="cut" data-say="Скорочуємо">…</li>   ← перед цим кроком
+   </ol></div>                                        закреслюються .cf
+   Список у розмітці не показується — він лише рахує пробіли; на екрані
+   видно один крок, найсвіжіший.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.frm').forEach(function(box){
+  var ol = $('ol', box);
+  if(!ol) return;
+  var steps = $$('li', ol).map(function(li){
+    return {h: li.innerHTML, say: li.dataset.say || '', cut: li.classList.contains('cut')};
+  });
+  if(!steps.length) return;
+  var view = el('div','fview'), say = asay(box);
+  box.insertBefore(view, ol);
+  box.insertBefore(say, ol);
+  $$('li', ol).forEach(function(li,i){
+    li.innerHTML = '';
+    li.className = i ? 'hide' : '';
+  });
+  box.__at = -1;
+  box.__paint = function(){
+    var shown = 0;
+    $$('li', ol).forEach(function(li,i){ if(!i || li.classList.contains('on')) shown = i; });
+    if(shown === box.__at) return;
+    var was = box.__at;
+    box.__at = shown;
+    /* крок «скорочення»: спершу закреслити множники в попередньому кадрі */
+    if(steps[shown].cut && was === shown - 1 && was >= 0){
+      view.innerHTML = steps[was].h;
+      view.classList.add('cut');
+      say.textContent = steps[shown].say;
+      setTimeout(function(){
+        if(box.__at !== shown) return;
+        view.classList.remove('cut');
+        view.innerHTML = steps[shown].h;
+        fit();
+      }, 950);
+      return;
+    }
+    view.classList.remove('cut');
+    view.innerHTML = steps[shown].h;
+    say.textContent = steps[shown].say;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C13 · .fls — копіювати чи перемістити (операції над файлами)
+   <div class="fls" data-file="Казка.docx" data-from="Мої документи"
+        data-to="Флешка"></div>
+   Відповідає на єдине питання, яке діти плутають: скільки файлів лишилось.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.fls').forEach(function(box){
+  var name = box.dataset.file || 'Казка.docx',
+      nmA  = box.dataset.from || 'Мої документи',
+      nmB  = box.dataset.to   || 'Флешка';
+  box.textContent = '';
+  var wrap = el('div','flw');
+  wrap.innerHTML =
+    '<div class="fold"><span class="nm"><i></i>' + nmA + '</span><div class="slot"></div></div>' +
+    '<span class="farr">→</span>' +
+    '<div class="fold"><span class="nm"><i></i>' + nmB + '</span><div class="slot"></div></div>';
+  box.appendChild(wrap);
+  var A = $$('.slot', wrap)[0], B = $$('.slot', wrap)[1];
+  var row = arow(box), say = asay(box), chip;
+
+  function make(){
+    var c = el('span','fchip');
+    c.innerHTML = '<span class="ic"></span>';
+    c.appendChild(D.createTextNode(name));
+    return c;
+  }
+  function fly(c, to, done){
+    var r = c.getBoundingClientRect(), br = wrap.getBoundingClientRect();
+    c.style.width = r.width + 'px';
+    c.style.left = (r.left - br.left) + 'px';
+    c.style.top  = (r.top  - br.top ) + 'px';
+    c.classList.add('fly');
+    wrap.appendChild(c);
+    var slot = to.getBoundingClientRect();
+    setTimeout(function(){
+      c.style.left = (slot.left - br.left + 8) + 'px';
+      c.style.top  = (slot.top  - br.top  + 8) + 'px';
+    }, 30);
+    setTimeout(function(){
+      c.classList.remove('fly'); c.removeAttribute('style'); to.appendChild(c);
+      if(done) done();
+    }, 950);
+  }
+  function reset(){
+    A.textContent = ''; B.textContent = '';
+    $$('.fly', wrap).forEach(function(x){ x.parentNode.removeChild(x); });
+    chip = make(); A.appendChild(chip);
+    say.textContent = 'Файл «' + name + '» лежить у теці «' + nmA + '». Файлів: 1.';
+  }
+  abtn(row, 'Перемістити', '', function(){
+    if(!A.contains(chip)){ say.textContent = 'Файл уже в другій теці — тисни «Спочатку».'; return; }
+    say.textContent = 'Переміщуємо…';
+    fly(chip, B, function(){
+      say.textContent = 'ПЕРЕМІСТИТИ: файл один, він просто в іншій теці. Файлів: 1.';
+    });
+  });
+  abtn(row, 'Копіювати', '', function(){
+    if(!A.contains(chip)){ say.textContent = 'Спершу «Спочатку» — щоб файл був у першій теці.'; return; }
+    say.textContent = 'Копіюємо…';
+    var c = make();
+    var r = chip.getBoundingClientRect(), br = wrap.getBoundingClientRect();
+    c.style.width = r.width + 'px';
+    c.style.left = (r.left - br.left) + 'px';
+    c.style.top  = (r.top  - br.top ) + 'px';
+    c.classList.add('fly'); wrap.appendChild(c);
+    var slot = B.getBoundingClientRect();
+    setTimeout(function(){
+      c.style.left = (slot.left - br.left + 8) + 'px';
+      c.style.top  = (slot.top  - br.top  + 8) + 'px';
+    }, 30);
+    setTimeout(function(){
+      c.classList.remove('fly'); c.removeAttribute('style'); B.appendChild(c);
+      say.textContent = 'КОПІЮВАТИ: оригінал лишився, зʼявився ще один файл. Файлів: 2.';
+    }, 950);
+  });
+  abtn(row, 'Спочатку', 'q', reset);
+  reset();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C14 · .mv — задача на рух: два тіла, смуги пройденого шляху, рівняння
+   <div class="mv" data-s="310" data-v="60,80" data-start="0,0.5"
+        data-names="Вантажівка,Легковик" data-mode="meet"
+        data-eq="2,5x + 2(x + 20) = 310  →  x = 60"></div>
+   Смуги ростуть разом із тілами: у мить зустрічі видно, що вони вклалися
+   у відстань без залишку — звідси й береться рівняння.
+   mode="meet" — назустріч, mode="chase" — навздогін (обидва з лівого краю).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.mv').forEach(function(box){
+  var S  = parseFloat(box.dataset.s) || 100,
+      V  = (box.dataset.v || '60,80').split(',').map(parseFloat),
+      T0 = (box.dataset.start || '0,0').split(',').map(parseFloat),
+      NM = (box.dataset.names || 'Перший,Другий').split(','),
+      chase = box.dataset.mode === 'chase',
+      U  = box.dataset.unit || '',
+      X0 = 60, W = 600, K = W/S;
+  var v1 = V[0] || 60, v2 = V[1] || 80, t1 = T0[0] || 0, t2 = T0[1] || 0;
+  /* «туди й назад»: той самий шлях двома швидкостями, відомий лише ЗАГАЛЬНИЙ час.
+     Тоді смуги під дорогою міряють не кілометри, а ЧАС — вони й складаються в нього,
+     а сам шлях s лишається невідомим, доки вчитель не натисне «Показати s». */
+  var back = box.dataset.mode === 'there-back', TT = parseFloat(box.dataset.t) || 0, legT = 0;
+  if(back){
+    S = TT * v1 * v2 / (v1 + v2);
+    K = W / S; legT = S / v1;
+  }
+  /* коли зустрінуться: назустріч — сума шляхів = S; навздогін — шляхи рівні */
+  var TEND = back ? TT
+                  : (chase ? (v2 * t2 - v1 * t1) / (v2 - v1)
+                           : (S + v1 * t1 + v2 * t2) / (v1 + v2));
+  if(!(TEND > 0) || !isFinite(TEND)) TEND = 1;
+  var meetKm = back ? S : v1 * (TEND - t1);
+
+  box.textContent = '';
+  var svg = el('div','mvs');
+  svg.innerHTML =
+    '<svg viewBox="0 0 720 128" role="img" aria-label="Рух на відрізку ' + S + '">' +
+    '<line class="rd" x1="60" y1="44" x2="660" y2="44"></line>' +
+    '<line class="tick" x1="60" y1="32" x2="60" y2="56"></line>' +
+    '<line class="tick" x1="660" y1="32" x2="660" y2="56"></line>' +
+    '<text class="lbl b" x="60" y="70" text-anchor="middle">A</text>' +
+    '<text class="lbl b" x="660" y="70" text-anchor="middle">B</text>' +
+    '<text class="lbl sl" x="360" y="18" text-anchor="middle"></text>' +
+    '<line class="meet" x1="0" y1="30" x2="0" y2="120"></line>' +
+    '<rect class="b1" x="60" y="80" width="0" height="13" rx="3"></rect>' +
+    '<rect class="b2" x="660" y="100" width="0" height="13" rx="3"></rect>' +
+    '<text class="vlbl o1" x="64" y="90" dominant-baseline="middle"></text>' +
+    '<text class="vlbl o2" x="656" y="110" text-anchor="end" dominant-baseline="middle"></text>' +
+    '<g class="g1"><rect x="-22" y="-15" width="42" height="15" rx="3"></rect>' +
+      '<rect x="5" y="-25" width="14" height="10" rx="2"></rect>' +
+      '<circle cx="-12" cy="2" r="4"></circle><circle cx="12" cy="2" r="4"></circle>' +
+      '<text class="vlbl" x="0" y="-30" text-anchor="middle">' + NM[0] + '</text></g>' +
+    '<g class="g2"><rect x="-17" y="-13" width="34" height="13" rx="4"></rect>' +
+      '<path d="M-10 -13 L-5 -21 L7 -21 L12 -13 Z"></path>' +
+      '<circle cx="-9" cy="2" r="3.6"></circle><circle cx="9" cy="2" r="3.6"></circle>' +
+      '<text class="vlbl" x="0" y="-26" text-anchor="middle">' + (NM[1] || '') + '</text></g>' +
+    '</svg>';
+  box.appendChild(svg);
+  var info = el('div','mvi');
+  info.innerHTML = '<span class="mvclock">t = <b>0</b></span>' +
+                   (back ? '' : '<span class="mvgap">між ними <b>' + anum(S) + '</b> ' + U + '</span>') +
+                   '<span class="mvall"></span>';
+  box.appendChild(info);
+  var say = asay(box);
+  var res = el('div','mvres');
+  if(box.dataset.eq) res.innerHTML = '<p class="eqn">' + box.dataset.eq + '</p>';
+  box.appendChild(res);
+  var row = arow(box);
+  var sl = el('input'); sl.type = 'range'; sl.min = 0; sl.max = 1000; sl.value = 0;
+  sl.className = 'mvsl';
+
+  var q = function(s){ return $(s, svg); };
+  var b1 = q('.b1'), b2 = q('.b2'), o1 = q('.o1'), o2 = q('.o2'),
+      g1 = q('.g1'), g2 = q('.g2'), mk = q('.meet'), lblS = q('.sl'),
+      clock = $('b', $('.mvclock', info)),
+      gapBox = $('.mvgap', info), gap = gapBox ? $('b', gapBox) : null,
+      all = $('.mvall', info);
+  var t = 0, shown = false;
+  if(back){
+    g2.setAttribute('opacity','0');             /* тіло одне — друга фігурка не потрібна */
+    b2.setAttribute('y', 80); o2.setAttribute('y', 90);   /* смуги часу — в один рядок */
+  }
+  lblS.textContent = back ? 's ' + U : anum(S) + ' ' + U;
+  all.textContent = '';
+
+  function draw(){
+    var done = t >= TEND - 1e-9;
+    if(back){
+      var d = t <= legT ? v1*t : S - v2*(t - legT);
+      g1.setAttribute('transform','translate(' + (X0 + d*K) + ',44)');
+      var w1 = Math.min(t, legT)/TT*W, w2 = Math.max(0, t - legT)/TT*W;
+      b1.setAttribute('x', X0); b1.setAttribute('width', w1);
+      b2.setAttribute('x', X0 + w1); b2.setAttribute('width', w2);
+      o1.textContent = w1 > 46 ? 'туди' : '';
+      o2.setAttribute('x', X0 + w1 + w2 - 6);
+      o2.textContent = w2 > 52 ? 'назад' : '';
+      clock.textContent = anum(Math.round(t*100)/100) + ' з ' + anum(TT) + ' год';
+      lblS.textContent = shown ? anum(S) + ' ' + U : 's ' + U;
+      all.textContent = shown
+        ? 'туди ' + anum(legT) + ' год, назад ' + anum(TT - legT) + ' год'
+        : 'смуги під дорогою — це ЧАС, а не кілометри';
+      box.classList.toggle('done', done);
+      say.textContent = done
+        ? 'Повернувся. Час туди й час назад разом дали ' + anum(TT) + ' год.'
+        : (t <= legT ? 'Іде туди — швидше, тому на цей самий шлях витрачає менше часу.'
+                     : 'Повертається повільніше — смуга часу росте швидше.');
+      sl.value = Math.round(t/TEND*1000);
+      return;
+    }
+    var s1 = Math.max(0, v1*(t - t1)), s2 = Math.max(0, v2*(t - t2));
+    var x1 = X0 + s1*K, x2 = chase ? X0 + s2*K : X0 + (S - s2)*K;
+    g1.setAttribute('transform','translate(' + x1 + ',70)');
+    g2.setAttribute('transform','translate(' + x2 + ',70)');
+    b1.setAttribute('width', s1*K);
+    if(chase){ b2.setAttribute('x', X0); b2.setAttribute('width', s2*K); }
+    else { b2.setAttribute('x', x2); b2.setAttribute('width', s2*K); }
+    o1.textContent = s1*K > 34 ? anum(Math.round(s1)) : '';
+    o2.textContent = s2*K > 34 ? anum(Math.round(s2)) : '';
+    o2.setAttribute('x', chase ? X0 + s2*K - 4 : 656);
+    clock.textContent = anum(Math.round(t*100)/100);
+    var g = chase ? Math.max(0, s1 - s2) : Math.max(0, S - s1 - s2);
+    if(gap) gap.textContent = anum(Math.round(g));
+    mk.setAttribute('x1', X0 + meetKm*K); mk.setAttribute('x2', X0 + meetKm*K);
+    box.classList.toggle('done', done);
+    say.textContent = done
+      ? (chase ? 'Наздогнав. Шляхи зрівнялись.' : 'Зустрілись. Разом подолали ' + anum(S) + '.')
+      : (t < Math.max(t1,t2) ? 'Другий виїде пізніше — перший уже в дорозі.'
+                            : (chase ? 'Відстань між ними меншає.' : 'Їдуть назустріч.'));
+    sl.value = Math.round(t/TEND*1000);
+  }
+  /* Крок, а не автопрогравання (вчитель, 25.09.2026): одне натискання —
+     десята частина дороги, перехід малює CSS. Повзунок лишається для того,
+     щоб відмотати в будь-яку мить. */
+  abtn(row, 'Крок', '', function(){
+    t = t >= TEND - 1e-9 ? 0 : Math.min(TEND, t + TEND/10);
+    draw();
+  });
+  abtn(row, 'Спочатку', 'q', function(){ t = 0; draw(); });
+  if(back) abtn(row, 'Показати s', 'q', function(){ shown = !shown; draw(); });
+  row.appendChild(sl);
+  on(sl,'input',function(e){ e.stopPropagation(); t = +sl.value/1000*TEND; draw(); });
+  on(sl,'click',function(e){ e.stopPropagation(); });
+  draw();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C15 · .vang — вертикальні й суміжні кути; пряму можна крутити
+   <div class="vang" data-angle="55" data-ratio="4:5"></div>
+   data-lock="1" — лише показати, без перетягування.
+   Числа біжать, а рівність вертикальних лишається — це й треба побачити
+   перед доведенням.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.vang').forEach(function(box){
+  var CX = 260, CY = 180, R = 145, HR = 132, AR = 46, AR2 = 66, LR = 70, LR2 = 92;
+  var th = parseFloat(box.dataset.angle) || 55;
+  var lock = box.dataset.lock === '1';
+  box.textContent = '';
+  var wrap = el('div','vsvg');
+  wrap.innerHTML =
+    '<svg viewBox="0 0 520 360" role="img" aria-label="Дві прямі, що перетинаються">' +
+    '<line class="ln" x1="105" y1="180" x2="415" y2="180"></line>' +
+    '<line class="ln l2" x1="105" y1="180" x2="415" y2="180"></line>' +
+    '<path class="p1 a1"></path><path class="p2 a2"></path>' +
+    '<path class="p1 a3"></path><path class="p2 a4"></path>' +
+    '<circle cx="260" cy="180" r="4.5" class="dot"></circle>' +
+    '<text class="pt" x="250" y="203">K</text>' +
+    '<text class="pt" x="91" y="186">A</text><text class="pt" x="429" y="186">B</text>' +
+    '<text class="pt pc"></text><text class="pt pd"></text>' +
+    '<text class="an p1 t1"></text><text class="an p2 t2"></text>' +
+    '<text class="an p1 t3"></text><text class="an p2 t4"></text>' +
+    (lock ? '' : '<circle class="hnd" r="9"></circle>') +
+    '</svg>';
+  box.appendChild(wrap);
+  var side = el('div','vside');
+  side.innerHTML =
+    '<p><span class="eq p1">∠BKC = ∠AKD = <b class="v1"></b></span><br>' +
+    '<span class="eq p2">∠AKC = ∠BKD = <b class="v2"></b></span></p>' +
+    '<p class="ok">вертикальні — <b>рівні завжди</b></p><p class="lab sum"></p>';
+  box.appendChild(side);
+  var svg = $('svg', wrap);
+  var l2 = $('.l2', svg), h = $('.hnd', svg), pc = $('.pc', svg), pd = $('.pd', svg);
+  var A = ['.a1','.a2','.a3','.a4'].map(function(s){ return $(s, svg); });
+  var T = ['.t1','.t2','.t3','.t4'].map(function(s){ return $(s, svg); });
+  var v1 = $('.v1', side), v2 = $('.v2', side), sum = $('.sum', side);
+
+  function P(a, r){ var k = a*Math.PI/180; return [CX + r*Math.cos(k), CY - r*Math.sin(k)]; }
+  function arc(a1, a2, r){
+    var p = P(a1,r), q2 = P(a2,r);
+    return 'M ' + CX + ' ' + CY + ' L ' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) +
+           ' A ' + r + ' ' + r + ' 0 ' + ((a2-a1) > 180 ? 1 : 0) + ' 0 ' +
+           q2[0].toFixed(1) + ' ' + q2[1].toFixed(1) + ' Z';
+  }
+  function put(e, a, r, txt){
+    var p = P(a,r);
+    e.setAttribute('x', p[0].toFixed(1)); e.setAttribute('y', p[1].toFixed(1));
+    if(txt != null) e.textContent = txt;
+  }
+  function draw(){
+    var c = P(th,R), d = P(th+180,R);
+    l2.setAttribute('x1',c[0]); l2.setAttribute('y1',c[1]);
+    l2.setAttribute('x2',d[0]); l2.setAttribute('y2',d[1]);
+    if(h){ var hp = P(th,HR); h.setAttribute('cx',hp[0]); h.setAttribute('cy',hp[1]); }
+    put(pc, th, R+17, 'C'); put(pd, th+180, R+17, 'D');
+    A[0].setAttribute('d', arc(0, th, AR));
+    A[1].setAttribute('d', arc(th, 180, AR2));
+    A[2].setAttribute('d', arc(180, 180+th, AR));
+    A[3].setAttribute('d', arc(180+th, 360, AR2));
+    var a = Math.round(th), b = 180 - a;
+    put(T[0], th/2, LR, a + '°');
+    put(T[1], (th+180)/2, LR2, b + '°');
+    put(T[2], 180 + th/2, LR, a + '°');
+    put(T[3], (180+th+360)/2, LR2, b + '°');
+    v1.textContent = a + '°'; v2.textContent = b + '°';
+    sum.textContent = 'суміжні: ' + a + '° + ' + b + '° = 180°';
+  }
+  function to(target){ atween(box, th, target, 650, function(v){ th = v; draw(); }); }
+  if(!lock){
+    var down = false;
+    function angleAt(e){
+      var r = svg.getBoundingClientRect(), s = r.width/520;
+      var x = (e.clientX - r.left)/s, y = (e.clientY - r.top)/s;
+      var a = Math.atan2(CY - y, x - CX)*180/Math.PI;
+      if(a < 0) a += 180;
+      return Math.max(12, Math.min(168, a));
+    }
+    on(svg,'pointerdown',function(e){
+      e.stopPropagation(); down = true; svg.setPointerCapture(e.pointerId);
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      th = angleAt(e); draw();
+    });
+    on(svg,'pointermove',function(e){ if(down){ th = angleAt(e); draw(); } });
+    ['pointerup','pointercancel'].forEach(function(k){ on(svg,k,function(){ down = false; }); });
+    var row = arow(box);
+    if(box.dataset.ratio){
+      var r2 = box.dataset.ratio.split(':').map(parseFloat);
+      abtn(row, 'Приклад ' + r2[0] + ' : ' + r2[1], '', function(){
+        to(180*r2[0]/(r2[0] + r2[1]));
+      });
+    }
+    abtn(row, 'Прямий кут', 'q', function(){ to(90); });
+    abtn(row, 'Спочатку', 'q', function(){ to(parseFloat(box.dataset.angle) || 55); });
+  }
+  draw();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C16 · .qfam — родина чотирикутників: паралелограм → прямокутник /
+   ромб → квадрат. Фігура ПЕРЕТІКАЄ, а не замінюється картинкою, тому
+   видно, що квадрат — це одночасно прямокутник і ромб.
+   <div class="qfam"></div>  (data-start="rect" — почати з прямокутника)
+   ───────────────────────────────────────────────────────────────────── */
+$$('.qfam').forEach(function(box){
+  var SH = {
+    par:  [[100,210],[240,210],[300,100],[160,100]],
+    rect: [[110,210],[270,210],[270,100],[110,100]],
+    rhmb: [[ 90,210],[230,210],[300, 89],[160, 89]],
+    sqr:  [[125,210],[255,210],[255, 80],[125, 80]]
+  };
+  var NAME = {par:'паралелограм', rect:'прямокутник', rhmb:'ромб', sqr:'квадрат'};
+  var SAY = {
+    par:'Паралелограм. Більше нічого поки не вимагаємо.',
+    rect:'Додали прямі кути — прямокутник. Діагоналі стали рівними.',
+    rhmb:'Додали рівні сторони — ромб. Діагоналі стали перпендикулярними.',
+    sqr:'Обидві умови разом — квадрат. Він і прямокутник, і ромб водночас.'
+  };
+  var st = box.dataset.start || 'par';
+  var ang = (st === 'rect' || st === 'sqr'), eq = (st === 'rhmb' || st === 'sqr');
+  box.textContent = '';
+  var wrap = el('div','qsvg');
+  wrap.innerHTML =
+    '<svg viewBox="0 0 400 265" role="img" aria-label="Чотирикутник, що змінює форму">' +
+    '<polygon class="sh"></polygon>' +
+    '<line class="dg d1"></line><line class="dg d2"></line>' +
+    '<path class="ra r0"></path><path class="ra r1"></path>' +
+    '<path class="ra r2"></path><path class="ra r3"></path>' +
+    '<line class="tk k0"></line><line class="tk k1"></line>' +
+    '<line class="tk k2"></line><line class="tk k3"></line>' +
+    '<text class="nm" x="200" y="252"></text></svg>';
+  box.appendChild(wrap);
+  var side = el('div','qside');
+  side.innerHTML =
+    '<ul class="prop">' +
+    '<li class="on"><b>✓</b><span>протилежні сторони паралельні й рівні</span></li>' +
+    '<li><b>·</b><span>усі кути прямі</span></li>' +
+    '<li><b>·</b><span>усі сторони рівні</span></li>' +
+    '<li><b>·</b><span>діагоналі рівні</span></li>' +
+    '<li><b>·</b><span>діагоналі перпендикулярні</span></li></ul>';
+  box.appendChild(side);
+  var say = asay(box), row = arow(box);
+  var svg = $('svg', wrap), poly = $('.sh', svg), nm = $('.nm', svg);
+  var R = ['.r0','.r1','.r2','.r3'].map(function(s){ return $(s, svg); });
+  var T = ['.k0','.k1','.k2','.k3'].map(function(s){ return $(s, svg); });
+  var d1 = $('.d1', svg), d2 = $('.d2', svg);
+  var pr = $$('li', side);
+  var cur = SH[st === 'rect' ? 'rect' : st === 'rhmb' ? 'rhmb' : st === 'sqr' ? 'sqr' : 'par']
+              .map(function(p){ return p.slice(); });
+
+  function key(){ return ang && eq ? 'sqr' : ang ? 'rect' : eq ? 'rhmb' : 'par'; }
+  function nrm(v){ var L = Math.sqrt(v[0]*v[0] + v[1]*v[1]) || 1; return [v[0]/L, v[1]/L]; }
+  function paint(){
+    poly.setAttribute('points', cur.map(function(p){
+      return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' '));
+    cur.forEach(function(v,i){
+      var p = cur[(i+3)%4], n = cur[(i+1)%4];
+      var u = nrm([p[0]-v[0], p[1]-v[1]]), w = nrm([n[0]-v[0], n[1]-v[1]]), s = 17;
+      R[i].setAttribute('d', 'M ' + (v[0]+u[0]*s) + ' ' + (v[1]+u[1]*s) +
+        ' L ' + (v[0]+u[0]*s+w[0]*s) + ' ' + (v[1]+u[1]*s+w[1]*s) +
+        ' L ' + (v[0]+w[0]*s) + ' ' + (v[1]+w[1]*s));
+      var q2 = cur[(i+1)%4], mx = (v[0]+q2[0])/2, my = (v[1]+q2[1])/2;
+      var d = nrm([q2[0]-v[0], q2[1]-v[1]]), nn = [-d[1], d[0]], k = 8;
+      T[i].setAttribute('x1', mx+nn[0]*k); T[i].setAttribute('y1', my+nn[1]*k);
+      T[i].setAttribute('x2', mx-nn[0]*k); T[i].setAttribute('y2', my-nn[1]*k);
+    });
+    d1.setAttribute('x1',cur[0][0]); d1.setAttribute('y1',cur[0][1]);
+    d1.setAttribute('x2',cur[2][0]); d1.setAttribute('y2',cur[2][1]);
+    d2.setAttribute('x1',cur[1][0]); d2.setAttribute('y1',cur[1][1]);
+    d2.setAttribute('x2',cur[3][0]); d2.setAttribute('y2',cur[3][1]);
+  }
+  function state(){
+    var k = key();
+    box.classList.toggle('ang', ang); box.classList.toggle('eq', eq);
+    nm.textContent = NAME[k]; say.textContent = SAY[k];
+    [true, ang, eq, ang, eq].forEach(function(v,i){
+      pr[i].classList.toggle('on', !!v);
+      $('b', pr[i]).textContent = v ? '✓' : '·';
+    });
+  }
+  function morph(){
+    var to = SH[key()], from = cur.map(function(p){ return p.slice(); });
+    atween(box, 0, 1, 620, function(k){
+      cur = from.map(function(p,i){
+        return [p[0] + (to[i][0]-p[0])*k, p[1] + (to[i][1]-p[1])*k]; });
+      paint();
+    });
+    state();
+  }
+  var bA = abtn(row, 'усі кути прямі', '', function(b){
+    ang = !ang; b.setAttribute('aria-pressed', String(ang)); morph(); });
+  var bE = abtn(row, 'усі сторони рівні', '', function(b){
+    eq = !eq; b.setAttribute('aria-pressed', String(eq)); morph(); });
+  var bD = abtn(row, 'діагоналі', 'q', function(b){
+    var on2 = !box.classList.contains('diag');
+    box.classList.toggle('diag', on2); b.setAttribute('aria-pressed', String(on2)); });
+  abtn(row, 'Спочатку', 'q', function(){
+    ang = eq = false;
+    bA.setAttribute('aria-pressed','false'); bE.setAttribute('aria-pressed','false');
+    morph(); });
+  bA.setAttribute('aria-pressed', String(ang));
+  bE.setAttribute('aria-pressed', String(eq));
+  bD.setAttribute('aria-pressed','false');
+  paint(); state();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C17 · .cnv — згортка: ядро їде по зображенню й малює карту ознак
+   <div class="cnv" data-k="1,0,-1,2,0,-2,1,0,-1"></div>
+   data-img="50,50,…" — своє зображення (квадрат N×N), інакше світлий
+   прямокутник на темному тлі: на ньому видно головне — вертикальне ядро
+   світиться на бічних межах і мовчить на верхній та нижній.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.cnv').forEach(function(box){
+  var IMG = [], N = 8, r, c;
+  if(box.dataset.img){
+    var a = box.dataset.img.split(/[,\s]+/).map(Number).filter(function(x){ return !isNaN(x); });
+    N = Math.round(Math.sqrt(a.length));
+    for(r = 0; r < N; r++){ IMG[r] = []; for(c = 0; c < N; c++) IMG[r][c] = a[r*N + c]; }
+  } else {
+    var bg = parseInt(box.dataset.bg || '50', 10), fg = parseInt(box.dataset.fg || '200', 10);
+    for(r = 0; r < N; r++){ IMG[r] = []; for(c = 0; c < N; c++)
+      IMG[r][c] = (r >= 1 && r <= 6 && c >= 2 && c <= 5) ? fg : bg; }
+  }
+  var kk = (box.dataset.k || '1,0,-1,2,0,-2,1,0,-1').split(',').map(Number);
+  var K = [[kk[0],kk[1],kk[2]],[kk[3],kk[4],kk[5]],[kk[6],kk[7],kk[8]]];
+  var M = N - 2, LAST = M*M - 1;
+
+  box.textContent = '';
+  var wrap = el('div','cnw');
+  wrap.innerHTML =
+    '<div class="col"><p class="cap">зображення ' + N + '×' + N + ' · яскравість</p>' +
+      '<div class="gr in"></div></div>' +
+    '<div class="col ker"><p class="cap">ядро</p><div class="kg"></div><p class="sum"></p></div>' +
+    '<div class="col"><p class="cap">карта ознак ' + M + '×' + M + ' · |сума|</p>' +
+      '<div class="gr out"></div></div>';
+  box.appendChild(wrap);
+  var inG = $('.gr.in', wrap), outG = $('.gr.out', wrap), kg = $('.kg', wrap),
+      sum = $('.sum', wrap), say = asay(box), row = arow(box);
+  inG.style.gridTemplateColumns  = 'repeat(' + N + ',1fr)';
+  outG.style.gridTemplateColumns = 'repeat(' + M + ',1fr)';
+
+  function gray(v){ return 'rgb(' + v + ',' + v + ',' + v + ')'; }
+  function ink(v){ return v > 128 ? '#111' : '#eee'; }
+  var inC = [], outC = [];
+  for(r = 0; r < N; r++) for(c = 0; c < N; c++){
+    var d = el('div','cl');
+    d.style.background = gray(IMG[r][c]); d.style.color = ink(IMG[r][c]);
+    d.textContent = IMG[r][c]; inG.appendChild(d); inC.push(d);
+  }
+  for(r = 0; r < M*M; r++){
+    var o = el('div','cl empty'); o.textContent = '0'; outG.appendChild(o); outC.push(o);
+  }
+  K.forEach(function(rw){ rw.forEach(function(k){
+    var d = el('div', k > 0 ? 'plus' : (k < 0 ? 'minus' : ''));
+    d.textContent = k > 0 ? '+' + k : String(k);
+    kg.appendChild(d);
+  });});
+
+  var pos = -1, timer = null, play;
+  function conv(rr,cc){
+    var s = 0;
+    for(var i = 0; i < 3; i++) for(var j = 0; j < 3; j++) s += IMG[rr+i-1][cc+j-1]*K[i][j];
+    return s;
+  }
+  function show(p){
+    inC.forEach(function(d){ d.classList.remove('win','ctr'); });
+    if(p < 0){ sum.innerHTML = 'Тисни «Крок» — ядро стане на перше місце.'; say.textContent = ''; return; }
+    var rr = 1 + Math.floor(p/M), cc = 1 + (p % M);
+    for(var i = -1; i <= 1; i++) for(var j = -1; j <= 1; j++)
+      inC[(rr+i)*N + (cc+j)].classList.add('win');
+    inC[rr*N + cc].classList.add('ctr');
+    var s = conv(rr,cc), v = Math.min(255, Math.abs(s)), o = outC[(rr-1)*M + (cc-1)];
+    o.classList.remove('empty'); o.textContent = v;
+    o.style.background = gray(v); o.style.color = ink(v);
+    sum.innerHTML = 'сума = <b>' + s + '</b><br>|сума| → <span class="big">' + v + '</span>';
+    say.textContent = v > 200 ? 'Тут перепад — ядро спалахнуло.'
+      : (v === 0 ? 'Зліва і справа однаково — нуль. Цю межу ядро не бачить.'
+                 : 'Невеликий перепад — невелике число.');
+  }
+  function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+  function step(){ if(pos >= LAST) return; pos++; show(pos); }
+  function reset(){
+    stop(); pos = -1;
+    outC.forEach(function(o){ o.className = 'cl empty'; o.textContent = '0';
+      o.removeAttribute('style'); });
+    show(-1);
+  }
+  abtn(row, 'Крок', '', function(){ step(); });
+  abtn(row, 'Спочатку', 'q', reset);
+  reset();
+});
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   C18 · .back — рух назад у часі: «скільки було спочатку»
+   <div class="back" data-end="68" data-steps="-15,+23,-17,+12"
+        data-what="У вагоні" data-unit="пасажирів"
+        data-labels="1-ша зупинка,1-ша зупинка,2-га зупинка,2-га зупинка"></div>
+   Малюємо вагон: на платформі стоять ті самі люди, що вийшли чи зайшли,
+   і клас бачить, чому назад у часі «вийшло 15» перетворюється на «+15».
+   Один лічильник стану на обидві кнопки: pos — скільки дій уже сталося,
+   cur = start + сума перших pos дій. Вперед і назад ходять по ньому ж,
+   тому переключати напрям можна будь-коли (раніше вони мали свої лічильники
+   й розʼїжджались — 25.09.2026).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.back').forEach(function(box){
+  var end  = parseFloat(box.dataset.end) || 0,
+      what = box.dataset.what || 'Було',
+      unit = box.dataset.unit || '';
+  var ST = (box.dataset.steps || '').split(',').map(function(x){
+    return parseFloat(x.replace('−','-').replace(/\s/g,''));
+  }).filter(function(x){ return !isNaN(x); });
+  if(!ST.length) return;
+  var LB = (box.dataset.labels || '').split(',').map(function(x){ return x.trim(); });
+  var sum = ST.reduce(function(a,b){ return a+b; }, 0), start = end - sum;
+
+  box.textContent = '';
+  var svg = el('div');
+  svg.innerHTML =
+    '<svg class="bcar" viewBox="0 0 700 224" role="img" aria-label="Вагон і пасажири">' +
+      '<line class="rail" x1="10" y1="214" x2="690" y2="214"></line>' +
+      '<line class="rail" x1="10" y1="196" x2="252" y2="196"></line>' +
+      '<rect class="car" x="262" y="40" width="428" height="150" rx="20"></rect>' +
+      '<rect class="door" x="278" y="64" width="54" height="126" rx="6"></rect>' +
+      '<rect class="win" x="356" y="52" width="70" height="40" rx="6"></rect>' +
+      '<rect class="win" x="452" y="52" width="70" height="40" rx="6"></rect>' +
+      '<rect class="win" x="548" y="52" width="70" height="40" rx="6"></rect>' +
+      '<text class="bwhat" x="500" y="118">' + what + (unit ? ' · ' + unit : '') + '</text>' +
+      '<text class="bnum" x="500" y="168">?</text>' +
+      '<circle class="wh" cx="330" cy="200" r="13"></circle>' +
+      '<circle class="wh" cx="620" cy="200" r="13"></circle>' +
+      '<text class="bmark" x="128" y="46"></text>' +
+      '<g class="ppg"></g>' +
+    '</svg>';
+  var sv = svg.firstChild;
+  box.appendChild(sv);
+
+  var track = el('div','btrack');
+  ST.forEach(function(v,i){
+    var c = el('div','bstep');
+    c.innerHTML = '<b>' + (v > 0 ? '+' + anum(v) : '−' + anum(-v)) + '</b>' +
+                  (LB[i] ? '<span class="bi">' + LB[i] + '</span>' : '');
+    track.appendChild(c);
+  });
+  var fin = el('div','bstep bend');
+  fin.innerHTML = '<b>' + anum(end) + '</b><span class="bi">стало</span>';
+  track.appendChild(fin);
+  box.appendChild(track);
+  var say = asay(box), row = arow(box);
+
+  var num  = $('.bnum', sv),
+      mark = $('.bmark', sv), ppg = $('.ppg', sv),
+      chips = $$('.bstep', track);
+
+  /* pos — скільки дій від початку вже сталося; cur — число зараз */
+  var pos = ST.length, cur = end;
+
+  function paint(hi){
+    num.textContent = anum(Math.round(cur));
+    chips.forEach(function(c,i){
+      if(c.classList.contains('bend')) return;
+      c.classList.toggle('now', i === hi);
+      c.classList.toggle('undone', i >= pos);
+    });
+    fit();
+  }
+  /* фігурки: ті самі люди, що в умові. dir='out' — виходять з вагона на
+     платформу, dir='in' — з платформи заходять усередину. */
+  function people(n, dir){
+    ppg.innerHTML = '';
+    if(!n){ mark.classList.remove('on'); return; }
+    var N = Math.min(n, 24), gs = [];
+    for(var i = 0; i < N; i++){
+      var col = i % 8, r = Math.floor(i / 8);
+      var px = 18 + col * 29, py = 190 - r * 37;
+      var g = D.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('class', 'pp ' + (dir === 'out' ? 'go' : 'come'));
+      g.innerHTML = '<circle cx="0" cy="-26" r="7"></circle>' +
+                    '<path d="M-8 0 v-12 a8 8 0 0 1 16 0 v12 z"></path>';
+      g.__to = 'translate(' + px + ',' + py + ')';
+      g.setAttribute('transform', dir === 'out' ? 'translate(304,190)' : g.__to);
+      if(dir === 'out') g.classList.add('off');
+      ppg.appendChild(g); gs.push(g);
+    }
+    var go = function(){
+      gs.forEach(function(g){
+        if(dir === 'out'){ g.classList.remove('off'); g.setAttribute('transform', g.__to); }
+        else { g.classList.add('off'); g.setAttribute('transform','translate(304,190)'); }
+      });
+    };
+    if(W.requestAnimationFrame) W.requestAnimationFrame(function(){ W.requestAnimationFrame(go); });
+    else go();
+  }
+  function showMark(txt, cls){
+    mark.textContent = txt;
+    mark.setAttribute('class', 'bmark on ' + cls);
+  }
+  function clean(){ ppg.innerHTML = ''; mark.classList.remove('on'); }
+
+  function reset(){
+    pos = ST.length; cur = end; clean(); paint(-1);
+    say.textContent = 'У кінці ' + what.toLowerCase() + ' ' + anum(end) + '. Ідемо назад: ' +
+                      'кожну дію замінюємо на протилежну.';
+  }
+  abtn(row, 'Крок назад', '', function(){
+    if(pos <= 0){ say.textContent = 'Це вже початок: ' + anum(start) + '.'; return; }
+    pos--;
+    var v = ST[pos], was = cur;
+    cur = cur - v;
+    /* назад у часі: хто вийшов — повертається у вагон, хто зайшов — виходить */
+    people(Math.abs(v), v > 0 ? 'out' : 'in');
+    showMark((v > 0 ? '−' : '+') + anum(Math.abs(v)), v > 0 ? 'go' : 'come');
+    paint(pos);
+    say.textContent = 'Було ' + (v > 0 ? '«зайшло ' + anum(v) + '» — назад віднімаємо ' + anum(v)
+                                       : '«вийшло ' + anum(-v) + '» — назад додаємо ' + anum(-v)) +
+                      ': ' + anum(was) + ' → ' + anum(cur) +
+                      (pos === 0 ? '. Стільки було спочатку.' : '.');
+  });
+  abtn(row, 'Крок вперед', 'q', function(){
+    if(pos >= ST.length){ say.textContent = 'Це вже кінець: ' + anum(end) + '.'; return; }
+    var v = ST[pos], was = cur;
+    cur = cur + v; pos++;
+    people(Math.abs(v), v > 0 ? 'in' : 'out');
+    showMark((v > 0 ? '+' : '−') + anum(Math.abs(v)), v > 0 ? 'come' : 'go');
+    paint(pos - 1);
+    say.textContent = 'Перевірка вперед: ' + (v > 0 ? 'зайшло ' + anum(v) : 'вийшло ' + anum(-v)) +
+                      ' — ' + anum(was) + ' → ' + anum(cur) +
+                      (pos >= ST.length ? '. Зійшлось із умовою.' : '.');
+  });
+  abtn(row, 'Спочатку', 'q', reset);
+  reset();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C19 · .sqdiag — діагоналі квадрата по кроках
+   <div class="sqdiag"></div>
+   Крок відкривається пробілом. Показує, звідки в таких задачах беруться
+   всі числа: 45° у вершинах і прямий кут у центрі.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.sqdiag').forEach(function(box){
+  var L = (box.dataset.labels || 'A,B,C,D').split(',');
+  box.textContent = '';
+  var wrap = el('div','sqw');
+  wrap.innerHTML =
+    '<svg viewBox="0 0 300 290" role="img" aria-label="Квадрат із діагоналями">' +
+    '<g class="tri g3"><path d="M50 50 L250 50 L150 150 Z"></path>' +
+      '<path d="M250 50 L250 250 L150 150 Z"></path>' +
+      '<path d="M250 250 L50 250 L150 150 Z"></path>' +
+      '<path d="M50 250 L50 50 L150 150 Z"></path></g>' +
+    '<rect class="sq" x="50" y="50" width="200" height="200"></rect>' +
+    '<line class="dg g1" x1="50" y1="50" x2="250" y2="250"></line>' +
+    '<line class="dg g2" x1="250" y1="50" x2="50" y2="250"></line>' +
+    '<path class="ra g2" d="M136 150 A 14 14 0 0 1 150 136"></path>' +
+    '<circle class="o g2" cx="150" cy="150" r="4"></circle>' +
+    '<text class="an g1" x="72" y="72">45°</text>' +
+    '<text class="an g1" x="205" y="238">45°</text>' +
+    '<text class="an g2" x="205" y="72">45°</text>' +
+    '<text class="an g2" x="72" y="238">45°</text>' +
+    '<text class="an o g2" x="168" y="176">90°</text>' +
+    '<text class="pt" x="36" y="44">' + L[0] + '</text>' +
+    '<text class="pt" x="264" y="44">' + L[1] + '</text>' +
+    '<text class="pt" x="264" y="268">' + L[2] + '</text>' +
+    '<text class="pt" x="36" y="268">' + L[3] + '</text>' +
+    '<text class="pt" x="128" y="146">O</text>' +
+    '</svg>';
+  box.appendChild(wrap);
+  var say = asay(box);
+  var ol = el('ol','sqlog');
+  var LOG = [
+    'Квадрат: усі сторони рівні, усі кути прямі.',
+    'Провели одну діагональ — вона ділить прямий кут навпіл: 45° і 45°.',
+    'Друга діагональ: у центрі прямий кут, а кути при вершинах теж по 45°.',
+    'Чотири трикутники рівні між собою — кожен рівнобедрений і прямокутний.'
+  ];
+  LOG.forEach(function(t,i){ if(i) ol.appendChild(el('li','hide')); });
+  box.appendChild(ol);
+  box.__paint = function(){
+    var shown = 0;
+    $$('li', ol).forEach(function(li,i){ if(li.classList.contains('on')) shown = i+1; });
+    box.className = 'sqdiag s' + shown;
+    say.textContent = LOG[shown];
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C20 · .lnk — ярлик і файл: що чому підпорядковане
+   <div class="lnk" data-file="Море.png" data-place="Фото"></div>
+   Видалили ярлик — файл на місці; видалили файл — ярлик став битим.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.lnk').forEach(function(box){
+  var name  = box.dataset.file  || 'Море.png',
+      place = box.dataset.place || 'Фото';
+  box.textContent = '';
+  var wrap = el('div','lnw');
+  wrap.innerHTML =
+    '<div class="lbox"><span class="nm"><i></i>Диск · тека «' + place + '»</span>' +
+      '<div class="slot"><span class="fchip file"><span class="ic"></span>' + name + '</span></div></div>' +
+    '<div class="larr">↗</div>' +
+    '<div class="lbox"><span class="nm"><i class="d"></i>Робочий стіл</span>' +
+      '<div class="slot"><span class="fchip short"><span class="ic"></span>' + name +
+      '<span class="badge">↗</span></span></div></div>';
+  box.appendChild(wrap);
+  var say = asay(box), row = arow(box);
+  var file = $('.file', wrap), short = $('.short', wrap);
+
+  function reset(){
+    box.classList.remove('nofile','noshort');
+    short.classList.remove('bad');
+    $('.badge', short).textContent = '↗';
+    say.textContent = 'Файл лежить у теці, а ярлик — лише стрілка-вказівник на нього.';
+  }
+  abtn(row, 'Видалити ярлик', '', function(){
+    box.classList.add('noshort'); box.classList.remove('nofile');
+    say.textContent = 'Ярлик зник — файл на місці. Ярлик не зберігає вміст, лише дорогу до нього.';
+  });
+  abtn(row, 'Видалити файл', '', function(){
+    box.classList.add('nofile'); box.classList.remove('noshort');
+    short.classList.add('bad'); $('.badge', short).textContent = '✕';
+    say.textContent = 'Файл у Кошику — ярлик лишився, але став битим: веде в нікуди.';
+  });
+  abtn(row, 'Спочатку', 'q', reset);
+  reset();
+});
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   C21 · .regroup — перегрупування: що куди переїхало
+   <div class="regroup" data-from="6238 − (5238 + 120)"
+                        data-to="(6238 − 5238) − 120"></div>
+   Числа їдуть зі старого запису в новий, за ними тягнуться стрілки, а знак,
+   який змінився, підсвічується. Показує те, чого не видно в готовому
+   записі: куди подівся кожен доданок і чому «+» став «−».
+   ───────────────────────────────────────────────────────────────────── */
+$$('.regroup').forEach(function(box){
+  var A = opTok(box.dataset.from || ''), B = opTok(box.dataset.to || '');
+  if(!A || !B) return;
+  box.textContent = '';
+
+  function line(toks, cls){
+    var d = el('div','rline ' + cls);
+    toks.forEach(function(t,i){
+      var e = el('span', t.k === 'o' ? 'op' : (t.k === 'n' ? 'n' : 'br'));
+      e.textContent = opText(t);
+      e.dataset.i = i;
+      d.appendChild(e);
+    });
+    return d;
+  }
+  var l1 = line(A,'from'), l2 = line(B,'to');
+  var arr = el('div','rarr');
+  arr.innerHTML = '<svg preserveAspectRatio="none"><g></g></svg>';
+  box.appendChild(l1); box.appendChild(arr); box.appendChild(l2);
+  /* data-ans — необовʼязковий останній рядок: що вийшло після перестановки */
+  var ans = null;
+  if(box.dataset.ans){ ans = el('div','rans'); ans.textContent = box.dataset.ans; box.appendChild(ans); }
+  var say = asay(box), row = arow(box);
+
+  /* знак, який змінився: порівнюємо послідовності дій */
+  var opsA = [], opsB = [];
+  A.forEach(function(t,i){ if(t.k === 'o') opsA.push(i); });
+  B.forEach(function(t,i){ if(t.k === 'o') opsB.push(i); });
+  var changed = [];
+  opsB.forEach(function(bi,k){
+    if(opsA[k] != null && A[opsA[k]].v !== B[bi].v) changed.push(bi);
+  });
+
+  /* кожне число зі старого запису шукає себе в новому */
+  var used = {}, pairs = [];
+  $$('.n', l2).forEach(function(nb){
+    var v = nb.textContent;
+    var na = null;
+    $$('.n', l1).forEach(function(x){ if(!na && !used[x.dataset.i] && x.textContent === v) na = x; });
+    if(na){ used[na.dataset.i] = 1; pairs.push({a:na, b:nb}); }
+  });
+
+  var at = 0;
+  function reset(){
+    at = 0;
+    box.classList.remove('done');
+    $$('.ghost', box).forEach(function(g){ g.parentNode.removeChild(g); });
+    $('g', arr).innerHTML = '';
+    $$('.chg', l2).forEach(function(e){ e.classList.remove('chg'); });
+    $$('.n', l1).forEach(function(e){ e.style.opacity = ''; });
+    $$('.n', l2).forEach(function(e){ e.style.opacity = ''; });
+    say.textContent = 'Дивимось, куди переїде кожне число — по одному.';
+    fit();
+  }
+  /* По одному числу за крок — нічого не перемикається саме (вчитель, 25.09.2026). */
+  function move(){
+    if(at >= pairs.length){
+      box.classList.add('done');
+      changed.forEach(function(i){ var e = $('[data-i="' + i + '"]', l2); if(e) e.classList.add('chg'); });
+      $$('.ghost', box).forEach(function(gh){ gh.parentNode.removeChild(gh); });
+      say.textContent = 'Усе на місцях. Знак перед дужкою розійшовся на кожен доданок.';
+      fit();
+      return;
+    }
+    var br = box.getBoundingClientRect(), svg = $('svg', arr), g = $('g', arr);
+    svg.setAttribute('viewBox', '0 0 ' + Math.round(br.width) + ' ' + Math.round(br.height));
+    svg.style.width = br.width + 'px'; svg.style.height = br.height + 'px';
+    svg.style.left = '0'; svg.style.top = '0';
+    var p = pairs[at];
+    var a = p.a.getBoundingClientRect(), b = p.b.getBoundingClientRect();
+    var ax = a.left - br.left + a.width/2, ay = a.bottom - br.top;
+    var bx = b.left - br.left + b.width/2, by = b.top - br.top;
+    var my = (ay + by)/2;
+    g.innerHTML += '<path class="rp" d="M ' + ax.toFixed(1) + ' ' + ay.toFixed(1) +
+      ' C ' + ax.toFixed(1) + ' ' + my.toFixed(1) + ', ' + bx.toFixed(1) + ' ' + my.toFixed(1) +
+      ', ' + bx.toFixed(1) + ' ' + by.toFixed(1) + '"></path>';
+    var gh = el('span','ghost');
+    gh.textContent = p.a.textContent;
+    gh.style.left = (a.left - br.left) + 'px';
+    gh.style.top  = (a.top  - br.top ) + 'px';
+    box.appendChild(gh);
+    setTimeout(function(){
+      gh.style.transform = 'translate(' + (b.left - a.left) + 'px,' + (b.top - a.top) + 'px)';
+    }, 30);
+    p.a.style.opacity = '.25';
+    p.b.style.opacity = '1';
+    say.textContent = 'Число ' + p.a.textContent + ' переїхало на своє нове місце.';
+    at++;
+    fit();
+  }
+  abtn(row, 'Далі', '', move);
+  abtn(row, 'Спочатку', 'q', reset);
+  reset();
+});
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   C22 · .subst — підстановка значення: буква зникає, число стає на її місце
+   <div class="subst" data-var="a" data-value="6" data-expr="9a − 7"></div>
+   Перший пробіл — буква тане, на її місці спалахує число (і зʼявляється
+   знак множення, якщо буква стояла біля числа). Далі — звичайні кроки
+   обчислення, ті самі, що в .ordops.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.subst').forEach(function(box){
+  var V = box.dataset.var || 'a', VAL = box.dataset.value;
+  /* data-list="Василь|9a − 7; Михайло|95 − 10a" — кілька виразів одного завдання:
+     тоді кроки веде кнопка, а не пробіл (інакше на слайд лягло б 15 пробілів). */
+  var LIST = (box.dataset.list || '').split(';')
+    .map(function(x){ return x.trim(); }).filter(Boolean)
+    .map(function(x){
+      var p = x.split('|');
+      return {lab: p.length > 1 ? p[0].trim() : '',
+              ex: (p[1] || p[0]).trim(),
+              cell: p[2] ? p[2].trim() : ''};   /* куди вписати відповідь */
+    });
+  var EX = box.dataset.expr || (LIST[0] ? LIST[0].ex : '');
+  if(VAL == null || !EX){ return; }
+  box.textContent = '';
+
+  /* розбір виразу з буквою: число | буква | дія | дужка */
+  function tok(ex){
+    var T = [], i = 0;
+    while(i < ex.length){
+      var c = ex.charAt(i);
+      if(c === ' '){ i++; continue; }
+      if(c === V){ T.push({k:'v'}); i++; continue; }
+      if(c >= '0' && c <= '9'){
+        var j2 = i; while(j2 < ex.length && /[0-9.,]/.test(ex.charAt(j2))) j2++;
+        T.push({k:'n', s: ex.slice(i,j2)}); i = j2; continue;
+      }
+      if('+-−·*×:/÷()'.indexOf(c) >= 0){ T.push({k:'o', s:c}); i++; continue; }
+      i++;
+    }
+    return T;
+  }
+  /* вираз після підстановки: біля числа дописуємо знак множення */
+  function subst(T){
+    var out = '';
+    T.forEach(function(t,k){
+      if(t.k === 'v'){
+        var pr = T[k-1];
+        if(pr && (pr.k === 'n' || (pr.k === 'o' && pr.s === ')'))) out += ' · ';
+        out += VAL;
+      } else out += (t.s === '(' || t.s === ')' ? t.s : ' ' + t.s + ' ');
+    });
+    return out;
+  }
+  var T = tok(EX), F = opFrames(opTok(subst(T)));
+
+  var view = el('div','sv'), say = asay(box), ol = el('ol','olog');
+  box.appendChild(view); box.appendChild(say); box.appendChild(ol);
+  /* кроків: один на підстановку + стільки, скільки дій у виразі */
+  var STEPS = F.length;                         /* F[0] — вираз із числом, далі дії */
+  for(var k = 0; k < STEPS; k++) ol.appendChild(el('li','hide'));
+
+  function drawStart(){
+    view.innerHTML = '';
+    T.forEach(function(t){
+      var e = el('span', t.k === 'v' ? 'v' : (t.k === 'o' ? 'o' : ''));
+      e.textContent = t.k === 'v' ? V : t.s;
+      view.appendChild(e);
+    });
+  }
+  function drawFrame(n, pop){
+    var f = F[n];
+    view.innerHTML = '';
+    var i2 = 0;
+    while(i2 < f.t.length){
+      var e;
+      if(f.act && i2 === f.act[0]){
+        e = el('span','act'); e.textContent = opJoin(f.t, f.act[0], f.act[1]); i2 = f.act[1] + 1;
+      } else {
+        e = el('span', f.t[i2].k === 'o' ? 'o' : '');
+        if(i2 === f.nw && pop) e.className += ' nw';
+        if(f.t.length === 1) e.className += ' fin';
+        e.textContent = opText(f.t[i2]); i2++;
+      }
+      view.appendChild(e);
+    }
+  }
+  if(LIST.length){
+    /* Кілька виразів одного завдання. КОЖЕН крок — окремий пробіл, нічого не
+       перемикається само (вчитель, 25.09.2026): підстановка — крок, кожна дія —
+       крок. Коли вираз дорахований, відповідь сама стає в клітинку таблиці
+       (третє поле в data-list). */
+    var lab = el('div','slab');
+    box.insertBefore(lab, view);
+    var ITEM = LIST.map(function(it){
+      var tt = tok(it.ex);
+      return {lab: it.lab, cell: it.cell, T: tt, F: opFrames(opTok(subst(tt)))};
+    });
+    /* Кроків на вираз: показати його З БУКВОЮ, підставити число, далі кожна дія.
+       Крок із буквою обовʼязковий — інакше клас не бачить, що саме підставляють. */
+    ol.innerHTML = '';
+    ITEM.forEach(function(it, idx){
+      it.steps = it.F.length + (idx ? 1 : 0);   /* перший вираз уже видно з буквою */
+      for(var k = 0; k < it.steps; k++) ol.appendChild(el('li','hide'));
+    });
+    box.__at = -1;
+    box.__paint = function(){
+      var shown = 0;
+      $$('li', ol).forEach(function(li){ if(li.classList.contains('on')) shown++; });
+      if(shown === box.__at) return;
+      var pop = shown > box.__at;
+      box.__at = shown;
+      if(shown <= 0){                      /* нічого не відкрито — перший вираз із буквою */
+        T = ITEM[0].T; F = ITEM[0].F; lab.textContent = ITEM[0].lab;
+        box.classList.remove('gone'); drawStart();
+        say.textContent = 'Замість ' + V + ' ставимо ' + VAL + '.';
+        fit(); return;
+      }
+      /* знайти, чий це вираз і який крок усередині нього */
+      var k = 0, left = shown;
+      while(k < ITEM.length - 1 && left > ITEM[k].steps){ left -= ITEM[k].steps; k++; }
+      var it = ITEM[k], off = k ? 1 : 0;    /* у наступних виразів перший крок — буква */
+      T = it.T; F = it.F; lab.textContent = it.lab;
+      if(off && left <= 1){
+        box.classList.remove('gone'); drawStart();
+        say.textContent = (it.lab ? it.lab + ': ' : '') + 'замість ' + V + ' ставимо ' + VAL + '.';
+        fit(); return;
+      }
+      box.classList.add('gone');
+      var n = Math.max(0, Math.min(F.length - 1, left - 1 - off));
+      drawFrame(n, pop);
+      say.textContent = (left - off) === 1 ? 'Буква зникла — на її місці ' + VAL + '.'
+                                           : (F[n].say || '');
+      if(left >= it.steps && it.cell){
+        var c = D.querySelector(it.cell);
+        if(c){ c.textContent = anum(F[F.length-1].t[0].v); c.classList.add('ans','on'); }
+      }
+      fit();
+    };
+    lab.textContent = ITEM[0].lab;
+    T = ITEM[0].T; F = ITEM[0].F;
+    drawStart();
+    say.textContent = 'Замість ' + V + ' ставимо ' + VAL + '.';
+    return;
+  }
+  box.__at = -1;
+  box.__paint = function(){
+    var shown = 0;
+    $$('li', ol).forEach(function(li){ if(li.classList.contains('on')) shown++; });
+    if(shown > STEPS) shown = STEPS;
+    var pop = shown !== box.__at;
+    /* крок 0 — ще буква; крок 1 — щойно підставили; далі — обчислення */
+    if(shown === 0){
+      box.classList.remove('gone');
+      drawStart();
+      say.textContent = 'Замість букви ' + V + ' скрізь ставимо її значення — ' + VAL + '.';
+    } else {
+      if(pop && shown === 1){
+        /* спершу буква тане, і лише потім на її місці число */
+        box.classList.add('gone');
+        setTimeout(function(){ if(box.__at === 1){ drawFrame(0, true); } }, 260);
+        say.textContent = 'Буква зникла — на її місці число ' + VAL + '.';
+      } else {
+        drawFrame(shown - 1, pop);
+        say.textContent = F[shown-1].say || '';
+      }
+    }
+    box.__at = shown;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C23 · .jump — стрибки по числовій прямій: який знак ставимо замість ✳
+   <div class="jump" data-start="120" data-steps="50,70,30,100"
+        data-target="170" data-unit=""></div>
+   Клас каже знак, учитель тисне «+» або «−» — стрибок малюється дугою,
+   і видно, чи прилетіли в ціль. Мінус, що завів би нижче нуля, не дається:
+   у 5 класі від меншого числа більше не віднімаємо.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.jump').forEach(function(box){
+  var st0 = parseFloat(box.dataset.start) || 0,
+      tgt = parseFloat(box.dataset.target);
+  var NV = (box.dataset.steps || '').split(',').map(function(x){
+    return Math.abs(parseFloat(x.replace('−','-').replace(/\s/g,'')));
+  }).filter(function(x){ return !isNaN(x); });
+  if(!NV.length) return;
+  var N = NV.length, tot = NV.reduce(function(a,b){ return a+b; }, 0);
+  var HI = Math.max(st0 + tot, isNaN(tgt) ? 0 : tgt), LO = 0;
+  var W0 = 40, W1 = 660, Y = 116;
+  function X(v){ return W0 + (W1 - W0) * (v - LO) / (HI - LO || 1); }
+  /* крок поділок: щоб їх було 6…14 */
+  var stp = 10; [10,20,25,50,100,200,250,500].some(function(k){
+    stp = k; return (HI - LO) / k <= 14;
+  });
+
+  box.textContent = '';
+  var xr = el('div','jx'); box.appendChild(xr);
+  var svg = el('div');
+  var ticks = '';
+  for(var t = LO; t <= HI + 1e-9; t += stp){
+    ticks += '<line class="tk" x1="' + X(t) + '" y1="' + (Y - 7) + '" x2="' + X(t) + '" y2="' + (Y + 7) + '"></line>' +
+             '<text class="tl" x="' + X(t) + '" y="' + (Y + 26) + '">' + anum(t) + '</text>';
+  }
+  var goal = isNaN(tgt) ? '' :
+    '<line class="goal" x1="' + X(tgt) + '" y1="' + (Y - 40) + '" x2="' + X(tgt) + '" y2="' + (Y + 34) + '"></line>' +
+    '<text class="goalt" x="' + X(tgt) + '" y="' + (Y + 56) + '">ціль ' + anum(tgt) + '</text>';
+  svg.innerHTML =
+    '<svg viewBox="0 0 700 172" role="img" aria-label="Числова пряма зі стрибками">' +
+      '<g class="arcs"></g>' + ticks + goal +
+      '<line class="ax" x1="' + W0 + '" y1="' + Y + '" x2="' + (W1 + 14) + '" y2="' + Y + '"></line>' +
+      '<path class="ax" d="M' + (W1 + 14) + ' ' + Y + ' l-11 -6 v12 z" style="fill:currentColor"></path>' +
+      '<circle class="dot" cx="' + X(st0) + '" cy="' + Y + '" r="8"></circle>' +
+    '</svg>';
+  box.appendChild(svg.firstChild);
+  var sv = $('svg', box), arcs = $('.arcs', sv), dot = $('.dot', sv);
+  var say = asay(box), row = arow(box);
+
+  var sg = [], cur = st0;                   /* sg[i] = +1 / −1, поки не обрано — немає */
+
+  function expr(){
+    var h = '<span>' + anum(st0) + '</span>';
+    for(var i = 0; i < N; i++){
+      h += (sg[i] === undefined
+              ? '<span class="st' + (i === sg.length ? ' act' : '') + '">✳</span>'
+              : '<span class="sg">' + (sg[i] > 0 ? '+' : '−') + '</span>') +
+           '<span>' + anum(NV[i]) + '</span>';
+    }
+    if(!isNaN(tgt)) h += '<span class="sg"> = </span><span class="tg">' + anum(tgt) + '</span>';
+    xr.innerHTML = h;
+  }
+  function arc(i, from, to, sign){
+    var x1 = X(from), x2 = X(to), mid = (x1 + x2) / 2, h = Y - 30 - Math.min(24, Math.abs(x2 - x1) / 7);
+    var p = D.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('class','arc on');
+    p.setAttribute('d','M' + x1 + ' ' + (Y - 10) + ' Q' + mid + ' ' + h + ' ' + x2 + ' ' + (Y - 10));
+    var len = 0; try{ len = p.getTotalLength(); }catch(e){}
+    p.style.setProperty('--len', (len || Math.abs(x2 - x1) * 1.4) + 'px');
+    arcs.appendChild(p);
+    var a = D.createElementNS('http://www.w3.org/2000/svg','path');
+    a.setAttribute('class','ah on');
+    a.setAttribute('d', sign > 0 ? 'M' + x2 + ' ' + (Y - 8) + ' l-10 -9 l14 1 z'
+                                 : 'M' + x2 + ' ' + (Y - 8) + ' l10 -9 l-14 1 z');
+    arcs.appendChild(a);
+    var l = D.createElementNS('http://www.w3.org/2000/svg','text');
+    l.setAttribute('class','alab on'); l.setAttribute('x', mid); l.setAttribute('y', h - 4);
+    l.textContent = (sign > 0 ? '+' : '−') + anum(NV[i]);
+    arcs.appendChild(l);
+  }
+  function redraw(){
+    arcs.innerHTML = '';
+    var v = st0;
+    for(var i = 0; i < sg.length; i++){ var nx = v + sg[i] * NV[i]; arc(i, v, nx, sg[i]); v = nx; }
+    cur = v;
+    dot.setAttribute('cx', X(cur));
+    var hit = sg.length === N && !isNaN(tgt) && cur === tgt;
+    dot.classList.toggle('hit', hit);
+    expr(); fit();
+  }
+  function put(sign){
+    var i = sg.length;
+    if(i >= N){ say.textContent = 'Усі знаки вже стоять. «Крок назад» — і пробуємо інакше.'; return; }
+    if(sign < 0 && cur - NV[i] < 0){
+      say.textContent = 'Мінус тут не підходить: від ' + anum(cur) + ' відняти ' + anum(NV[i]) +
+                        ' не можемо — у 5 класі від меншого більше не віднімаємо.';
+      return;
+    }
+    sg.push(sign); redraw();
+    if(sg.length < N){
+      say.textContent = (sign > 0 ? 'Стрибок вправо на ' : 'Стрибок уліво на ') + anum(NV[i]) +
+                        ': тепер ми на ' + anum(cur) + '.';
+    } else if(isNaN(tgt)){
+      say.textContent = 'Прилетіли в ' + anum(cur) + '.';
+    } else if(cur === tgt){
+      say.textContent = 'Влучили: ' + anum(cur) + ' = ' + anum(tgt) + '. Знаки підібрані.';
+    } else {
+      say.textContent = 'Промах: ' + anum(cur) + ' замість ' + anum(tgt) + '. Різниця ' +
+                        anum(Math.abs(cur - tgt)) + ' — шукаємо, який знак повернути.';
+    }
+  }
+  abtn(row, '+', '', function(){ put(1); });
+  abtn(row, '−', '', function(){ put(-1); });
+  abtn(row, 'Крок назад', 'q', function(){
+    if(!sg.length){ say.textContent = 'Ще жодного знака не поставили.'; return; }
+    sg.pop(); redraw();
+    say.textContent = 'Забрали останній знак — стоїмо на ' + anum(cur) + '.';
+  });
+  abtn(row, 'Спочатку', 'q', function(){
+    sg = []; redraw();
+    say.textContent = 'Починаємо з ' + anum(st0) + '. Який знак замість першої зірочки?';
+  });
+  redraw();
+  say.textContent = 'Починаємо з ' + anum(st0) + '. Який знак замість першої зірочки?';
 });
 
 /* ─────────────────────────────────────────────────────────────────────

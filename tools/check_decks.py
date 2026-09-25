@@ -82,6 +82,32 @@ function __report(){
     numBoxes:document.querySelectorAll('.numline').length,
     coladd:document.querySelectorAll('.coladd table.cl').length,
     coladdBoxes:document.querySelectorAll('.coladd').length,
+    ordops:document.querySelectorAll('.ordops .oe span').length ? document.querySelectorAll('.ordops').length : 0,
+    ordopsBoxes:document.querySelectorAll('.ordops').length,
+    frm:document.querySelectorAll('.frm .fview').length,
+    frmBoxes:document.querySelectorAll('.frm').length,
+    fls:document.querySelectorAll('.fls .fchip').length ? document.querySelectorAll('.fls').length : 0,
+    flsBoxes:document.querySelectorAll('.fls').length,
+    mv:document.querySelectorAll('.mv svg').length,
+    mvBoxes:document.querySelectorAll('.mv').length,
+    vang:document.querySelectorAll('.vang path.p1').length ? document.querySelectorAll('.vang').length : 0,
+    vangBoxes:document.querySelectorAll('.vang').length,
+    qfam:document.querySelectorAll('.qfam polygon').length,
+    qfamBoxes:document.querySelectorAll('.qfam').length,
+    cnv:document.querySelectorAll('.cnv .gr.out .cl').length ? document.querySelectorAll('.cnv').length : 0,
+    cnvBoxes:document.querySelectorAll('.cnv').length,
+    back:document.querySelectorAll('.back .bstep').length ? document.querySelectorAll('.back').length : 0,
+    backBoxes:document.querySelectorAll('.back').length,
+    jump:document.querySelectorAll('.jump svg .ax').length ? document.querySelectorAll('.jump').length : 0,
+    jumpBoxes:document.querySelectorAll('.jump').length,
+    sqdiag:document.querySelectorAll('.sqdiag svg').length,
+    sqdiagBoxes:document.querySelectorAll('.sqdiag').length,
+    lnk:document.querySelectorAll('.lnk .fchip').length ? document.querySelectorAll('.lnk').length : 0,
+    lnkBoxes:document.querySelectorAll('.lnk').length,
+    regroup:document.querySelectorAll('.regroup .rline').length ? document.querySelectorAll('.regroup').length : 0,
+    regroupBoxes:document.querySelectorAll('.regroup').length,
+    subst:document.querySelectorAll('.subst .sv span').length ? document.querySelectorAll('.subst').length : 0,
+    substBoxes:document.querySelectorAll('.subst').length,
     timers:document.querySelectorAll('.timer').length,
     pick:document.querySelectorAll('.mode.pick').length,
     roster:document.querySelectorAll('.roster').length,
@@ -172,7 +198,15 @@ def main():
                     problem = True
                 miss = []
                 for key, box in (("qr", "qrBoxes"), ("numline", "numBoxes"),
-                                 ("coladd", "coladdBoxes")):
+                                 ("coladd", "coladdBoxes"),
+                                 # анімації: контейнер є, а вмісту немає — компонент не ожив
+                                 ("ordops", "ordopsBoxes"), ("frm", "frmBoxes"),
+                                 ("fls", "flsBoxes"), ("mv", "mvBoxes"),
+                                 ("vang", "vangBoxes"), ("qfam", "qfamBoxes"),
+                                 ("cnv", "cnvBoxes"), ("back", "backBoxes"),
+                                 ("sqdiag", "sqdiagBoxes"), ("lnk", "lnkBoxes"),
+                                 ("regroup", "regroupBoxes"), ("subst", "substBoxes"),
+                                 ("jump", "jumpBoxes")):
                     if data[box] and data[key] < data[box]:
                         miss.append(f"{key}: {data[key]}/{data[box]}")
                 if miss:

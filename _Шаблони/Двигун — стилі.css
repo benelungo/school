@@ -159,6 +159,14 @@ ul,ol{margin:0;padding-left:1.25em;font-size:clamp(15px,calc(1.7*var(--u)),21px)
 li{margin:.32em 0}
 li::marker{color:var(--pen)}
 .lab{font-size:clamp(11px,calc(1.25*var(--u)),16px);color:var(--soft);margin:6px 0 0;line-height:1.35}
+/* умова задачі — її має бути видно з останньої парти. Не підпис і не ремарка:
+   це головний текст слайда, тож не .lab. Кольорами nb/oral не позначаємо. */
+.cond{font-size:clamp(16px,calc(2.15*var(--u)),26px);line-height:1.38;color:var(--ink);
+  margin:0 0 clamp(8px,1.2vw,14px);max-width:64ch;
+  border-left:5px solid var(--pen);padding-left:clamp(9px,1.3vw,16px)}
+.cond b{font-weight:800}
+.cond .n{font-weight:800;color:var(--pen);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cond .q{font-weight:800;color:var(--marker)}
 .mut{color:var(--soft);font-weight:400;font-size:.62em;letter-spacing:0}
 
 .row{display:grid;gap:clamp(9px,1.3vw,16px)}
@@ -601,7 +609,6 @@ table.cl td.op{color:var(--soft);padding-right:.25em;vertical-align:middle}
   color:var(--pen);border-radius:var(--rad);padding:clamp(10px,1.4vw,16px) clamp(16px,2.4vw,30px);
   min-width:min(320px,100%);text-align:center;box-shadow:var(--sh2)}
 .roster.spin .win{color:var(--soft);border-color:var(--edge);background:var(--card)}
-.roster .left{font-size:clamp(11px,calc(1.25*var(--u)),15px);color:var(--soft)}
 
 /* ───────────────────────── C9 · QR ─────────────────────────────────────── */
 .qr{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(16px,3vw,40px)}
@@ -721,11 +728,7 @@ button[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:
 #rail.chap .ch .seg i{flex:1 1 0;height:7px}
 @media(max-width:900px){#rail.chap .ch .cap{display:none}}
 
-#count{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;
-  color:var(--soft);font-variant-numeric:tabular-nums;white-space:nowrap}
-#tip{font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:700;color:var(--pen);
-  white-space:nowrap;opacity:0;transition:opacity .2s;font-variant-numeric:tabular-nums}
-#tip.on{opacity:1}
+#count,#tip{display:none}   /* прибрані лічильники, 25.09.2026 */
 @media(max-width:760px){
   #count{display:none}
   #bar .hide-sm{display:none}
@@ -819,6 +822,337 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 :root[data-proj="1"] p,:root[data-proj="1"] ul,:root[data-proj="1"] ol{font-weight:500}
 :root[data-proj="1"] .box::before{height:6px}
 :root[data-proj="1"] .lede{color:#2a2a2a}
+
+/* ───────────────────────── C10 · АНІМАЦІЇ ──────────────────────────────
+   Спільні кнопки й підпис під анімацією. Усе, що нижче, — компоненти
+   з каталогу (tools/components.py --анімації): анімація показує те, що
+   учень має зрозуміти, а не просто рухається.
+   ──────────────────────────────────────────────────────────────────────*/
+.arow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:clamp(7px,1vw,12px)}
+.ab{font:inherit;font-weight:600;font-size:clamp(11px,calc(1.3*var(--u)),15px);
+  padding:6px 13px;border-radius:999px;cursor:pointer;
+  border:var(--bw) solid var(--pen);background:var(--pen-soft);color:var(--pen);
+  transition:box-shadow .15s,transform .1s,background .15s}
+.ab:hover{box-shadow:0 0 0 3px var(--pen-soft)}
+.ab:active{transform:translateY(1px)}
+.ab[aria-pressed="true"]{background:var(--pen);color:var(--on-pen)}
+.ab.q{border-color:var(--edge);background:var(--card);color:var(--soft)}
+.asay{color:var(--soft);font-size:clamp(11px,calc(1.3*var(--u)),15px);line-height:1.4;
+  margin-top:clamp(5px,.8vw,9px);min-height:1.4em}
+
+/* C11 · .ordops — вираз згортається по одній дії */
+.ordops .oe{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(18px,calc(3*var(--u)),38px);line-height:1.9;letter-spacing:.02em;
+  padding:clamp(5px,.9vw,12px) 0}
+.ordops .oe span{display:inline-block;
+  transition:transform .34s cubic-bezier(.4,0,.2,1),opacity .34s,color .34s}
+.ordops .oe span.o{margin:0 .3em;color:var(--soft)}
+.ordops .oe .act{color:var(--pen);background:var(--pen-soft);border-radius:9px;padding:0 .2em}
+.ordops .oe .nw{color:var(--check);background:var(--check-soft);border-radius:9px;padding:0 .2em;
+  animation:op-pop .5s cubic-bezier(.22,1.5,.4,1) both}
+.ordops .oe .fin{color:var(--check)}
+@keyframes op-pop{from{transform:scale(.35);opacity:0}to{transform:none;opacity:1}}
+.ordops .olog{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px;
+  justify-content:center;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(11px,calc(1.35*var(--u)),16px);color:var(--soft)}
+
+/* C12 · .frm — ланцюжок перетворень запису */
+.frm ol{display:none}
+.frm .fview{text-align:center;font-size:clamp(17px,calc(2.6*var(--u)),34px);line-height:2;
+  min-height:2.6em;padding:clamp(4px,.8vw,10px) 0}
+.frm .fview .fr{font-family:"JetBrains Mono",monospace;font-weight:700}
+.frm .fview .op{margin:0 .35em;color:var(--soft)}
+.frm .fview .res{color:var(--check)}
+.frm .fview .hint{display:block;font-family:"Manrope",sans-serif;font-weight:500;
+  font-size:.42em;color:var(--soft);line-height:1.4;margin-top:.2em}
+.frm .cf{position:relative;display:inline-block;transition:opacity .45s .45s}
+.frm .cf::after{content:"";position:absolute;left:-.06em;right:-.06em;top:50%;height:.1em;
+  background:var(--marker);border-radius:2px;transform:scaleX(0);transform-origin:left center;
+  transition:transform .42s cubic-bezier(.4,0,.2,1)}
+.frm .fview.cut .cf::after{transform:scaleX(1)}
+.frm .fview.cut .cf{opacity:.3}
+
+/* C13 · .fls — копіювати чи перемістити */
+.fls .flw{position:relative;display:flex;gap:clamp(10px,2.5vw,36px);justify-content:center;
+  align-items:stretch}
+.fls .fold{flex:1;max-width:330px;border:var(--bw) dashed var(--edge);border-radius:var(--rad);
+  background:var(--card);padding:9px;display:flex;flex-direction:column;gap:7px}
+.fls .nm{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(11px,calc(1.35*var(--u)),16px);display:flex;align-items:center;gap:7px}
+.fls .nm i{width:1.5em;height:1.15em;border-radius:3px 7px 7px 7px;background:var(--sun);
+  box-shadow:inset 0 .28em 0 -.2em var(--card);flex:none}
+.fls .slot{flex:1;border-radius:8px;background:var(--paper);display:flex;flex-wrap:wrap;gap:7px;
+  align-content:flex-start;padding:7px;min-height:3.8em}
+.fls .fchip{display:inline-flex;align-items:center;gap:7px;font-weight:600;
+  font-size:clamp(11px,calc(1.3*var(--u)),15px);background:var(--card);
+  border:var(--bw) solid var(--pen);color:var(--pen);border-radius:8px;padding:5px 10px;
+  box-shadow:var(--sh1)}
+.fls .fchip .ic{width:.85em;height:1.1em;border:2px solid currentColor;border-radius:2px;
+  border-top-right-radius:.4em;flex:none}
+.fls .fly{position:absolute;margin:0;z-index:2;
+  transition:left .85s cubic-bezier(.4,0,.2,1),top .85s cubic-bezier(.4,0,.2,1)}
+.fls .farr{align-self:center;color:var(--soft);flex:none;
+  font-size:clamp(16px,calc(2.2*var(--u)),28px)}
+
+/* C14 · .mv — задача на рух */
+.mv .mvs{max-width:min(100%,calc(62*var(--u)));margin:0 auto}
+/* стеля ширини: інакше дорога на весь слайд тягне за собою висоту */
+.mv svg{width:100%;height:auto;display:block}
+.mv .rd{stroke:var(--edge);stroke-width:3}
+.mv .tick{stroke:var(--edge);stroke-width:2}
+.mv .lbl{font-family:"Manrope",sans-serif;font-size:13px;fill:var(--soft)}
+.mv .lbl.b{font-weight:700;fill:var(--ink)}
+.mv .vlbl{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700}
+.mv .meet{stroke:var(--check);stroke-width:2;stroke-dasharray:5 5;opacity:0;transition:opacity .3s}
+.mv.done .meet{opacity:1}
+.mv .b1{fill:var(--pen);opacity:.85} .mv .b2{fill:var(--marker);opacity:.85}
+.mv .o1,.mv .o2{fill:var(--on-pen)}
+.mv .g1 rect,.mv .g1 path{fill:var(--pen)} .mv .g1 circle{fill:var(--ink)}
+.mv .g1 .vlbl{fill:var(--pen)}
+.mv .g2 rect,.mv .g2 path{fill:var(--marker)} .mv .g2 circle{fill:var(--ink)}
+.mv .g2 .vlbl{fill:var(--marker)}
+.mv .mvi{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px;
+  font-size:clamp(12px,calc(1.4*var(--u)),16px)}
+.mv .mvclock{font-family:"JetBrains Mono",monospace;font-weight:700;
+  border:var(--bw) solid var(--edge);border-radius:999px;padding:4px 13px;background:var(--card)}
+.mv .mvclock b{color:var(--pen)}
+.mv .mvgap b{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--marker)}
+.mv .mvall{color:var(--soft)}
+.mv .mvres{opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
+.mv.done .mvres{opacity:1;transform:none}
+.mv .mvsl{flex:1;min-width:140px;accent-color:var(--pen)}
+
+/* C15 · .vang — вертикальні кути */
+.vang{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,20px);align-items:center}
+.vang .vsvg{flex:1 1 280px;min-width:230px;max-width:min(100%,calc(26*var(--u)))}
+.vang svg{width:100%;height:auto;display:block;touch-action:none;cursor:grab}
+.vang svg:active{cursor:grabbing}
+.vang .ln{stroke:var(--ink);stroke-width:2.5;stroke-linecap:round}
+.vang .dot{fill:var(--ink)}
+.vang .p1{fill:var(--pen-soft);stroke:var(--pen);stroke-width:2.5}
+.vang .p2{fill:var(--marker-soft);stroke:var(--marker);stroke-width:2.5}
+.vang .an{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:700;
+  text-anchor:middle;dominant-baseline:middle;stroke:none}
+.vang .an.p1{fill:var(--pen)} .vang .an.p2{fill:var(--marker)}
+.vang .pt{font-family:"Unbounded","Manrope",sans-serif;font-size:15px;font-weight:700;
+  fill:var(--ink);text-anchor:middle}
+.vang .hnd{fill:var(--card);stroke:var(--pen);stroke-width:3}
+.vang .vside{flex:1 1 210px;min-width:200px}
+.vang .vside p{margin:0 0 5px;font-size:clamp(11px,calc(1.35*var(--u)),16px)}
+.vang .vside .ok{color:var(--check)}
+.vang .eq{font-family:"JetBrains Mono",monospace;font-weight:700}
+.vang .eq.p1{color:var(--pen);fill:none;stroke:none}
+.vang .eq.p2{color:var(--marker);fill:none;stroke:none}
+
+/* C16 · .qfam — родина чотирикутників */
+.qfam{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,20px);align-items:center}
+.qfam .qsvg{flex:1 1 280px;min-width:230px;max-width:min(100%,calc(30*var(--u)))}
+.qfam svg{width:100%;height:auto;display:block}
+.qfam .sh{fill:var(--pen-soft);stroke:var(--pen);stroke-width:3;stroke-linejoin:round}
+.qfam .dg{stroke:var(--note);stroke-width:2;stroke-dasharray:6 5;opacity:0;transition:opacity .3s}
+.qfam.diag .dg{opacity:1}
+.qfam .ra{fill:none;stroke:var(--check);stroke-width:2.5;opacity:0;transition:opacity .35s}
+.qfam.ang .ra{opacity:1}
+.qfam .tk{stroke:var(--marker);stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .35s}
+.qfam.eq .tk{opacity:1}
+.qfam .nm{font-family:"Unbounded","Manrope",sans-serif;font-size:19px;font-weight:700;
+  fill:var(--pen);text-anchor:middle}
+.qfam .qside{flex:1 1 220px;min-width:210px}
+.qfam .prop{list-style:none;margin:0;padding:0;font-size:clamp(12px,calc(1.4*var(--u)),16px)}
+.qfam .prop li{display:flex;gap:9px;align-items:baseline;padding:3px 0;
+  border-bottom:1px solid var(--edge);color:var(--soft)}
+.qfam .prop li b{font-family:"JetBrains Mono",monospace;flex:none;width:1.3em;text-align:center}
+.qfam .prop li.on{color:var(--ink)} .qfam .prop li.on b{color:var(--check)}
+
+/* C17 · .cnv — згортка */
+.cnv .cnw{display:flex;flex-wrap:wrap;gap:clamp(10px,2vw,24px);align-items:flex-start}
+.cnv .col{flex:1 1 190px;min-width:170px}
+.cnv .col.ker{flex:0 1 180px}
+.cnv .cap{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(10px,calc(1.25*var(--u)),14px);margin:0 0 5px;color:var(--soft)}
+.cnv .gr{display:grid;gap:2px;max-width:min(100%,calc(30*var(--u)))}
+/* стеля ширини сітки — щоб слайд зі згорткою влазив у 1280×720 */
+.cnv .cl{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:3px;
+  font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(7px,calc(1*var(--u)),12px)}
+.cnv .cl.win{outline:3px solid var(--pen);outline-offset:-1px;z-index:1}
+.cnv .cl.ctr{outline-color:var(--marker)}
+.cnv .cl.empty{background:var(--paper);border:1px dashed var(--edge);color:transparent}
+.cnv .kg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:180px}
+.cnv .kg div{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:5px;
+  font-family:"JetBrains Mono",monospace;font-weight:700;border:var(--bw) solid var(--edge);
+  background:var(--card);font-size:clamp(9px,calc(1.25*var(--u)),15px)}
+.cnv .kg div.plus{color:var(--check);border-color:var(--check);background:var(--check-soft)}
+.cnv .kg div.minus{color:var(--marker);border-color:var(--marker);background:var(--marker-soft)}
+.cnv .sum{font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(11px,calc(1.45*var(--u)),17px);margin:8px 0 0;line-height:1.6}
+.cnv .sum b{color:var(--pen)} .cnv .sum .big{color:var(--check)}
+
+
+/* C18 · .back — назад у часі: вагон, фігурки й лічильник над дахом */
+.back .bcar{display:block;width:100%;max-width:min(100%,calc(52*var(--u)));margin:0 auto;height:auto}
+.back .bcar .car{fill:var(--card);stroke:var(--ink);stroke-width:3}
+.back .bcar .win{fill:var(--pen-soft);stroke:var(--ink);stroke-width:2}
+.back .bcar .door{fill:var(--paper);stroke:var(--ink);stroke-width:2}
+.back .bcar .rail{stroke:var(--edge);stroke-width:4;stroke-linecap:round}
+.back .bcar .wh{fill:var(--ink)}
+.back .bcar .fill{fill:var(--pen);opacity:.22;transition:width .5s cubic-bezier(.4,0,.2,1),x .5s}
+.back .bcar .bnum{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;fill:var(--pen);
+  font-size:46px;text-anchor:middle;font-variant-numeric:tabular-nums}
+.back .bcar .bwhat,.back .bcar .bunit{font-family:"Manrope",sans-serif;font-weight:600;
+  fill:var(--soft);font-size:17px;text-anchor:middle}
+.back .bcar .pp{transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .4s}
+.back .bcar .pp path,.back .bcar .pp circle{fill:var(--ink);stroke:none}
+.back .bcar .pp.go path,.back .bcar .pp.go circle{fill:var(--marker)}
+.back .bcar .pp.come path,.back .bcar .pp.come circle{fill:var(--check)}
+.back .bcar .pp.off{opacity:0}
+.back .bcar .bmark{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:26px;
+  text-anchor:middle;opacity:0;transition:opacity .3s}
+.back .bcar .bmark.on{opacity:1}
+.back .bcar .bmark.go{fill:var(--marker)} .back .bcar .bmark.come{fill:var(--check)}
+.back .btrack{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;
+  margin-top:clamp(6px,1vw,12px)}
+.back .bstep{border:var(--bw) solid var(--edge);border-radius:var(--rad);background:var(--card);
+  padding:5px 12px;text-align:center;transition:border-color .2s,background .2s,transform .2s,opacity .2s}
+.back .bstep b{display:block;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(13px,calc(1.7*var(--u)),20px)}
+.back .bstep .bi{font-size:clamp(9px,calc(1.05*var(--u)),12px);color:var(--soft)}
+.back .bstep.bend b{color:var(--check)}
+.back .bstep.undone{opacity:.42;border-style:dashed}
+.back .bstep.undone b{text-decoration:line-through}
+.back .bstep.now{border-color:var(--pen);background:var(--pen-soft);transform:translateY(-2px);opacity:1}
+.back .bstep.now b{color:var(--pen);text-decoration:none}
+.back .bstep.now .bi{color:var(--pen)}
+
+/* C19 · .sqdiag — діагоналі квадрата */
+.sqdiag{display:flex;flex-wrap:wrap;gap:clamp(8px,1.6vw,18px);align-items:center;
+  justify-content:center}
+.sqdiag .sqw{flex:0 1 auto;max-width:min(100%,calc(26*var(--u)))}
+.sqdiag svg{width:100%;height:auto;display:block}
+.sqdiag .sq{fill:var(--pen-soft);stroke:var(--pen);stroke-width:3}
+.sqdiag .dg{stroke:var(--marker);stroke-width:2.5;opacity:0;transition:opacity .4s}
+.sqdiag .ra{fill:none;stroke:var(--check);stroke-width:2.5}
+.sqdiag .o{fill:var(--ink)}
+.sqdiag .tri path{fill:var(--check-soft);stroke:var(--check);stroke-width:2;opacity:0;
+  transition:opacity .4s}
+.sqdiag .an{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:700;
+  fill:var(--marker);text-anchor:middle;opacity:0;transition:opacity .4s}
+.sqdiag .an.o{fill:var(--check)}
+.sqdiag .pt{font-family:"Unbounded","Manrope",sans-serif;font-size:15px;font-weight:700;
+  fill:var(--ink);text-anchor:middle}
+.sqdiag .g1,.sqdiag .g2,.sqdiag .g3{opacity:0}
+.sqdiag.s1 .g1,.sqdiag.s2 .g1,.sqdiag.s3 .g1{opacity:1}
+.sqdiag.s2 .g2,.sqdiag.s3 .g2{opacity:1}
+.sqdiag.s3 .g3{opacity:1}
+.sqdiag .sqlog{display:none}
+
+/* C20 · .lnk — ярлик і файл */
+.lnk .lnw{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,28px);justify-content:center;
+  align-items:stretch}
+.lnk .lbox{flex:1;max-width:320px;border:var(--bw) dashed var(--edge);border-radius:var(--rad);
+  background:var(--card);padding:9px;display:flex;flex-direction:column;gap:7px}
+.lnk .nm{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(11px,calc(1.3*var(--u)),15px);display:flex;align-items:center;gap:7px}
+.lnk .nm i{width:1.5em;height:1.15em;border-radius:3px 7px 7px 7px;background:var(--sun);
+  box-shadow:inset 0 .28em 0 -.2em var(--card);flex:none}
+.lnk .nm i.d{border-radius:3px;background:var(--note)}
+.lnk .slot{flex:1;border-radius:8px;background:var(--paper);padding:7px;min-height:3.4em}
+.lnk .fchip{display:inline-flex;align-items:center;gap:7px;font-weight:600;position:relative;
+  font-size:clamp(11px,calc(1.3*var(--u)),15px);background:var(--card);
+  border:var(--bw) solid var(--pen);color:var(--pen);border-radius:8px;padding:5px 10px;
+  transition:opacity .45s,transform .45s,border-color .3s,color .3s}
+.lnk .fchip .ic{width:.85em;height:1.1em;border:2px solid currentColor;border-radius:2px;
+  border-top-right-radius:.4em;flex:none}
+.lnk .fchip .badge{position:absolute;left:-7px;bottom:-7px;width:1.25em;height:1.25em;
+  border-radius:4px;background:var(--note);color:var(--on-pen);font-size:.72em;
+  display:flex;align-items:center;justify-content:center;line-height:1}
+.lnk .short.bad{border-color:var(--marker);color:var(--marker);text-decoration:line-through}
+.lnk .short.bad .badge{background:var(--marker)}
+.lnk.nofile .file{opacity:.12;transform:translateY(10px) scale(.9)}
+.lnk.noshort .short{opacity:.12;transform:translateY(10px) scale(.9)}
+.lnk .larr{align-self:center;color:var(--note);font-weight:700;flex:none;
+  font-size:clamp(16px,calc(2.2*var(--u)),28px)}
+
+
+/* C21 · .regroup — що куди переїхало */
+.regroup{position:relative}
+.regroup .rline{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(16px,calc(2.6*var(--u)),32px);line-height:1.5;white-space:nowrap}
+.regroup .rline span{display:inline-block}
+.regroup .rline .op{margin:0 .3em;color:var(--soft)}
+.regroup .rline .n{padding:0 .05em}
+.regroup .to{color:var(--check);transition:opacity .45s}
+.regroup .to span{opacity:.18;transition:opacity .45s}
+.regroup.done .to span{opacity:1}
+.regroup.done .to{opacity:1}
+.regroup.done .from{opacity:.3}
+.regroup .from{transition:opacity .45s}
+.regroup .to .chg{color:var(--marker);background:var(--marker-soft);border-radius:6px;
+  padding:0 .18em}
+.regroup .rarr{height:clamp(26px,calc(3.4*var(--u)),44px)}
+.regroup .rarr svg{position:absolute;overflow:visible;pointer-events:none}
+.regroup .rp{fill:none;stroke:var(--pen);stroke-width:2.5;stroke-linecap:round;
+  stroke-dasharray:1000;stroke-dashoffset:1000;
+  animation:rg-draw .7s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes rg-draw{to{stroke-dashoffset:0}}
+.regroup .rans{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(15px,calc(2.2*var(--u)),28px);color:var(--check);
+  opacity:0;transition:opacity .4s .3s}
+.regroup.done .rans{opacity:1}
+.regroup .ghost{position:absolute;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(16px,calc(2.6*var(--u)),32px);line-height:1.5;color:var(--pen);
+  transition:transform .8s cubic-bezier(.4,0,.2,1);z-index:2;pointer-events:none}
+
+
+/* C22 · .subst — буква зникає, число стає на її місце */
+.subst .sv{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(17px,calc(2.8*var(--u)),34px);line-height:1.6;padding:clamp(3px,.6vw,8px) 0}
+.subst .sv span{display:inline-block;transition:transform .26s,opacity .26s,color .26s}
+.subst .sv .o{margin:0 .3em;color:var(--soft)}
+.subst .sv .v{color:var(--marker);background:var(--marker-soft);border-radius:7px;padding:0 .2em}
+.subst.gone .sv .v{transform:scale(.3) rotate(-12deg);opacity:0}
+.subst .sv .nw{color:var(--check);background:var(--check-soft);border-radius:7px;padding:0 .2em;
+  animation:op-pop .5s cubic-bezier(.22,1.5,.4,1) both}
+.subst .sv .act{color:var(--pen);background:var(--pen-soft);border-radius:7px;padding:0 .2em}
+.subst .sv .fin{color:var(--check)}
+.subst .slab{font-family:"Unbounded","Manrope",sans-serif;font-weight:700;text-align:center;
+  font-size:clamp(11px,calc(1.35*var(--u)),16px);color:var(--pen);letter-spacing:.04em}
+.subst .olog{display:none}
+
+/* C23 · .jump — стрибки по числовій прямій: обираємо знак, дивимось, куди прилетіли */
+.jump .jx{font-family:"JetBrains Mono",monospace;font-weight:700;text-align:center;
+  font-size:clamp(16px,calc(2.5*var(--u)),32px);line-height:1.7;letter-spacing:.02em}
+.jump .jx span{display:inline-block;transition:color .25s,background .25s}
+.jump .jx .st{color:var(--marker);background:var(--marker-soft);border-radius:8px;
+  padding:0 .28em;margin:0 .12em}
+.jump .jx .st.act{color:var(--pen);background:var(--pen-soft);animation:jb 1.1s ease-in-out infinite}
+.jump .jx .sg{color:var(--pen);padding:0 .28em;margin:0 .12em}
+.jump .jx .sg.bad{color:var(--marker)}
+.jump .jx .tg{color:var(--check)}
+@keyframes jb{0%,100%{transform:none}50%{transform:translateY(-3px)}}
+.jump svg{display:block;width:100%;max-width:min(100%,calc(50*var(--u)));height:auto;
+  margin:clamp(2px,.6vw,7px) auto 0}
+.jump svg .ax{stroke:var(--ink);stroke-width:2.5;fill:none}
+.jump svg .tk{stroke:var(--edge);stroke-width:2}
+.jump svg .tl{font-family:"Manrope",sans-serif;font-size:15px;fill:var(--soft);text-anchor:middle}
+.jump svg .arc{stroke:var(--pen);stroke-width:3.5;fill:none;opacity:0;
+  transition:opacity .3s;stroke-dasharray:var(--len);stroke-dashoffset:var(--len)}
+.jump svg .arc.on{opacity:1;animation:jarc .55s cubic-bezier(.4,0,.2,1) forwards}
+.jump svg .arc.back{stroke:var(--marker)}
+@keyframes jarc{to{stroke-dashoffset:0}}
+.jump svg .ah{fill:var(--pen);opacity:0;transition:opacity .25s .4s}
+.jump svg .ah.on{opacity:1} .jump svg .ah.back{fill:var(--marker)}
+.jump svg .alab{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:17px;
+  fill:var(--pen);text-anchor:middle;opacity:0;transition:opacity .25s .35s}
+.jump svg .alab.on{opacity:1} .jump svg .alab.back{fill:var(--marker)}
+.jump svg .goal{stroke:var(--check);stroke-width:3;stroke-dasharray:6 5}
+.jump svg .goalt{font-family:"Unbounded","Manrope",sans-serif;font-weight:700;font-size:18px;
+  fill:var(--check);text-anchor:middle}
+.jump svg .dot{fill:var(--pen);transition:cx .5s cubic-bezier(.4,0,.2,1)}
+.jump svg .dot.hit{fill:var(--check)}
+.jump svg .dotl{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:19px;
+  fill:var(--pen);text-anchor:middle;transition:x .5s cubic-bezier(.4,0,.2,1)}
+.jump svg .dotl.hit{fill:var(--check)}
 
 /* ───────────────────────── A6 · друк у PDF ─────────────────────────────── */
 @media print{
