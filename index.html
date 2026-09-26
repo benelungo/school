@@ -1195,6 +1195,17 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   {
    "kind": "самостійна",
    "title": "Самостійна робота № 1",
+   "subject": "Алгебра",
+   "theme": "Додавання та віднімання дробів з однаковими знаменниками",
+   "minutes": 30,
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2013/%D0%A3%D1%80%D0%BE%D0%BA%2013%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "cls": "8-К",
+   "lesson": "Урок 13",
+   "key": "8-К | Алгебра | Самостійна робота № 1"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 1",
    "subject": "Геометрія",
    "theme": "Чотирикутник. Паралелограм і його види",
    "minutes": 30,
@@ -4685,14 +4696,15 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 
     if (!стан.код || !стан.клас){ box.hidden = true; return; }
 
-    var мої = ДАНІ.works.filter(function(w){ return w.cls === стан.клас; });
-    if (стан.роботи){                       // приймач сказав, що відкрито
-      мої = мої.filter(function(w){ return стан.роботи.indexOf(w.key) >= 0; });
-    } else {
-      нота2.hidden = false;
-      нота2.className = 'note bad';
-      нота2.textContent = 'Немає звʼязку з журналом — список робіт може бути неточним.';
-    }
+    /* Роботу показуємо, ЛИШЕ коли приймач назвав її відкритою. Поки його
+       відповіді немає (вхід з кешу, офлайн) — не показуємо нічого.
+       Раніше без відповіді малювалися ВСІ роботи класу з поміткою «список
+       може бути неточним»: робота блимала на сторінці за тиждень до свого
+       вікна, і в неї можна було зайти. Вчитель, 26.09.2026. */
+    if (!стан.роботи){ box.hidden = true; return; }
+    var мої = ДАНІ.works.filter(function(w){
+      return w.cls === стан.клас && стан.роботи.indexOf(w.key) >= 0;
+    });
     if (!мої.length){ box.hidden = true; return; }
 
     box.hidden = false;
