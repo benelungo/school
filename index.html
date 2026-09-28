@@ -4596,17 +4596,26 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
      Тег <script src> не підпадає під CORS узагалі. fetch до Apps Script
      іде через редірект на googleusercontent.com і в частині браузерів
      мовчки падає, тож для читання це найнадійніший канал. */
+  /* Після тайм-ауту НЕ глухнемо: на повільному планшеті відповідь
+     приходила пізніше 8 с, колбек уже був видалений, і учень лишався без
+     імені й без робіт до кінця сесії (28.09.2026, 5-З). Тепер тайм-аут лише
+     каже «поки немає» (коли(null,'час')), а пізня відповідь усе одно
+     доїжджає другим викликом коли(від). Обробники мусять це витримувати. */
   function jsonp(параметри, коли){
-    if (!ПРИЙМАЧ.url) return коли(null);
+    if (!ПРИЙМАЧ.url) return коли(null, 'немає');
     var імʼя = 'кб' + Math.random().toString(36).slice(2);
     var тег = D.createElement('script');
-    var годинник = setTimeout(function(){ прибрати(null); }, 8000);
-    function прибрати(від){
+    var готово = false;
+    var годинник = setTimeout(function(){ if (!готово) коли(null, 'час'); }, 12000);
+    function прибрати(від, чому){
+      if (готово) return;
+      готово = true; clearTimeout(годинник);
       try { delete window[імʼя]; } catch(e){ window[імʼя] = undefined; }
-      тег.remove(); clearTimeout(годинник); коли(від);
+      if (тег.parentNode) тег.parentNode.removeChild(тег);
+      коли(від, чому);
     }
-    window[імʼя] = прибрати;
-    тег.onerror = function(){ прибрати(null); };
+    window[імʼя] = function(від){ прибрати(від); };
+    тег.onerror = function(){ прибрати(null, 'блок'); };
     var q = [];
     параметри.токен = ПРИЙМАЧ.токен; параметри.кб = імʼя;
     for (var k in параметри) q.push(encodeURIComponent(k) + '=' + encodeURIComponent(параметри[k]));
@@ -4670,19 +4679,25 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
     if (кеш && кеш.код === код){ відкрити(код, кеш.клас, кеш.учень); }
 
     нота('Перевіряємо код…');
-    jsonp({ дія:'вхід', код: код }, function(від){
+    стан.перевіряємо = true;
+    jsonp({ дія:'вхід', код: код }, function(від, чому){
+      стан.перевіряємо = false;
       if (від && від.ок){
         store('код', код);
         store('хто', JSON.stringify({ код: код, клас: від.клас, учень: від.учень }));
         відкрити(код, від.клас, від.учень, від.роботи);
         return;
       }
-      if (кеш && кеш.код === код) return;                 // уже відкрили з кешу
       if (!від){
-        // мережі немає: уроки показуємо, роботи — з попередженням
-        відкрити(код, клас, '', null, true);
+        /* Відповіді немає. Уроки показуємо, а на місці робіт — чому їх
+           не видно і кнопка «ще раз». Раніше секція просто зникала, і
+           учень не знав, що робота взагалі є. */
+        стан.чому = чому || 'час';
+        if (кеш && кеш.код === код) відкрити(код, кеш.клас, кеш.учень, null, true);
+        else відкрити(код, клас, '', null, true);
         return;
       }
+      if (кеш && кеш.код === код) return;                 // уже відкрили з кешу
       нота(від.помилка || 'Код не знайдено.', 'bad');
     });
   }
@@ -4783,7 +4798,20 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
        Раніше без відповіді малювалися ВСІ роботи класу з поміткою «список
        може бути неточним»: робота блимала на сторінці за тиждень до свого
        вікна, і в неї можна було зайти. Вчитель, 26.09.2026. */
-    if (!стан.роботи){ box.hidden = true; return; }
+    if (!стан.роботи){
+      if (!стан.offline){ box.hidden = true; return; }
+      box.hidden = false; нота2.hidden = false;
+      нота2.className = 'note bad';
+      нота2.textContent = стан.чому === 'блок'
+        ? 'Цей браузер не зміг звʼязатися з сервером робіт (script.google.com), тому роботи не видно. Спробуй інший браузер або іншу мережу — або напиши вчителю.'
+        : 'Сервер робіт поки не відповів — можливо, повільний інтернет. Роботи зʼявляться самі, щойно прийде відповідь.';
+      var ще = D.createElement('button');
+      ще.type = 'button'; ще.className = 'btn ghost'; ще.textContent = 'Спробувати ще раз';
+      ще.style.marginTop = '10px';
+      ще.addEventListener('click', function(){ ще.disabled = true; ще.textContent = 'Перевіряємо…'; увійти(стан.код); });
+      сп.appendChild(ще);
+      return;
+    }
     var мої = ДАНІ.works.filter(function(w){
       return w.cls === стан.клас && стан.роботи.indexOf(w.key) >= 0;
     });
