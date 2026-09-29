@@ -392,7 +392,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.colsub,.ordops,.frm,.sqdiag,.subst,.sgn', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.colsub,.ordops,.frm,.sqdiag,.subst,.sgn,.hist', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -2735,6 +2735,132 @@ $$('.sgn').forEach(function(box){
       });
     } else {
       ta.style.transform = ''; tb.style.transform = '';
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C25 · .hist — гістограма яскравостей, два режими, кроки — пробілом
+   «рахуємо» (типово):
+     <div class="hist" data-img="0,64,128,64,…"></div>
+     Таблиця N×N ліворуч, вісь 0…255 праворуч. Кожен крок бере одне
+     значення: усі клітинки з ним спалахують і гаснуть, а його стовпчик
+     виростає до їхньої кількості. Учень бачить, що гістограма — це
+     просто «скільки пікселів кожної яскравості», і що форма фото зникла.
+     data-levels="0,64,128,192,255" — які значення рахувати (типово — усі,
+     що є в таблиці, за зростанням).
+   «розтягуємо»:
+     <div class="hist" data-mode="stretch" data-vals="90:2,100:5,110:9"></div>
+     Пари «яскравість:кількість». Крок 1 — позначаємо min і max. Крок 2 —
+     кожен стовпчик переїжджає на (v − min)·255/(max − min): купка
+     розповзається на всю вісь. Висота стовпчиків не міняється — пікселів
+     стільки ж, змінилась лише їхня яскравість.
+   Далі цим самим компонентом — поріг (урок 8, Оцу).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.hist').forEach(function(box){
+  var stretch = box.dataset.mode === 'stretch';
+  function nums(s){ return (s || '').split(/[,\s]+/).map(Number).filter(function(x){ return !isNaN(x); }); }
+  function pct(v){ return (v/255*100) + '%'; }
+  function gray(v){ return 'rgb(' + v + ',' + v + ',' + v + ')'; }
+
+  var BARS = [], A = [], N = 0, top = 1, mn = 0, mx = 255;
+  if(stretch){
+    (box.dataset.vals || '').split(',').forEach(function(p){
+      var q = p.split(':').map(Number);
+      if(q.length === 2 && !isNaN(q[0]) && !isNaN(q[1])) BARS.push({v:q[0], c:q[1]});
+    });
+    if(!BARS.length) return;
+    mn = Math.min.apply(null, BARS.map(function(b){ return b.v; }));
+    mx = Math.max.apply(null, BARS.map(function(b){ return b.v; }));
+    if(mx === mn) return;
+    BARS.forEach(function(b){ b.nv = Math.round((b.v - mn)*255/(mx - mn)); });
+  } else {
+    A = nums(box.dataset.img);
+    if(!A.length) return;
+    N = Math.round(Math.sqrt(A.length));
+    var LV = box.dataset.levels ? nums(box.dataset.levels)
+      : A.slice().sort(function(a,b){ return a-b; }).filter(function(v,i,s){ return !i || v !== s[i-1]; });
+    LV.forEach(function(v){ BARS.push({v:v, c:A.filter(function(x){ return x === v; }).length}); });
+  }
+  top = Math.max.apply(null, BARS.map(function(b){ return b.c; })) || 1;
+
+  box.textContent = '';
+  var wrap = el('div','hw'); box.appendChild(wrap);
+  var cells = [];
+  if(!stretch){
+    var g = el('div','hg');
+    g.style.gridTemplateColumns = 'repeat(' + N + ',1fr)';
+    A.forEach(function(v){
+      var d = el('div','cl'); d.textContent = v;
+      d.style.background = gray(v); d.style.color = v > 128 ? '#111' : '#eee';
+      g.appendChild(d); cells.push(d);
+    });
+    wrap.appendChild(g);
+  }
+  var ch = el('div','hch');
+  ch.innerHTML = '<p class="hcap">скільки пікселів кожної яскравості</p>';
+  var pl = el('div','hpl'), ax = el('div','hax');
+  ch.appendChild(pl); ch.appendChild(ax); wrap.appendChild(ch);
+  [0,64,128,192,255].forEach(function(t){
+    var s = el('span'); s.textContent = t; s.style.left = pct(t); ax.appendChild(s);
+  });
+  var w = Math.max(2.2, Math.min(9, 56/BARS.length)) + '%';
+  BARS.forEach(function(b){
+    b.el = el('div','hb'); b.el.style.left = pct(b.v); b.el.style.width = w;
+    b.el.innerHTML = '<b></b>'; pl.appendChild(b.el);
+  });
+  var mA, mB, fm;
+  if(stretch){
+    mA = el('div','hm'); mB = el('div','hm');
+    mA.innerHTML = '<i></i>'; mB.innerHTML = '<i></i>';
+    pl.appendChild(mA); pl.appendChild(mB);
+    fm = el('p','hf'); fm.textContent = 'нове = (старе − ' + mn + ') · 255 / (' + mx + ' − ' + mn + ')';
+    box.appendChild(fm);
+  }
+  var say = asay(box);
+
+  /* порожні кроки: пробіл відкриває їх по одному, як будь-яку відповідь */
+  var marks = el('div','hmk'), K = stretch ? 2 : BARS.length;
+  marks.innerHTML = new Array(K + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var n = 0;
+    $$('i.hide', marks).forEach(function(i){ if(i.classList.contains('on')) n++; });
+    if(n === box.__at) return;
+    box.__at = n;
+    if(stretch){
+      BARS.forEach(function(b){
+        b.el.style.height = (b.c/top*88) + '%';
+        b.el.style.left = pct(n >= 2 ? b.nv : b.v);
+        $('b', b.el).textContent = '';
+      });
+      mA.classList.toggle('on', n >= 1); mB.classList.toggle('on', n >= 1);
+      mA.style.left = pct(n >= 2 ? 0 : mn); mB.style.left = pct(n >= 2 ? 255 : mx);
+      $('i', mA).textContent = n >= 2 ? mn + ' → 0' : 'min = ' + mn;
+      $('i', mB).textContent = n >= 2 ? mx + ' → 255' : 'max = ' + mx;
+      fm.classList.toggle('on', n >= 2);
+      say.textContent = n === 0 ? 'Усі пікселі стиснулись між ' + mn + ' і ' + mx + ': фото сіре й «пласке».'
+        : n === 1 ? 'Найтемніший піксель — ' + mn + ', найсвітліший — ' + mx + '. Решта шкали 0…255 порожня.'
+        : 'Кожну яскравість перераховуємо за формулою: min стає 0, max — 255. Стовпчики ті самі, лише розʼїхались.';
+    } else {
+      BARS.forEach(function(b, k){
+        var open = k < n;
+        b.el.style.height = open ? (b.c/top*88) + '%' : '0';
+        b.el.classList.toggle('now', k === n - 1);
+        $('b', b.el).textContent = open ? b.c : '';
+      });
+      var cur = n ? BARS[n-1].v : null, past = BARS.slice(0, n).map(function(b){ return b.v; });
+      cells.forEach(function(d, i){
+        d.classList.toggle('now', A[i] === cur);
+        d.classList.toggle('done', past.indexOf(A[i]) >= 0 && A[i] !== cur);
+      });
+      say.textContent = n === 0 ? 'Пробіл — беремо по одній яскравості й рахуємо, скільки таких клітинок.'
+        : 'Яскравість ' + cur + ' — ' + BARS[n-1].c + ' пікс.'
+          + (n === BARS.length ? ' Разом ' + A.length + ' — розкладено всі пікселі, а від самої картинки лишились тільки стовпчики.' : '');
     }
     fit();
   };
