@@ -104,6 +104,12 @@ function __report(){
     sgnBoxes:document.querySelectorAll('.sgn').length,
     hist:document.querySelectorAll('.hist .hb').length ? document.querySelectorAll('.hist').length : 0,
     histBoxes:document.querySelectorAll('.hist').length,
+    ocr:document.querySelectorAll('.ocr .og .cl').length ? document.querySelectorAll('.ocr').length : 0,
+    ocrBoxes:document.querySelectorAll('.ocr').length,
+    colmul:document.querySelectorAll('.colmul table.cl td').length ? document.querySelectorAll('.colmul').length : 0,
+    colmulBoxes:document.querySelectorAll('.colmul').length,
+    packs:document.querySelectorAll('.packs .pk-b').length ? document.querySelectorAll('.packs').length : 0,
+    packsBoxes:document.querySelectorAll('.packs').length,
     sqdiag:document.querySelectorAll('.sqdiag svg').length,
     sqdiagBoxes:document.querySelectorAll('.sqdiag').length,
     lnk:document.querySelectorAll('.lnk .fchip').length ? document.querySelectorAll('.lnk').length : 0,
@@ -211,7 +217,9 @@ def main():
                                  ("sqdiag", "sqdiagBoxes"), ("lnk", "lnkBoxes"),
                                  ("regroup", "regroupBoxes"), ("subst", "substBoxes"),
                                  ("jump", "jumpBoxes"), ("sgn", "sgnBoxes"),
-                                 ("hist", "histBoxes")):
+                                 ("hist", "histBoxes"),
+                                 ("ocr", "ocrBoxes"), ("colmul", "colmulBoxes"),
+                                 ("packs", "packsBoxes")):
                     if data[box] and data[key] < data[box]:
                         miss.append(f"{key}: {data[key]}/{data[box]}")
                 if miss:

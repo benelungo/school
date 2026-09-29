@@ -1212,6 +1212,87 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
   font-size:clamp(12px,calc(1.5*var(--u)),18px);opacity:.35;transition:opacity .3s}
 .hist .hf.on{opacity:1}
 
+/* C26 · .ocr — конвеєр: фото → числа → поріг → букви → голос */
+.ocr .hmk{display:none}
+.ocr .ost{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:clamp(8px,1.2vw,14px)}
+.ocr .och{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:clamp(10px,calc(1.25*var(--u)),15px);
+  padding:4px 10px;border-radius:999px;border:var(--bw,2px) solid var(--edge);color:var(--soft);
+  background:var(--card);transition:background .3s,color .3s,border-color .3s}
+.ocr .och b{font-family:"JetBrains Mono",monospace}
+.ocr .och.done{border-color:var(--pen);color:var(--pen)}
+.ocr .och.now{background:var(--marker);border-color:var(--marker);color:var(--ink)}
+.ocr .ogw{position:relative;max-width:min(100%,calc(70*var(--u)));margin:0 auto}
+.ocr .og{display:grid;gap:1px;background:var(--edge);border:1px solid var(--edge)}
+.ocr .og .cl{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(7px,calc(.95*var(--u)),12px);
+  transition:background .5s,opacity .4s;overflow:hidden}
+.ocr .og .cl.dim{opacity:.55}
+.ocr .ofr{position:absolute;top:-4px;bottom:-4px;border:3px solid var(--check);border-radius:5px;
+  opacity:0;transition:opacity .4s}
+.ocr .ofr.on{opacity:1}
+.ocr .ofr i{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:4px;font-style:normal;
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:700;color:var(--check);
+  font-size:clamp(14px,calc(2.2*var(--u)),28px)}
+.ocr .oout{display:flex;align-items:center;justify-content:center;gap:14px;
+  margin-top:clamp(30px,calc(3.8*var(--u)),46px);opacity:.15;transition:opacity .4s;min-height:1.6em}
+.ocr .oout.on{opacity:1}
+.ocr .otx{font-family:"Unbounded","Manrope",sans-serif;font-weight:700;font-size:clamp(16px,calc(2.4*var(--u)),30px)}
+.ocr .owv{display:flex;align-items:center;gap:3px;height:1.6em}
+.ocr .owv i{display:block;width:5px;border-radius:3px;background:var(--pen)}
+.ocr .owv i:nth-child(1){height:30%}.ocr .owv i:nth-child(2){height:75%}.ocr .owv i:nth-child(3){height:100%}
+.ocr .owv i:nth-child(4){height:60%}.ocr .owv i:nth-child(5){height:35%}
+.ocr .arow{justify-content:center;transition:opacity .3s}
+.ocr .arow.off{opacity:0;pointer-events:none}
+.ocr .asay{text-align:center}
+
+/* C27 · .colmul — множення стовпчиком по кроках (журнал і пояснення — як у .colsub) */
+.colmul{display:flex;flex-wrap:wrap;gap:clamp(12px,2vw,28px);align-items:flex-start}
+.colmul .cs-l{flex:1 1 clamp(220px,34vw,460px);min-width:0}
+.colmul table.cl{font-size:clamp(22px,calc(3.2*var(--u)),42px)}
+.colmul table.cl td{border-radius:6px;padding:0 .12em;min-width:.8em}
+.colmul table.cl tr.w td{font-size:.55em;color:var(--pen);height:1.1em;vertical-align:bottom;font-weight:800}
+.colmul table.cl tr.ln td:not(.op){border-bottom:3px solid currentColor}
+.colmul table.cl td.x{text-decoration:line-through;text-decoration-thickness:.1em;color:var(--soft);opacity:.7}
+.colmul table.cl td.hi{background:var(--sun-soft)}
+.colmul table.cl tr:not(.w) td.hi{color:var(--sun)}
+.colmul .say{margin-top:clamp(8px,1.2vw,14px);min-height:4.4em;line-height:1.4;
+  font-size:clamp(14px,calc(1.7*var(--u)),21px);border-left:4px solid var(--sun);
+  padding:clamp(6px,.8vw,10px) clamp(9px,1.2vw,14px);background:var(--sun-soft);border-radius:0 8px 8px 0}
+.colmul .cs-log{flex:1 1 clamp(200px,26vw,340px);margin:0;padding-left:1.6em;
+  font-family:"JetBrains Mono",monospace;font-weight:600;font-variant-numeric:tabular-nums;
+  font-size:clamp(11px,calc(1.2*var(--u)),15px);line-height:1.4}
+.colmul .cs-log li{transition:opacity .3s,color .3s}
+.colmul .cs-log li.past{color:var(--soft)}
+.colmul .cs-log li.now{color:var(--pen);font-weight:800}
+
+/* C28 · .packs — коробки → сума → добуток */
+.packs .hmk{display:none}
+.packs .pk-sh{display:flex;flex-wrap:wrap;gap:clamp(8px,1.4vw,18px);justify-content:center;min-height:clamp(70px,calc(10*var(--u)),120px)}
+.packs .pk-b{position:relative;display:grid;gap:5px;align-content:center;padding:clamp(8px,1.1vw,14px);
+  border:3px solid var(--pen);border-radius:10px;background:var(--pen-soft);
+  opacity:0;transform:translateY(-14px) scale(.9);transition:opacity .35s,transform .35s,box-shadow .3s}
+.packs .pk-b.on{opacity:1;transform:none}
+.packs .pk-b.now{box-shadow:0 0 0 4px var(--marker)}
+.packs .pk-b i{display:block;width:clamp(12px,calc(1.8*var(--u)),22px);aspect-ratio:1;border-radius:50%;background:var(--marker)}
+.packs .pk-b i.em{background:none;width:auto;font-style:normal;font-size:clamp(14px,calc(2*var(--u)),24px);line-height:1}
+.packs .pk-b b{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--pen)}
+.packs .pk-sum{text-align:center;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(18px,calc(2.6*var(--u)),32px);margin-top:clamp(26px,calc(3.6*var(--u)),42px);min-height:1.3em;
+  transition:opacity .35s}
+.packs .pk-sum.gone{opacity:.3;text-decoration:line-through;text-decoration-color:var(--soft)}
+.packs .pk-mul{display:flex;justify-content:center;align-items:flex-start;gap:clamp(8px,1.4vw,18px);
+  margin-top:clamp(8px,1.2vw,14px);opacity:0;transform:scale(.85);transition:opacity .4s,transform .4s}
+.packs .pk-mul.on{opacity:1;transform:none}
+.packs .pk-mul span{display:flex;flex-direction:column;align-items:center}
+.packs .pk-mul em{font-style:normal;font-family:"JetBrains Mono",monospace;font-weight:800;
+  font-size:clamp(28px,calc(4.4*var(--u)),56px);line-height:1.1}
+.packs .pk-mul .f1 em{color:var(--pen)} .packs .pk-mul .f2 em{color:var(--marker)} .packs .pk-mul .f3 em{color:var(--check)}
+.packs .pk-mul .o{font-family:"JetBrains Mono",monospace;font-weight:800;font-size:clamp(28px,calc(4.4*var(--u)),56px);line-height:1.1;color:var(--soft)}
+.packs .pk-mul small{font-size:clamp(11px,calc(1.3*var(--u)),16px);color:var(--soft);text-align:center;max-width:9em;line-height:1.2}
+.packs .pk-mul.named small{color:var(--ink);font-weight:800}
+.packs .asay{text-align:center}
+
 /* ───────────────────────── A6 · друк у PDF ─────────────────────────────── */
 @media print{
   @page{size:A4 landscape;margin:12mm}

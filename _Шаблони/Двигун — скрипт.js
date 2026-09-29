@@ -392,7 +392,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.colsub,.ordops,.frm,.sqdiag,.subst,.sgn,.hist', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.colsub,.colmul,.packs,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -2862,6 +2862,359 @@ $$('.hist').forEach(function(box){
         : 'Яскравість ' + cur + ' — ' + BARS[n-1].c + ' пікс.'
           + (n === BARS.length ? ' Разом ' + A.length + ' — розкладено всі пікселі, а від самої картинки лишились тільки стовпчики.' : '');
     }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C26 · .ocr — конвеєр розпізнавання тексту: фото → числа → поріг → букви → голос
+     <div class="ocr" data-word="ХЛІБ"></div>
+     Слово малюється на «аркуші з тінню» (праворуч темніше) як сітка
+     пікселів. Пробіл — наступна станція:
+       1 · числа — у кожній клітинці її яскравість;
+       2 · поріг — світліше за T стає білим, темніше чорним: тінь зникла;
+       3 · букви — рамки навколо кожної букви й розпізнані літери;
+       4 · голос — рядок тексту й кнопка «Послухати» (speechSynthesis).
+     Учень бачить: машина читає ті самі числа, що й у гістограмі, і кожна
+     станція — вже знайома операція.
+     data-t — поріг (типово — посередині між найсвітлішим чорнилом і
+     найтемнішим папером); data-shade="0" — без тіні.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.ocr').forEach(function(box){
+  var word = (box.dataset.word || 'ХЛІБ').toUpperCase().slice(0, 6);
+  var L = word.length, CW = 7, GAP = 1, H = 9, S = 8;
+  var W = L*CW + (L - 1)*GAP + 2;              /* +1 стовпчик поля з кожного боку */
+  var shade = box.dataset.shade === '0' ? 0 : 1;
+
+  /* покриття чорнилом кожної клітинки: букву малюємо у 8 разів більшою й усереднюємо */
+  var cv = D.createElement('canvas'); cv.width = W*S; cv.height = H*S;
+  var cx = cv.getContext('2d'), cov = [];
+  if(cx){
+    cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
+    cx.fillStyle = '#000'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.font = '900 ' + (H*S*0.92) + 'px Arial, "Helvetica Neue", sans-serif';
+    for(var k = 0; k < L; k++){
+      var x0 = (1 + k*(CW + GAP))*S;
+      cx.save(); cx.beginPath(); cx.rect(x0, 0, CW*S, H*S); cx.clip();
+      cx.fillText(word[k], x0 + CW*S/2, H*S/2 + S*0.35, CW*S*0.96);
+      cx.restore();
+    }
+    var px = cx.getImageData(0, 0, cv.width, cv.height).data;
+    for(var r = 0; r < H; r++) for(var c = 0; c < W; c++){
+      var sum = 0;
+      for(var yy = 0; yy < S; yy++) for(var xx = 0; xx < S; xx++)
+        sum += px[((r*S + yy)*cv.width + c*S + xx)*4];
+      cov.push(1 - sum/(S*S*255));
+    }
+  }
+  if(!cov.length) return;
+
+  /* яскравість: папір 232 → 118 у тіні праворуч, чорнило 44 → 22 */
+  var V = cov.map(function(q, i){
+    var f = shade ? (i % W)/(W - 1) : 0;
+    var paper = 232 - 114*f*f, ink = 44 - 22*f;
+    return Math.round(paper*(1 - q) + ink*q);
+  });
+  var inkMax = 0, paperMin = 255;
+  V.forEach(function(v, i){
+    if(cov[i] > .6) inkMax = Math.max(inkMax, v);
+    if(cov[i] < .08) paperMin = Math.min(paperMin, v);
+  });
+  var T = parseFloat(box.dataset.t);
+  if(isNaN(T)) T = Math.round((inkMax + paperMin)/2);
+
+  box.textContent = '';
+  var st = el('div','ost');
+  var NAMES = ['📷 фото','🔢 числа','◐ поріг ' + T,'🔤 букви','🔊 голос'];
+  var chips = NAMES.map(function(t, i){
+    var c = el('span','och'); c.innerHTML = '<b>' + (i + 1) + '</b> ' + t; st.appendChild(c); return c;
+  });
+  box.appendChild(st);
+
+  var gw = el('div','ogw'), g = el('div','og');
+  g.style.gridTemplateColumns = 'repeat(' + W + ',1fr)';
+  var cells = V.map(function(v){ var d = el('div','cl'); g.appendChild(d); return d; });
+  gw.appendChild(g);
+  var frames = [];
+  for(var k2 = 0; k2 < L; k2++){
+    var fr = el('div','ofr');
+    fr.style.left = ((1 + k2*(CW + GAP))/W*100) + '%';
+    fr.style.width = (CW/W*100) + '%';
+    fr.innerHTML = '<i>' + word[k2] + '</i>';
+    gw.appendChild(fr); frames.push(fr);
+  }
+  box.appendChild(gw);
+
+  var out = el('div','oout');
+  out.innerHTML = '<span class="otx"></span><span class="owv"><i></i><i></i><i></i><i></i><i></i></span>';
+  box.appendChild(out);
+  var row = arow(box);
+  abtn(row, '🔊 Послухати', '', function(){
+    try{
+      var u = new SpeechSynthesisUtterance(word.toLowerCase()); u.lang = 'uk-UA';
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    }catch(e){}
+  });
+  var say = asay(box);
+
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(5).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var n = 0;
+    $$('i.hide', marks).forEach(function(i){ if(i.classList.contains('on')) n++; });
+    if(n === box.__at) return;
+    box.__at = n;
+    chips.forEach(function(c, i){ c.classList.toggle('now', i === n); c.classList.toggle('done', i < n); });
+    cells.forEach(function(d, i){
+      var v = V[i], b = n >= 2 ? (v > T ? 255 : 0) : v;
+      d.style.background = 'rgb(' + b + ',' + b + ',' + b + ')';
+      d.style.color = b > 128 ? '#111' : '#eee';
+      d.textContent = n === 1 ? v : n === 2 ? (b ? '1' : '0') : '';
+      d.classList.toggle('dim', n >= 3);
+    });
+    frames.forEach(function(f){ f.classList.toggle('on', n >= 3); });
+    out.classList.toggle('on', n >= 4);
+    row.classList.toggle('off', n < 4);
+    $('.otx', out).textContent = n >= 4 ? '«' + word.toLowerCase() + '»' : '';
+    say.textContent = [
+      'Камера сфотографувала аркуш. Праворуч на нього лягла тінь.',
+      'Для машини це лише таблиця ' + W + ' × ' + H + ' = ' + (W*H) + ' чисел: папір ' + V[0] + ', у тіні ' + paperMin + ', чорнило ' + inkMax + ' і темніше.',
+      'Поріг ' + T + ': світліше — біле (1), темніше — чорне (0). Тінь зникла, лишились самі букви.',
+      'Машина шукає знайомі обриси й підписує кожну рамку буквою.',
+      'Букви стали текстом, а текст — голосом. Так працюють Lookout і Be My Eyes.'
+    ][n];
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C27 · .colmul — множення стовпчиком: кожна цифра — окремий крок по пробілу
+     <div class="colmul" data-a="182" data-b="14"></div>
+     Як .colsub: праворуч журнал кроків (li.hide — їх гортає пробіл),
+     ліворуч стовпчик і пояснення дитячою мовою. Множимо на кожну цифру
+     нижнього числа справа наліво; перенос пишемо дрібно над наступною
+     цифрою верхнього числа. Другий неповний добуток зсуваємо на клітинку
+     вліво (окремий крок «чому зсуваємо»), нуль у нижньому числі — рядок
+     нулів не пишемо. Далі неповні добутки додаємо стовпчиком, по розряду
+     за крок, з переносами над першим рядком.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.colmul').forEach(function(box){
+  var a = String(box.dataset.a||'').replace(/\D/g,''), b = String(box.dataset.b||'').replace(/\D/g,'');
+  if(!a || !b) return;
+  a = String(+a); b = String(+b);
+  var R = String(+a * +b), W = Math.max(R.length, a.length, b.length);
+  var NOM = ['одиниці','десятки','сотні','тисячі','десятки тисяч','сотні тисяч','мільйони','десятки мільйонів','сотні мільйонів'];
+  var GEN = ['одиниць','десятків','сотень','тисяч','десятків тисяч','сотень тисяч','мільйонів','десятків мільйонів','сотень мільйонів'];
+  var UNDER = ['під одиницями','під десятками','під сотнями','під тисячами','під десятками тисяч','під сотнями тисяч','під мільйонами'];
+  function nm(k, arr){ return arr[k] || ('розряд ' + (k + 1)); }
+  function fmt(x){ return String(x).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
+  var A = a.split('').reverse().map(Number), B = b.split('').reverse().map(Number);
+  var jobs = [];                                  /* неповні добутки: цифра нижнього числа ≠ 0 */
+  B.forEach(function(d, j){ if(d) jobs.push(j); });
+  var many = jobs.length > 1;
+
+  var carry = [], pd = jobs.map(function(){ return []; }), res = [], acar = [], xed = [];
+  var snaps = [], log = [];
+  function snap(hi, sh, lg){
+    snaps.push({ carry:carry.slice(), pd:pd.map(function(r){ return r.slice(); }), res:res.slice(),
+                 acar:acar.slice(), xed:xed.slice(), hi:hi || [] });
+    log.push({ sh:sh, lg:lg });
+  }
+  snap([], 'Записали ' + fmt(a) + ' · ' + fmt(b),
+    'Пишемо одне число під іншим так, щоб останні цифри стояли одна під одною — по правому краю. ' +
+    'Множимо на кожну цифру нижнього числа по черзі, починаючи з одиниць — справа наліво.');
+
+  jobs.forEach(function(j, q){
+    var d = B[j];
+    /* нулі в нижньому числі між цифрами */
+    for(var z = (q ? jobs[q-1] + 1 : 0); z < j; z++){
+      snap([['b', z]], 'Цифра 0 — рядок нулів не пишемо',
+        'У нижньому числі ' + nm(z, NOM) + ' — це 0. Будь-яке число, помножене на 0, дає 0, тож рядок із самих нулів не пишемо. ' +
+        'Але розряд пропускати не можна: наступний рядок зсунемо ще на одну клітинку.');
+    }
+    if(q){
+      xed = carry.slice();
+      carry = [];
+      snap([['b', j]], 'Тепер множимо на ' + d + ' (' + nm(j, NOM) + ')',
+        'Беремо наступну цифру нижнього числа — ' + d + '. Вона стоїть у розряді «' + nm(j, NOM) + '», тобто це не ' + d +
+        ', а ' + d + (j === 1 ? '0' : j === 2 ? '00' : '0'.repeat(j)) + '. Тому перша цифра цього рядка стає ' + nm(j, UNDER) +
+        ': зсуваємо рядок на ' + (j === 1 ? 'одну клітинку' : j + ' клітинки') + ' вліво. Старі переноси закреслюємо — вони вже не потрібні.');
+    }
+    var c = 0;
+    for(var i = 0; i < A.length; i++){
+      var p = A[i] * d, t = p + c, last = i === A.length - 1;
+      var lg = d + ' · ' + A[i] + ' = ' + p + '. ';
+      var sh = d + ' · ' + A[i] + ' = ' + p;
+      if(c){ lg += 'Згадуємо число над цифрою ' + A[i] + ' — там ' + c + ': ' + p + ' + ' + c + ' = ' + t + '. '; sh += ' + ' + c + ' = ' + t; }
+      var hi = [['a', i], ['b', j], ['p' + q, i + j]];
+      if(last){
+        pd[q][i + j] = t % 10;
+        if(t >= 10){ pd[q][i + j + 1] = Math.floor(t / 10); hi.push(['p' + q, i + j + 1]); }
+        lg += 'Це остання цифра верхнього числа, тож пишемо ' + t + ' повністю' + (t >= 10 ? ' — обидві цифри.' : '.');
+        c = 0;
+      } else {
+        pd[q][i + j] = t % 10;
+        c = Math.floor(t / 10);
+        if(c){
+          carry[i + 1] = c; hi.push(['w', i + 1]);
+          lg += 'Пишемо ' + (t % 10) + ', а ' + c + ' ' + (c === 1 ? 'десяток' : c < 5 ? 'десятки' : 'десятків') +
+                ' несемо далі — пишемо дрібно над цифрою ' + A[i + 1] + '.';
+        } else {
+          carry[i + 1] = null;
+          lg += t < 10 ? 'Однозначне — просто пишемо ' + t + ', нести нічого.' : '';
+        }
+      }
+      snap(hi, sh, lg);
+    }
+  });
+
+  if(many){
+    xed = carry.slice();
+    carry = [];
+    snap([], 'Додаємо неповні добутки',
+      'Кожен рядок — це «неповний добуток»: скільки дає множення на одну цифру. Щоб отримати відповідь, рядки додаємо стовпчиком, ' +
+      'теж справа наліво. Порожня клітинка — це 0.');
+    var ac = 0;
+    for(var k = 0; k < R.length; k++){
+      var terms = [], hiA = [];
+      pd.forEach(function(r, q2){ if(r[k] != null){ terms.push(r[k]); hiA.push(['p' + q2, k]); } });
+      var sum = terms.reduce(function(x, y){ return x + y; }, 0) + ac;
+      var expr = terms.join(' + ') + (ac ? ' + ' + ac : '');
+      var lastCol = k === R.length - 1, plain = terms.length === 1 && !ac;
+      res[k] = sum % 10;
+      if(lastCol && sum >= 10) res[k + 1] = Math.floor(sum / 10);
+      if(ac) hiA.push(['w2', k]);
+      hiA.push(['r', k]);
+      var NM = nm(k, NOM).charAt(0).toUpperCase() + nm(k, NOM).slice(1);
+      var txt = NM + ': ';
+      if(plain) txt += 'тут лише ' + terms[0] + ' — просто зносимо вниз.';
+      else {
+        txt += terms.join(' + ') + (ac ? ' і ще ' + ac + ' перенесений згори' : '') + ' = ' + sum + '. ';
+      }
+      var nc = lastCol ? 0 : Math.floor(sum / 10);
+      if(nc){ acar[k + 1] = nc; hiA.push(['w2', k + 1]); txt += 'Пишемо ' + (sum % 10) + ', а ' + nc + ' переносимо в ' + nm(k + 1, GEN) + ' — дрібно над стовпчиком.'; }
+      else if(!plain) txt += 'Пишемо ' + sum + '.';
+      snap(hiA, nm(k, NOM) + ': ' + (plain ? terms[0] + ' ↓' : expr + ' = ' + sum), txt);
+      ac = nc;
+      if(lastCol) break;
+    }
+  } else {
+    R.split('').reverse().forEach(function(ch, k){ res[k] = +ch; });
+  }
+  function rnd(x){ var m = Math.pow(10, String(x).length - 1); return Math.round(x / m) * m; }
+  var ra = rnd(+a), rb = rnd(+b);
+  snap([], 'Відповідь: ' + fmt(a) + ' · ' + fmt(b) + ' = ' + fmt(R),
+    'Відповідь: ' + fmt(a) + ' · ' + fmt(b) + ' = ' + fmt(R) + '.' + (function(){
+      var est = [[a, ra], [b, rb]].filter(function(p){ return String(p[0]).length > 1 && +p[0] !== p[1]; })
+        .map(function(p){ return fmt(p[0]) + ' ≈ ' + fmt(p[1]); }).join(', ');
+      return est ? ' Прикидка: ' + est + ', а ' + fmt(ra) + ' · ' + fmt(rb) + ' = ' + fmt(ra * rb) +
+                   ' — відповідь того ж розміру, схоже на правду.' : '';
+    })());
+
+  /* таблиця */
+  var tb = el('table','cl'), cells = {};
+  function row(key, cls, op){
+    var r = el('tr', cls || ''); var o = el('td','op'); o.textContent = op || ''; r.appendChild(o);
+    cells[key] = [];
+    for(var c2 = W - 1; c2 >= 0; c2--){ var td = el('td'); cells[key][c2] = td; r.appendChild(td); }
+    tb.appendChild(r); return r;
+  }
+  row('w','w'); row('a',''); var rb = row('b','ln','×');
+  if(many) row('w2','w');
+  /* лінія під множниками й — якщо рядків кілька — під останнім неповним добутком */
+  pd.forEach(function(_, q){ row('p' + q, many && q === pd.length - 1 ? 'ln' : '', q === 1 ? '+' : ''); });
+  if(many) row('r','');
+  A.forEach(function(v, i){ cells.a[i].textContent = v; });
+  B.forEach(function(v, j){ cells.b[j].textContent = v; });
+
+  var say = el('div','say');
+  var ol = el('ol','cs-log');
+  log.forEach(function(L, i){ var li = el('li', i ? 'hide' : '', L.sh); ol.appendChild(li); });
+  var left = el('div','cs-l'); left.appendChild(tb); left.appendChild(say);
+  box.appendChild(left); box.appendChild(ol);
+
+  box.__paint = function(){
+    var lis = $$('li', ol), shown = 0;
+    lis.forEach(function(li, i){ if(!i || li.classList.contains('on')) shown = i + 1; });
+    var s = snaps[shown - 1];
+    lis.forEach(function(li, i){ li.classList.toggle('now', i === shown - 1); li.classList.toggle('past', i < shown - 1); });
+    Object.keys(cells).forEach(function(key){ cells[key].forEach(function(td){ td.classList.remove('hi','x'); }); });
+    for(var c4 = 0; c4 < W; c4++){
+      var cw = s.carry[c4] != null ? s.carry[c4] : (s.xed[c4] != null ? s.xed[c4] : '');
+      cells.w[c4].textContent = cw;
+      if(s.carry[c4] == null && s.xed[c4] != null) cells.w[c4].classList.add('x');
+      if(many){
+        cells.w2[c4].textContent = s.acar[c4] != null ? s.acar[c4] : '';
+        cells.r[c4].textContent = s.res[c4] != null ? s.res[c4] : '';
+      }
+      s.pd.forEach(function(r, q){ cells['p' + q][c4].textContent = r[c4] != null ? r[c4] : ''; });
+    }
+    s.hi.forEach(function(h){ var c5 = cells[h[0]] && cells[h[0]][h[1]]; if(c5) c5.classList.add('hi'); });
+    say.textContent = log[shown - 1].lg.replace(/ ([−=→+·]) /g, ' $1 ');
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C28 · .packs — множення як додавання однакових доданків
+     <div class="packs" data-n="3" data-k="4"></div>
+     data-n — скільки в одній коробці, data-k — скільки коробок (до 8).
+     Пробіл: коробки зʼявляються по одній, під ними росте сума «3 + 3 + …»;
+     потім сума згортається в «3 · 4 = 12» з підписами «скільки в коробці /
+     скільки коробок»; останній крок — назви: множник · множник = добуток.
+     data-item="🍬" — замість кружечків (типово — кружечки, без шрифтів).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.packs').forEach(function(box){
+  var n = Math.max(1, Math.min(12, parseInt(box.dataset.n, 10) || 3));
+  var k = Math.max(1, Math.min(8, parseInt(box.dataset.k, 10) || 4));
+  var item = box.dataset.item || '';
+  box.textContent = '';
+  var shelf = el('div','pk-sh'), bxs = [];
+  for(var i = 0; i < k; i++){
+    var bx = el('div','pk-b');
+    bx.style.gridTemplateColumns = 'repeat(' + Math.min(n, n > 6 ? Math.ceil(n / 2) : n) + ',1fr)';
+    for(var t = 0; t < n; t++){ var it = el('i', item ? 'em' : ''); if(item) it.textContent = item; bx.appendChild(it); }
+    var cap = el('b'); cap.textContent = n; bx.appendChild(cap);
+    shelf.appendChild(bx); bxs.push(bx);
+  }
+  box.appendChild(shelf);
+  var sum = el('div','pk-sum'), mul = el('div','pk-mul');
+  mul.innerHTML = '<span class="f1"><em>' + n + '</em><small></small></span><span class="o">·</span>' +
+                  '<span class="f2"><em>' + k + '</em><small></small></span><span class="o">=</span>' +
+                  '<span class="f3"><em>' + (n * k) + '</em><small></small></span>';
+  box.appendChild(sum); box.appendChild(mul);
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(k + 3).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var shown = Math.min(st, k);
+    bxs.forEach(function(b2, i2){ b2.classList.toggle('on', i2 < shown); b2.classList.toggle('now', i2 === shown - 1 && st <= k); });
+    var terms = []; for(var q = 0; q < shown; q++) terms.push(n);
+    sum.textContent = shown ? terms.join(' + ') + ' = ' + (n * shown) : '';
+    sum.classList.toggle('gone', st > k);
+    mul.classList.toggle('on', st > k);
+    var names = st > k + 1;
+    $('.f1 small', mul).textContent = names ? 'множник' : 'скільки в одній';
+    $('.f2 small', mul).textContent = names ? 'множник' : 'скільки разів (коробок)';
+    $('.f3 small', mul).textContent = names ? 'добуток' : 'усього';
+    mul.classList.toggle('named', names);
+    say.textContent = st === 0 ? 'У кожній коробці по ' + n + '. Пробіл — ставимо коробки по одній.'
+      : st <= k ? 'Коробок: ' + shown + '. Усього — додаємо ще ' + n + ': ' + (n * shown) + '.'
+      : !names ? 'Щоб не писати «' + n + ' +» ' + k + (k === 1 ? ' раз' : k < 5 ? ' рази' : ' разів') + ', пишемо коротко: ' + n + ' · ' + k + '. Однакові доданки — це множення.'
+      : 'Числа, які множимо, — множники. Результат — добуток.';
     fit();
   };
   box.__paint();
