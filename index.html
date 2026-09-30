@@ -708,6 +708,17 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   {
    "cls": "5-З",
    "subject": "Математика",
+   "n": 19,
+   "lesson": "Урок 19",
+   "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
+   "themeTotal": 17,
+   "title": "Контрольна робота № 1",
+   "offline": true,
+   "kr": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
    "n": 20,
    "lesson": "Урок 20",
    "theme": "Тема 1. Натуральні числа. Додавання і віднімання натуральних чисел (17 год)",
@@ -896,6 +907,17 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
    "slides": 18,
    "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2014/%D0%A3%D1%80%D0%BE%D0%BA%2014%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "fresh": true
+  },
+  {
+   "cls": "7-І",
+   "subject": "Алгебра",
+   "n": 15,
+   "lesson": "Урок 15",
+   "theme": "Тема 1. Лінійні рівняння з однією змінною (10 год)",
+   "themeTotal": 10,
+   "title": "Контрольна робота № 1",
+   "offline": true,
+   "kr": true
   },
   {
    "cls": "7-І",
@@ -1974,7 +1996,7 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
       {
        "n": 19,
        "title": "Контрольна робота № 1 з теми «Натуральні числа. Додавання і віднімання натуральних чисел»",
-       "done": false
+       "done": true
       },
       {
        "n": 20,
@@ -2905,7 +2927,7 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
       {
        "n": 15,
        "title": "Контрольна робота № 1 з теми «Лінійні рівняння з однією змінною»",
-       "done": false
+       "done": true
       }
      ]
     },
@@ -5037,7 +5059,7 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
         });
       }
       var мітки = '';
-      if (l.offline) мітки += '<span class="tag">Очно</span>';
+      if (l.offline) мітки += '<span class="tag">' + (l.kr ? 'Контрольна' : 'Очно') + '</span>';
       if (l.fresh && !l.offline) мітки += '<span class="tag new">Новий</span>';
       if (l.href && seen[l.href]) мітки += '<span class="tag">Переглянуто</span>';
       карта.innerHTML = '<span class="num">' + esc(l.lesson || '') + '</span>' +

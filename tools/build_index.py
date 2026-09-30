@@ -35,6 +35,7 @@ INDEX = ROOT / "index.html"
 STUDENT_SUFFIX = " — презентація для класу.html"
 # Сторінки перевірочних робіт лежать ПОРУЧ З УРОКОМ, як і презентації.
 WORK_SUFFIXES = (" — контрольна для класу.html", " — самостійна для класу.html")
+DONE_MARK = "проведено.txt"   # мітка проведеного уроку-контрольної
 # учительська хронокарта: сама не публікується, але позначає урок як очний
 TEACHER_SUFFIX = " — презентація.html"
 
@@ -319,6 +320,16 @@ def collect():
                     found = sorted(lesson_dir.glob("*" + TEACHER_SUFFIX))
                     teacher = found[0] if found else None
                 if teacher is None:
+                    # Урок-контрольна: презентації немає, є робота й мітка
+                    # «проведено.txt». На сайті — неактивна картка, як очний.
+                    kr = sorted(lesson_dir.glob("*" + WORK_SUFFIXES[0]))
+                    if kr and (lesson_dir / DONE_MARK).is_file():
+                        w = read_work(kr[0])
+                        item["title"] = (w or {}).get("title") or "Контрольна робота"
+                        item["offline"] = True
+                        item["kr"] = True
+                        lessons.append(item)
+                        done_numbers.append(item["n"])
                     continue
 
                 item["title"] = clean_teacher_title(
