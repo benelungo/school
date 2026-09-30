@@ -54,7 +54,7 @@
   --sh2:0 4px 10px -3px oklch(24% .04 var(--h)/.10), 0 2px 4px -2px oklch(24% .04 var(--h)/.06);
   --sh3:0 18px 40px -16px oklch(24% .04 var(--h)/.24);
   color-scheme:light;
-}
+}/*compat{*/@supports not ((color:oklch(50% .1 200))){:root{--paper:#faf9fd;--card:#ffffff;--grid:#ddd7e9;--ink:#221b2d;--soft:#686374;--edge:#dfdce7;--pen:#763ebd;--pen-soft:#f3ebff;--on-pen:#ffffff;--check:#0a7e3a;--check-soft:#def8e2;--marker:#d01a34;--marker-soft:#ffe6e4;--sun:#a46e00;--sun-soft:#fff1cc;--sh1:0 1px 2px rgba(34,27,47,0.06);--sh2:0 4px 10px -3px rgba(34,27,47,0.1), 0 2px 4px -2px rgba(34,27,47,0.06);--sh3:0 18px 40px -16px rgba(34,27,47,0.24)}}/*}compat*//*compat{*/@supports not ((width:min(1px,2px))){:root{--u:1vw}}/*}compat*/
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   color-scheme:dark;
   --paper:oklch(17% .022 var(--h)); --card:oklch(21.5% .025 var(--h));
@@ -65,12 +65,9 @@
   --marker:oklch(74% .16 22);       --marker-soft:oklch(29% .07 22);
   --sun:oklch(84% .14 88);          --sun-soft:oklch(29% .06 78);
   --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
-}}
-@supports not (color: oklch(50% .1 200)){
-  :root{--paper:#FBFAF7;--card:#fff;--grid:#C9D8E8;--ink:#1B2430;--soft:#5B6879;--edge:#DDE4EC;
-        --pen:#6B2FC9;--pen-soft:#F0E9FC;--on-pen:#fff;--check:#1B7F4B;--check-soft:#E4F3EA;
-        --marker:#D7263D;--marker-soft:#FCEAEC;--sun:#B57C00;--sun-soft:#FDF3DC}
-}
+}/*compat{*/@supports not ((color:oklch(50% .1 200))){:root:not([data-theme="light"]){--paper:#110d18;--card:#1b1723;--grid:#302a3b;--ink:#f0ecf7;--soft:#a7a1b2;--edge:#322d3d;--pen:#c4a4fe;--pen-soft:#312249;--on-pen:#110d17;--check:#66da85;--check-soft:#0f3118;--marker:#ff7d7c;--marker-soft:#481b1b;--sun:#f0c551;--sun-soft:#3b2700}}/*}compat*/}
+/* Запасну палітру для рушіїв без oklch() (Chrome < 111, Safari < 15.4) дописує
+   tools/сумісність.py — з точним тоном предмета сторінки. */
 
 /*═════════════════════════ база ══════════════════════════════════════════*/
 *{box-sizing:border-box}
@@ -84,10 +81,11 @@ body{
   color:var(--ink);
   font-family:"Manrope","Segoe UI",system-ui,sans-serif;
   padding:env(safe-area-inset-top,0) 16px env(safe-area-inset-bottom,0);
-}
+}/*compat{*/@supports not ((padding:env(safe-area-inset-top,1px))){body{padding:0 16px 0}}/*}compat*/
 @media (prefers-color-scheme: dark){ body{background-image:
   linear-gradient(oklch(30% .03 var(--h)/.5) 1px,transparent 1px),
-  linear-gradient(90deg,oklch(30% .03 var(--h)/.5) 1px,transparent 1px)} }
+  linear-gradient(90deg,oklch(30% .03 var(--h)/.5) 1px,transparent 1px)}/*compat{*/@supports not ((color:oklch(50% .1 200))){body{background-image:linear-gradient(rgba(48,42,59,0.5) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(48,42,59,0.5) 1px,transparent 1px)}}/*}compat*/ }
 
 /*───── заборона виділення й довгого натиску (п. «не копіювати», «без меню») ─*/
 body,body *{
@@ -99,35 +97,35 @@ input,textarea{-webkit-user-select:text;user-select:text}
 img,canvas{-webkit-user-drag:none;user-drag:none;pointer-events:none}
 
 h1,h2{font-family:"Unbounded","Manrope",sans-serif;letter-spacing:-.02em;margin:0}
-h1{font-weight:800;font-size:clamp(22px,calc(3.6*var(--u)),40px);line-height:1.06}
-h2{font-weight:600;font-size:clamp(17px,calc(2.4*var(--u)),27px);line-height:1.16}
-p{margin:0 0 10px;font-size:clamp(14px,calc(1.6*var(--u)),19px);line-height:1.5}
+h1{font-weight:800;font-size:clamp(22px,calc(3.6*var(--u)),40px);line-height:1.06}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){h1{font-size:22px}}/*}compat*/
+h2{font-weight:600;font-size:clamp(17px,calc(2.4*var(--u)),27px);line-height:1.16}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){h2{font-size:17px}}/*}compat*/
+p{margin:0 0 10px;font-size:clamp(14px,calc(1.6*var(--u)),19px);line-height:1.5}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){p{font-size:14px}}/*}compat*/
 .eyebrow{font-family:"Unbounded",sans-serif;font-weight:600;color:var(--soft);
-  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase}
-.lede{font-size:clamp(15px,calc(1.9*var(--u)),22px);color:var(--soft);line-height:1.4;max-width:60ch}
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.22em;text-transform:uppercase}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eyebrow{font-size:10px}}/*}compat*/
+.lede{font-size:clamp(15px,calc(1.9*var(--u)),22px);color:var(--soft);line-height:1.4;max-width:60ch}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.lede{font-size:15px}}/*}compat*/
 b{font-weight:800}
 
-.wrap{max-width:1080px;margin:0 auto;padding-block:22px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:22px}/*compat{*/@supports not ((padding-block:1px)){.wrap{padding-top:22px;padding-bottom:22px}}/*}compat*/
 [hidden]{display:none!important}
 
 /*═════════════════════════ екран входу ═══════════════════════════════════*/
 .card{background:var(--card);border:1px solid var(--edge);border-radius:var(--rad);
-  box-shadow:var(--sh2);padding:clamp(18px,calc(2.6*var(--u)),30px)}
+  box-shadow:var(--sh2);padding:clamp(18px,calc(2.6*var(--u)),30px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.card{padding:18px}}/*}compat*/
 .card+.card{margin-top:16px}
-.rules{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:9px}
+.rules{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:9px}/*compat{*/@supports not ((gap:1px)){.rules{grid-gap:9px}}/*}compat*/
 .rules li{display:flex;gap:10px;align-items:flex-start;
-  font-size:clamp(14px,calc(1.55*var(--u)),18px);line-height:1.42}
+  font-size:clamp(14px,calc(1.55*var(--u)),18px);line-height:1.42}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.rules li{font-size:14px}}/*}compat*//*compat{*/.no-fgap .rules li>*{margin-right:10px}.no-fgap .rules li>*:last-child{margin-right:0}/*}compat*/
 .rules li::before{content:"";flex:0 0 auto;width:9px;height:9px;margin-top:.45em;
   border-radius:3px;background:var(--pen)}
 .rules li.no::before{background:var(--marker)}
 
 label{display:block;font-family:"Unbounded",sans-serif;font-weight:600;color:var(--soft);
   font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase;
-  margin:0 0 6px}
+  margin:0 0 6px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){label{font-size:10px}}/*}compat*/
 input[type=text],select{
   width:100%;padding:12px 14px;border:2px solid var(--edge);border-radius:10px;
   background:var(--paper);color:var(--ink);font:inherit;
-  font-size:clamp(16px,calc(1.9*var(--u)),21px);font-weight:600}
+  font-size:clamp(16px,calc(1.9*var(--u)),21px);font-weight:600}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){input[type=text],select{font-size:16px}}/*}compat*/
 input[type=text]:focus,select:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 4px var(--pen-soft)}
 select:disabled{opacity:.55}
 #fam-note{margin-top:8px}
@@ -139,7 +137,7 @@ select:disabled{opacity:.55}
   font-size:clamp(12px,calc(1.3*var(--u)),15px);
   padding:14px 26px;border-radius:10px;border:2px solid var(--pen);
   background:var(--pen);color:var(--on-pen);box-shadow:var(--sh1);
-  transition:transform .12s, box-shadow .12s}
+  transition:transform .12s, box-shadow .12s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.btn{font-size:12px}}/*}compat*//*compat{*/.no-fgap .btn>*{margin-right:10px}.no-fgap .btn>*:last-child{margin-right:0}/*}compat*/
 .btn:hover{transform:translateY(-1px);box-shadow:var(--sh2)}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 .btn.ghost{background:transparent;color:var(--pen)}
@@ -148,11 +146,11 @@ select:disabled{opacity:.55}
 #bar{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
   padding:10px 0;background:color-mix(in oklab,var(--paper) 88%,transparent);
   backdrop-filter:blur(8px);border-bottom:1px solid var(--edge);
-  padding-top:calc(10px + env(safe-area-inset-top,0px))}
+  padding-top:calc(10px + env(safe-area-inset-top,0px))}/*compat{*/@supports not ((padding:env(safe-area-inset-top,1px))){#bar{padding-top:calc(10px + 0px)}}/*}compat*//*compat{*/@supports not ((color:color-mix(in srgb,red,blue))){#bar{background:var(--paper)}}/*}compat*//*compat{*/.no-fgap #bar>*{margin-right:10px;margin-bottom:10px}/*}compat*/
 .chip{display:inline-flex;align-items:center;gap:7px;
   border:1.5px solid var(--edge);background:var(--card);border-radius:999px;
   padding:6px 13px;font-family:"Unbounded",sans-serif;font-weight:600;
-  font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase}
+  font-size:clamp(10px,calc(1.05*var(--u)),13px);letter-spacing:.08em;text-transform:uppercase}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.chip{font-size:10px}}/*}compat*//*compat{*/.no-fgap .chip>*{margin-right:7px}.no-fgap .chip>*:last-child{margin-right:0}/*}compat*/
 .chip .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-variant-numeric:tabular-nums;
   letter-spacing:0;font-size:1.12em}
 #clock.warn{border-color:var(--sun);color:var(--sun);background:var(--sun-soft)}
@@ -161,7 +159,7 @@ select:disabled{opacity:.55}
 #esc.on{border-color:var(--marker);color:var(--marker);background:var(--marker-soft)}
 #bar .sp{flex:1 1 auto}
 
-#rail{display:flex;gap:4px;margin:12px 0 18px}
+#rail{display:flex;gap:4px;margin:12px 0 18px}/*compat{*/.no-fgap #rail>*{margin-right:4px}.no-fgap #rail>*:last-child{margin-right:0}/*}compat*/
 #rail i{flex:1 1 0;height:6px;border-radius:3px;background:var(--edge)}
 #rail i.done{background:var(--pen)}
 #rail i.now{background:var(--pen);box-shadow:0 0 0 3px var(--pen-soft)}
@@ -169,12 +167,12 @@ select:disabled{opacity:.55}
 /*═════════════════════════ завдання ══════════════════════════════════════*/
 #qcard{position:relative;background:var(--card);border:1px solid var(--edge);
   border-radius:var(--rad);box-shadow:var(--sh2);overflow:hidden}
-#qcard::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--pen)}
-.qhead{display:flex;align-items:baseline;gap:12px;padding:20px 22px 0}
+#qcard::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--pen)}/*compat{*/@supports not ((inset:0)){#qcard::before{top:0;right:0;bottom:auto;left:0}}/*}compat*/
+.qhead{display:flex;align-items:baseline;gap:12px;padding:20px 22px 0}/*compat{*/.no-fgap .qhead>*{margin-right:12px}.no-fgap .qhead>*:last-child{margin-right:0}/*}compat*/
 .qno{font-family:"Unbounded",sans-serif;font-weight:800;color:var(--pen);
-  font-size:clamp(20px,calc(2.6*var(--u)),30px);line-height:1}
+  font-size:clamp(20px,calc(2.6*var(--u)),30px);line-height:1}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.qno{font-size:20px}}/*}compat*/
 .qbal{font-family:"Unbounded",sans-serif;font-weight:600;color:var(--soft);
-  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase}
+  font-size:clamp(10px,calc(1.02*var(--u)),13px);letter-spacing:.14em;text-transform:uppercase}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.qbal{font-size:10px}}/*}compat*/
 
 /* Полотно завдання. Тексту в DOM немає — тільки пікселі.
    .pane — обов'язковий відносний контейнер: другий кадр лежить ПОВЕРХ
@@ -199,16 +197,16 @@ select:disabled{opacity:.55}
    overflow:hidden тут обов'язковий: шар зі смугами навмисно більший за
    рамку (inset:-150px), інакше зсув оголював би його край. */
 .pane .veil{position:absolute;pointer-events:none;overflow:hidden;border-radius:4px}
-.pane .veil i{position:absolute;inset:-150px;display:block;will-change:transform}
+.pane .veil i{position:absolute;inset:-150px;display:block;will-change:transform}/*compat{*/@supports not ((inset:0)){.pane .veil i{top:-150px;right:-150px;bottom:-150px;left:-150px}}/*}compat*/
 
 
 /*───── варіанти: один клік — і все ─────*/
-#opts{display:grid;gap:10px;padding:16px 22px 22px}
+#opts{display:grid;gap:10px;padding:16px 22px 22px}/*compat{*/@supports not ((gap:1px)){#opts{grid-gap:10px}}/*}compat*/
 @media (min-width:760px){ #opts{grid-template-columns:1fr 1fr} }
 .opt{position:relative;display:flex;align-items:center;gap:14px;cursor:pointer;
   border:2px solid var(--edge);background:var(--paper);border-radius:10px;
   padding:12px 16px;text-align:left;font:inherit;color:inherit;width:100%;
-  transition:border-color .12s, background .12s, transform .1s}
+  transition:border-color .12s, background .12s, transform .1s}/*compat{*/.no-fgap .opt>*{margin-right:14px}.no-fgap .opt>*:last-child{margin-right:0}/*}compat*/
 .opt .k{flex:0 0 auto;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
   background:var(--card);border:1.5px solid var(--edge);
   font-family:"Unbounded",sans-serif;font-weight:800;font-size:15px;color:var(--soft)}
@@ -221,7 +219,7 @@ select:disabled{opacity:.55}
 #opts.locked .opt:not(.sel){opacity:.4}
 
 .note{display:flex;gap:9px;align-items:center;margin:14px 2px 0;color:var(--soft);
-  font-size:clamp(12px,calc(1.3*var(--u)),15px)}
+  font-size:clamp(12px,calc(1.3*var(--u)),15px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.note{font-size:12px}}/*}compat*//*compat{*/.no-fgap .note>*{margin-right:9px}.no-fgap .note>*:last-child{margin-right:0}/*}compat*/
 .note b{color:var(--marker)}
 
 /*───── панель підбирання смужки (тільки для вчителя) ─────*/
@@ -229,7 +227,7 @@ select:disabled{opacity:.55}
 .tune input[type=range]{width:100%;margin:10px 0 0;accent-color:var(--pen);height:26px}
 .tune label{text-transform:none;letter-spacing:.04em;color:var(--ink);
   font-family:"Manrope",sans-serif;font-weight:600;
-  font-size:clamp(13px,calc(1.5*var(--u)),17px)}
+  font-size:clamp(13px,calc(1.5*var(--u)),17px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.tune label{font-size:13px}}/*}compat*/
 .tune label b{color:var(--pen);font-family:"JetBrains Mono",monospace;
   font-variant-numeric:tabular-nums;font-size:1.15em}
 .tune .note{display:block}
@@ -240,10 +238,10 @@ select:disabled{opacity:.55}
 
 /*═════════════════════════ щит: втрата фокусу / PrintScreen ══════════════*/
 #shield{position:fixed;inset:0;z-index:900;display:grid;place-items:center;
-  background:var(--paper);text-align:center;padding:24px}
+  background:var(--paper);text-align:center;padding:24px}/*compat{*/@supports not ((inset:0)){#shield{top:0;right:0;bottom:0;left:0}}/*}compat*/
 #shield .in{max-width:34ch}
 #shield .big{font-family:"Unbounded",sans-serif;font-weight:800;color:var(--marker);
-  font-size:clamp(24px,calc(3.6*var(--u)),42px);line-height:1.1;margin:0 0 12px}
+  font-size:clamp(24px,calc(3.6*var(--u)),42px);line-height:1.1;margin:0 0 12px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){#shield .big{font-size:24px}}/*}compat*/
 /* коли щит піднято — під ним нічого не видно й нічого не клікнути */
 body.guard #app{filter:blur(26px) saturate(.25);pointer-events:none}
 body:not(.guard) #shield{display:none}
@@ -253,19 +251,19 @@ body:not(.guard) #shield{display:none}
    знімок і на будь-яке фото, з якого боку його не роби. */
 #wm{position:fixed;inset:-40%;z-index:800;pointer-events:none;overflow:hidden;
   opacity:.06;transform:rotate(-24deg);
-  display:flex;flex-direction:column;justify-content:center;gap:1.9em}
+  display:flex;flex-direction:column;justify-content:center;gap:1.9em}/*compat{*/@supports not ((inset:0)){#wm{top:-40%;right:-40%;bottom:-40%;left:-40%}}/*}compat*//*compat{*/.no-fgap #wm>*{margin-bottom:1.9em}.no-fgap #wm>*:last-child{margin-bottom:0}/*}compat*/
 #wm span{font-family:"Unbounded",sans-serif;font-weight:800;white-space:nowrap;
   font-size:clamp(15px,calc(1.9*var(--u)),23px);letter-spacing:.14em;
-  line-height:1;text-align:center}
+  line-height:1;text-align:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){#wm span{font-size:15px}}/*}compat*/
 #wm span:nth-child(even){transform:translateX(-7%)}
 
 /*═════════════════════════ підсумок ══════════════════════════════════════*/
 .score{font-family:"Unbounded",sans-serif;font-weight:800;color:var(--pen);
-  font-size:clamp(46px,calc(8*var(--u)),96px);line-height:1;letter-spacing:-.03em}
+  font-size:clamp(46px,calc(8*var(--u)),96px);line-height:1;letter-spacing:-.03em}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.score{font-size:46px}}/*}compat*/
 .codebox{margin-top:16px;padding:14px 16px;border:2px dashed var(--pen);border-radius:10px;
   background:var(--pen-soft);font-family:"JetBrains Mono",monospace;font-weight:700;
   font-size:clamp(13px,calc(1.5*var(--u)),18px);word-break:break-all;
-  -webkit-user-select:text;user-select:text}
+  -webkit-user-select:text;user-select:text}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.codebox{font-size:13px}}/*}compat*/
 
 /*───── розбір помилок (приходить від приймача, тільки самостійна) ─────
   Текст тут ВИДІЛЯЄТЬСЯ і копіюється, на відміну від решти сторінки:
@@ -275,9 +273,9 @@ body:not(.guard) #shield{display:none}
 .fix{margin-top:14px;padding:14px 18px;border-radius:10px;
   background:var(--sun-soft);border:1px solid var(--edge)}
 .fixno{margin:0 0 8px;font-family:"Unbounded",sans-serif;font-weight:700;
-  color:var(--sun);font-size:clamp(14px,calc(1.7*var(--u)),20px);letter-spacing:-.01em}
-.fix ol{margin:0;padding-left:1.45em;display:grid;gap:7px}
-.fix li{font-size:clamp(14px,calc(1.6*var(--u)),19px);line-height:1.45;color:var(--ink)}
+  color:var(--sun);font-size:clamp(14px,calc(1.7*var(--u)),20px);letter-spacing:-.01em}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.fixno{font-size:14px}}/*}compat*/
+.fix ol{margin:0;padding-left:1.45em;display:grid;gap:7px}/*compat{*/@supports not ((gap:1px)){.fix ol{grid-gap:7px}}/*}compat*/
+.fix li{font-size:clamp(14px,calc(1.6*var(--u)),19px);line-height:1.45;color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.fix li{font-size:14px}}/*}compat*/
 .fix li::marker{color:var(--soft);font-weight:700}
 /* останній крок — це «Відповідь: …», і його шукають очима першим */
 .fix li:last-child{font-weight:800;color:var(--check)}
@@ -286,6 +284,7 @@ body:not(.guard) #shield{display:none}
 /*═════════════════════════ друк заборонено ═══════════════════════════════*/
 @media print{ html,body{display:none!important;visibility:hidden!important} }
 </style>
+<script id="compat-fgap">/* флекс-gap з Safari 14.1: де його нема, стилі дають дітям відступи (tools/сумісність.py) */(function(){try{var d=document.createElement("div"),r=document.documentElement;d.style.cssText="display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden";d.appendChild(document.createElement("div"));d.appendChild(document.createElement("div"));r.appendChild(d);var ok=d.scrollHeight===1;r.removeChild(d);if(!ok)r.className+=" no-fgap";}catch(e){}})();</script>
 </head>
 <body class="lvl-max">
 
@@ -1888,7 +1887,8 @@ function малюватиПравила(){
   (Т.правила || []).forEach(([клас, текст]) => {
     const li = document.createElement('li');
     if (клас) li.className = клас;
-    li.innerHTML = текст;
+    /* в обгортці: інакше li-флекс розкладав би <b> і текст у дві колонки */
+    li.innerHTML = '<span>' + текст + '</span>';
     ul.appendChild(li);
   });
 }

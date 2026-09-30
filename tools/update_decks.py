@@ -31,6 +31,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import сумісність  # noqa: E402  (запасні стилі для старих браузерів)
+
 ROOT = Path(__file__).resolve().parent.parent
 TPL = ROOT / "_Шаблони"
 ENGINE_CSS = TPL / "Двигун — стилі.css"
@@ -219,7 +222,12 @@ def subject_of(path):
 
 # ─────────────────────────── перебудова ───────────────────────────
 def rebuild(path, base_keys, css_engine, js_engine, eng):
-    html = path.read_text(encoding="utf-8")
+    """Вбудувати свіжий двигун і дописати запасні стилі для старих браузерів."""
+    html = сумісність.strip(path.read_text(encoding="utf-8"))
+    return сумісність.process_html(_rebuild(path, html, base_keys, css_engine, js_engine, eng))[0]
+
+
+def _rebuild(path, html, base_keys, css_engine, js_engine, eng):
 
     if CSS_B in html:                      # вже оновлений — міняємо лише двигун
         html = re.sub(re.escape(CSS_B) + r".*?" + re.escape(CSS_E),

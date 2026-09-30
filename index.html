@@ -29,7 +29,7 @@
   --sh2:0 4px 10px -3px oklch(24% .04 var(--h)/.10), 0 2px 4px -2px oklch(24% .04 var(--h)/.06);
   --sh3:0 18px 40px -16px oklch(24% .04 var(--h)/.22);
   color-scheme:light;
-}
+}/*compat{*/@supports not ((color:oklch(50% .1 200))){:root{--paper:#f7fafe;--card:#ffffff;--sunk:#f0f4fa;--grid:#d1dceb;--ink:#152030;--soft:#5c6776;--edge:#d8dfe8;--pen:#005ccc;--pen-soft:#e2f2ff;--on-pen:#ffffff;--check:#0a7e3a;--check-soft:#def8e2;--marker:#d01a34;--marker-soft:#ffe6e4;--sun:#a46e00;--sun-soft:#fff1cc;--note:#794db6;--note-soft:#f4ebff;--sh1:0 1px 2px rgba(19,32,50,0.06);--sh2:0 4px 10px -3px rgba(19,32,50,0.1), 0 2px 4px -2px rgba(19,32,50,0.06);--sh3:0 18px 40px -16px rgba(19,32,50,0.22)}}/*}compat*/
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ color-scheme:dark;
   --paper:oklch(17% .022 var(--h)); --card:oklch(21.5% .025 var(--h)); --sunk:oklch(19% .022 var(--h));
   --grid:oklch(30% .03 var(--h)); --ink:oklch(95% .015 var(--h)); --soft:oklch(72% .025 var(--h));
@@ -43,7 +43,7 @@
   --sun:oklch(84% .14 88);     --sun-soft:oklch(29% .06 78);
   --note:oklch(80% .13 300);   --note-soft:oklch(29% .06 300);
   --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
-}}
+}/*compat{*/@supports not ((color:oklch(50% .1 200))){:root:not([data-theme="light"]){--paper:#091019;--card:#121a25;--sunk:#0e141e;--grid:#242e3d;--ink:#e8eff9;--soft:#9ba5b5;--edge:#28313f;--pen:#82b9ff;--pen-soft:#132b4d;--on-pen:#0a1018;--check:#66da85;--check-soft:#0f3118;--marker:#ff7d7c;--marker-soft:#481b1b;--sun:#f0c551;--sun-soft:#3b2700;--note:#cbaaff;--note-soft:#302445}}/*}compat*/}
 :root[data-theme="dark"]{ color-scheme:dark;
   --paper:oklch(17% .022 var(--h)); --card:oklch(21.5% .025 var(--h)); --sunk:oklch(19% .022 var(--h));
   --grid:oklch(30% .03 var(--h)); --ink:oklch(95% .015 var(--h)); --soft:oklch(72% .025 var(--h));
@@ -57,13 +57,9 @@
   --sun:oklch(84% .14 88);     --sun-soft:oklch(29% .06 78);
   --note:oklch(80% .13 300);   --note-soft:oklch(29% .06 300);
   --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
-}
-@supports not (color: oklch(50% .1 200)){
-  :root{--paper:#FBFAF7;--card:#fff;--sunk:#F3F5F8;--grid:#C9D8E8;--ink:#1B2430;--soft:#5B6879;
-        --edge:#DDE4EC;--pen:#2C4BC9;--pen-soft:#E7ECFC;--on-pen:#fff;--check:#1B7F4B;--check-soft:#E4F3EA;
-        --marker:#D7263D;--marker-soft:#FCEAEC;--sun:#B57C00;--sun-soft:#FDF3DC;--note:#6B4FA8;--note-soft:#EFEAFA;
-        --sh1:0 1px 0 #DDE4EC;--sh2:0 2px 6px rgba(27,36,48,.10);--sh3:0 14px 34px rgba(27,36,48,.20)}
-}
+}/*compat{*/@supports not ((color:oklch(50% .1 200))){:root[data-theme="dark"]{--paper:#091019;--card:#121a25;--sunk:#0e141e;--grid:#242e3d;--ink:#e8eff9;--soft:#9ba5b5;--edge:#28313f;--pen:#82b9ff;--pen-soft:#132b4d;--on-pen:#0a1018;--check:#66da85;--check-soft:#0f3118;--marker:#ff7d7c;--marker-soft:#481b1b;--sun:#f0c551;--sun-soft:#3b2700;--note:#cbaaff;--note-soft:#302445}}/*}compat*/
+/* Запасну палітру для рушіїв без oklch() (Chrome < 111, Safari < 15.4) дописує
+   tools/сумісність.py — з точним тоном предмета сторінки. */
 
 /* Кожен предмет має свій тон. Власні властивості обчислюються там, де оголошені,
    тож у межах .subj їх треба перерахувати — інакше --h нижче нічого не змінює. */
@@ -86,24 +82,25 @@ img{max-width:100%}
 [hidden]{display:none!important}
 .wrap{max-width:1220px;margin:0 auto;
   padding:calc(clamp(20px,4vw,52px) + env(safe-area-inset-top,0px)) clamp(14px,4vw,44px)
-          calc(clamp(40px,6vw,80px) + env(safe-area-inset-bottom,0px))}
+          calc(clamp(40px,6vw,80px) + env(safe-area-inset-bottom,0px))}/*compat{*/@supports not ((width:clamp(1px,2px,3px)) and (padding:env(safe-area-inset-top,1px))){.wrap{padding:calc(20px + 0px) 14px
+          calc(40px + 0px)}}/*}compat*/
 
 h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-   font-size:clamp(34px,6vw,72px);line-height:1.02;letter-spacing:-.03em;margin:0;text-wrap:balance}
+   font-size:clamp(34px,6vw,72px);line-height:1.02;letter-spacing:-.03em;margin:0;text-wrap:balance}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){h1{font-size:34px}}/*}compat*/
 .eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-   font-size:clamp(11px,1.15vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 12px}
+   font-size:clamp(11px,1.15vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--pen);margin:0 0 12px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eyebrow{font-size:11px}}/*}compat*/
 .lede{font-size:clamp(16px,2vw,23px);color:var(--soft);line-height:1.45;
-   margin:clamp(12px,2vw,20px) 0 0;max-width:48ch}
+   margin:clamp(12px,2vw,20px) 0 0;max-width:48ch}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.lede{font-size:16px;margin:12px 0 0}}/*}compat*/
 
 /* ─────────── керування ─────────── */
 .controls{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,12px);align-items:center;
-  margin:clamp(24px,4vw,40px) 0 clamp(18px,2.6vw,28px)}
-.chips{display:flex;flex-wrap:wrap;gap:7px}
+  margin:clamp(24px,4vw,40px) 0 clamp(18px,2.6vw,28px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.controls{gap:8px;margin:24px 0 18px}}/*}compat*//*compat{*/.no-fgap .controls>*{margin-right:8px;margin-bottom:8px}/*}compat*/
+.chips{display:flex;flex-wrap:wrap;gap:7px}/*compat{*/.no-fgap .chips>*{margin-right:7px;margin-bottom:7px}/*}compat*/
 .chip{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
   font-size:clamp(13px,1.4vw,16px);letter-spacing:.03em;
   border:2px solid var(--edge);background:var(--card);color:var(--ink);
   border-radius:99px;padding:10px 17px;cursor:pointer;line-height:1;box-shadow:var(--sh1);
-  transition:background .15s,border-color .15s,color .15s,transform .1s}
+  transition:background .15s,border-color .15s,color .15s,transform .1s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.chip{font-size:13px}}/*}compat*/
 .chip:hover{border-color:var(--pen)}
 .chip:active{transform:translateY(1px)}
 .chip[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:var(--on-pen)}
@@ -112,7 +109,7 @@ h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
 .search{flex:1 1 230px;min-width:190px;position:relative}
 #q{width:100%;font:inherit;font-size:clamp(15px,1.6vw,18px);color:inherit;
   border:2px solid var(--edge);border-radius:99px;background:var(--card);
-  padding:11px 46px 11px 18px;box-shadow:var(--sh1)}
+  padding:11px 46px 11px 18px;box-shadow:var(--sh1)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){#q{font-size:15px}}/*}compat*/
 #q::placeholder{color:var(--soft)}
 #q:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 3px var(--pen-soft)}
 .search kbd{position:absolute;right:13px;top:50%;transform:translateY(-50%);pointer-events:none;
@@ -127,30 +124,30 @@ h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
 #found{font-size:14px;color:var(--soft);white-space:nowrap}
 
 /* ─────────── групи ─────────── */
-.cls{margin:0 0 clamp(26px,4vw,44px)}
+.cls{margin:0 0 clamp(26px,4vw,44px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.cls{margin:0 0 26px}}/*}compat*/
 .cls > h2{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
-  font-size:clamp(24px,3.4vw,40px);letter-spacing:-.02em;margin:0 0 4px;line-height:1.1}
-.cls > .sub{font-size:clamp(13px,1.4vw,16px);color:var(--soft);margin:0 0 clamp(14px,2vw,20px)}
+  font-size:clamp(24px,3.4vw,40px);letter-spacing:-.02em;margin:0 0 4px;line-height:1.1}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.cls > h2{font-size:24px}}/*}compat*/
+.cls > .sub{font-size:clamp(13px,1.4vw,16px);color:var(--soft);margin:0 0 clamp(14px,2vw,20px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.cls > .sub{font-size:13px;margin:0 0 14px}}/*}compat*/
 
-.subj{margin:0 0 clamp(16px,2.4vw,26px)}
+.subj{margin:0 0 clamp(16px,2.4vw,26px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.subj{margin:0 0 16px}}/*}compat*/
 .subj > h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
   font-size:clamp(12px,1.25vw,15px);letter-spacing:.14em;text-transform:uppercase;
-  color:var(--soft);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+  color:var(--soft);margin:0 0 12px;display:flex;align-items:center;gap:10px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.subj > h3{font-size:12px}}/*}compat*//*compat{*/.no-fgap .subj > h3>*{margin-right:10px}.no-fgap .subj > h3>*:last-child{margin-right:0}/*}compat*/
 .subj > h3::after{content:"";flex:1;height:2px;background:var(--edge);border-radius:2px}
 .subj > h3 .swatch{width:11px;height:11px;border-radius:50%;background:var(--pen);flex:none}
 
 /* D6 · тема КТП */
-.theme{margin:0 0 clamp(14px,2vw,22px)}
-.theme > .th{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 9px}
+.theme{margin:0 0 clamp(14px,2vw,22px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.theme{margin:0 0 14px}}/*}compat*/
+.theme > .th{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 9px}/*compat{*/.no-fgap .theme > .th>*{margin-right:12px;margin-bottom:12px}/*}compat*/
 .theme > .th .nm{font-family:"Unbounded",sans-serif;font-weight:600;
-  font-size:clamp(13px,1.45vw,17px);line-height:1.2}
+  font-size:clamp(13px,1.45vw,17px);line-height:1.2}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.theme > .th .nm{font-size:13px}}/*}compat*/
 .theme > .th .cnt{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--soft);white-space:nowrap}
-.theme > .bar{display:flex;gap:3px;margin:0 0 12px}
+.theme > .bar{display:flex;gap:3px;margin:0 0 12px}/*compat{*/.no-fgap .theme > .bar>*{margin-right:3px}.no-fgap .theme > .bar>*:last-child{margin-right:0}/*}compat*/
 .theme > .bar i{height:6px;border-radius:99px;background:var(--edge)}
 .theme > .bar i.d{background:var(--pen)}
 
 .cards{display:grid;gap:clamp(10px,1.5vw,16px);
-  grid-template-columns:repeat(auto-fill,minmax(clamp(210px,23vw,280px),1fr))}
+  grid-template-columns:repeat(auto-fill,minmax(clamp(210px,23vw,280px),1fr))}/*compat{*/@supports not ((width:clamp(1px,2px,3px)) and (gap:1px)){.cards{grid-gap:10px}}/*}compat*//*compat{*/@supports not ((width:clamp(1px,2px,3px))){.cards{gap:10px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}}/*}compat*/
 
 /* D1 · картка з прев'ю */
 .card{display:flex;flex-direction:column;text-decoration:none;color:inherit;
@@ -163,21 +160,26 @@ h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),
                    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:17px 17px}
+/* aspect-ratio лише з Safari 15: без нього мініатюра мала б нульову висоту */
+@supports not (aspect-ratio:1){
+  .card .thumb{height:0;padding-top:56.25%}
+  .card .thumb .glow{height:0;padding-top:56%}
+}
 .card .thumb .mini{position:absolute;inset:0;padding:11px 13px;display:flex;flex-direction:column;
-  justify-content:center;gap:6px}
+  justify-content:center;gap:6px}/*compat{*/@supports not ((inset:0)){.card .thumb .mini{top:0;right:0;bottom:0;left:0}}/*}compat*//*compat{*/.no-fgap .card .thumb .mini>*{margin-bottom:6px}.no-fgap .card .thumb .mini>*:last-child{margin-bottom:0}/*}compat*/
 .card .thumb .mini b{font-family:"Unbounded",sans-serif;font-weight:800;letter-spacing:-.015em;
   font-size:clamp(12px,1.35vw,15px);line-height:1.15;
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.card .thumb .mini b{font-size:12px}}/*}compat*/
 .card .thumb .mini i{display:block;height:4px;border-radius:99px;background:var(--edge)}
 .card .thumb .glow{position:absolute;inset:auto -18% -48% auto;width:56%;aspect-ratio:1;border-radius:50%;
-  background:radial-gradient(circle,var(--pen) 0,transparent 68%);opacity:.14}
-.card .in{padding:12px 15px 15px;display:flex;flex-direction:column;gap:6px;flex:1}
+  background:radial-gradient(circle,var(--pen) 0,transparent 68%);opacity:.14}/*compat{*/@supports not ((inset:0)){.card .thumb .glow{top:auto;right:-18%;bottom:-48%;left:auto}}/*}compat*/
+.card .in{padding:12px 15px 15px;display:flex;flex-direction:column;gap:6px;flex:1}/*compat{*/.no-fgap .card .in>*{margin-bottom:6px}.no-fgap .card .in>*:last-child{margin-bottom:0}/*}compat*/
 .card .k{font-family:"JetBrains Mono",monospace;font-weight:700;
   font-size:clamp(11px,1.15vw,13px);letter-spacing:.14em;text-transform:uppercase;
-  color:var(--pen);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  color:var(--pen);display:flex;align-items:center;gap:8px;flex-wrap:wrap}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.card .k{font-size:11px}}/*}compat*//*compat{*/.no-fgap .card .k>*{margin-right:8px;margin-bottom:8px}/*}compat*/
 .card .t{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
-  font-size:clamp(15px,1.75vw,19px);line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
-.card .m{font-size:clamp(12px,1.25vw,14px);color:var(--soft);margin-top:auto;padding-top:4px}
+  font-size:clamp(15px,1.75vw,19px);line-height:1.2;letter-spacing:-.01em;text-wrap:balance}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.card .t{font-size:15px}}/*}compat*/
+.card .m{font-size:clamp(12px,1.25vw,14px);color:var(--soft);margin-top:auto;padding-top:4px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.card .m{font-size:12px}}/*}compat*/
 
 /* урок, який проводили очно, і урок, якого ще немає */
 .card.off,.card.soon{cursor:default;border-style:dashed;background:transparent;box-shadow:none}
@@ -188,7 +190,7 @@ h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
 /* D2 · позначки */
 .flag{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
   font-size:clamp(9px,1vw,11px);letter-spacing:.14em;text-transform:uppercase;
-  border-radius:99px;padding:3px 9px;line-height:1.5;white-space:nowrap;flex:none;border:1.5px solid}
+  border-radius:99px;padding:3px 9px;line-height:1.5;white-space:nowrap;flex:none;border:1.5px solid}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.flag{font-size:9px}}/*}compat*/
 .flag.new{background:var(--sun-soft);color:var(--sun);border-color:var(--sun)}
 .flag.seen{background:var(--check-soft);color:var(--check);border-color:var(--check)}
 .flag.live{background:var(--marker-soft);color:var(--marker);border-color:var(--marker)}
@@ -196,11 +198,11 @@ h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
 
 mark{background:var(--sun-soft);color:var(--sun);border-radius:4px;padding:0 2px;font-weight:800}
 
-#empty{display:none;font-size:clamp(16px,2vw,22px);color:var(--soft);margin:30px 0}
+#empty{display:none;font-size:clamp(16px,2vw,22px);color:var(--soft);margin:30px 0}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){#empty{font-size:16px}}/*}compat*/
 #empty.on{display:block}
 
 footer{margin-top:clamp(30px,5vw,56px);border-top:2px solid var(--edge);padding-top:18px;
-  font-size:clamp(13px,1.4vw,16px);color:var(--soft);line-height:1.6}
+  font-size:clamp(13px,1.4vw,16px);color:var(--soft);line-height:1.6}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){footer{margin-top:30px;font-size:13px}}/*}compat*/
 footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge);border-bottom-width:3px;
   border-radius:5px;background:var(--card);padding:1px 6px;font-size:.85em;font-weight:700;color:var(--ink)}
 
@@ -218,10 +220,10 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 #kod{width:100%;padding:16px 18px;border:2px solid var(--edge);border-radius:14px;
   background:var(--card);color:var(--ink);box-shadow:var(--sh1);
   font-family:"JetBrains Mono",ui-monospace,monospace;font-size:clamp(20px,3.4vw,30px);
-  font-weight:700;letter-spacing:.34em;text-transform:uppercase;text-align:center}
+  font-weight:700;letter-spacing:.34em;text-transform:uppercase;text-align:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){#kod{font-size:20px}}/*}compat*/
 #kod::placeholder{letter-spacing:.06em;font-size:.6em;color:var(--soft);text-transform:none}
 #kod:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 4px var(--pen-soft)}
-.gatebtns{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0;align-items:center}
+.gatebtns{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0;align-items:center}/*compat{*/.no-fgap .gatebtns>*{margin-right:10px;margin-bottom:10px}/*}compat*/
 
 /* Кнопки в одному ладу з наявними чипами: та сама гарнітура, та сама
    пігулкова форма, та сама тінь. Інакше ворота виглядали б чужими. */
@@ -229,7 +231,7 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   font-size:clamp(13px,1.4vw,16px);letter-spacing:.03em;line-height:1;
   padding:14px 26px;border-radius:99px;box-shadow:var(--sh1);
   border:2px solid var(--pen);background:var(--pen);color:var(--on-pen);
-  transition:background .15s,border-color .15s,color .15s,transform .1s,box-shadow .15s}
+  transition:background .15s,border-color .15s,color .15s,transform .1s,box-shadow .15s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.btn{font-size:13px}}/*}compat*/
 .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:var(--sh3)}
 .btn:active:not(:disabled){transform:translateY(1px);box-shadow:var(--sh1)}
 .btn:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
@@ -248,7 +250,7 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   font-size:clamp(12px,1.3vw,15px);letter-spacing:.03em;line-height:1;cursor:pointer;
   border:2px solid var(--edge);border-radius:99px;background:var(--card);color:var(--ink);
   padding:11px 18px;box-shadow:var(--sh1);white-space:nowrap;
-  transition:border-color .15s,color .15s,transform .1s}
+  transition:border-color .15s,color .15s,transform .1s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){#plan-btn{font-size:12px}}/*}compat*/
 #plan-btn:hover{border-color:var(--pen);color:var(--pen)}
 #plan-btn:active{transform:translateY(1px)}
 #plan-btn:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
@@ -256,10 +258,10 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 
 /* ── смуга робіт ── */
 .sect{font-size:1.05rem;margin:26px 0 10px}
-#works-list{display:grid;gap:10px}
+#works-list{display:grid;gap:10px}/*compat{*/@supports not ((gap:1px)){#works-list{grid-gap:10px}}/*}compat*/
 .work{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;
   border:2px solid var(--pen);background:var(--card);text-decoration:none;color:inherit;
-  box-shadow:var(--sh1);transition:transform .16s,box-shadow .16s,border-color .16s}
+  box-shadow:var(--sh1);transition:transform .16s,box-shadow .16s,border-color .16s}/*compat{*/.no-fgap .work>*{margin-right:14px}.no-fgap .work>*:last-child{margin-right:0}/*}compat*/
 .work:hover{transform:translateY(-3px);box-shadow:var(--sh3)}
 .work .kind{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
   color:#fff;background:var(--pen);border-radius:999px;padding:4px 10px;white-space:nowrap}
@@ -271,14 +273,14 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 /* ── картка уроку в плоскому списку ──
    Стара картка була вертикальною (з прев'ю теми зверху). Тепер список
    плоский і довгий, тож рядок читається краще: номер — назва — позначки. */
-#list{display:grid;gap:8px}
-#list .card{flex-direction:row;align-items:center;gap:14px;padding:12px 16px}
+#list{display:grid;gap:8px}/*compat{*/@supports not ((gap:1px)){#list{grid-gap:8px}}/*}compat*/
+#list .card{flex-direction:row;align-items:center;gap:14px;padding:12px 16px}/*compat{*/.no-fgap #list .card>*{margin-right:14px;margin-bottom:14px}/*}compat*/
 #list .card .num{color:var(--soft);font-size:.85rem;white-space:nowrap;min-width:5.2rem}
 #list .card .grow{flex:1 1 auto;min-width:0}
 #list .card .tag{white-space:nowrap}
 #list .card.offline{border-style:dashed}
 @media (max-width:520px){
-  #list .card{flex-wrap:wrap;gap:6px 12px}
+  #list .card{flex-wrap:wrap;gap:6px 12px}/*compat{*/.no-fgap #list .card>*{margin-right:12px;margin-bottom:6px}/*}compat*/
   #list .card .grow{flex-basis:100%;order:3}
 }
 
@@ -288,6 +290,7 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 #plan ol{margin:0;padding-left:1.4em;color:var(--soft)}
 #plan li.done{color:var(--ink);text-decoration:line-through;opacity:.55}
 </style>
+<script id="compat-fgap">/* флекс-gap з Safari 14.1: де його нема, стилі дають дітям відступи (tools/сумісність.py) */(function(){try{var d=document.createElement("div"),r=document.documentElement;d.style.cssText="display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden";d.appendChild(document.createElement("div"));d.appendChild(document.createElement("div"));r.appendChild(d);var ok=d.scrollHeight===1;r.removeChild(d);if(!ok)r.className+=" no-fgap";}catch(e){}})();</script>
 </head>
 <body>
 <div class="wrap">

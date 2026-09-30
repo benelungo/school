@@ -32,6 +32,7 @@
 !/tools/update_decks.py
 !/tools/check_decks.py
 !/tools/components.py
+!/tools/сумісність.py
 
 # 4. Повертаємо презентації для учнів — і тільки їх.
 #    Учительські «Урок N — презентація.html» під цей шаблон не підпадають.

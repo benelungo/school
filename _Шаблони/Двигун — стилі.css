@@ -74,14 +74,8 @@
   --or:oklch(82% .15 340);          --or-soft:oklch(28% .07 340); --or-ink:oklch(17% .02 340);
   --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
 }
-/* Старі рушії без oklch() бачать рівно ту палітру, що була до оновлення. */
-@supports not (color: oklch(50% .1 200)){
-  :root{--paper:#FBFAF7;--card:#FFFFFF;--grid:#C9D8E8;--ink:#1B2430;--soft:#5B6879;--edge:#DDE4EC;
-        --pen:#2C4BC9;--pen-soft:#E7ECFC;--on-pen:#FFFFFF;--check:#1B7F4B;--check-soft:#E4F3EA;
-        --marker:#D7263D;--marker-soft:#FCEAEC;--sun:#B57C00;--sun-soft:#FDF3DC;--note:#6B4FA8;
-        --note-soft:#EFEAFA;--nb:#00838F;--nb-soft:#E0F4F6;--nb-ink:#FFFFFF;--or:#B3157A;--or-soft:#FCE8F3;--or-ink:#FFFFFF;
-        --sh1:0 1px 0 #DDE4EC;--sh2:0 2px 6px rgba(27,36,48,.10);--sh3:0 14px 34px rgba(27,36,48,.20)}
-}
+/* Запасну палітру для рушіїв без oklch() (Chrome < 111, Safari < 15.4) дописує
+   tools/сумісність.py — з точним тоном предмета сторінки. */
 
 /* ───────────────────────── база й фон (B5) ─────────────────────────────── */
 *{box-sizing:border-box}
@@ -787,6 +781,10 @@ button[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:
 dialog{border:var(--bw) solid var(--edge);border-radius:var(--rad);background:var(--card);color:var(--ink);
   box-shadow:var(--sh3);padding:0;max-width:min(620px,94vw);width:100%}
 dialog::backdrop{background:#0008;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+/* Safari < 15.4: <dialog> там невідомий тег, двигун керує ним атрибутом open */
+dialog.dlg-old{display:none;position:fixed;left:50%;top:6vh;z-index:60;
+  -webkit-transform:translateX(-50%);transform:translateX(-50%);box-shadow:0 0 0 100vmax rgba(0,0,0,.53)}
+dialog.dlg-old[open]{display:block}
 dialog .dhd{display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 18px;border-bottom:var(--bw) solid var(--edge)}
 dialog .dhd h2{margin:0;font-size:18px}
@@ -1273,7 +1271,7 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
   opacity:0;transform:translateY(-14px) scale(.9);transition:opacity .35s,transform .35s,box-shadow .3s}
 .packs .pk-b.on{opacity:1;transform:none}
 .packs .pk-b.now{box-shadow:0 0 0 4px var(--marker)}
-.packs .pk-b i{display:block;width:clamp(12px,calc(1.8*var(--u)),22px);aspect-ratio:1;border-radius:50%;background:var(--marker)}
+.packs .pk-b i{display:block;width:clamp(12px,calc(1.8*var(--u)),22px);height:clamp(12px,calc(1.8*var(--u)),22px);aspect-ratio:1;border-radius:50%;background:var(--marker)}
 .packs .pk-b i.em{background:none;width:auto;font-style:normal;font-size:clamp(14px,calc(2*var(--u)),24px);line-height:1}
 .packs .pk-b b{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;
   font-family:"JetBrains Mono",monospace;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--pen)}
@@ -1323,4 +1321,15 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+}
+
+/* ───────────────────────── старі рушії без aspect-ratio ─────────────────────
+   aspect-ratio є лише з Safari 15 / Chrome 88. Без нього кружечок-«світіння»
+   зникає, а клітинки піксельних сіток перестають бути квадратними.
+   Прокладка ::before з padding-top:100% (відсоток рахується від ШИРИНИ)
+   робить клітинку не нижчою за її ширину. */
+@supports not (aspect-ratio:1){
+  .slide.hero .glow{height:0;padding-top:58%}
+  .cnv .cl::before,.cnv .kg div::before,.hist .hg .cl::before,.ocr .og .cl::before{
+    content:"";width:0;padding-top:100%}
 }

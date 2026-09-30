@@ -26,7 +26,34 @@ var D = document, W = window, root = D.documentElement;
 function $(s,r){ return (r||D).querySelector(s); }
 function $$(s,r){ return [].slice.call((r||D).querySelectorAll(s)); }
 function el(t,c,h){ var e=D.createElement(t); if(c) e.className=c; if(h!=null) e.innerHTML=h; return e; }
-function on(e,t,f,o){ e.addEventListener(t,f,o); }
+/* Pointer Events є лише з Safari 13 / iOS 13. На старіших iPad малювання й
+   перетягування мовчки не працювали б — тож там pointer* перекладаємо на
+   мишу + дотик. Обробникам віддаємо лише те, що вони справді читають:
+   clientX/Y, pointerId, target, stopPropagation, preventDefault. */
+var PTR = { pointerdown:['mousedown','touchstart'], pointermove:['mousemove','touchmove'],
+            pointerup:['mouseup','touchend'], pointercancel:['touchcancel'] };
+var lastTouch = 0;
+function on(e,t,f,o){
+  if(W.PointerEvent || !PTR[t]){ e.addEventListener(t,f,o); return; }
+  var cap = o === true || !!(o && o.capture);
+  PTR[t].forEach(function(k){
+    var touch = k.indexOf('touch') === 0;
+    e.addEventListener(k, function(ev){
+      var p = touch ? (ev.changedTouches && ev.changedTouches[0]) : ev;
+      if(!p) return;
+      /* після дотику браузер ще й імітує мишу — другий виклик тут зайвий */
+      if(touch) lastTouch = Date.now(); else if(Date.now() - lastTouch < 800) return;
+      /* без touch-action (його старий iOS не знає) сторінка їхала б під пальцем */
+      if(k === 'touchmove' && e !== D && e !== W) ev.preventDefault();
+      f.call(e, { type:t, clientX:p.clientX, clientY:p.clientY, pointerId:1,
+                  pointerType: touch ? 'touch' : 'mouse', target:ev.target, button:0,
+                  stopPropagation:function(){ ev.stopPropagation(); },
+                  preventDefault:function(){ ev.preventDefault(); } });
+    }, touch ? { capture:cap, passive:false } : cap);
+  });
+}
+/* setPointerCapture теж з'явився разом із Pointer Events */
+function capture(n,id){ if(n.setPointerCapture) try{ n.setPointerCapture(id); }catch(err){} }
 function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(err){ return null; } }
 function lsDel(k){ try{ localStorage.removeItem(k); }catch(err){} }
 
@@ -547,7 +574,7 @@ function setInk(mode){
 }
 on(cv,'pointerdown',function(e){
   if(inkMode !== 'pen') return;
-  drawing = true; cv.setPointerCapture(e.pointerId);
+  drawing = true; capture(cv,e.pointerId);
   strokes.push({ c:inkCol, p:[[e.clientX,e.clientY]] }); redrawInk();
 });
 on(cv,'pointermove',function(e){
@@ -585,6 +612,14 @@ sizeInk();
    A7 · довідка + A6 · друк + A8 · тема і проєктор
    ───────────────────────────────────────────────────────────────────── */
 var help = el('dialog'); help.id = 'help';
+/* <dialog> з'явився лише в Safari 15.4. Старіший рушій бачить невідомий тег
+   без showModal — вікно довідки тоді просто перемикаємо атрибутом open,
+   а вигляд дає клас .dlg-old у стилях (фіксоване по центру, з тінню). */
+if(!help.showModal){
+  help.className = 'dlg-old';
+  help.showModal = function(){ help.setAttribute('open',''); };
+  help.close = function(){ help.removeAttribute('open'); };
+}
 help.innerHTML =
  '<div class="dhd"><h2>Клавіші й режими</h2><button type="button" data-close>Закрити</button></div>' +
  '<div class="dbd">' +
@@ -726,7 +761,7 @@ $$('.numline').forEach(function(box){
     val = Math.min(Rt, Math.max(L, Math.round(v)));
     paintNl();
   }
-  on(svg,'pointerdown',function(e){ e.stopPropagation(); down = true; svg.setPointerCapture(e.pointerId); setFrom(e); });
+  on(svg,'pointerdown',function(e){ e.stopPropagation(); down = true; capture(svg,e.pointerId); setFrom(e); });
   on(svg,'pointermove',function(e){ if(down) setFrom(e); });
   ['pointerup','pointercancel'].forEach(function(t){ on(svg,t,function(){ down = false; }); });
   paintNl();
@@ -1806,7 +1841,7 @@ $$('.vang').forEach(function(box){
       return Math.max(12, Math.min(168, a));
     }
     on(svg,'pointerdown',function(e){
-      e.stopPropagation(); down = true; svg.setPointerCapture(e.pointerId);
+      e.stopPropagation(); down = true; capture(svg,e.pointerId);
       if(box.__tw) cancelAnimationFrame(box.__tw);
       th = angleAt(e); draw();
     });
@@ -3331,6 +3366,7 @@ on(D,'keydown',function(e){
   var k = e.code;
   if(e.key === '?'){ e.preventDefault(); openHelp(); return; }
   if(k === 'Escape'){
+    if(help.className === 'dlg-old' && help.hasAttribute('open')){ e.preventDefault(); help.close(); return; }
     if(ov.classList.contains('on')){ e.preventDefault(); closeOv(); return; }
     if(inkMode !== 'off'){ e.preventDefault(); setInk('off'); return; }
     if(black.style.display === 'block'){ e.preventDefault(); toggleBlack(); return; }

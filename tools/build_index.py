@@ -25,6 +25,9 @@ import time
 from pathlib import Path
 from urllib.parse import quote
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import сумісність  # noqa: E402  (запасні стилі для старих браузерів)
+
 ROOT = Path(__file__).resolve().parent.parent
 INDEX = ROOT / "index.html"
 
@@ -371,6 +374,8 @@ def write_index(data):
         count=1,
         flags=re.S,
     )
+    # запасні стилі для старих браузерів (iOS 12, Android 5, Chrome на Windows 7)
+    new = сумісність.process_html(new)[0]
     changed = new != html
     if changed:
         INDEX.write_text(new, encoding="utf-8")
