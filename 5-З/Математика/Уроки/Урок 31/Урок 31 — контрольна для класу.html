@@ -615,7 +615,10 @@ const РЕЗЕРВ = false;
 const ПОСИЛАННЯ = (function(){
   const п = new URLSearchParams(location.search);
   return { учень: String(п.get('учень') || '').replace(/\s+/g, ' ').trim().normalize('NFC'),
-           код:   String(п.get('код') || '').toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 8) };
+           код:   String(п.get('код') || '').toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 8),
+           /* &варіант=2 — учитель призначає варіант сам (перездача іншим варіантом,
+              рішення 09.10.2026); без параметра — як завжди, за прізвищем */
+           варіант: parseInt(п.get('варіант'), 10) || 0 };
 })();
 if (РЕЗЕРВ) Object.assign(Т, { захист:'low', повнийЕкран:false, другийЕкран:false });
 
@@ -1453,6 +1456,7 @@ let ЗАВДАННЯ = Т.варіанти[0].завдання;
 function обратиВаріант(пІ, кл){
   const n = Т.варіанти.length;
   if (n < 2) return 0;
+  if (РЕЗЕРВ && ПОСИЛАННЯ.варіант >= 1 && ПОСИЛАННЯ.варіант <= n) return ПОСИЛАННЯ.варіант - 1;
   if (Т.розподілВаріанта === 'випадково') return (Math.random() * n) | 0;
   return parseInt(сума(`${кл}|${пІ}|${Т.назва}`), 16) % n;
 }
