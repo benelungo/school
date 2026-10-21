@@ -42,7 +42,7 @@ GEN_RE = re.compile(re.escape(MARK_OPEN) + r'.*?' + re.escape(MARK_CLOSE), re.S)
 SCRIPT_ID = 'compat-fgap'
 SCRIPT_RE = re.compile(r'\n?<script id="%s">.*?</script>' % SCRIPT_ID, re.S)
 
-SUBJECT_H = {'math': 258, 'algebra': 300, 'geometry': 150, 'informatics': 40}
+SUBJECT_H = {'math': 277, 'algebra': 300, 'geometry': 150, 'informatics': 40}
 
 TEST = {
     'clamp': '(width:clamp(1px,2px,3px))',

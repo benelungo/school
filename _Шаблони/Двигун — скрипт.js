@@ -88,35 +88,73 @@ function availH(){
        - (topic ? topic.offsetHeight : 0)
        - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
 }
+/* Масштаб слайда. Слайд росте під час кроків (куточок, стовпчик, відповідь
+   компонента), тож fit() кличеться після КОЖНОГО кроку (refit), а не лише
+   тоді, коли компонент сам про це згадає: 15.10.2026 відповідь № 430 у 5-З
+   ховалась під панеллю саме так. У межах одного входу на слайд масштаб
+   лише зменшується (s.__k) — крок назад не роздуває слайд знову. */
 function fit(){
   var s = slides[cur];
   if(!s) return;
   s.style.transform = '';
   var h = s.scrollHeight, a = availH();
-  if(a > 0 && h > a + 1){
-    var k = Math.max(0.45, a / h);
+  var k = (a > 0 && h > a + 1) ? Math.max(0.45, a / h) : 1;
+  if(s.__k && s.__k < k) k = s.__k;
+  s.__k = k;
+  /* Стискаємо від ВЕРХНЬОГО краю. У стилях .slide має transform-origin
+     center center, а лист розкладає слайд від верху — тож стиснутий слайд
+     зʼїжджав униз на h·(1−k)/2 і низ ховався під панель (15.10.2026: на
+     1280×720 при k = 0.76 — 87 px, відповідь № 430 у 5-З). */
+  if(k < 1){
+    s.style.transformOrigin = 'center top';
     s.style.transform = 'scale(' + k.toFixed(4) + ')';
-  }
+  } else s.style.transformOrigin = '';
+}
+var rft = [];
+function refit(){
+  fit();
+  rft.forEach(clearTimeout);
+  rft = [setTimeout(fit, 80), setTimeout(fit, 1100)];   /* компоненти, що доростають анімацією */
 }
 W.__deckFit = fit;                      /* для автоперевірки «чи влазить» */
 var rt = null;
-on(W,'resize',function(){ clearTimeout(rt); rt = setTimeout(fit,120); });
+on(W,'resize',function(){ clearTimeout(rt); rt = setTimeout(function(){
+  slides.forEach(function(x){ x.__k = 0; }); fit(); },120); });
 if(D.fonts && D.fonts.ready) D.fonts.ready.then(function(){ fit(); });
 on(W,'load',fit);
 
 /* ─────────────────────────────────────────────────────────────────────
    панель знизу: кнопки, яких у старих деках не було
    ───────────────────────────────────────────────────────────────────── */
+/* B9d · іконки (20.10.2026): лінійні SVG замість символів ← → ▦ ✎ ◐ ? ⛶ — ті на
+   різних ОС малювались різними шрифтами й різного розміру. Стрілки в розмітці
+   старих деків двигун підміняє сам; aria-label лишається. */
+var ICO = {
+  prev:'<path d="M15 18l-6-6 6-6"/>', next:'<path d="M9 18l6-6-6-6"/>',
+  ov:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  ink:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  th:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M12 8h4.5M12 12h6M12 16h4.5"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.2 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5M12 17.6v.01"/>',
+  fs:'<path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  erase:'<path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l9.6-9.6a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L11 21"/><path d="M22 21H7M5 11l9 9"/>',
+  laser:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>',
+  clear:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/>',
+  done:'<path d="M20 6 9 17l-5-5"/>'
+};
+function ico(n){ return '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">' + ICO[n] + '</svg>'; }
 var rail = $('#rail'), count = $('#count'), tip = $('#tip');
 if(bar){
-  if(!$('#fs',bar)){ var f=el('button'); f.id='fs'; f.type='button'; f.textContent='⛶'; bar.appendChild(f); }
+  if(!$('#fs',bar)){ var f=el('button'); f.id='fs'; f.type='button'; bar.appendChild(f); }
+  var fsb = $('#fs',bar); fsb.innerHTML = ico('fs'); fsb.title = 'На весь екран (F)'; fsb.setAttribute('aria-label','На весь екран');
+  ['prev','next'].forEach(function(id){ var b = $('#'+id,bar); if(b) b.innerHTML = ico(id); });
   var extra = el('div','nav hide-sm');
   extra.innerHTML =
-    '<button id="btnOv"  type="button" title="Огляд слайдів (O)" class="mini">▦</button>' +
-    '<button id="btnInk" type="button" title="Малювати (D)"      class="mini">✎</button>' +
-    '<button id="btnTh"  type="button" title="Тема (Y)"          class="mini">◐</button>' +
-    '<button id="btnHelp" type="button" title="Клавіші (?)"      class="mini">?</button>';
-  bar.insertBefore(extra, $('#fs',bar));
+    '<button id="btnOv"  type="button" title="Огляд слайдів (O)" aria-label="Огляд слайдів" class="mini">' + ico('ov') + '</button>' +
+    '<button id="btnInk" type="button" title="Малювати (D)" aria-label="Малювати" class="mini">' + ico('ink') + '</button>' +
+    '<button id="btnTh"  type="button" title="Тема й колір (Y — світла / темна)" aria-label="Тема й колір" class="mini">' + ico('th') + '</button>' +
+    '<button id="btnHelp" type="button" title="Клавіші (?)" aria-label="Клавіші й налаштування" class="mini">' + ico('help') + '</button>';
+  bar.insertBefore(extra, fsb);
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -325,8 +363,46 @@ $$('.count').forEach(function(c){ if(c.dataset.to && !c.textContent.trim()) c.te
 /* ─────────────────────────────────────────────────────────────────────
    показ відповідей, лічильник кроків (A11), навігація, A1 переходи
    ───────────────────────────────────────────────────────────────────── */
-function hiddenOf(i){ return $$('.hide:not(.on)', slides[i]); }
-function shownOf(i){ return $$('.hide.on', slides[i]); }
+/* Черга кроків — порядок у HTML, тобто таблиця відкривається по рядках. Але якщо
+   в таблиці є стовпці «№» (дві пари «№ | відповідь»: 1–4 ліворуч, 5–8 праворуч),
+   пробіл мав би йти за номерами, а не 1, 5, 2, 6… (20.10.2026). Тож кроки такої
+   таблиці стають у чергу за числом із найближчого стовпця «№» ліворуч у тому ж
+   рядку; кроки з однаковим номером лишаються в порядку HTML. Таблиця з одним
+   «№» не сортується: там можуть стояти номери вправ не по зростанню. */
+function stepNo(x){
+  var td = x.closest && x.closest('td,th'), tb = td && td.closest('table');
+  if(!tb) return null;
+  if(!tb.__noCols){
+    tb.__noCols = [];
+    var hr = tb.rows[0];
+    if(hr) Array.prototype.forEach.call(hr.cells, function(c){
+      if(/^(№|#)$/.test(c.textContent.trim())) tb.__noCols.push(c.cellIndex);
+    });
+  }
+  if(tb.__noCols.length < 2) return null;   /* один «№» — рядки вже по черзі */
+  for(var k = td.cellIndex - 1; k >= 0; k--){
+    if(tb.__noCols.indexOf(k) < 0) continue;
+    var m = /^\d+/.exec(td.parentNode.cells[k] ? td.parentNode.cells[k].textContent.trim() : '');
+    return m ? +m[0] : null;
+  }
+  return null;
+}
+function stepsOf(i){
+  var all = $$('.hide', slides[i]), out = [], seen = [];
+  all.forEach(function(x){
+    var tb = x.closest('table');
+    if(!tb || stepNo(x) === null){ out.push(x); return; }
+    if(seen.indexOf(tb) >= 0) return;
+    seen.push(tb);
+    var grp = all.filter(function(y){ return y.closest('table') === tb; });
+    grp.map(function(y, j){ var n = stepNo(y); return {y:y, n:n === null ? -1 : n, j:j}; })
+       .sort(function(a, b){ return a.n - b.n || a.j - b.j; })
+       .forEach(function(o){ out.push(o.y); });
+  });
+  return out;
+}
+function hiddenOf(i){ return stepsOf(i).filter(function(x){ return !x.classList.contains('on'); }); }
+function shownOf(i){ return stepsOf(i).filter(function(x){ return x.classList.contains('on'); }); }
 
 function paint(){
   var s = slides[cur];
@@ -350,7 +426,7 @@ function paint(){
     var ch = s.__chapter;
     var slot = $('.step-of', topic);
     if(ch){
-      if(!slot){ slot = el('span','step-of'); slot.style.cssText='flex:none;color:var(--soft);font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.14em;text-transform:uppercase;font-family:"Unbounded",sans-serif;font-weight:600'; topic.appendChild(slot); }
+      if(!slot){ slot = el('span','step-of'); slot.style.cssText='flex:none;color:var(--soft);font-size:clamp(9px,calc(.95*var(--u)),12px);letter-spacing:.14em;text-transform:uppercase;font-family:"MMGrot","Manrope",sans-serif;font-weight:600'; topic.appendChild(slot); }
       slot.textContent = ch;
     } else if(slot) slot.textContent = '';
   }
@@ -362,18 +438,20 @@ function applyState(i, revealAll){
   cur = i;
   var s = slides[cur];
   s.classList.add('on');
+  s.__k = 0;                            /* новий вхід — масштаб рахуємо наново */
   $$('.hide', s).forEach(function(x){ x.classList.toggle('on', !!revealAll); });
   if(revealAll) runCount(s);
   resetTimer(s);
   syncSteps(s);
+  inkSwap();
   paint();
+  refit();
 }
 
 function go(i, revealAll){
   if(i < 0 || i >= slides.length || i === cur) { if(i===cur){ paint(); } return; }
   lesAuto();
   stopTick(); resetTimer(slides[cur]);
-  clearInk();
   var run = function(){ applyState(i, revealAll); };
   var fx = root.getAttribute('data-fx');
   if(fx && fx !== 'none' && D.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches){
@@ -391,6 +469,7 @@ function next(){
     runCount(h[0]);
     syncSteps(slides[cur]);
     paint();
+    refit();
     return;
   }
   go(cur+1,false);
@@ -401,10 +480,33 @@ function prev(){
     s[s.length-1].classList.remove('on');
     syncSteps(slides[cur]);
     paint();
+    refit();
     return;
   }
   go(cur-1,true);
 }
+
+/* C1a · у нерозкритих кроках .steps числа сховані (15.10.2026). Крок притьмарений —
+   учні бачать план (скільки дій, які знаки), а кожне число загорнуте в span.dg, і
+   стилі малюють на його місці сіру плашку, доки крок не відкрили пробілом. Номер
+   кроку в кружечку (.i) — не відповідь, його не чіпаємо. */
+(function(){
+  $$('.steps .st.hide').forEach(function(st){
+    var walk = D.createTreeWalker(st, 4 /* NodeFilter.SHOW_TEXT */, null, false), nodes = [], n;
+    while((n = walk.nextNode())) if(/\d/.test(n.nodeValue)) nodes.push(n);
+    nodes.forEach(function(t){
+      var p = t.parentNode;
+      if(!p || (p.closest && p.closest('.i'))) return;
+      var f = D.createDocumentFragment();
+      t.nodeValue.split(/(\d+(?:[ \u00a0,.]\d+)*)/).forEach(function(part, k){
+        if(!part) return;
+        if(k % 2){ var d = el('span','dg'); d.textContent = part; f.appendChild(d); }
+        else f.appendChild(D.createTextNode(part));
+      });
+      p.replaceChild(f, t);
+    });
+  });
+})();
 
 /* ─────────────────────────────────────────────────────────────────────
    C1 · покрокове розвʼязання: підсвічує останній відкритий крок
@@ -419,7 +521,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.colsub,.colmul,.packs,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -495,21 +597,51 @@ on($('#ovClose',ov),'click',function(e){ e.stopPropagation(); closeOv(); });
    ───────────────────────────────────────────────────────────────────── */
 var cv = el('canvas'); cv.id = 'ink'; D.body.appendChild(cv);
 var las = el('div'); las.id = 'laser'; D.body.appendChild(las);
+/* Панель малювання (20.10.2026): кольори · товщина · назад, гумка, лазер, стерти, готово.
+   Колір і товщина запамʼятовуються (deckpref:inkc, deckpref:inkw). */
+var INK_COLS = ['marker','pen','check','rainbow'];
+var inkCol = ls('deckpref:inkc'); if(INK_COLS.indexOf(inkCol) < 0) inkCol = 'marker';
+var inkW = Math.min(20, Math.max(1, +ls('deckpref:inkw') || 5));
 var inkbar = el('div'); inkbar.id = 'inkbar';
 inkbar.innerHTML =
-  '<button type="button" class="sw" data-c="marker" aria-pressed="true" title="Червоний"></button>' +
-  '<button type="button" class="sw" data-c="pen"    title="Синій"></button>' +
-  '<button type="button" class="sw" data-c="check"  title="Зелений"></button>' +
-  '<button type="button" data-a="laser" title="Лазер (L)">лазер</button>' +
-  '<button type="button" data-a="clear" title="Стерти (C)">стерти</button>' +
-  '<button type="button" data-a="off"   title="Вийти (Esc)">готово</button>';
+  '<button type="button" class="sw" data-c="marker"  title="Червоний"></button>' +
+  '<button type="button" class="sw" data-c="pen"     title="Синій"></button>' +
+  '<button type="button" class="sw" data-c="check"   title="Зелений"></button>' +
+  '<button type="button" class="sw" data-c="rainbow" title="Райдужний"></button>' +
+  '<span class="sep"></span>' +
+  '<label class="wd" title="Товщина лінії"><input type="range" min="1" max="20" step="1" aria-label="Товщина лінії">' +
+    '<span class="pv"><i></i></span></label>' +
+  '<span class="sep"></span>' +
+  '<button type="button" data-a="undo"  title="Назад (Ctrl+Z)" aria-label="Скасувати останній штрих">' + ico('undo') + '</button>' +
+  '<button type="button" data-a="erase" title="Гумка (E)" aria-label="Гумка">' + ico('erase') + '</button>' +
+  '<button type="button" data-a="laser" title="Лазер (L)" aria-label="Лазер">' + ico('laser') + '</button>' +
+  '<button type="button" data-a="clear" title="Стерти слайд (C), увесь дек — Shift+C" aria-label="Стерти слайд">' + ico('clear') + '</button>' +
+  '<button type="button" data-a="off"   title="Готово (Esc)">' + ico('done') + 'готово</button>';
 D.body.appendChild(inkbar);
+var wdIn = $('.wd input', inkbar), wdPv = $('.wd .pv i', inkbar);
+function markInkbar(){
+  $$('.sw',inkbar).forEach(function(x){ x.setAttribute('aria-pressed', String(x.dataset.c === inkCol && inkMode === 'pen')); });
+  wdIn.value = inkW; wdPv.style.width = wdPv.style.height = Math.max(2, inkW) + 'px';
+  wdPv.style.background = inkCol === 'rainbow' ? 'hsl(300,92%,56%)' : cssVar(inkCol);
+  var u = $('[data-a="undo"]',inkbar); if(u) u.disabled = !(inkUndo[cur] && inkUndo[cur].length);
+}
 
-var ctx = cv.getContext('2d'), inkMode = 'off', inkCol = 'marker', drawing = false, strokes = [];
+/* Малюнки — окремо на кожен слайд (20.10.2026): гортаєш туди й назад — намальоване
+   на місці. inkBy[i] — штрихи слайда i, inkUndo[i] — що скасовувати («назад»).
+   Точки — у пікселях вікна; при зміні розміру вікна всі штрихи масштабуються. */
+var ctx = cv.getContext('2d'), inkMode = 'off', drawing = false, erasing = false;
+var inkBy = {}, inkUndo = {}, strokes = [];
+var inkVW = W.innerWidth, inkVH = W.innerHeight;
 var lasPts = [], lasRaf = null, lastXY = null;
 function cssVar(n){ return getComputedStyle(root).getPropertyValue('--'+n).trim() || '#D7263D'; }
 function sizeInk(){
   var dpr = W.devicePixelRatio || 1;
+  var kx = W.innerWidth / inkVW, ky = W.innerHeight / inkVH;
+  if(kx !== 1 || ky !== 1){
+    Object.keys(inkBy).forEach(function(i){ inkBy[i].forEach(function(st){
+      st.p.forEach(function(pt){ pt[0] *= kx; pt[1] *= ky; }); }); });
+    inkVW = W.innerWidth; inkVH = W.innerHeight;
+  }
   cv.width = Math.round(W.innerWidth*dpr); cv.height = Math.round(W.innerHeight*dpr);
   cv.style.width = W.innerWidth+'px'; cv.style.height = W.innerHeight+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0); redrawInk();
@@ -517,13 +649,122 @@ function sizeInk(){
 function redrawInk(){
   ctx.clearRect(0,0,W.innerWidth,W.innerHeight);
   ctx.lineCap='round'; ctx.lineJoin='round';
-  ctx.lineWidth=5;
-  strokes.forEach(function(st){
-    ctx.strokeStyle = cssVar(st.c); ctx.beginPath();
+  var glass = root.getAttribute('data-proj') !== '1';
+  strokes.forEach(function(st){ if(glass) glassStroke(st); else flatStroke(st); });
+  ctx.lineWidth = 5;
+  drawLaser();
+}
+function flatStroke(st){
+  if(st.c === 'rainbow' && !st.col){ rainbowStroke(st); return; }
+  ctx.strokeStyle = st.col || cssVar(st.c);
+  if(!st.pen){                          /* миша, палець — рівна лінія одним контуром */
+    if(st.p.length === 1){ penSegments(st, function(){ return ctx.strokeStyle; }); return; }
+    ctx.lineWidth = st.w || 5; ctx.beginPath();
     st.p.forEach(function(pt,i){ i ? ctx.lineTo(pt[0],pt[1]) : ctx.moveTo(pt[0],pt[1]); });
     ctx.stroke();
+    return;
+  }
+  penSegments(st, function(){ return ctx.strokeStyle; });
+}
+/* Скляний пензель (21.10.2026, учитель: «щоб пензлик малював склом» — стиль mimory).
+   Штрих спершу малюється суцільним на прихованому полотні gA (маска), а на екран
+   іде двома шарами: 1) тіло — маска з прозорістю й легкою тінню; 2) блік — тонка
+   світла лінія по центру. (Перша версія мала ще обідок і зсунутий відблиск —
+   учитель: «не дуже гарний, треба простіше».) Прозорість накладаємо на ГОТОВУ
+   маску, а не на відрізки: інакше на стиках відрізків пера проступали б темні
+   «намистини». Малюємо лише в рамці штриха — повне полотно на кожен рух дороге.
+   На проєкторі ([data-proj="1"]) — звичайна суцільна лінія, скло там блякне. */
+var gA = el('canvas'), gB = el('canvas'), xA = gA.getContext('2d'), xB = gB.getContext('2d');
+function glassSize(){
+  var d = W.devicePixelRatio || 1;
+  gA.width = gB.width = cv.width; gA.height = gB.height = cv.height;
+  xA.setTransform(d,0,0,d,0,0); xB.setTransform(d,0,0,d,0,0);
+}
+function shapeOf(st, k, dx, dy, col){
+  return { c:st.c, h0:st.h0, pen:st.pen, w:(st.w || 5)*k, col:col,
+           p:st.p.map(function(q){ return [q[0]+dx, q[1]+dy, q[2] ? q[2]*k : q[2]]; }) };
+}
+function paintOn(c, st){
+  var keep = ctx; ctx = c; c.lineCap = 'round'; c.lineJoin = 'round';
+  try { flatStroke(st); } finally { ctx = keep; }
+}
+function glassStroke(st){
+  if(gA.width !== cv.width || gA.height !== cv.height) glassSize();
+  var d = W.devicePixelRatio || 1, wMax = st.w || 5, x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  st.p.forEach(function(q){ if(q[2] > wMax) wMax = q[2];
+    if(q[0] < x0) x0 = q[0]; if(q[0] > x1) x1 = q[0]; if(q[1] < y0) y0 = q[1]; if(q[1] > y1) y1 = q[1]; });
+  var pad = wMax*2 + 24;
+  x0 = Math.max(0, Math.floor(x0 - pad)); y0 = Math.max(0, Math.floor(y0 - pad));
+  var bw = Math.min(W.innerWidth, Math.ceil(x1 + pad)) - x0, bh = Math.min(W.innerHeight, Math.ceil(y1 + pad)) - y0;
+  if(bw <= 0 || bh <= 0) return;
+  function blit(g){ ctx.drawImage(g, x0*d, y0*d, bw*d, bh*d, x0, y0, bw, bh); }
+  var thin = wMax < 4;
+  xA.clearRect(x0, y0, bw, bh); paintOn(xA, st);
+  /* 1 · тіло: напівпрозоре, легка тінь */
+  ctx.save();
+  ctx.globalAlpha = thin ? .8 : .55;
+  ctx.shadowColor = 'rgba(19,18,59,.22)'; ctx.shadowBlur = Math.max(4, wMax*.8); ctx.shadowOffsetY = Math.max(1, wMax*.15);
+  blit(gA);
+  ctx.restore();
+  if(thin) return;
+  /* 2 · блік: тонка світла лінія по центру штриха */
+  xB.clearRect(x0, y0, bw, bh);
+  paintOn(xB, shapeOf(st, .28, 0, 0, '#ffffff'));
+  ctx.save(); ctx.globalAlpha = .45; blit(gB); ctx.restore();
+}
+/* Райдужний пензель (15.10.2026): колір іде по колу вздовж лінії — повне коло
+   приблизно на 450 px штриха; кожен штрих починає з випадкового кольору (st.h0).
+   hsl, а не oklch: canvas зі старих браузерів oklch не розуміє. */
+function rainbowStroke(st){
+  var d = 0;
+  penSegments(st, function(i){
+    var p = st.p;
+    if(i > 1) d += Math.sqrt(Math.pow(p[i-1][0]-p[i-2][0], 2) + Math.pow(p[i-1][1]-p[i-2][1], 2));
+    return 'hsl(' + Math.round(((st.h0 + d * 0.8 - rbShift()) % 360 + 360) % 360) + ',92%,56%)';
   });
-  drawLaser();
+}
+/* Райдужний штрих переливається (15.10.2026, прохання вчителя): кольори біжать
+   уздовж лінії від початку до кінця — 120° за секунду, повне коло за 3 с. Поки на
+   слайді є хоч один райдужний штрих, полотно перемальовується щокадру (rbLoop) —
+   тепер і поза режимом малювання, бо намальоване лишається видимим.
+   «Зменшити рух» у системі — штрих стоїть. */
+var RB_STILL = !!(W.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+function rbShift(){ return RB_STILL ? 0 : performance.now() / 1000 * 120; }
+var rbRaf = null;
+function rbLoop(){
+  var any = strokes.some(function(st){ return st.c === 'rainbow'; });
+  if(RB_STILL || !any){ rbRaf = null; return; }
+  if(!lasRaf) redrawInk();                 /* лазер і так перемальовує щокадру */
+  rbRaf = requestAnimationFrame(rbLoop);
+}
+function rbStart(){ if(!rbRaf && !RB_STILL) rbRaf = requestAnimationFrame(rbLoop); }
+/* Перо графічного планшета (15.10.2026): товщина — від натиску. Точка штриха —
+   [x, y, w], де w — товщина в цій точці; відрізок малюється товщиною, середньою
+   між кінцями, з круглими кінцями — стики не видно. Миша й палець дають w = st.w
+   (рівна лінія). colorOf(i) — колір відрізка, що закінчується в i. */
+function penSegments(st, colorOf){
+  var p = st.p, w0 = st.w || 5;
+  if(p.length === 1){                      /* дотик без руху — крапка */
+    ctx.fillStyle = colorOf(0); ctx.beginPath();
+    ctx.arc(p[0][0], p[0][1], (p[0][2] || w0) / 2, 0, 6.2832); ctx.fill();
+    return;
+  }
+  for(var i = 1; i < p.length; i++){
+    ctx.strokeStyle = colorOf(i);
+    ctx.lineWidth = ((p[i-1][2] || w0) + (p[i][2] || w0)) / 2;
+    ctx.beginPath(); ctx.moveTo(p[i-1][0], p[i-1][1]); ctx.lineTo(p[i][0], p[i][1]); ctx.stroke();
+  }
+}
+/* Натиск → товщина. Перо дає pressure 0…1; миша з натиснутою кнопкою — рівно 0.5,
+   палець і старі браузери — 0 або нічого. Тож «справжній» натиск беремо лише від
+   pointerType 'pen'. Повзунок товщини (st.w, типово 5) — множник: за типової
+   товщини легкий дотик ≈ 1,5 px, повний — ≈ 11 px.
+   Згладжування (st.ps) прибирає тремтіння: датчик пера шумить на кілька відсотків. */
+function penWidth(st, e){
+  if(!st.pen) return st.w;
+  var raw = e.pressure > 0 ? e.pressure : (st.ps != null ? st.ps : 0.5);   /* 0 у мить відриву — тримаємо попередній */
+  st.ps = st.ps == null ? raw : st.ps * 0.65 + raw * 0.35;
+  return (1.2 + 9.6 * Math.pow(st.ps, 1.1)) * st.w / 5;
 }
 var LAS_MS = 700;
 function drawLaser(){
@@ -551,7 +792,96 @@ function lasLoop(){
   redrawInk();
   lasRaf = requestAnimationFrame(lasLoop);
 }
-function clearInk(){ strokes = []; lasPts = []; if(ctx) redrawInk(); }
+
+/* «назад»: кожна дія над штрихами кладе в inkUndo[cur] запис, як її відкотити */
+function inkDo(op){ (inkUndo[cur] = inkUndo[cur] || []).push(op); if(inkUndo[cur].length > 200) inkUndo[cur].shift(); }
+function undoInk(){
+  var u = inkUndo[cur]; if(!u || !u.length) return;
+  var op = u.pop();
+  if(op.add){ var i = strokes.indexOf(op.add); if(i >= 0) strokes.splice(i,1); }
+  else if(op.del) strokes.splice(Math.min(op.at, strokes.length), 0, op.del);
+  else if(op.clr) Array.prototype.push.apply(strokes, op.clr);
+  inkChanged();
+}
+function clearInk(){
+  lasPts = [];
+  if(strokes.length){ inkDo({ clr: strokes.slice() }); strokes.length = 0; }
+  inkChanged();
+}
+function clearAllInk(){
+  inkBy = {}; inkUndo = {}; strokes = inkBy[cur] = []; lasPts = [];
+  inkChanged();
+}
+/* гумка стирає штрих цілком: шукаємо відрізок, ближчий до точки за півтовщини + запас */
+function segDist(x,y,a,b){
+  var dx = b[0]-a[0], dy = b[1]-a[1], l = dx*dx + dy*dy;
+  var t = l ? Math.max(0, Math.min(1, ((x-a[0])*dx + (y-a[1])*dy) / l)) : 0;
+  var px = a[0] + t*dx - x, py = a[1] + t*dy - y;
+  return Math.sqrt(px*px + py*py);
+}
+function eraseAt(x,y){
+  var hit = false;
+  for(var i = strokes.length - 1; i >= 0; i--){
+    var st = strokes[i], p = st.p, r = (st.w || 5) / 2 + Math.max(8, inkW);
+    for(var j = 0; j < p.length; j++){
+      if(segDist(x, y, p[j ? j-1 : 0], p[j]) <= r + (p[j][2] || 0) / 2){
+        inkDo({ del: st, at: i }); strokes.splice(i,1); hit = true; break;
+      }
+    }
+  }
+  if(hit) inkChanged();
+}
+
+/* Збереження (20.10.2026): штрихи всіх слайдів — у localStorage під KEY + ':ink'.
+   Як і таймер уроку, запис старший за 3 години відкидається: наступного дня дек
+   відкривається чистим. Пишемо із затримкою — перо дає сотні точок. */
+var INK_TTL = 3*3600*1000, inkSaveT = null;
+function saveInk(){
+  clearTimeout(inkSaveT);
+  inkSaveT = setTimeout(function(){
+    var out = {}, any = false;
+    Object.keys(inkBy).forEach(function(i){
+      if(!inkBy[i].length) return;
+      any = true;
+      out[i] = inkBy[i].map(function(st){
+        return { c:st.c, w:st.w, h0:st.h0, pen:st.pen,
+          p:st.p.map(function(pt){ return [Math.round(pt[0]*10)/10, Math.round(pt[1]*10)/10, pt[2] ? Math.round(pt[2]*10)/10 : 0]; }) };
+      });
+    });
+    if(!any){ lsDel(KEY + ':ink'); return; }
+    ls(KEY + ':ink', JSON.stringify({ t:Date.now(), vw:inkVW, vh:inkVH, s:out }));
+  }, 400);
+}
+(function loadInk(){
+  var raw = ls(KEY + ':ink'); if(!raw) return;
+  try{
+    var d = JSON.parse(raw);
+    if(!d || !d.s || Date.now() - d.t > INK_TTL){ lsDel(KEY + ':ink'); return; }
+    var kx = W.innerWidth / (d.vw || W.innerWidth), ky = W.innerHeight / (d.vh || W.innerHeight);
+    Object.keys(d.s).forEach(function(i){
+      if(+i >= slides.length) return;
+      inkBy[i] = d.s[i].map(function(st){
+        st.p.forEach(function(pt){ pt[0] *= kx; pt[1] *= ky; });
+        return st;
+      });
+    });
+  }catch(err){ lsDel(KEY + ':ink'); }
+})();
+function inkChanged(){
+  inkBy[cur] = strokes;
+  if(ctx) redrawInk();
+  rbStart();
+  if(inkbar) markInkbar();
+  saveInk();
+}
+/* applyState кличе це при кожному переході: полотно показує штрихи нового слайда */
+function inkSwap(){
+  drawing = erasing = false; lasPts = [];
+  strokes = inkBy[cur] = inkBy[cur] || [];
+  if(ctx) redrawInk();
+  rbStart(); markInkbar();
+}
+
 function setInk(mode){
   inkMode = mode;
   if(mode === 'laser'){
@@ -564,18 +894,26 @@ function setInk(mode){
     if(lasRaf){ cancelAnimationFrame(lasRaf); lasRaf = null; }
     if(ctx) redrawInk();
   }
+  rbStart();
   cv.classList.toggle('on', mode !== 'off');
   cv.classList.toggle('laser', mode === 'laser');
+  cv.classList.toggle('erase', mode === 'erase');
   las.classList.toggle('on', mode === 'laser');
   inkbar.classList.toggle('on', mode !== 'off');
   $$('button[data-a="laser"]',inkbar).forEach(function(b){ b.setAttribute('aria-pressed', String(mode==='laser')); });
+  $$('button[data-a="erase"]',inkbar).forEach(function(b){ b.setAttribute('aria-pressed', String(mode==='erase')); });
   var btn = $('#btnInk'); if(btn) btn.setAttribute('aria-pressed', String(mode !== 'off'));
   if(mode === 'off') las.classList.remove('on');
+  markInkbar();
 }
 on(cv,'pointerdown',function(e){
+  if(inkMode === 'erase'){ erasing = true; capture(cv,e.pointerId); eraseAt(e.clientX, e.clientY); return; }
   if(inkMode !== 'pen') return;
   drawing = true; capture(cv,e.pointerId);
-  strokes.push({ c:inkCol, p:[[e.clientX,e.clientY]] }); redrawInk();
+  var st = { c:inkCol, w:inkW, h0:Math.floor(Math.random()*360), pen: e.pointerType === 'pen', p:[] };
+  st.p.push([e.clientX, e.clientY, st.pen ? penWidth(st, e) : 0]);
+  strokes.push(st); inkDo({ add: st }); redrawInk();
+  if(st.c === 'rainbow') rbStart();
 });
 on(cv,'pointermove',function(e){
   lastXY = [e.clientX, e.clientY];
@@ -586,26 +924,41 @@ on(cv,'pointermove',function(e){
                              видно навіть там, де анімацію притишено */
     return;
   }
+  if(erasing){ eraseAt(e.clientX, e.clientY); return; }
   if(!drawing) return;
-  strokes[strokes.length-1].p.push([e.clientX,e.clientY]); redrawInk();
+  var st = strokes[strokes.length-1];
+  /* перо шле 200+ точок за секунду, браузер між кадрами склеює їх в одну подію —
+     беремо всі, інакше швидка лінія ламається на кути */
+  var evs = (e.getCoalescedEvents && e.getCoalescedEvents()) || [];
+  if(!evs.length) evs = [e];
+  evs.forEach(function(c){ st.p.push([c.clientX, c.clientY, st.pen ? penWidth(st, c) : 0]); });
+  redrawInk();
 });
-['pointerup','pointercancel'].forEach(function(t){ on(cv,t,function(){ drawing = false; }); });
+['pointerup','pointercancel'].forEach(function(t){ on(cv,t,function(){
+  if(drawing || erasing) inkChanged();
+  drawing = erasing = false;
+}); });
 on(inkbar,'click',function(e){
-  var b = e.target.closest('button'); if(!b) return;
   e.stopPropagation();
+  var b = e.target.closest('button'); if(!b) return;
   if(b.classList.contains('sw')){
-    inkCol = b.dataset.c;
-    $$('.sw',inkbar).forEach(function(x){ x.setAttribute('aria-pressed', String(x===b)); });
-    if(inkMode !== 'pen') setInk('pen');
+    inkCol = b.dataset.c; ls('deckpref:inkc', inkCol);
+    setInk('pen');
     return;
   }
   var a = b.dataset.a;
   if(a === 'clear') clearInk();
+  else if(a === 'undo') undoInk();
   else if(a === 'laser') setInk(inkMode === 'laser' ? 'pen' : 'laser');
+  else if(a === 'erase') setInk(inkMode === 'erase' ? 'pen' : 'erase');
   else setInk('off');
 });
+on(wdIn,'input',function(){ inkW = +wdIn.value || 5; ls('deckpref:inkw', inkW); markInkbar(); });
+/* після відпускання повзунок віддає фокус — інакше пробіл і стрілки лишаються в ньому */
+on(wdIn,'change',function(){ wdIn.blur(); });
 on(D,'pointermove',function(e){ if(inkMode === 'off') lastXY = [e.clientX, e.clientY]; }, true);
 on(W,'resize',sizeInk);
+inkSwap();
 sizeInk();
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -631,16 +984,18 @@ help.innerHTML =
      '<span class="k"><kbd>U</kbd></span><span>таймер уроку (Shift+U — спочатку)</span>' +
      '<span class="k"><kbd>D</kbd></span><span>маркер — писати по слайду</span>' +
      '<span class="k"><kbd>L</kbd></span><span>лазерна цятка</span>' +
-     '<span class="k"><kbd>C</kbd></span><span>стерти намальоване</span>' +
+     '<span class="k"><kbd>E</kbd></span><span>гумка — стирає штрих, якого торкнулась</span>' +
+     '<span class="k"><kbd>Ctrl</kbd> <kbd>Z</kbd></span><span>скасувати останній штрих</span>' +
+     '<span class="k"><kbd>C</kbd></span><span>стерти намальоване на слайді (Shift+C — у всьому деку)</span>' +
      '<span class="k"><kbd>B</kbd></span><span>затемнити екран — увага на вчителя</span>' +
      '<span class="k"><kbd>F</kbd></span><span>на весь екран</span>' +
-     '<span class="k"><kbd>Y</kbd></span><span>тема: світла / темна / як у системі</span>' +
+     '<span class="k"><kbd>Y</kbd></span><span>тема: світла / темна / як у системі; колір — кнопка ◐ на панелі</span>' +
      '<span class="k"><kbd>P</kbd></span><span>режим проєктора (чорне на білому)</span>' +
      '<span class="k"><kbd>Home</kbd> <kbd>End</kbd></span><span>перший / останній слайд</span>' +
      '<span class="k"><kbd>?</kbd></span><span>ця довідка</span>' +
    '</div>' +
    '<div style="margin-top:18px;border-top:2px solid var(--edge);padding-top:14px">' +
-     '<div style="font-family:Unbounded,sans-serif;font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-bottom:10px">Друк і роздатка</div>' +
+     '<div style="font-family:MMGrot,Manrope,sans-serif;font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-bottom:10px">Друк і роздатка</div>' +
      '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
        '<button type="button" data-print="teacher">Друк з відповідями</button>' +
        '<button type="button" data-print="student">Друк для учнів</button>' +
@@ -694,8 +1049,66 @@ var THEMES = ['','light','dark'];
 function cycleTheme(){
   var i = THEMES.indexOf(root.getAttribute('data-theme') || '');
   pref('theme', THEMES[(i+1) % THEMES.length]);
+  if(typeof markTh === 'function') markTh();
 }
 function toggleProj(){ pref('proj', root.getAttribute('data-proj') === '1' ? '' : '1'); }
+
+/* A8a · вибір теми на уроці (з 15.10.2026): кнопка ◐ відкриває панель —
+   світла / темна / як у системі і колір палітри (тон --h). Колір пам'ятається
+   ОКРЕМО для кожного предмета (deckpref:hue:<data-subject>), щоб алгебра не
+   перефарбовувала геометрію. «Як у предмета» — прибрати свій колір. */
+var HUES = [['mimory',277],['синій',258],['фіолетовий',295],['малиновий',335],['теракотовий',30],
+            ['бурштиновий',65],['зелений',150],['бірюзовий',190],['блакитний',225]];
+/* A8b · переливи (15.10.2026): тон --h не стоїть, а ходить своїм діапазоном —
+   разом із ним переливаються фон, сітка, рамки, заголовки й акценти. Смислові
+   кольори (бірюзова «у зошит», зелена відповідь, малинова «усно») не міняються. */
+var RAINBOWS = [['веселка','rb-full'],['захід сонця','rb-sunset'],['океан','rb-ocean'],
+                ['північне сяйво','rb-aurora'],['цукерки','rb-candy']];
+var HKEY = 'deckpref:hue:' + (root.getAttribute('data-subject') || 'math');
+function setHue(v){
+  if(v){ root.setAttribute('data-hue', v); ls(HKEY, v); }
+  else { root.removeAttribute('data-hue'); lsDel(HKEY); }
+  markTh();
+}
+(function(){ var v = ls(HKEY); if(v && /^(\d+|rb-[a-z]+)$/.test(v)) root.setAttribute('data-hue', v); })();
+var thpop = el('div'); thpop.id = 'thpop'; thpop.hidden = true;
+thpop.innerHTML =
+  '<div class="tp-h">Тема</div>' +
+  '<div class="tp-row"><button type="button" data-th="light">☀ світла</button>' +
+  '<button type="button" data-th="dark">☾ темна</button><button type="button" data-th="">як у системі</button></div>' +
+  '<div class="tp-h">Колір</div>' +
+  '<div class="tp-row tp-sw">' + HUES.map(function(h){
+    return '<button type="button" data-hue="' + h[1] + '" title="' + h[0] + '" aria-label="' + h[0] + '" style="--sw:' + h[1] + '"></button>';
+  }).join('') + '</div>' +
+  '<div class="tp-h">Переливи</div>' +
+  '<div class="tp-row tp-sw tp-rb">' + RAINBOWS.map(function(h){
+    return '<button type="button" data-hue="' + h[1] + '" title="' + h[0] + '" aria-label="' + h[0] + '"></button>';
+  }).join('') + '</div>' +
+  '<div class="tp-row"><button type="button" data-hue="">як у предмета</button></div>';
+D.body.appendChild(thpop);
+function markTh(){
+  var t = root.getAttribute('data-theme') || '', h = root.getAttribute('data-hue') || '';
+  $$('[data-th]', thpop).forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-th') === t)); });
+  $$('[data-hue]', thpop).forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-hue') === h)); });
+}
+function toggleThPop(){
+  thpop.hidden = !thpop.hidden;
+  if(!thpop.hidden){
+    markTh();
+    var bt = $('#btnTh');
+    if(bt){ var r = bt.getBoundingClientRect();
+      thpop.style.right = Math.max(8, W.innerWidth - r.right) + 'px';
+      thpop.style.bottom = (W.innerHeight - r.top + 8) + 'px'; }
+  }
+}
+on(thpop,'click',function(e){
+  e.stopPropagation();
+  var b = e.target.closest('button'); if(!b) return;
+  if(b.hasAttribute('data-th')){ pref('theme', b.getAttribute('data-th')); markTh(); }
+  if(b.hasAttribute('data-hue')) setHue(b.getAttribute('data-hue'));
+});
+on(D,'click',function(e){ if(!thpop.hidden && !e.target.closest('#thpop,#btnTh')) thpop.hidden = true; });
+on(D,'keydown',function(e){ if(e.key === 'Escape' && !thpop.hidden){ thpop.hidden = true; } }, true);
 
 /* B · затемнення екрана */
 var black = el('div');
@@ -1369,25 +1782,39 @@ function opTok(s){
       i = j; continue;
     }
     if(c === '(' || c === ')'){ t.push({k:c}); i++; continue; }
+    /* степінь: 3² або 3^2 — дія «^» і показник окремим числом */
+    var sup = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+    if(sup.indexOf(c) >= 0 || c === '^'){
+      var e = '', j2 = c === '^' ? i + 1 : i;
+      while(j2 < n && s.charAt(j2) === ' ' && c === '^') j2++;
+      while(j2 < n && (c === '^' ? /[0-9]/.test(s.charAt(j2)) : sup.indexOf(s.charAt(j2)) >= 0)){
+        var ch = s.charAt(j2); e += c === '^' ? ch : sup.indexOf(ch); j2++;
+      }
+      if(!e) return null;
+      t.push({k:'o', v:'^'}); t.push({k:'n', v:parseInt(e, 10), sup:true});
+      i = j2; continue;
+    }
     if('+-−·*×:/÷'.indexOf(c) >= 0){ t.push({k:'o', v:c}); i++; continue; }
     return null;                      /* незрозумілий символ — не беремось */
   }
   return t.length ? t : null;
 }
-function opPrec(o){ return (o === '+' || o === '-' || o === '−') ? 1 : 2; }
+function opPrec(o){ return o === '^' ? 3 : (o === '+' || o === '-' || o === '−') ? 1 : 2; }
 function opCalc(a, o, b){
   if(o === '+') return a + b;
   if(o === '-' || o === '−') return a - b;
   if(o === ':' || o === '/' || o === '÷') return a / b;
+  if(o === '^') return Math.pow(a, b);
   return a * b;
 }
-function opText(t){ return t.k === 'n' ? anum(t.v) : (t.k === 'o' ? t.v : t.k); }
+function opText(t){ return t.k === 'n' ? (t.sup ? supNum(t.v) : anum(t.v)) : (t.k === 'o' ? (t.v === '^' ? '' : t.v) : t.k); }
 /* Дужки тримаються свого вмісту: «(32 − 17)», а не «( 32 − 17 )». */
 function opJoin(t, from, to){
   var s = '';
   for(var i = from; i <= to; i++){
     var c = opText(t[i]);
-    if(s && c !== ')' && s.charAt(s.length-1) !== '(') s += ' ';
+    if(!c) continue;
+    if(s && c !== ')' && !t[i].sup && s.charAt(s.length-1) !== '(') s += ' ';
     s += c;
   }
   return s;
@@ -1416,7 +1843,7 @@ function opStep(t){
     cut:  whole ? [open, close] : [best-1, best+1],
     act:  whole ? [open, close] : [best-1, best+1],
     val:  val, paren: whole || open >= 0, prec: prec,
-    log:  (whole ? '(' : '') + anum(a.v) + ' ' + t[best].v + ' ' + anum(b.v) + (whole ? ')' : '') +
+    log:  (whole ? '(' : '') + anum(a.v) + (t[best].v === '^' ? supNum(b.v) : ' ' + t[best].v + ' ' + anum(b.v)) + (whole ? ')' : '') +
           ' = ' + anum(val)
   };
 }
@@ -1426,7 +1853,8 @@ function opFrames(t){
     var st = opStep(t);
     if(!st){ F.push({t:t, act:null, nw:-1}); break; }
     F.push({t:t, act:st.act, nw:-1, say:
-      st.paren ? 'Спочатку — те, що в дужках.'
+      st.prec === 3 ? (st.paren ? 'У дужках спершу — степінь.' : 'Спершу — степінь: він раніше за множення, ділення, додавання й віднімання.')
+      : st.paren ? 'Спочатку — те, що в дужках.'
                : (st.prec === 2 ? 'Множення й ділення — раніше за додавання.'
                                 : 'Дужок немає — рахуємо зліва направо.')});
     var next = t.slice(0, st.cut[0]).concat([{k:'n', v:st.val}], t.slice(st.cut[1] + 1));
@@ -1470,8 +1898,10 @@ $$('.ordops').forEach(function(box){
         e = el('span','act');
         e.textContent = opJoin(f.t, f.act[0], f.act[1]);
         i = f.act[1] + 1;
+      } else if(f.t[i].k === 'o' && f.t[i].v === '^'){
+        i++; continue;                /* сама дія «^» не пишеться — показник стоїть угорі */
       } else {
-        e = el('span', f.t[i].k === 'o' ? 'o' : '');
+        e = el('span', f.t[i].k === 'o' ? 'o' : (f.t[i].sup ? 'sup' : ''));
         if(i === f.nw && pop) e.className += ' nw';
         if(f.t.length === 1) e.className += ' fin';
         e.textContent = opText(f.t[i]);
@@ -1491,19 +1921,55 @@ $$('.ordops').forEach(function(box){
      <li data-say="Знаменники однакові">…html кроку…</li>
      <li class="cut" data-say="Скорочуємо">…</li>   ← перед цим кроком
    </ol></div>                                        закреслюються .cf
-   Список у розмітці не показується — він лише рахує пробіли; на екрані
-   видно один крок, найсвіжіший.
+   Список у розмітці не показується — він лише рахує пробіли; великим
+   видно найсвіжіший крок.
+
+   Запис (15.10.2026): над великим кроком росте .ftrail — усі пройдені
+   кроки дрібніше, як їх пишуть у зошит. Раніше кадр заміняв кадр, і після
+   останнього пробілу на екрані лишалась сама відповідь — переписати
+   розвʼязок учням не було звідки.
+     • кроки без «=» — це один вираз, що перетворюється: запис іде
+       ланцюжком  A = B = C;
+     • якщо хоч один крок сам є рівністю (рівняння, «57 = 8 · 7 + 1»),
+       «=» між кроками був би неправдою — запис іде стовпчиком, по рядку
+       на крок, як у зошиті.
+   Місце під запис зарезервоване від початку (майбутні кроки невидимі), тож
+   слайд під час кроків не росте. data-trail="off" — без запису.
    ───────────────────────────────────────────────────────────────────── */
 $$('.frm').forEach(function(box){
   var ol = $('ol', box);
   if(!ol) return;
   var steps = $$('li', ol).map(function(li){
-    return {h: li.innerHTML, say: li.dataset.say || '', cut: li.classList.contains('cut')};
+    return {h: li.innerHTML, say: li.dataset.say || '', cut: li.classList.contains('cut'),
+            eq: /=/.test(li.textContent.replace(/[≠≈]/g,''))};
   });
   if(!steps.length) return;
   var view = el('div','fview'), say = asay(box);
+  var trail = null, items = [];
+  if(box.dataset.trail !== 'off' && steps.length > 1){
+    var lines = steps.some(function(st){ return st.eq; });
+    trail = el('div', 'ftrail' + (lines ? ' lines' : ''));
+    steps.forEach(function(st, i){
+      if(i === steps.length - 1) return;      /* останній крок і так великим */
+      var it = el('span','ft');
+      it.innerHTML = st.h;
+      if(steps[i+1].cut) it.classList.add('crossed');   /* перед скороченням — закреслене */
+      trail.appendChild(it);
+      var sep = null;
+      if(!lines){ sep = el('span','fe'); sep.textContent = '='; trail.appendChild(sep); }
+      items.push({it:it, sep:sep});
+    });
+    box.insertBefore(trail, ol);
+  }
   box.insertBefore(view, ol);
   box.insertBefore(say, ol);
+  function paintTrail(shown){
+    items.forEach(function(x, i){
+      var on = i < shown;
+      x.it.classList.toggle('on', on);
+      if(x.sep) x.sep.classList.toggle('on', on);
+    });
+  }
   $$('li', ol).forEach(function(li,i){
     li.innerHTML = '';
     li.className = i ? 'hide' : '';
@@ -1515,6 +1981,7 @@ $$('.frm').forEach(function(box){
     if(shown === box.__at) return;
     var was = box.__at;
     box.__at = shown;
+    paintTrail(shown);
     /* крок «скорочення»: спершу закреслити множники в попередньому кадрі */
     if(steps[shown].cut && was === shown - 1 && was >= 0){
       view.innerHTML = steps[was].h;
@@ -1766,11 +2233,17 @@ $$('.mv').forEach(function(box){
    data-lock="1" — лише показати, без перетягування.
    Числа біжать, а рівність вертикальних лишається — це й треба побачити
    перед доведенням.
+   Покроково в задачі: <div class="vang" id="v125" data-lock="1"> і на рядках
+   розвʼязку <p class="eqn hide" data-vgo="v125:89">…</p> — рядок відкрився,
+   пряма повернулась на 89°. До першого такого рядка замість чисел «?».
    ───────────────────────────────────────────────────────────────────── */
 $$('.vang').forEach(function(box){
-  var CX = 260, CY = 180, R = 145, HR = 132, AR = 46, AR2 = 66, LR = 70, LR2 = 92;
+  var CX = 260, CY = 180, R = 145, HR = 132, AR = 46, AR2 = 66, LR = 80, LR2 = 108;
   var th = parseFloat(box.dataset.angle) || 55;
   var lock = box.dataset.lock === '1';
+  var sec = box.closest ? box.closest('section') : null;
+  var gos = box.id && sec ? $$('[data-vgo]', sec).filter(function(x){ return x.dataset.vgo.split(':')[0] === box.id; }) : [];
+  var blind = gos.length > 0;
   box.textContent = '';
   var wrap = el('div','vsvg');
   wrap.innerHTML =
@@ -1823,12 +2296,13 @@ $$('.vang').forEach(function(box){
     A[2].setAttribute('d', arc(180, 180+th, AR));
     A[3].setAttribute('d', arc(180+th, 360, AR2));
     var a = Math.round(th), b = 180 - a;
-    put(T[0], th/2, LR, a + '°');
-    put(T[1], (th+180)/2, LR2, b + '°');
-    put(T[2], 180 + th/2, LR, a + '°');
-    put(T[3], (180+th+360)/2, LR2, b + '°');
-    v1.textContent = a + '°'; v2.textContent = b + '°';
-    sum.textContent = 'суміжні: ' + a + '° + ' + b + '° = 180°';
+    var sa = blind ? '?' : a + '°', sb = blind ? '?' : b + '°';
+    put(T[0], th/2, LR, sa);
+    put(T[1], (th+180)/2, LR2, sb);
+    put(T[2], 180 + th/2, LR, sa);
+    put(T[3], (180+th+360)/2, LR2, sb);
+    v1.textContent = sa; v2.textContent = sb;
+    sum.textContent = blind ? 'суміжні: разом 180°' : 'суміжні: ' + a + '° + ' + b + '° = 180°';
   }
   function to(target){ atween(box, th, target, 650, function(v){ th = v; draw(); }); }
   if(!lock){
@@ -1856,6 +2330,20 @@ $$('.vang').forEach(function(box){
     }
     abtn(row, 'Прямий кут', 'q', function(){ to(90); });
     abtn(row, 'Спочатку', 'q', function(){ to(parseFloat(box.dataset.angle) || 55); });
+  }
+  if(gos.length){
+    box.__at = -1;                     /* ще не малювали */
+    box.__paint = function(){
+      var last = null;
+      gos.forEach(function(x){ if(x.classList.contains('on') || !x.classList.contains('hide')) last = x; });
+      if(last === box.__at) return;
+      box.__at = last;
+      blind = !last;
+      var target = last ? parseFloat(last.dataset.vgo.split(':')[1]) : (parseFloat(box.dataset.angle) || 55);
+      if(Math.abs(target - th) > 0.5) to(target); else draw();
+    };
+    box.__paint();
+    return;
   }
   draw();
 });
@@ -1974,6 +2462,10 @@ $$('.qfam').forEach(function(box){
    data-img="50,50,…" — своє зображення (квадрат N×N), інакше світлий
    прямокутник на темному тлі: на ньому видно головне — вертикальне ядро
    світиться на бічних межах і мовчить на верхній та нижній.
+   data-div="9" — усереднення (розмиття): сума ділиться на 9 і округлюється,
+   праворуч — розмите зображення, а не |сума|.
+   Кроки — пробілом (20.10.2026, раніше кнопка «Крок»): перші data-n вікон
+   (типово 4) — по одному, наступний пробіл заповнює решту карти.
    ───────────────────────────────────────────────────────────────────── */
 $$('.cnv').forEach(function(box){
   var IMG = [], N = 8, r, c;
@@ -1989,6 +2481,8 @@ $$('.cnv').forEach(function(box){
   var kk = (box.dataset.k || '1,0,-1,2,0,-2,1,0,-1').split(',').map(Number);
   var K = [[kk[0],kk[1],kk[2]],[kk[3],kk[4],kk[5]],[kk[6],kk[7],kk[8]]];
   var M = N - 2, LAST = M*M - 1;
+  var DIV = parseInt(box.dataset.div || '0', 10) || 0;
+  var NS = Math.min(M*M, parseInt(box.dataset.n || '4', 10) || 4);
 
   box.textContent = '';
   var wrap = el('div','cnw');
@@ -1996,11 +2490,15 @@ $$('.cnv').forEach(function(box){
     '<div class="col"><p class="cap">зображення ' + N + '×' + N + ' · яскравість</p>' +
       '<div class="gr in"></div></div>' +
     '<div class="col ker"><p class="cap">ядро</p><div class="kg"></div><p class="sum"></p></div>' +
-    '<div class="col"><p class="cap">карта ознак ' + M + '×' + M + ' · |сума|</p>' +
+    '<div class="col"><p class="cap">' + (DIV ? 'розмите ' + M + '×' + M + ' · середнє'
+                                              : 'карта ознак ' + M + '×' + M + ' · |сума|') + '</p>' +
       '<div class="gr out"></div></div>';
   box.appendChild(wrap);
   var inG = $('.gr.in', wrap), outG = $('.gr.out', wrap), kg = $('.kg', wrap),
-      sum = $('.sum', wrap), say = asay(box), row = arow(box);
+      sum = $('.sum', wrap), say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(NS + (M*M > NS ? 1 : 0) + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
   inG.style.gridTemplateColumns  = 'repeat(' + N + ',1fr)';
   outG.style.gridTemplateColumns = 'repeat(' + M + ',1fr)';
 
@@ -2017,42 +2515,64 @@ $$('.cnv').forEach(function(box){
   }
   K.forEach(function(rw){ rw.forEach(function(k){
     var d = el('div', k > 0 ? 'plus' : (k < 0 ? 'minus' : ''));
-    d.textContent = k > 0 ? '+' + k : String(k);
+    d.textContent = DIV ? String(k) : (k > 0 ? '+' + k : String(k));
     kg.appendChild(d);
   });});
 
-  var pos = -1, timer = null, play;
   function conv(rr,cc){
     var s = 0;
     for(var i = 0; i < 3; i++) for(var j = 0; j < 3; j++) s += IMG[rr+i-1][cc+j-1]*K[i][j];
     return s;
   }
+  function val(p){
+    var rr = 1 + Math.floor(p/M), cc = 1 + (p % M), s = conv(rr,cc);
+    return {rr: rr, cc: cc, s: s, v: DIV ? Math.round(s/DIV) : Math.min(255, Math.abs(s))};
+  }
+  function put(p){
+    var x = val(p), o = outC[p];
+    o.classList.remove('empty'); o.textContent = x.v;
+    o.style.background = gray(x.v); o.style.color = ink(x.v);
+    return x;
+  }
+  /* p — номер останнього заповненого вікна; усе до нього вже на карті */
   function show(p){
     inC.forEach(function(d){ d.classList.remove('win','ctr'); });
-    if(p < 0){ sum.innerHTML = 'Тисни «Крок» — ядро стане на перше місце.'; say.textContent = ''; return; }
-    var rr = 1 + Math.floor(p/M), cc = 1 + (p % M);
+    outC.forEach(function(o){ o.className = 'cl empty'; o.textContent = '0'; o.removeAttribute('style'); });
+    if(p < 0){
+      sum.innerHTML = DIV ? 'Пробіл — вікно 3×3 стане на перше місце.' : 'Пробіл — ядро стане на перше місце.';
+      say.textContent = ''; return;
+    }
+    var x;
+    for(var q = 0; q <= p; q++) x = put(q);
     for(var i = -1; i <= 1; i++) for(var j = -1; j <= 1; j++)
-      inC[(rr+i)*N + (cc+j)].classList.add('win');
-    inC[rr*N + cc].classList.add('ctr');
-    var s = conv(rr,cc), v = Math.min(255, Math.abs(s)), o = outC[(rr-1)*M + (cc-1)];
-    o.classList.remove('empty'); o.textContent = v;
-    o.style.background = gray(v); o.style.color = ink(v);
-    sum.innerHTML = 'сума = <b>' + s + '</b><br>|сума| → <span class="big">' + v + '</span>';
-    say.textContent = v > 200 ? 'Тут перепад — ядро спалахнуло.'
-      : (v === 0 ? 'Зліва і справа однаково — нуль. Цю межу ядро не бачить.'
-                 : 'Невеликий перепад — невелике число.');
+      inC[(x.rr+i)*N + (x.cc+j)].classList.add('win');
+    inC[x.rr*N + x.cc].classList.add('ctr');
+    if(DIV){
+      var lo = 255, hi = 0;
+      for(i = -1; i <= 1; i++) for(j = -1; j <= 1; j++){
+        var w = IMG[x.rr+i][x.cc+j]; lo = Math.min(lo, w); hi = Math.max(hi, w); }
+      sum.innerHTML = 'сума = <b>' + x.s + '</b><br>' + x.s + ' : ' + DIV + ' → <span class="big">' + x.v + '</span>';
+      say.textContent = p === LAST && p >= NS
+        ? 'Уся карта заповнена: різкі переходи стали плавними, а самотній яскравий піксель розтікся по сусідах.'
+        : (hi - lo > 100 ? 'У вікні є і темні, і світлі — середнє десь посередині: різкий перехід розмивається.'
+                         : 'Сусіди майже однакові — середнє майже не змінилось.');
+    } else {
+      sum.innerHTML = 'сума = <b>' + x.s + '</b><br>|сума| → <span class="big">' + x.v + '</span>';
+      say.textContent = x.v > 200 ? 'Тут перепад — ядро спалахнуло.'
+        : (x.v === 0 ? 'Зліва і справа однаково — нуль. Цю межу ядро не бачить.'
+                     : 'Невеликий перепад — невелике число.');
+    }
   }
-  function stop(){ if(timer){ clearInterval(timer); timer = null; } }
-  function step(){ if(pos >= LAST) return; pos++; show(pos); }
-  function reset(){
-    stop(); pos = -1;
-    outC.forEach(function(o){ o.className = 'cl empty'; o.textContent = '0';
-      o.removeAttribute('style'); });
-    show(-1);
-  }
-  abtn(row, 'Крок', '', function(){ step(); });
-  abtn(row, 'Спочатку', 'q', reset);
-  reset();
+  box.__at = -2;
+  box.__paint = function(){
+    var on = 0;
+    $$('i.hide', marks).forEach(function(m){ if(m.classList.contains('on')) on++; });
+    if(on === box.__at) return;
+    box.__at = on;
+    show(on <= NS ? on - 1 : LAST);
+    fit();
+  };
+  box.__paint();
 });
 
 
@@ -2320,7 +2840,7 @@ $$('.regroup').forEach(function(box){
   /* data-ans — необовʼязковий останній рядок: що вийшло після перестановки */
   var ans = null;
   if(box.dataset.ans){ ans = el('div','rans'); ans.textContent = box.dataset.ans; box.appendChild(ans); }
-  var say = asay(box), row = arow(box);
+  var say = asay(box);
 
   /* знак, який змінився: порівнюємо послідовності дій */
   var opsA = [], opsB = [];
@@ -2340,57 +2860,73 @@ $$('.regroup').forEach(function(box){
     if(na){ used[na.dataset.i] = 1; pairs.push({a:na, b:nb}); }
   });
 
-  var at = 0;
-  function reset(){
-    at = 0;
-    box.classList.remove('done');
-    $$('.ghost', box).forEach(function(g){ g.parentNode.removeChild(g); });
-    $('g', arr).innerHTML = '';
-    $$('.chg', l2).forEach(function(e){ e.classList.remove('chg'); });
+  /* Кроки — пробілом (вчитель, 01.10.2026: «усі анімації по пробілу»):
+     по одному числу за крок, останній крок — «усе на місцях» і data-ans. */
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(pairs.length + 2).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  /* слайд масштабується transform-ом (fit), тож координати ділимо на масштаб */
+  function geo(){
+    var br = box.getBoundingClientRect(), k = box.offsetWidth ? br.width / box.offsetWidth : 1;
+    return { br: br, k: k || 1 };
+  }
+  function pt(e, G){
+    var r = e.getBoundingClientRect();
+    return { l: (r.left - G.br.left) / G.k, t: (r.top - G.br.top) / G.k, w: r.width / G.k, h: r.height / G.k };
+  }
+  function arrows(n, anim){
+    var G = geo(), svg = $('svg', arr), g = $('g', arr);
+    var W0 = box.offsetWidth, H0 = box.offsetHeight;
+    svg.setAttribute('viewBox', '0 0 ' + W0 + ' ' + H0);
+    svg.style.width = W0 + 'px'; svg.style.height = H0 + 'px';
+    svg.style.left = '0'; svg.style.top = '0';
+    var html = '';
+    for(var q = 0; q < n; q++){
+      var a = pt(pairs[q].a, G), b = pt(pairs[q].b, G);
+      var ax = a.l + a.w / 2, ay = a.t + a.h, bx = b.l + b.w / 2, by = b.t, my = (ay + by) / 2;
+      html += '<path class="rp' + (anim && q === n - 1 ? '' : ' st') + '" d="M ' + ax.toFixed(1) + ' ' + ay.toFixed(1) +
+        ' C ' + ax.toFixed(1) + ' ' + my.toFixed(1) + ', ' + bx.toFixed(1) + ' ' + my.toFixed(1) +
+        ', ' + bx.toFixed(1) + ' ' + by.toFixed(1) + '"></path>';
+    }
+    g.innerHTML = html;
+    $$('.ghost', box).forEach(function(gh){ gh.parentNode.removeChild(gh); });
+    if(anim && n){
+      var p = pairs[n - 1], A = pt(p.a, G), B = pt(p.b, G);
+      var gh = el('span','ghost'); gh.textContent = p.a.textContent;
+      gh.style.left = A.l + 'px'; gh.style.top = A.t + 'px';
+      box.appendChild(gh);
+      p.b.style.opacity = '.18';
+      setTimeout(function(){ gh.style.transform = 'translate(' + (B.l - A.l) + 'px,' + (B.t - A.t) + 'px)'; }, 30);
+      setTimeout(function(){ if(gh.parentNode){ gh.parentNode.removeChild(gh); } if(box.__at >= n) p.b.style.opacity = '1'; }, 850);
+    }
+  }
+  var nA = $$('.n', l1), nB = $$('.n', l2);
+  function stay(p){ return nA.indexOf(p.a) === nB.indexOf(p.b); }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at){ if(st && box.offsetWidth && box.__drawn !== st){ box.__drawn = st; arrows(Math.min(st, pairs.length), false); } return; }
+    var fwd = st > box.__at;
+    box.__at = st;
+    var n = Math.min(st, pairs.length), done = st > pairs.length;
+    box.classList.toggle('done', done);
     $$('.n', l1).forEach(function(e){ e.style.opacity = ''; });
     $$('.n', l2).forEach(function(e){ e.style.opacity = ''; });
-    say.textContent = 'Дивимось, куди переїде кожне число — по одному.';
+    pairs.forEach(function(p, q){ if(q < n){ p.a.style.opacity = '.25'; p.b.style.opacity = '1'; } });
+    $$('.chg', l2).forEach(function(e){ e.classList.remove('chg'); });
+    if(done) changed.forEach(function(i){ var e = $('[data-i="' + i + '"]', l2); if(e) e.classList.add('chg'); });
+    say.textContent = st === 0 ? 'Дивимось, куди переїде кожне число — по одному.'
+      : done ? (changed.length ? 'Усе на місцях. Знак, що змінився, підсвічено.'
+                               : 'Усе на місцях. Числа ті самі — змінився лише порядок, а рахувати стало зручніше.')
+      : (stay(pairs[n - 1]) ? 'Число ' + pairs[n - 1].a.textContent + ' лишається на своєму місці.'
+                            : 'Число ' + pairs[n - 1].a.textContent + ' переїхало на своє нове місце.');
     fit();
-  }
-  /* По одному числу за крок — нічого не перемикається саме (вчитель, 25.09.2026). */
-  function move(){
-    if(at >= pairs.length){
-      box.classList.add('done');
-      changed.forEach(function(i){ var e = $('[data-i="' + i + '"]', l2); if(e) e.classList.add('chg'); });
-      $$('.ghost', box).forEach(function(gh){ gh.parentNode.removeChild(gh); });
-      say.textContent = 'Усе на місцях. Знак перед дужкою розійшовся на кожен доданок.';
-      fit();
-      return;
-    }
-    var br = box.getBoundingClientRect(), svg = $('svg', arr), g = $('g', arr);
-    svg.setAttribute('viewBox', '0 0 ' + Math.round(br.width) + ' ' + Math.round(br.height));
-    svg.style.width = br.width + 'px'; svg.style.height = br.height + 'px';
-    svg.style.left = '0'; svg.style.top = '0';
-    var p = pairs[at];
-    var a = p.a.getBoundingClientRect(), b = p.b.getBoundingClientRect();
-    var ax = a.left - br.left + a.width/2, ay = a.bottom - br.top;
-    var bx = b.left - br.left + b.width/2, by = b.top - br.top;
-    var my = (ay + by)/2;
-    g.innerHTML += '<path class="rp" d="M ' + ax.toFixed(1) + ' ' + ay.toFixed(1) +
-      ' C ' + ax.toFixed(1) + ' ' + my.toFixed(1) + ', ' + bx.toFixed(1) + ' ' + my.toFixed(1) +
-      ', ' + bx.toFixed(1) + ' ' + by.toFixed(1) + '"></path>';
-    var gh = el('span','ghost');
-    gh.textContent = p.a.textContent;
-    gh.style.left = (a.left - br.left) + 'px';
-    gh.style.top  = (a.top  - br.top ) + 'px';
-    box.appendChild(gh);
-    setTimeout(function(){
-      gh.style.transform = 'translate(' + (b.left - a.left) + 'px,' + (b.top - a.top) + 'px)';
-    }, 30);
-    p.a.style.opacity = '.25';
-    p.b.style.opacity = '1';
-    say.textContent = 'Число ' + p.a.textContent + ' переїхало на своє нове місце.';
-    at++;
-    fit();
-  }
-  abtn(row, 'Далі', '', move);
-  abtn(row, 'Спочатку', 'q', reset);
-  reset();
+    box.__drawn = box.offsetWidth ? st : -1;
+    if(box.offsetWidth) arrows(n, fwd && !done && st === n);
+  };
+  on(W,'resize',function(){ if(box.__at > 0) setTimeout(function(){ arrows(Math.min(box.__at, pairs.length), false); }, 160); });
+  box.__paint();
 });
 
 
@@ -2424,6 +2960,11 @@ $$('.subst').forEach(function(box){
       var c = ex.charAt(i);
       if(c === ' '){ i++; continue; }
       if(c === V){ T.push({k:'v'}); i++; continue; }
+      /* показник степеня: x² → після підстановки 3², рахує .ordops (з 04.10.2026) */
+      if('⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(c) >= 0){
+        var j3 = i; while(j3 < ex.length && '⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(ex.charAt(j3)) >= 0) j3++;
+        T.push({k:'p', s: ex.slice(i,j3)}); i = j3; continue;
+      }
       if(c >= '0' && c <= '9'){
         var j2 = i; while(j2 < ex.length && /[0-9.,]/.test(ex.charAt(j2))) j2++;
         T.push({k:'n', s: ex.slice(i,j2)}); i = j2; continue;
@@ -2441,7 +2982,8 @@ $$('.subst').forEach(function(box){
         var pr = T[k-1];
         if(pr && (pr.k === 'n' || (pr.k === 'o' && pr.s === ')'))) out += ' · ';
         out += VAL;
-      } else out += (t.s === '(' || t.s === ')' ? t.s : ' ' + t.s + ' ');
+      } else if(t.k === 'p') out += t.s;
+      else out += (t.s === '(' || t.s === ')' ? t.s : ' ' + t.s + ' ');
     });
     return out;
   }
@@ -2777,6 +3319,89 @@ $$('.sgn').forEach(function(box){
 });
 
 /* ─────────────────────────────────────────────────────────────────────
+   C50 · .flip — ділення дробів: дільник перевертається, «:» стає «·»
+   <div class="flip" data-a="a|b" data-b="c|d" data-res="a · d|b · c"></div>
+   Чисельник і знаменник — через «|», можна з розміткою (<span class="m">x</span>).
+   Кроки пробілом. Перший: чисельник і знаменник дільника міняються
+   місцями (справді переїжджають), двокрапка перетворюється на крапку,
+   під діленим — «не чіпаємо». Другий (якщо є data-res): «= результат».
+   Учень має побачити, що ділення дробів — це множення на перевернутий
+   дільник, а ділене лишається як було.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.flip').forEach(function(box){
+  function parts(s, d1, d2){ var p = (s || '').split('|'); return [p[0] || d1, p[1] || d2]; }
+  var A = parts(box.dataset.a, 'a', 'b'), B = parts(box.dataset.b, 'c', 'd'),
+      R = box.dataset.res ? parts(box.dataset.res, '', '') : null;
+  /* у всіх трьох дробах однакова будова, інакше дільник сідає нижче за ділене */
+  function fr(p, c){ return '<span class="fr' + (c ? ' ' + c : '') + '"><span class="n"><span class="fx">' + p[0] +
+                            '</span></span><span class="d"><span class="fx">' + p[1] + '</span></span></span>'; }
+
+  box.textContent = '';
+  var view = el('div','flv');
+  view.innerHTML =
+    '<span class="fcol fa">' + fr(A) + '<span class="tag">ділене</span></span>' +
+    '<span class="fop">:</span>' +
+    '<span class="fcol fb">' + fr(B, 'fdiv') + '<span class="tag">дільник</span></span>' +
+    (R ? '<span class="fres"><span class="feq">=</span>' + fr(R) + '</span>' : '');
+  box.appendChild(view);
+  var say = asay(box);
+
+  var K = R ? 2 : 1;
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(K + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  var op = $('.fop', view), fb = $('.fb', view), fa = $('.fa', view),
+      bn = $('.fdiv .n .fx', view), bd = $('.fdiv .d .fx', view),
+      ta = $('.fa .tag', view), tb = $('.fb .tag', view), res = $('.fres', view);
+
+  var TXT = [
+    'Ділимо дріб на дріб. Хто тут ділене, а хто дільник?',
+    'Дільник перевертаємо: чисельник і знаменник міняються місцями. Ділення стає множенням. Ділене не чіпаємо.',
+    'Далі — звичайне множення дробів: чисельник на чисельник, знаменник на знаменник.'
+  ];
+
+  box.__at = -1;
+  box.__paint = function(){
+    var n = 0;
+    $$('i.hide', marks).forEach(function(i){ if(i.classList.contains('on')) n++; });
+    if(n === box.__at) return;
+    var was = box.__at;
+    box.__at = n;
+
+    var flip = n >= 1, wasFlip = was >= 1;
+    var o1 = bn.getBoundingClientRect(), o2 = bd.getBoundingClientRect();
+    bn.innerHTML = flip ? B[1] : B[0];
+    bd.innerHTML = flip ? B[0] : B[1];
+    op.textContent = flip ? '·' : ':';
+    op.classList.toggle('nw', flip);
+    fb.classList.toggle('on', flip);
+    fa.classList.toggle('keep', flip);
+    ta.textContent = flip ? 'не чіпаємо' : 'ділене';
+    tb.textContent = flip ? 'обернений до дільника' : 'дільник';
+    if(res) res.classList.toggle('on', n >= 2);
+    say.textContent = TXT[Math.min(n, 2)];
+
+    /* чисельник і знаменник справді переїжджають, а не просто перемальовуються */
+    if(was >= 0 && flip !== wasFlip && o1.height){
+      var k = box.getBoundingClientRect().width / (box.offsetWidth || 1) || 1;
+      var n1 = bn.getBoundingClientRect(), n2 = bd.getBoundingClientRect();
+      bn.style.transition = 'none'; bd.style.transition = 'none';
+      bn.style.transform = 'translateY(' + ((o2.top - n1.top) / k) + 'px)';
+      bd.style.transform = 'translateY(' + ((o1.top - n2.top) / k) + 'px)';
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        bn.style.transition = ''; bd.style.transition = '';
+        bn.style.transform = '';  bd.style.transform = '';
+      }); });
+    } else {
+      bn.style.transform = ''; bd.style.transform = '';
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
    C25 · .hist — гістограма яскравостей, два режими, кроки — пробілом
    «рахуємо» (типово):
      <div class="hist" data-img="0,64,128,64,…"></div>
@@ -3037,11 +3662,22 @@ $$('.ocr').forEach(function(box){
      вліво (окремий крок «чому зсуваємо»), нуль у нижньому числі — рядок
      нулів не пишемо. Далі неповні добутки додаємо стовпчиком, по розряду
      за крок, з переносами над першим рядком.
+     data-zeros="aside" — нулі в кінці множників відставляємо вбік (за
+     пунктиром), рахуємо стовпчиком без них, а в кінці дописуємо до
+     відповіді (як 4259 · 8700 у підручнику: 4259 · 87, потім «00»).
    ───────────────────────────────────────────────────────────────────── */
 $$('.colmul').forEach(function(box){
   var a = String(box.dataset.a||'').replace(/\D/g,''), b = String(box.dataset.b||'').replace(/\D/g,'');
   if(!a || !b) return;
   a = String(+a); b = String(+b);
+  /* нулі вбік: множимо без них, дописуємо в кінці */
+  var A0 = a, B0 = b, za = 0, zb = 0;
+  if(box.dataset.zeros === 'aside'){
+    za = a.length - a.replace(/0+$/,'').length; if(za === a.length) za = 0;
+    zb = b.length - b.replace(/0+$/,'').length; if(zb === b.length) zb = 0;
+    a = a.slice(0, a.length - za); b = b.slice(0, b.length - zb);
+  }
+  var Z = za + zb, zOut = false, ZS = new Array(Z + 1).join('0');
   var R = String(+a * +b), W = Math.max(R.length, a.length, b.length);
   var NOM = ['одиниці','десятки','сотні','тисячі','десятки тисяч','сотні тисяч','мільйони','десятки мільйонів','сотні мільйонів'];
   var GEN = ['одиниць','десятків','сотень','тисяч','десятків тисяч','сотень тисяч','мільйонів','десятків мільйонів','сотень мільйонів'];
@@ -3057,12 +3693,21 @@ $$('.colmul').forEach(function(box){
   var snaps = [], log = [];
   function snap(hi, sh, lg){
     snaps.push({ carry:carry.slice(), pd:pd.map(function(r){ return r.slice(); }), res:res.slice(),
-                 acar:acar.slice(), xed:xed.slice(), hi:hi || [] });
+                 acar:acar.slice(), xed:xed.slice(), hi:hi || [], z:zOut });
     log.push({ sh:sh, lg:lg });
   }
   snap([], 'Записали ' + fmt(a) + ' · ' + fmt(b),
     'Пишемо одне число під іншим так, щоб останні цифри стояли одна під одною — по правому краю. ' +
     'Множимо на кожну цифру нижнього числа по черзі, починаючи з одиниць — справа наліво.');
+  if(Z){
+    var zhi = [];
+    for(var zi = 0; zi < za; zi++) zhi.push(['aZ', Z - 1 - zi]);
+    for(var zj = 0; zj < zb; zj++) zhi.push(['bZ', Z - 1 - zj]);
+    snap(zhi, 'Нулі в кінці — вбік: ' + fmt(a) + ' · ' + fmt(b),
+      'У кінці ' + (za && zb ? 'обох чисел' : za ? 'першого числа' : 'другого числа') + ' стоять нулі. Їх відставляємо вбік, за пунктир, ' +
+      'а числа пишемо так, щоб під одною стояли останні цифри БЕЗ нулів. Рахуємо ' + fmt(a) + ' · ' + fmt(b) +
+      ' — коротше й легше. Нулі не губимо: допишемо їх у кінці.');
+  }
 
   jobs.forEach(function(j, q){
     var d = B[j];
@@ -3132,7 +3777,7 @@ $$('.colmul').forEach(function(box){
         txt += terms.join(' + ') + (ac ? ' і ще ' + ac + ' перенесений згори' : '') + ' = ' + sum + '. ';
       }
       var nc = lastCol ? 0 : Math.floor(sum / 10);
-      if(nc){ acar[k + 1] = nc; hiA.push(['w2', k + 1]); txt += 'Пишемо ' + (sum % 10) + ', а ' + nc + ' переносимо в ' + nm(k + 1, GEN) + ' — дрібно над стовпчиком.'; }
+      if(nc){ acar[k + 1] = nc; hiA.push(['w2', k + 1]); txt += 'Пишемо ' + (sum % 10) + ', а ' + nc + ' переносимо в розряд ' + nm(k + 1, GEN) + ' — дрібно над стовпчиком.'; }
       else if(!plain) txt += 'Пишемо ' + sum + '.';
       snap(hiA, nm(k, NOM) + ': ' + (plain ? terms[0] + ' ↓' : expr + ' = ' + sum), txt);
       ac = nc;
@@ -3142,6 +3787,17 @@ $$('.colmul').forEach(function(box){
     R.split('').reverse().forEach(function(ch, k){ res[k] = +ch; });
   }
   function rnd(x){ var m = Math.pow(10, String(x).length - 1); return Math.round(x / m) * m; }
+  if(Z){
+    zOut = true;
+    var rhi = [];
+    for(var zr = 0; zr < Z; zr++) rhi.push([(many ? 'r' : 'p0') + 'Z', zr]);
+    snap(rhi, 'Дописуємо ' + ZS + ': ' + fmt(R) + ' → ' + fmt(R + ZS),
+      fmt(a) + ' · ' + fmt(b) + ' = ' + fmt(R) + '. Тепер повертаємо відкладені нулі: ' +
+      (za && zb ? za + ' з першого числа і ' + zb + ' з другого — разом ' + Z : Z) + '. ' +
+      'Дописуємо їх справа до відповіді: ' + fmt(R + ZS) + '.');
+  }
+  var R1 = R;
+  a = A0; b = B0; R = R + ZS;
   var ra = rnd(+a), rb = rnd(+b);
   snap([], 'Відповідь: ' + fmt(a) + ' · ' + fmt(b) + ' = ' + fmt(R),
     'Відповідь: ' + fmt(a) + ' · ' + fmt(b) + ' = ' + fmt(R) + '.' + (function(){
@@ -3157,6 +3813,10 @@ $$('.colmul').forEach(function(box){
     var r = el('tr', cls || ''); var o = el('td','op'); o.textContent = op || ''; r.appendChild(o);
     cells[key] = [];
     for(var c2 = W - 1; c2 >= 0; c2--){ var td = el('td'); cells[key][c2] = td; r.appendChild(td); }
+    if(Z){
+      cells[key + 'Z'] = [];
+      for(var c3 = Z - 1; c3 >= 0; c3--){ var tz = el('td', 'z' + (c3 === Z - 1 ? ' zs' : '')); cells[key + 'Z'][c3] = tz; r.appendChild(tz); }
+    }
     tb.appendChild(r); return r;
   }
   row('w','w'); row('a',''); var rb = row('b','ln','×');
@@ -3166,6 +3826,8 @@ $$('.colmul').forEach(function(box){
   if(many) row('r','');
   A.forEach(function(v, i){ cells.a[i].textContent = v; });
   B.forEach(function(v, j){ cells.b[j].textContent = v; });
+  for(var zq = 0; zq < za; zq++) { cells.aZ[Z - 1 - zq].textContent = 0; cells.aZ[Z - 1 - zq].classList.add('zq'); }
+  for(var zw = 0; zw < zb; zw++) { cells.bZ[Z - 1 - zw].textContent = 0; cells.bZ[Z - 1 - zw].classList.add('zq'); }
 
   var say = el('div','say');
   var ol = el('ol','cs-log');
@@ -3189,8 +3851,200 @@ $$('.colmul').forEach(function(box){
       }
       s.pd.forEach(function(r, q){ cells['p' + q][c4].textContent = r[c4] != null ? r[c4] : ''; });
     }
+    if(Z){
+      var rz = cells[(many ? 'r' : 'p0') + 'Z'];
+      for(var c6 = 0; c6 < Z; c6++) rz[c6].textContent = s.z ? 0 : '';
+    }
     s.hi.forEach(function(h){ var c5 = cells[h[0]] && cells[h[0]][h[1]]; if(c5) c5.classList.add('hi'); });
     say.textContent = log[shown - 1].lg.replace(/ ([−=→+·]) /g, ' $1 ');
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C27a · .coldiv — ділення куточком: кожна дія — окремий крок по пробілу
+     <div class="coldiv" data-a="2832" data-b="12"></div>
+     Як .colmul: праворуч журнал кроків (li.hide — їх гортає пробіл),
+     ліворуч куточок і пояснення дитячою мовою, між ними — стовпчик
+     «кратні дільника»: 12, 24, 36 … росте й зупиняється на найбільшому,
+     що вміщається в неповне ділене, — так видно, звідки цифра частки.
+     Кроки: перше неповне ділене (і скільки цифр буде в частці — крапками) →
+     цифра частки → множимо → віднімаємо → зносимо наступну цифру. Неповне
+     ділене менше за дільник — окремий крок «пишемо 0 у частку». Нулі, що
+     лишились у кінці діленого, — одним кроком у частку. Останній крок —
+     перевірка множенням.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.coldiv').forEach(function(box){
+  var a = String(box.dataset.a||'').replace(/\D/g,''), b = String(box.dataset.b||'').replace(/\D/g,'');
+  if(!a || !b || +b === 0 || +a < +b) return;
+  a = String(+a); b = String(+b);
+  var B = +b, W = a.length, Qs = String(Math.floor(+a / B));
+  function fmt(x){ return String(x).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
+  function pl(n, one, few, many){ var m = n % 10, h = n % 100;
+    return n + ' ' + (m === 1 && h !== 11 ? one : m >= 2 && m <= 4 && (h < 12 || h > 14) ? few : many); }
+
+  /* перше неповне ділене */
+  var f = 1; while(+a.slice(0, f) < B) f++;
+  var QL = W - f + 1;
+  var G = {}, ul = {}, Q = [], K = null, hi = [], snaps = [], log = [], row = 0;
+  function put(r, endCol, s, cls){
+    for(var i = 0; i < W + 1; i++){ var k = r + ',' + (i - 1); if(G[k] && G[k][1] !== 'mn') delete G[k]; }
+    s = String(s);
+    for(var j = 0; j < s.length; j++) G[r + ',' + (endCol - s.length + 1 + j)] = [s.charAt(j), cls || ''];
+  }
+  function cellsOf(r, endCol, len){ var o = []; for(var j = 0; j < len; j++) o.push(r + ',' + (endCol - j)); return o; }
+  function snap(sh, lg){
+    snaps.push({ G: JSON.stringify(G), ul: Object.keys(ul), Q: Q.slice(), K: K, hi: hi.slice() });
+    log.push({ sh: sh, lg: lg }); hi = [];
+  }
+  put(0, W - 1, a);
+  snap('Записали ' + fmt(a) + ' : ' + fmt(b),
+    'Ділене пишемо зліва, за рискою — дільник ' + fmt(b) + ', під ним буде частка. ' +
+    'Ділимо зліва направо — з найстарших розрядів, не так, як множимо.');
+
+  var pos = f - 1, cur = +a.slice(0, f);
+  hi = cellsOf(0, pos, f);
+  for(var qi = 0; qi < QL; qi++) Q.push('•');
+  snap('Перше неповне ділене: ' + cur,
+    (f > 1 ? 'Чи можна ' + a.slice(0, f - 1) + ' поділити на ' + fmt(b) + '? Ні, ' + a.slice(0, f - 1) + ' < ' + fmt(b) +
+      '. Беремо на одну цифру більше: ' + cur + '. ' : cur + ' ≥ ' + fmt(b) + ' — уже можна ділити. ') +
+    'Це перше неповне ділене. ' + (W - f ? 'Після нього в діленому лишилось ' + pl(W - f, 'цифра', 'цифри', 'цифр') + ', тож ' : '') +
+    'у частці буде ' + pl(QL, 'цифра', 'цифри', 'цифр') + ' — ставимо ' + pl(QL, 'крапку', 'крапки', 'крапок') + '.');
+
+  var qn = 0;                                   /* яку цифру частки пишемо */
+  var minusRow = 0, minusEnd = pos, minusLen = f;
+  while(true){
+    var q = Math.floor(cur / B), p = q * B, rem = cur - p;
+    /* 1. цифра частки */
+    K = { n: B, q: q, cur: cur, up: Math.min(9, q + 1) };
+    Q[qn] = String(q); hi = ['Q' + qn];
+    if(q === 0){
+      snap(cur + ' < ' + fmt(b) + ' → у частку 0',
+        cur + ' менше за ' + fmt(b) + ' — жодного разу не вміщається. У частку пишемо 0 — цифру пропускати не можна, ' +
+        'інакше частка вийде в 10 разів меншою.');
+    } else {
+      snap(cur + ' : ' + fmt(b) + ' → ' + q,
+        'Скільки разів ' + fmt(b) + ' вміщається в ' + cur + '? Рахуємо кратні: ' +
+        (q < 9 ? fmt(B * q) + ' ще вміщається, а ' + fmt(B * (q + 1)) + ' > ' + cur + ' — уже забагато. '
+               : fmt(B * 9) + ' ≤ ' + cur + ' — більше 9 не буває. ') +
+        'У частку пишемо ' + q + '.');
+      K = null;
+      /* 2. множимо */
+      var rp = row + 1;
+      put(rp, pos, p);
+      hi = cellsOf(rp, pos, String(p).length).concat(['Q' + qn, 'D']);
+      cellsOf(rp, pos, Math.max(String(p).length, String(cur).length)).forEach(function(k){ ul[k] = 1; });
+      G[minusRow + ',' + (minusEnd - minusLen)] = ['−', 'mn'];
+      snap(q + ' · ' + fmt(b) + ' = ' + p,
+        'Множимо цифру частки на дільник: ' + q + ' · ' + fmt(b) + ' = ' + p + '. Пишемо ' + p + ' під ' + cur +
+        ' так, щоб останні цифри стояли одна під одною, і ставимо мінус — зараз будемо віднімати.');
+      /* 3. віднімаємо */
+      var rr = row + 2;
+      put(rr, pos, rem);
+      hi = cellsOf(rr, pos, String(rem).length);
+      snap(cur + ' − ' + p + ' = ' + rem,
+        cur + ' − ' + p + ' = ' + rem + '. Остача ' + rem + ' < ' + fmt(b) + ' — так і має бути. ' +
+        'Якби вийшло більше або стільки ж, як дільник, — цифру частки треба було б узяти більшою.');
+      row = rr;
+      cur = rem;
+    }
+    qn++;
+    if(pos === W - 1) break;
+    /* нулі в кінці, коли остача 0 */
+    var rest = a.slice(pos + 1);
+    if(cur === 0 && /^0+$/.test(rest)){
+      for(var z = 0; z < rest.length; z++) Q[qn + z] = '0';
+      hi = []; for(var z2 = 0; z2 < rest.length; z2++) hi.push('Q' + (qn + z2));
+      snap('Лишились нулі → ' + rest + ' у частку',
+        'Остача 0, а в діленому лишились самі нулі: ' + rest + '. 0 : ' + fmt(b) + ' = 0, тож кожен такий нуль просто ' +
+        'дописуємо в частку — ' + rest.length + ' ' + (rest.length === 1 ? 'нуль' : rest.length < 5 ? 'нулі' : 'нулів') + '.');
+      qn += rest.length; pos = W - 1;
+      break;
+    }
+    /* 4. зносимо наступну цифру */
+    pos++;
+    var d = a.charAt(pos), was = cur;
+    cur = cur * 10 + (+d);
+    put(row, pos, cur);
+    minusRow = row; minusEnd = pos; minusLen = String(cur).length;
+    hi = [row + ',' + pos, '0,' + pos];
+    snap('Зносимо ' + d + ' → ' + cur,
+      'Зносимо вниз наступну цифру діленого — ' + d + '. ' +
+      (was === 0 ? 'Остача була 0, тож нуль попереду не пишемо: ' : 'До остачі ' + was + ' дописуємо ' + d + ': ') +
+      'нове неповне ділене ' + cur + '.');
+  }
+
+  K = null; hi = []; for(var qa = 0; qa < QL; qa++) hi.push('Q' + qa);
+  var fr = cur;
+  var chk = fmt(Qs) + ' · ' + fmt(b) + (fr ? ' + ' + fr : '') + ' = ' + fmt(+Qs * B + fr);
+  snap('Перевірка: ' + chk,
+    (fr ? 'Неповна частка ' + fmt(Qs) + ', остача ' + fr + ': ' + fmt(a) + ' : ' + fmt(b) + ' = ' + fmt(Qs) + ' (ост. ' + fr + '). ' : 'Остача 0 — поділилось націло: ' + fmt(a) + ' : ' + fmt(b) + ' = ' + fmt(Qs) + '. ') +
+    'Перевіряємо множенням: ' + chk + ' — збіглося з діленим, отже, правильно.');
+
+  /* таблиця */
+  var rows = row + 1, RW = Math.max(b.length, QL) + 1;
+  var tb = el('table','cl'), cells = {};
+  for(var r = 0; r < Math.max(rows, 2); r++){
+    var tr = el('tr');
+    for(var c = -1; c < W; c++){ var td = el('td', c < 0 ? 'op' : ''); cells[r + ',' + c] = td; tr.appendChild(td); }
+    for(var j = 0; j < RW; j++){
+      /* риска куточка: зліва в рядках 0–1, знизу під дільником */
+      var tr2 = el('td', 'rt' + (j === 0 && r < 2 ? ' bar' : '') + (r === 0 ? ' dv' : ''));
+      if(r === 0 && j > 0 && j <= b.length){ tr2.textContent = b.charAt(j - 1); cells['D' + (j - 1)] = tr2; }
+      if(r === 1 && j > 0) cells['Q' + (j - 1)] = tr2;
+      tr.appendChild(tr2);
+    }
+    tb.appendChild(tr);
+  }
+  var kp = el('div','cd-k');
+  var say = el('div','say');
+  var ol = el('ol','cs-log');
+  log.forEach(function(L, i){ ol.appendChild(el('li', i ? 'hide' : '', L.sh)); });
+  var left = el('div','cs-l'), top = el('div','cd-t');
+  top.appendChild(tb); top.appendChild(kp);
+  left.appendChild(top); left.appendChild(say);
+  box.appendChild(left); box.appendChild(ol);
+
+  var lastK = '';
+  box.__paint = function(){
+    var lis = $$('li', ol), shown = 0;
+    lis.forEach(function(li, i){ if(!i || li.classList.contains('on')) shown = i + 1; });
+    var s = snaps[shown - 1], g = JSON.parse(s.G);
+    lis.forEach(function(li, i){ li.classList.toggle('now', i === shown - 1); li.classList.toggle('past', i < shown - 1); });
+    Object.keys(cells).forEach(function(k){
+      var td = cells[k]; td.classList.remove('hi','ul','mn');
+      if(k.charAt(0) === 'Q') td.textContent = '';
+      else if(k.charAt(0) !== 'D') td.textContent = '';
+    });
+    Object.keys(g).forEach(function(k){ var td = cells[k]; if(!td) return; td.textContent = g[k][0]; if(g[k][1]) td.classList.add(g[k][1]); });
+    s.ul.forEach(function(k){ if(cells[k]) cells[k].classList.add('ul'); });
+    s.Q.forEach(function(ch, i){ if(cells['Q' + i]) cells['Q' + i].textContent = ch; });
+    s.hi.forEach(function(k){
+      if(k === 'D'){ for(var i = 0; i < b.length; i++) cells['D' + i].classList.add('hi'); return; }
+      if(cells[k]) cells[k].classList.add('hi');
+    });
+    /* кратні дільника */
+    var key = s.K ? s.K.n + ':' + s.K.cur : '';
+    if(key !== lastK){
+      kp.textContent = '';
+      if(s.K){
+        kp.appendChild(el('b', '', 'кратні ' + fmt(s.K.n)));
+        var lisK = [];
+        for(var m = 1; m <= s.K.up; m++){
+          var v = s.K.n * m, ok = m === s.K.q, no = v > s.K.cur;
+          var li = el('div', 'k' + (ok ? ' ok' : '') + (no ? ' no' : ''),
+            fmt(s.K.n) + ' · ' + m + ' = ' + fmt(v) + (no ? ' &gt; ' + s.K.cur : ok ? ' ≤ ' + s.K.cur : ''));
+          li.style.transitionDelay = (m - 1) * 0.35 + 's';
+          kp.appendChild(li); lisK.push(li);
+        }
+        void kp.offsetWidth;
+        lisK.forEach(function(li){ li.classList.add('in'); });
+      }
+      lastK = key;
+    }
+    kp.classList.toggle('off', !s.K);
+    say.textContent = log[shown - 1].lg;
     fit();
   };
   box.__paint();
@@ -3204,11 +4058,27 @@ $$('.colmul').forEach(function(box){
      потім сума згортається в «3 · 4 = 12» з підписами «скільки в коробці /
      скільки коробок»; останній крок — назви: множник · множник = добуток.
      data-item="🍬" — замість кружечків (типово — кружечки, без шрифтів).
+     data-mode="div" — ДІЛЕННЯ (з 08.10.2026): усього n · k, розкладаємо по n;
+     коробки наповнюються по одній, під ними «лишилось …»; потім «12 : 3 = 4»
+     з підписами «усього / скільки в одній / скільки коробок», далі назви
+     ділене : дільник = частка, останній крок — перевірка множенням 4 · 3 = 12.
+     data-r="4" (лише з data-mode="div", з 14.10.2026) — ДІЛЕННЯ З ОСТАЧЕЮ:
+     усього n · k + r; після останньої коробки окремий крок — «лишилось r,
+     на коробку треба n: r < n» (зайві лежать поруч у штриховій рамці), далі
+     19 : 5 = 3 (ост. 4), назви з «неповна частка» й «остача», перевірка
+     5 · 3 + 4 = 19. Остача завжди менша за n (більшу двигун обрізає).
+     data-q="up" | "down" (лише з data-r, з 15.10.2026) — ЗМІСТ ОСТАЧІ В ЗАДАЧІ:
+     ще один крок після перевірки. up — «скільки коробок треба, щоб забрати
+     все?»: остача стає ще однією (неповною) коробкою, k + 1; down — «скільки
+     ПОВНИХ коробок?»: остача блякне, у відповідь іде лише неповна частка k.
    ───────────────────────────────────────────────────────────────────── */
 $$('.packs').forEach(function(box){
+  var dv = box.dataset.mode === 'div';
   var n = Math.max(1, Math.min(12, parseInt(box.dataset.n, 10) || 3));
   var k = Math.max(1, Math.min(8, parseInt(box.dataset.k, 10) || 4));
   var item = box.dataset.item || '';
+  var r = dv ? Math.max(0, Math.min(n - 1, parseInt(box.dataset.r, 10) || 0)) : 0;
+  var qq = r && /^(up|down)$/.test(box.dataset.q || '') ? box.dataset.q : '';
   box.textContent = '';
   var shelf = el('div','pk-sh'), bxs = [];
   for(var i = 0; i < k; i++){
@@ -3218,15 +4088,29 @@ $$('.packs').forEach(function(box){
     var cap = el('b'); cap.textContent = n; bx.appendChild(cap);
     shelf.appendChild(bx); bxs.push(bx);
   }
+  var lo = null;
+  if(r){
+    lo = el('div','pk-b pk-r');
+    lo.style.gridTemplateColumns = 'repeat(' + r + ',1fr)';
+    for(var t2 = 0; t2 < r; t2++){ var it2 = el('i', item ? 'em' : ''); if(item) it2.textContent = item; lo.appendChild(it2); }
+    var cap2 = el('b'); cap2.textContent = 'ост. ' + r; lo.appendChild(cap2);
+    shelf.appendChild(lo);
+  }
   box.appendChild(shelf);
   var sum = el('div','pk-sum'), mul = el('div','pk-mul');
-  mul.innerHTML = '<span class="f1"><em>' + n + '</em><small></small></span><span class="o">·</span>' +
-                  '<span class="f2"><em>' + k + '</em><small></small></span><span class="o">=</span>' +
-                  '<span class="f3"><em>' + (n * k) + '</em><small></small></span>';
-  box.appendChild(sum); box.appendChild(mul);
+  mul.innerHTML = dv
+    ? '<span class="f1"><em>' + (n * k + r) + '</em><small></small></span><span class="o">:</span>' +
+      '<span class="f2"><em>' + n + '</em><small></small></span><span class="o">=</span>' +
+      '<span class="f3"><em>' + k + '</em><small></small></span>' +
+      (r ? '<span class="f4"><em>(ост. ' + r + ')</em><small></small></span>' : '')
+    : '<span class="f1"><em>' + n + '</em><small></small></span><span class="o">·</span>' +
+      '<span class="f2"><em>' + k + '</em><small></small></span><span class="o">=</span>' +
+      '<span class="f3"><em>' + (n * k) + '</em><small></small></span>';
+  var chk = el('div','pk-sum');
+  box.appendChild(sum); box.appendChild(mul); if(dv) box.appendChild(chk);
   var say = asay(box);
   var marks = el('div','hmk');
-  marks.innerHTML = new Array(k + 3).join('<i class="hide"></i>');
+  marks.innerHTML = new Array(k + (dv ? 4 : 3) + (r ? 1 : 0) + (qq ? 1 : 0)).join('<i class="hide"></i>');
   box.appendChild(marks);
 
   box.__at = -1;
@@ -3238,6 +4122,54 @@ $$('.packs').forEach(function(box){
     var shown = Math.min(st, k);
     bxs.forEach(function(b2, i2){ b2.classList.toggle('on', i2 < shown); b2.classList.toggle('now', i2 === shown - 1 && st <= k); });
     var terms = []; for(var q = 0; q < shown; q++) terms.push(n);
+    if(dv){
+      var all = n * k + r, rem = all - n * shown, nm = st > k + 1;
+      if(r){
+        /* з остачею: після коробок окремий крок «на коробку не вистачає» */
+        var s2 = st - k;   /* 1 — остача, 2 — запис, 3 — назви, 4 — перевірка, 5 — питання задачі */
+        lo.classList.toggle('on', s2 >= 1); lo.classList.toggle('now', s2 === 1 || (s2 >= 5 && qq === 'up'));
+        lo.classList.toggle('pk-up', s2 >= 5 && qq === 'up');
+        lo.classList.toggle('pk-dn', s2 >= 5 && qq === 'down');
+        $('b', lo).textContent = s2 >= 5 && qq === 'up' ? '+1 коробка' : 'ост. ' + r;
+        sum.textContent = 'Було ' + all + (shown ? ' · розклали ' + (n * shown) : '') + ' · лишилось ' + rem;
+        sum.classList.toggle('gone', s2 >= 2);
+        mul.classList.toggle('on', s2 >= 2);
+        nm = s2 >= 3;
+        $('.f1 small', mul).textContent = nm ? 'ділене' : 'усього';
+        $('.f2 small', mul).textContent = nm ? 'дільник' : 'скільки в одній';
+        $('.f3 small', mul).textContent = nm ? 'неповна частка' : 'скільки коробок';
+        $('.f4 small', mul).textContent = nm ? 'остача' : 'лишилось';
+        mul.classList.toggle('named', nm);
+        chk.textContent = s2 >= 5 && qq ? (qq === 'up' ? 'Коробок треба: ' + k + ' + 1 = ' + (k + 1) : 'Повних коробок: ' + k + ', остача ' + r + ' — у відповідь не йде')
+          : s2 >= 4 ? 'Перевірка: ' + n + ' · ' + k + ' + ' + r + ' = ' + all : '';
+        say.textContent = st === 0 ? 'Усього ' + all + '. Розкладаємо по ' + n + ' в коробку. Скільки коробок вийде? Пробіл — наповнюємо по одній.'
+          : st < k ? 'Коробок: ' + shown + '. Лишилось ' + rem + ' — наповнюємо далі.'
+          : st === k ? 'Коробок: ' + shown + '. Лишилось ' + rem + '. Чи вистачить на ще одну коробку?'
+          : s2 === 1 ? 'Ні: на коробку треба ' + n + ', а є лише ' + r + '. ' + r + ' < ' + n + ' — це остача. Вона завжди менша за те, на що ділимо.'
+          : s2 === 2 ? 'По ' + n + ' вміщається в ' + all + ' повних ' + k + (k === 1 ? ' раз' : k < 5 ? ' рази' : ' разів') + ', і ще ' + r + ' лишається. Записуємо: ' + all + ' : ' + n + ' = ' + k + ' (ост. ' + r + ').'
+          : s2 === 3 ? 'Ділене і дільник — як завжди. Частка тепер «неповна»: поділилось не все. Те, що лишилось, — остача.'
+          : s2 === 4 ? 'Щоб повернути ділене: дільник множимо на неповну частку й додаємо остачу.'
+          : qq === 'up' ? 'Питання: скільки коробок треба, щоб забрати ВСЕ? ' + r + ' теж треба кудись покласти — беремо ще одну, неповну: ' + k + ' + 1 = ' + (k + 1) + '.'
+          : 'Питання: скільки ПОВНИХ коробок? Остача ' + r + ' коробку не заповнить — у відповідь іде неповна частка ' + k + '.';
+        fit();
+        return;
+      }
+      sum.textContent = 'Було ' + all + (shown ? ' · розклали ' + (n * shown) : '') + ' · лишилось ' + rem;
+      sum.classList.toggle('gone', st > k);
+      mul.classList.toggle('on', st > k);
+      $('.f1 small', mul).textContent = nm ? 'ділене' : 'усього';
+      $('.f2 small', mul).textContent = nm ? 'дільник' : 'скільки в одній';
+      $('.f3 small', mul).textContent = nm ? 'частка' : 'скільки коробок';
+      mul.classList.toggle('named', nm);
+      chk.textContent = st > k + 2 ? 'Перевірка: ' + k + ' · ' + n + ' = ' + all : '';
+      say.textContent = st === 0 ? 'Усього ' + all + '. Розкладаємо по ' + n + ' в коробку. Скільки коробок вийде? Пробіл — наповнюємо по одній.'
+        : st <= k ? 'Коробок: ' + shown + '. Лишилось ' + rem + (rem ? ' — наповнюємо далі.' : ' — усе розклали!')
+        : st === k + 1 ? 'Скільки разів по ' + n + ' вміщається в ' + all + '? ' + k + '. Записуємо коротко: ' + all + ' : ' + n + ' = ' + k + '.'
+        : st === k + 2 ? 'Число, яке ділимо, — ділене. На яке ділимо — дільник. Результат — частка.'
+        : 'Ділення — обернене до множення: частка · дільник = ділене.';
+      fit();
+      return;
+    }
     sum.textContent = shown ? terms.join(' + ') + ' = ' + (n * shown) : '';
     sum.classList.toggle('gone', st > k);
     mul.classList.toggle('on', st > k);
@@ -3250,6 +4182,2813 @@ $$('.packs').forEach(function(box){
       : st <= k ? 'Коробок: ' + shown + '. Усього — додаємо ще ' + n + ': ' + (n * shown) + '.'
       : !names ? 'Щоб не писати «' + n + ' +» ' + k + (k === 1 ? ' раз' : k < 5 ? ' рази' : ' разів') + ', пишемо коротко: ' + n + ' · ' + k + '. Однакові доданки — це множення.'
       : 'Числа, які множимо, — множники. Результат — добуток.';
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C38 · .pow — однакові множники згортаються в степінь
+     <div class="pow" data-base="3" data-n="5"></div>
+     data-base — основа (число або буква), data-n — показник (2…21).
+     Пробіл: множники стають по одному, під кожним — його номер; дужка
+     «5 множників»; ланцюжок згортається в 3⁵ з підписами «основа /
+     показник»; як читаємо; для числової основи далі — сходинки
+     3 · 3 = 9, 9 · 3 = 27 … до відповіді (data-calc="no" — без них).
+     data-mode="open" — навпаки: степінь розгортається в добуток
+     (b³ = b · b · b), сходинки лише з data-calc="yes".
+     Більше 8 множників — три перші, «…» і останній.
+   ───────────────────────────────────────────────────────────────────── */
+function supNum(v){ return String(v).replace(/\d/g, function(d){ return '⁰¹²³⁴⁵⁶⁷⁸⁹'.charAt(+d); }); }
+var POW_ORD = ['', 'першому', 'другому', 'третьому', 'четвертому', 'пʼятому', 'шостому', 'сьомому',
+  'восьмому', 'девʼятому', 'десятому', 'одинадцятому', 'дванадцятому', 'тринадцятому', 'чотирнадцятому',
+  'пʼятнадцятому', 'шістнадцятому', 'сімнадцятому', 'вісімнадцятому', 'девʼятнадцятому', 'двадцятому',
+  'двадцять першому'];
+function powWord(n){
+  var d = n % 10, h = n % 100;
+  return n + ' ' + (d === 1 && h !== 11 ? 'множник' : (d >= 2 && d <= 4 && (h < 12 || h > 14)) ? 'множники' : 'множників');
+}
+$$('.pow').forEach(function(box){
+  var B = (box.dataset.base || '3').trim();
+  var n = Math.max(2, Math.min(21, parseInt(box.dataset.n, 10) || 2));
+  var open = box.dataset.mode === 'open';
+  var num = /^\d+$/.test(B), bv = num ? parseInt(B, 10) : 0;
+  var calc = num && n <= 8 && (open ? box.dataset.calc === 'yes' : box.dataset.calc !== 'no');
+  box.textContent = '';
+
+  /* які множники видно: усі, або 1, 2, 3, …, n */
+  var vis = [];
+  if(n <= 8){ for(var i = 1; i <= n; i++) vis.push(i); }
+  else vis = [1, 2, 3, 0, n];
+
+  var line = el('div','pw-line');
+  var fs = el('div','pw-fs'), row = el('div','pw-row'), items = [];
+  vis.forEach(function(k, j){
+    if(j){ var o = el('span','pw-o'); o.textContent = '·'; row.appendChild(o); items.push(o); }
+    var f = el('span','pw-f' + (k ? '' : ' dots'));
+    f.innerHTML = '<em>' + (k ? B : '…') + '</em><small>' + (k || '') + '</small>';
+    row.appendChild(f); items.push(f);
+  });
+  var br = el('div','pw-br'); br.innerHTML = '<i></i><b>' + powWord(n) + '</b>';
+  fs.appendChild(row); fs.appendChild(br);
+  var eq = el('span','pw-eq'); eq.textContent = '=';
+  var big = el('div','pw-big');
+  big.innerHTML = '<span class="pw-b"><em>' + B + '</em><small>основа</small></span>' +
+                  '<span class="pw-e"><small>показник</small><em>' + n + '</em></span>' +
+                  '<span class="pw-v"></span>';
+  if(open){ line.appendChild(big); line.appendChild(eq); line.appendChild(fs); }
+  else    { line.appendChild(fs); line.appendChild(eq); line.appendChild(big); }
+  box.appendChild(line);
+  var ladder = el('div','pw-calc'); box.appendChild(ladder);
+  var say = asay(box);
+
+  /* кадри */
+  var read = 'Читаємо: «' + B + ' у ' + POW_ORD[n] + ' степені»' +
+             (n === 2 ? ' або «' + B + ' у квадраті»' : n === 3 ? ' або «' + B + ' у кубі»' : '') + '.';
+  var F = [], k2;
+  if(!open){
+    F.push({f:0, say:'Множимо ' + B + ' саме на себе. Пробіл — ставимо множники по одному.'});
+    vis.forEach(function(k, j){
+      F.push({f:j + 1, say: k ? 'Множників: ' + k + '.' : 'І так далі — аж до ' + n + '-го.'});
+    });
+    F.push({f:vis.length, br:1, say:'Усі множники однакові, їх ' + n + '. Писати довго — є коротший запис.'});
+    F.push({f:vis.length, br:1, big:1, fold:1,
+            say:B + ' пишемо один раз — це основа. Скільки разів — маленьке число вгорі праворуч, показник.'});
+    F.push({f:vis.length, br:1, big:1, fold:1, say:read});
+  } else {
+    F.push({f:0, big:1, say:'Основа ' + B + ' — що множимо. Показник ' + n + ' — скільки однакових множників.'});
+    vis.forEach(function(k, j){
+      F.push({f:j + 1, big:1, eq:1, say: k ? 'Множників: ' + k + '.' : 'І так далі — аж до ' + n + '-го.'});
+    });
+    F.push({f:vis.length, br:1, big:1, eq:1, say:B + supNum(n) + ' — це ' + powWord(n) + ', і кожен — ' + B + '. А НЕ ' + B + ' · ' + n + '!'});
+  }
+  if(calc){
+    var p = bv, last = F[F.length - 1];
+    for(k2 = 2; k2 <= n; k2++){
+      var q = p * bv;
+      F.push({f:last.f, br:1, big:1, eq:last.eq, fold:last.fold, calc:k2 - 1,
+              say: k2 === 2 ? 'Рахуємо сходинками: щоразу множимо ще на ' + B + '.'
+                 : k2 === n ? 'Останній множник — і відповідь.' : 'Множимо ще на ' + B + '.'});
+      p = q;
+    }
+    F[F.length - 1].val = p;
+    F[F.length - 1].say = B + supNum(n) + ' = ' + anum(p) + '. Множили ' + (n - 1) +
+      (n - 1 === 1 ? ' раз' : n - 1 < 5 ? ' рази' : ' разів') + ', бо множників ' + n + '.';
+  }
+  var steps = [];
+  (function(){ var p2 = bv; for(var s = 2; s <= n; s++){ steps.push(anum(p2) + ' · ' + B + ' = ' + anum(p2 * bv)); p2 *= bv; } })();
+
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st >= F.length) st = F.length - 1;
+    if(st === box.__at) return;
+    box.__at = st;
+    var f = F[st];
+    /* items: множник, ·, множник … — множник j стоїть на позиції 2j */
+    items.forEach(function(it, i3){
+      var j3 = Math.ceil(i3 / 2);              /* до якого множника належить */
+      it.classList.toggle('on', j3 < f.f);
+      it.classList.toggle('now', i3 === 2 * (f.f - 1) && !f.br);
+    });
+    br.classList.toggle('on', !!f.br);
+    big.classList.toggle('on', !!f.big);
+    eq.classList.toggle('on', !!(f.big && (open ? f.eq : true)));
+    line.classList.toggle('fold', !!f.fold);
+    ladder.innerHTML = '';
+    if(f.calc){
+      for(var c = 0; c < f.calc; c++){
+        var sp = el('span', c === f.calc - 1 ? 'now' : '');
+        sp.textContent = steps[c];
+        ladder.appendChild(sp);
+      }
+    }
+    $('.pw-v', big).textContent = f.val != null ? '= ' + anum(f.val) : '';
+    say.textContent = f.say;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C·powop · множення й ділення степенів з однаковою основою (з 15.10.2026)
+     <div class="powop" data-base="a" data-m="3" data-n="2"></div>
+     <div class="powop" data-op="div" data-base="a" data-m="5" data-n="3"></div>
+     data-m, data-n — показники (1…8), data-base — буква або число.
+     mul: a³ · a² → кожен степінь розгортається у свої множники (два кольори)
+     → дужки зникають, множники нумеруються підряд 1…5 → a³⁺² → a⁵:
+     показники ДОДАЄМО. div (m > n): a⁵ : a³ → дріб, зверху 5 множників,
+     знизу 3 → пари скорочуються (кожне a знизу забирає одне a зверху)
+     → лишилось 2 → a⁵⁻³ → a²: показники ВІДНІМАЄМО.
+   ───────────────────────────────────────────────────────────────────── */
+/* .powop з data-op="pow" — степінь степеня, data-op="prod" — степінь добутку (з 19.10.2026)
+     <div class="powop" data-op="pow" data-base="a" data-m="3" data-n="4"></div>
+       (a³)⁴ = a³ · a³ · a³ · a³ — під записом групи множників кольорами,
+       дужки зникають, множники нумеруються 1…12 → a³⁺³⁺³⁺³ → a³·⁴ → a¹²:
+       показники МНОЖИМО (m · n ≤ 16).
+     <div class="powop" data-op="prod" data-base="ab" data-n="3"></div>
+       (ab)³ = ab · ab · ab = (a · a · a) · (b · b · b) = a³b³; у основі
+       до трьох множників, число першим: data-base="2xy" → … = 2⁴x⁴y⁴ = 16x⁴y⁴. */
+function powopPP(box){
+  var isPow = box.dataset.op === 'pow';
+  var n = Math.max(2, Math.min(isPow ? 8 : 5, parseInt(box.dataset.n, 10) || 3));
+  function it(c){ return /^[A-Za-zА-Яа-яІіЇїЄєҐґ]$/.test(c) ? '<i class="m">' + c + '</i>' : c; }
+  function P(cls, h){ return '<span class="po-p ' + cls + '">' + h + '</span>'; }
+  function EQ(k){ return P('po-eq e' + k, '='); }
+  var DOT = '<span class="po-dot">·</span>';
+  box.textContent = '';
+  var line = el('div', 'po-line'), F = [];
+  box.appendChild(line);
+  if(isPow){
+    var B = (box.dataset.base || 'a').trim(), bb = it(B);
+    var m = Math.max(2, Math.min(8, parseInt(box.dataset.m, 10) || 3));
+    if(m * n > 16) n = Math.max(2, Math.floor(16 / m));
+    var R = m * n, cmp = [], sum = [], ill = '';
+    for(var i = 0; i < n; i++){
+      var g = i % 2 ? 'g2' : 'g1';
+      cmp.push('<span class="' + g + '">' + bb + '<sup>' + m + '</sup></span>');
+      sum.push('<span class="' + g + '">' + m + '</span>');
+      ill += (i ? DOT : '') + '<span class="po-g"><span class="po-par">(</span>';
+      for(var j = 0; j < m; j++) ill += (j ? DOT : '') + '<span class="po-f ' + g + '"><b>' + bb + '</b><small></small></span>';
+      ill += '<span class="po-par">)</span></span>';
+    }
+    line.innerHTML = P('po-src on', '(' + bb + '<sup>' + m + '</sup>)<sup>' + n + '</sup>') +
+      EQ(1) + P('s1', cmp.join(DOT)) + EQ(4) + P('s4', bb + '<sup>' + sum.join('+') + '</sup>') +
+      EQ(5) + P('s5', bb + '<sup>' + m + '·' + n + '</sup>') + EQ(6) + P('po-fin s6', bb + '<sup>' + R + '</sup>');
+    var il = el('div', 'po-line po-ill'); il.innerHTML = P('s2', ill); box.appendChild(il);
+    var Bm = B + supNum(m);
+    F = [
+      '(' + Bm + ')' + supNum(n) + ' — степінь, основа якого сама є степенем. Як записати його одним степенем?',
+      'Піднести до ' + POW_ORD[n] + ' степеня — взяти ' + Bm + ' множником ' + n + ' рази' + (n > 4 ? '' : '') + '.',
+      'Кожне ' + Bm + ' — це ' + powWord(m) + ' ' + B + '. Розгорнемо.',
+      'Дужки не потрібні — рахуємо всі множники підряд: ' + R + '.',
+      'Множимо степені з однаковою основою — показники додаємо: ' + new Array(n + 1).join(m + ' + ').slice(0, -3) + '.',
+      'Число ' + m + ' додали ' + n + ' рази — це ' + m + ' · ' + n + '.',
+      'Степінь степеня: показники МНОЖИМО. (' + Bm + ')' + supNum(n) + ' = ' + B + supNum(R) + ', а НЕ ' + B + supNum(m + n) + '!'
+    ];
+    F.forEach(function(x, k){ if(n > 4) F[k] = x.replace(n + ' рази', n + ' разів'); });
+  } else {
+    var T = String(box.dataset.base || 'ab').replace(/\s/g, '').match(/\d+(?:,\d+)?|[^\d]/g) || ['a','b'];
+    T = T.slice(0, 3);
+    var G = ['g1', 'g2', 'g3'], one = '', grp = [], fin = '', num = /^\d/.test(T[0]) ? T[0] : '';
+    T.forEach(function(t, k){ one += '<span class="' + G[k] + '">' + it(t) + '</span>'; });
+    T.forEach(function(t, k){
+      var h = '<span class="po-par">(</span>';
+      for(var j = 0; j < n; j++) h += (j ? DOT : '') + '<span class="' + G[k] + '">' + it(t) + '</span>';
+      grp.push(h + '<span class="po-par">)</span>');
+      fin += '<span class="' + G[k] + '">' + it(t) + '<sup>' + n + '</sup></span>';
+    });
+    var rep = []; for(var r = 0; r < n; r++) rep.push(one);
+    var nv = num ? Math.pow(parseFloat(num.replace(',', '.')), n) : 0;
+    var nvs = num ? String(Math.round(nv * 1e6) / 1e6).replace('.', ',') : '';
+    var rest = ''; T.slice(1).forEach(function(t, k){ rest += '<span class="' + G[k + 1] + '">' + it(t) + '<sup>' + n + '</sup></span>'; });
+    line.innerHTML = P('po-src on', '(' + one + ')<sup>' + n + '</sup>') + EQ(1) + P('s1', rep.join(DOT)) +
+      EQ(2) + P('s2', grp.join(DOT)) + EQ(3) + P(num ? 's3' : 'po-fin s3', fin) +
+      (num ? EQ(4) + P('po-fin s4', '<span class="g1">' + nvs + '</span>' + rest) : '');
+    var w = T.join(''), lw = T.map(function(t){ return t + supNum(n); }).join('');
+    F = [
+      '(' + w + ')' + supNum(n) + ' — степінь добутку. Як його спростити?',
+      'За означенням: ' + w + ' множником ' + n + (n > 4 ? ' разів.' : ' рази.'),
+      'Від перестановки множників добуток не змінюється: збираємо однакові разом.',
+      'Кожен множник піднесли до ' + POW_ORD[n] + ' степеня: (' + w + ')' + supNum(n) + ' = ' + lw + '.'
+    ];
+    if(num) F.push(num + supNum(n) + ' = ' + nvs + ' — обчислюємо число: ' + nvs + T.slice(1).map(function(t){ return t + supNum(n); }).join('') + '.');
+  }
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  var facs = $$('.po-ill .po-f', box), ilw = $('.po-ill', box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    box.__at = st;
+    for(var k = 1; k < F.length; k++){
+      $$('.e' + k + ',.s' + k, box).forEach(function(e){ e.classList.toggle('on', st >= k); });
+    }
+    if(isPow){
+      ilw.classList.toggle('flat', st >= 3);
+      facs.forEach(function(t, i){ $('small', t).textContent = st >= 3 ? i + 1 : ''; });
+    }
+    say.textContent = F[st];
+    fit();
+  };
+  box.__paint();
+}
+$$('.powop').forEach(function(box){
+  if(box.dataset.op === 'pow' || box.dataset.op === 'prod'){ powopPP(box); return; }
+  var B = (box.dataset.base || 'a').trim();
+  var dv = box.dataset.op === 'div';
+  var m = Math.max(1, Math.min(8, parseInt(box.dataset.m, 10) || 3));
+  var n = Math.max(1, Math.min(8, parseInt(box.dataset.n, 10) || 2));
+  if(dv && n >= m) n = m - 1;
+  if(n < 1){ n = 1; m = 2; }
+  var R = dv ? m - n : m + n;
+  var lt = /^[A-Za-zА-Яа-яІіЇїЄєҐґ]$/.test(B);
+  var bb = lt ? '<i class="m">' + B + '</i>' : B;
+  function pw(e, c){ return '<span class="' + (c || '') + '">' + bb + '<sup>' + e + '</sup></span>'; }
+  function fac(k, g){
+    var h = '';
+    for(var i = 0; i < k; i++){
+      if(i) h += '<span class="po-dot">·</span>';
+      h += '<span class="po-f ' + g + '"><b>' + bb + '</b><small></small></span>';
+    }
+    return h;
+  }
+  box.textContent = '';
+  var line = el('div','po-line');
+  var op = dv ? ':' : '·';
+  line.innerHTML =
+    '<span class="po-p po-src">' + pw(m,'g1') + ' <span class="po-o">' + op + '</span> ' + pw(n,'g2') + '</span>' +
+    '<span class="po-p po-eq e1">=</span>' +
+    (dv
+      ? '<span class="po-p po-exp po-frac"><span class="po-num">' + fac(m,'g1') + '</span><span class="po-den">' + fac(n,'g2') + '</span></span>'
+      : '<span class="po-p po-exp"><span class="po-g"><span class="po-par">(</span>' + fac(m,'g1') + '<span class="po-par">)</span></span>' +
+        '<span class="po-dot po-mid">·</span>' +
+        '<span class="po-g po-g2"><span class="po-par">(</span>' + fac(n,'g2') + '<span class="po-par">)</span></span></span>') +
+    '<span class="po-p po-eq e2">=</span>' +
+    '<span class="po-p po-res">' + bb + '<sup><span class="g1">' + m + '</span>' + (dv ? '−' : '+') + '<span class="g2">' + n + '</span></sup></span>' +
+    '<span class="po-p po-eq e3">=</span>' +
+    '<span class="po-p po-fin">' + bb + '<sup>' + R + '</sup></span>';
+  box.appendChild(line);
+  var say = asay(box);
+  var top = $$(dv ? '.po-num .po-f' : '.po-f', line);
+  var bot = dv ? $$('.po-den .po-f', line) : [];
+  var g2 = dv ? null : $('.po-g2', line);
+
+  var F = [];
+  F.push({say:'Два степені з однаковою основою ' + B + '. ' + (dv ? 'Ділимо' : 'Множимо') + ' — а що вийде? Розгорнемо кожен степінь.'});
+  if(!dv){
+    F.push({exp:1, one:1, say:B + supNum(m) + ' — це ' + powWord(m) + ' ' + B + '.'});
+    F.push({exp:1, say:B + supNum(n) + ' — ще ' + powWord(n) + ' ' + B + '.'});
+    F.push({exp:1, flat:1, say:'Дужки не потрібні — множимо підряд. Рахуємо всі множники: ' + R + '.'});
+    F.push({exp:1, flat:1, res:1, say:'Множників ' + B + ' стільки, скільки було в обох степенях разом: ' + m + ' + ' + n + '.'});
+    F.push({exp:1, flat:1, res:1, fin:1, say:'Основа та сама, показники ДОДАЄМО: ' + B + supNum(m) + ' · ' + B + supNum(n) + ' = ' + B + supNum(R) + '. А НЕ ' + B + supNum(m * n) + '!'});
+  } else {
+    F.push({exp:1, say:'Ділення запишемо дробом: зверху ' + powWord(m) + ' ' + B + ', знизу — ' + powWord(n) + '.'});
+    F.push({exp:1, cut:1, say:'Кожне ' + B + ' знизу скорочується з одним ' + B + ' зверху. Пар — ' + n + '.'});
+    F.push({exp:1, cut:1, res:1, say:'Зверху лишилось ' + m + ' − ' + n + ' = ' + R + (R === 1 ? ' множник.' : R < 5 ? ' множники.' : ' множників.')});
+    F.push({exp:1, cut:1, res:1, fin:1, say:'Основа та сама, показники ВІДНІМАЄМО: ' + B + supNum(m) + ' : ' + B + supNum(n) + ' = ' + B + supNum(R) + '.' + (m % n ? '' : ' А НЕ ' + B + supNum(m / n) + '!')});
+  }
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st >= F.length) st = F.length - 1;
+    if(st === box.__at) return;
+    box.__at = st;
+    var f = F[st];
+    $('.po-src', line).classList.add('on');
+    $('.e1', line).classList.toggle('on', !!f.exp);
+    $('.po-exp', line).classList.toggle('on', !!f.exp);
+    if(g2){ g2.classList.toggle('off', !!f.one); $('.po-mid', line).classList.toggle('off', !!f.one); }
+    line.classList.toggle('flat', !!f.flat);
+    top.forEach(function(t, i){ $('small', t).textContent = f.flat ? i + 1 : ''; });
+    if(dv){
+      bot.forEach(function(t, i){ t.classList.toggle('cut', !!f.cut); t.style.transitionDelay = f.cut ? (i * .25) + 's' : '0s'; });
+      top.forEach(function(t, i){ var c = !!f.cut && i < n; t.classList.toggle('cut', c); t.style.transitionDelay = c ? (i * .25) + 's' : '0s'; });
+    }
+    $('.e2', line).classList.toggle('on', !!f.res);
+    $('.po-res', line).classList.toggle('on', !!f.res);
+    $('.e3', line).classList.toggle('on', !!f.fin);
+    $('.po-fin', line).classList.toggle('on', !!f.fin);
+    say.textContent = f.say;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C·parax · аксіома паралельності: пряма обертається навколо точки K (з 15.10.2026)
+     <div class="parax"></div>   data-labels="K,b,a" — підписи точки, даної й паралельної прямої
+     Пробіл: пряма через K повертається (50° → 30° → 15° → 6° → 0° → −8°);
+     точка перетину X з b тікає вбік, на 6° — уже за екраном (стрілка «перетин
+     далі»), на 0° спільної точки немає — a ∥ b; далі X виринає з іншого боку.
+     Останній крок — знову 0°: «лише одна пряма через K паралельна b».
+   ───────────────────────────────────────────────────────────────────── */
+$$('.parax').forEach(function(box){
+  var L = (box.dataset.labels || 'K,b,a').split(',');
+  var W = 600, H = 250, KX = 300, KY = 70, BY = 200;
+  var NS = 'http://www.w3.org/2000/svg';
+  box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="аксіома паралельності">' +
+    '<line class="px-b" x1="10" y1="' + BY + '" x2="' + (W - 10) + '" y2="' + BY + '"/>' +
+    '<text class="px-t" x="' + (W - 30) + '" y="' + (BY - 10) + '">' + L[1] + '</text>' +
+    '<g class="px-r" style="transform-origin:' + KX + 'px ' + KY + 'px"><line x1="' + (KX - 1400) + '" y1="' + KY + '" x2="' + (KX + 1400) + '" y2="' + KY + '"/></g>' +
+    '<text class="px-a" x="40" y="' + (KY - 10) + '">' + L[2] + '</text>' +
+    '<circle class="px-x" r="6" cx="0" cy="' + BY + '"/>' +
+    '<text class="px-xt" x="0" y="' + (BY + 30) + '">X</text>' +
+    '<g class="px-far"><path d=""/><text x="0" y="' + (BY + 32) + '"></text></g>' +
+    '<circle class="px-k" r="6" cx="' + KX + '" cy="' + KY + '"/>' +
+    '<text class="px-t" x="' + (KX + 10) + '" y="' + (KY - 12) + '">' + L[0] + '</text>' +
+    '</svg>';
+  var say = asay(box);
+  var A = [50, 30, 15, 6, 0, -8, 0];
+  var S = [
+    'Через точку ' + L[0] + ' проводимо пряму. Вона перетинає ' + L[1] + ' у точці X.',
+    'Повертаємо пряму навколо ' + L[0] + ' — точка X тікає праворуч.',
+    'Ще трохи — X ще далі.',
+    'X уже за межею екрана. Але перетин є: пряма нескінченна, десь там вони зустрінуться.',
+    'Лише в цьому положенні спільної точки немає: ' + L[2] + ' ∥ ' + L[1] + '.',
+    'Повернули далі — і X виринув зліва. Знову перетин.',
+    'Висновок: через точку ' + L[0] + ', що не лежить на прямій ' + L[1] + ', проходить лише ОДНА пряма, паралельна ' + L[1] + '. Це аксіома паралельності.'
+  ];
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(A.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var r = $('.px-r', box), X = $('.px-x', box), XT = $('.px-xt', box), far = $('.px-far', box), at = $('.px-a', box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st >= A.length) st = A.length - 1;
+    if(st === box.__at) return;
+    box.__at = st;
+    var th = A[st];
+    r.style.transform = 'rotate(' + th + 'deg)';   /* центр — K, задано в CSS через transform-origin */
+    var par = th === 0;
+    box.classList.toggle('par', par);
+    box.classList.toggle('fin', st === A.length - 1);
+    at.style.opacity = par ? 1 : 0;
+    var x = par ? null : KX + (BY - KY) / Math.tan(th * Math.PI / 180);   /* rotate(+θ): праворуч пряма йде вниз */
+    var inside = x != null && x > 20 && x < W - 20;
+    X.style.opacity = XT.style.opacity = inside ? 1 : 0;
+    if(inside){ X.setAttribute('cx', x.toFixed(1)); XT.setAttribute('x', (x - 8).toFixed(1)); }
+    var off = x != null && !inside;
+    far.style.opacity = off ? 1 : 0;
+    if(off){
+      var right = x > W / 2, ex = right ? W - 18 : 18, d = right ? -1 : 1;
+      $('path', far).setAttribute('d', 'M' + (ex + d * 40) + ' ' + (BY + 14) + 'H' + ex + 'm' + (d * 10) + ' -7l' + (-d * 10) + ' 7l' + (d * 10) + ' 7');
+      var t = $('text', far); t.setAttribute('x', right ? W - 170 : 20); t.textContent = right ? 'X — далі →' : '← X — далі';
+    }
+    say.textContent = S[st];
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C·setsq · побудова паралельної прямої косинцем і лінійкою (з 15.10.2026)
+     <div class="setsq"></div>   data-labels="a,b,B"
+     Пробіл: дано пряму a й точку B → косинець катетом на a → лінійка до
+     другого катета → косинець ковзає вздовж лінійки до B → вздовж катета
+     проводимо b → інструменти прибрано: b ∥ a (обидві ⟂ краю лінійки).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.setsq').forEach(function(box){
+  var L = (box.dataset.labels || 'a,b,B').split(',');
+  var AY = 200, BX = 380, BY = 92, X0 = 210, TW = 240, TH = 80;
+  box.innerHTML = '<svg viewBox="0 0 600 250" role="img" aria-label="побудова паралельної прямої">' +
+    '<line class="ss-a" x1="20" y1="' + AY + '" x2="580" y2="' + AY + '"/>' +
+    '<text x="560" y="' + (AY - 10) + '">' + L[0] + '</text>' +
+    '<line class="ss-b" x1="20" y1="' + BY + '" x2="580" y2="' + BY + '"/>' +
+    '<text class="ss-bt" x="560" y="' + (BY - 10) + '">' + L[1] + '</text>' +
+    '<g class="ss-ru"><rect x="' + (X0 - 26) + '" y="4" width="26" height="242"/>' +
+      '<path d="M' + (X0 - 26) + ' 40h10M' + (X0 - 26) + ' 60h6M' + (X0 - 26) + ' 80h10M' + (X0 - 26) + ' 100h6M' + (X0 - 26) + ' 120h10M' + (X0 - 26) + ' 140h6M' + (X0 - 26) + ' 160h10M' + (X0 - 26) + ' 180h6M' + (X0 - 26) + ' 200h10M' + (X0 - 26) + ' 220h6"/></g>' +
+    '<g class="ss-tr"><path d="M' + X0 + ' ' + AY + 'h' + TW + 'L' + X0 + ' ' + (AY - TH) + 'z"/>' +
+      '<path class="ss-ra" d="M' + X0 + ' ' + (AY - 16) + 'h16v16"/></g>' +
+    '<circle class="pt ss-p" r="6" cx="' + BX + '" cy="' + BY + '"/>' +
+    '<text x="' + (BX + 8) + '" y="' + (BY + 30) + '">' + L[2] + '</text>' +
+    '</svg>';
+  var say = asay(box);
+  var S = [
+    'Дано пряму ' + L[0] + ' і точку ' + L[2] + ', що їй не належить. Треба провести через ' + L[2] + ' пряму, паралельну ' + L[0] + '.',
+    'Прикладаємо косинець одним катетом до прямої ' + L[0] + '.',
+    'До другого катета щільно прикладаємо лінійку. Лінійку далі тримаємо нерухомо!',
+    'Косинець ковзає вздовж лінійки — доки катет не дійде до точки ' + L[2] + '.',
+    'Вздовж катета проводимо пряму ' + L[1] + ' через точку ' + L[2] + '.',
+    'Прибираємо інструменти: ' + L[1] + ' ∥ ' + L[0] + '. Чому? Обидві прямі перпендикулярні до краю лінійки.'
+  ];
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(S.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var tr = $('.ss-tr', box), ru = $('.ss-ru', box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st >= S.length) st = S.length - 1;
+    if(st === box.__at) return;
+    box.__at = st;
+    tr.style.opacity = st >= 1 && st <= 4 ? 1 : 0;
+    ru.style.opacity = st >= 2 && st <= 4 ? 1 : 0;
+    tr.style.transform = 'translateY(' + (st >= 3 ? BY - AY : 0) + 'px)';
+    box.classList.toggle('drawn', st >= 4);
+    box.classList.toggle('fin', st >= 5);
+    say.textContent = S[st];
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C·transv · кути при перетині двох прямих січною; ознака паралельності (з 21.10.2026)
+     <div class="transv"></div>                       data-mode="names" (типово)
+       Пробіл: прямі a, b і січна c → вісім кутів з номерами (як мал. 9.1
+       Істера: 1–4 при M, 5–8 при N) → внутрішні (смуга між a і b) →
+       внутрішні односторонні 4 і 5, 3 і 6 → внутрішні різносторонні 4 і 6,
+       3 і 5 → відповідні 1 і 5, 2 і 6, 3 і 7, 4 і 8: хрест кутів при M
+       зʼїжджає по січній і лягає на хрест при N.
+     <div class="transv" data-mode="turn" data-phi="60" data-turn="35,20,8,0,-10,0"></div>
+       ∠1 при a стоїть (φ), пряма b обертається навколо N на кути data-turn
+       (нахил b, градуси); ∠2 біжить, точка перетину X тікає за екран; лише
+       коли ∠2 = ∠1, перетину немає. Останній 0 — висновок «ознака».
+     <div class="transv" data-mode="proof" data-phi="60"></div>
+       Доведення від супротивного (мал. 9.2–9.4): припускаємо перетин у F →
+       кут α при M переїжджає по січній у N → промені NF і NF₁ різні, а кути
+       з NM обидва α — суперечність → a ∥ b.
+     data-labels="a,b,c,M,N" — підписи прямих і точок.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.transv').forEach(function(box){
+  var mode = box.dataset.mode || 'names';
+  box.classList.add('tv-' + mode);
+  var L = (box.dataset.labels || 'a,b,c,M,N').split(',');
+  var phi = parseFloat(box.dataset.phi) || 62;
+  var W = 600, H = 250, AY = 70, BY = 185, R = Math.PI / 180;
+  var sh = (BY - AY) / Math.tan(phi * R);
+  var MX = 300 + sh / 2, NX = 300 - sh / 2;
+  function f(n){ return (+n).toFixed(1); }
+  function P(x, y, t, r){ return [x + r * Math.cos(t * R), y - r * Math.sin(t * R)]; }
+  function seg(x, y, t, r){ var a = P(x, y, t, r), b = P(x, y, t + 180, r); return 'M' + f(a[0]) + ' ' + f(a[1]) + 'L' + f(b[0]) + ' ' + f(b[1]); }
+  /* сектор і дуга від t1 до t2 проти годинникової (математично; на екрані теж) */
+  function arcd(x, y, t1, t2, r){
+    var a = P(x, y, t1, r), b = P(x, y, t2, r);
+    return 'M' + f(a[0]) + ' ' + f(a[1]) + 'A' + r + ' ' + r + ' 0 ' + ((t2 - t1) > 180 ? 1 : 0) + ' 0 ' + f(b[0]) + ' ' + f(b[1]);
+  }
+  function wedge(x, y, t1, t2, r){ return 'M' + f(x) + ' ' + f(y) + 'L' + arcd(x, y, t1, t2, r).slice(1) + 'Z'; }
+  /* чотири кути при вершині: пряма з напрямком β, січна вгору φ */
+  function quad(b){ return { UR: [b, phi], UL: [phi, b + 180], LL: [b + 180, phi + 180], LR: [phi + 180, b + 360] }; }
+  function txt(x, y, s, c){ return '<text' + (c ? ' class="' + c + '"' : '') + ' x="' + f(x) + '" y="' + f(y) + '">' + s + '</text>'; }
+  var cTop = P(NX, BY, phi, 250);
+  var base = '<path class="tv-c" d="' + seg(NX, BY, phi, 330) + '"/>' + txt(cTop[0] + 10, Math.max(22, cTop[1] + 28), L[2]) +
+             '<path class="tv-a" d="M10 ' + AY + 'H' + (W - 10) + '"/>' + txt(W - 32, AY - 10, L[0]);
+  var pts = '<circle class="tv-pt" r="5" cx="' + f(MX) + '" cy="' + AY + '"/><circle class="tv-pt" r="5" cx="' + f(NX) + '" cy="' + BY + '"/>';
+  var say, S = [], paint;
+
+  if(mode === 'names'){
+    var POS = { M: [MX, AY], N: [NX, BY] }, Q = quad(0);
+    var NUM = [['M','UL',1],['M','UR',2],['M','LR',3],['M','LL',4],['N','UL',5],['N','UR',6],['N','LR',7],['N','LL',8]];
+    var w = '', n = '', gh = '';
+    NUM.forEach(function(q){
+      var v = POS[q[0]], t = Q[q[1]], mid = (t[0] + t[1]) / 2, p = P(v[0], v[1], mid, 40);
+      w += '<path class="tv-w" data-k="' + q[2] + '" d="' + wedge(v[0], v[1], t[0], t[1], 28) + '"/>';
+      n += txt(p[0] - 6, p[1] + 7, q[2], 'tv-n');
+      if(q[0] === 'M') gh += '<path class="tv-w w' + q[2] + '" d="' + wedge(v[0], v[1], t[0], t[1], 28) + '"/>';
+    });
+    box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="кути при перетині двох прямих січною">' +
+      '<rect class="tv-band" x="0" y="' + AY + '" width="' + W + '" height="' + (BY - AY) + '"/>' + w +
+      '<g class="tv-gh">' + gh + '</g>' + base +
+      '<path class="tv-b" d="M10 ' + BY + 'H' + (W - 10) + '"/>' + txt(W - 32, BY - 10, L[1]) + pts + n + '</svg>';
+    var ST = [
+      [{}, 'Пряма ' + L[2] + ' перетинає прямі ' + L[0] + ' і ' + L[1] + ' у двох точках. Таку пряму називають січною для ' + L[0] + ' і ' + L[1] + '.'],
+      [{}, 'Утворилось вісім кутів: 1, 2, 3, 4 — при першій точці, 5, 6, 7, 8 — при другій.'],
+      [{3:2, 4:2, 5:2, 6:2}, 'Смуга між прямими ' + L[0] + ' і ' + L[1] + ' — «всередині». Кути 3, 4, 5, 6 лежать у ній — це внутрішні кути.'],
+      [{4:1, 5:1, 3:2, 6:2}, 'Внутрішні односторонні — обидва всередині й з одного боку від січної: 4 і 5; 3 і 6.'],
+      [{4:1, 6:1, 3:2, 5:2}, 'Внутрішні різносторонні — обидва всередині, але з різних боків від січної: 4 і 6; 3 і 5.'],
+      [{1:1, 5:1, 2:2, 6:2, 3:3, 7:3, 4:4, 8:4}, 'Відповідні — однаково розміщені при своїх точках. Хрест з кутами 1–4 зʼїжджає по січній — і лягає на 5–8: 1 і 5; 2 і 6; 3 і 7; 4 і 8.']
+    ];
+    S = ST;
+    var band = $('.tv-band', box), ghost = $('.tv-gh', box);
+    paint = function(st){
+      var cm = ST[st][0];
+      $$('svg > .tv-w', box).forEach(function(p){
+        p.setAttribute('class', 'tv-w' + (cm[p.dataset.k] ? ' w' + cm[p.dataset.k] : ''));
+      });
+      box.classList.toggle('nums', st >= 1);
+      band.style.opacity = st === 2 ? 1 : 0;
+      ghost.style.opacity = st === 5 ? 1 : 0;
+      ghost.style.transform = st === 5 ? 'translate(' + f(NX - MX) + 'px,' + (BY - AY) + 'px)' : 'none';
+      say.textContent = ST[st][1];
+    };
+  }
+
+  else if(mode === 'turn'){
+    var T = (box.dataset.turn || '35,20,8,0,-10,0').split(',').map(parseFloat);
+    box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="ознака паралельності: пряма b обертається">' + base +
+      '<path class="tv-arc" d="' + arcd(MX, AY, 0, phi, 30) + '"/>' + txt(MX + 34, AY - 12, '1', 'tv-n tv-al') +
+      '<path class="tv-b" d=""/><text class="tv-bt" x="0" y="0">' + L[1] + '</text>' +
+      '<path class="tv-arc tv-arc2" d=""/><text class="tv-n tv-al2" x="0" y="0">2</text>' +
+      '<circle class="tv-x" r="6" cx="0" cy="' + AY + '"/><text class="tv-xt" x="0" y="' + (AY - 14) + '">X</text>' +
+      '<g class="tv-far"><path d=""/><text x="0" y="' + (AY + 34) + '"></text></g>' +
+      pts + txt(MX - 34, AY + 28, L[3]) + txt(NX - 36, BY + 26, L[4]) +
+      '<text class="tv-cnt" x="14" y="28"></text></svg>';
+    var bl = $('.tv-b', box), bt = $('.tv-bt', box), a2 = $('.tv-arc2', box), l2 = $('.tv-al2', box),
+        X = $('.tv-x', box), XT = $('.tv-xt', box), far = $('.tv-far', box), cnt = $('.tv-cnt', box);
+    var draw = function(b){
+      bl.setAttribute('d', seg(NX, BY, b, 900));
+      var e = P(NX, BY, b, 268); bt.setAttribute('x', f(e[0])); bt.setAttribute('y', f(e[1] + (b > 0 ? 26 : -10)));
+      a2.setAttribute('d', arcd(NX, BY, b, phi, 30));
+      var m = P(NX, BY, (b + phi) / 2, 46); l2.setAttribute('x', f(m[0] - 6)); l2.setAttribute('y', f(m[1] + 8));
+      var x = Math.abs(b) < 0.3 ? null : NX + (BY - AY) / Math.tan(b * R);
+      var inside = x != null && x > 20 && x < W - 20;
+      X.style.opacity = XT.style.opacity = inside ? 1 : 0;
+      if(inside){ X.setAttribute('cx', f(x)); XT.setAttribute('x', f(x - 8)); }
+      var off = x != null && !inside;
+      far.style.opacity = off ? 1 : 0;
+      if(off){
+        var right = x > W / 2, ex = right ? W - 18 : 18, d = right ? -1 : 1;
+        $('path', far).setAttribute('d', 'M' + (ex + d * 40) + ' ' + (AY + 46) + 'H' + ex + 'm' + (d * 10) + ' -7l' + (-d * 10) + ' 7l' + (d * 10) + ' 7');
+        var t = $('text', far); t.setAttribute('x', right ? W - 170 : 20); t.textContent = right ? 'X — далі →' : '← X — далі';
+      }
+      cnt.textContent = '∠1 = ' + phi + '°    ∠2 = ' + Math.round(phi - b) + '°';
+    };
+    T.forEach(function(b, i){
+      var v = Math.round(phi - b), was0 = T.slice(0, i).indexOf(0) >= 0;
+      if(i === T.length - 1 && b === 0 && was0) S.push('Висновок: якщо при перетині двох прямих січною відповідні кути рівні, то прямі паралельні. Це ознака паралельності прямих.');
+      else if(b === 0) S.push('∠2 = ∠1 = ' + phi + '°. Лише в цьому положенні спільної точки немає: ' + L[0] + ' ∥ ' + L[1] + '.');
+      else if(i === 0) S.push('Відповідні кути 1 і 2 різні: ' + phi + '° і ' + v + '°. Прямі ' + L[0] + ' і ' + L[1] + ' перетинаються в точці X.');
+      else if(was0) S.push('∠2 = ' + v + '° — уже ' + (v > phi ? 'більший' : 'менший') + ' за ∠1. X виринула з іншого боку: знову перетин.');
+      else S.push('Повертаємо ' + L[1] + ': ∠2 = ' + v + '° — ближче до ∠1. Точка X тікає далі.');
+    });
+    var prev = T[0];
+    draw(prev);
+    paint = function(st){
+      var b = T[st];
+      atween(box, prev, b, 800, draw); prev = b;
+      box.classList.toggle('par', b === 0);
+      box.classList.toggle('fin', st === T.length - 1);
+      say.textContent = S[st];
+    };
+  }
+
+  else {   /* proof */
+    var FX = W - 40, g = Math.atan2(BY - AY, FX - NX) / R, rb = P(MX, AY, 0, 200);
+    box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="доведення ознаки паралельності від супротивного">' + base +
+      '<path class="tv-b tv-b0" d="M10 ' + BY + 'H' + (W - 10) + '"/><text class="tv-bt0" x="' + (W - 32) + '" y="' + (BY - 10) + '">' + L[1] + '</text>' +
+      '<path class="tv-arc" d="' + arcd(MX, AY, 0, phi, 30) + '"/>' + txt(MX + 36, AY - 10, 'α', 'tv-al') +
+      '<g class="tv-g0"><path class="tv-arc tv-arc2" d="' + arcd(NX, BY, 0, phi, 30) + '"/>' + txt(NX + 36, BY - 10, 'α', 'tv-al2') + '</g>' +
+      '<g class="tv-fg"><path class="tv-f" d="M' + f(P(NX, BY, g + 180, 80)[0]) + ' ' + f(P(NX, BY, g + 180, 80)[1]) + 'L' + FX + ' ' + AY + '"/>' +
+        '<circle class="tv-x" r="6" cx="' + FX + '" cy="' + AY + '"/>' + txt(FX + 4, AY - 12, 'F', 'tv-xt') +
+        '<path class="tv-arc tv-arcf" d="' + arcd(NX, BY, g, phi, 44) + '"/>' + txt(P(NX, BY, (g + phi) / 2, 58)[0], P(NX, BY, (g + phi) / 2, 58)[1] + 6, 'α', 'tv-alf') + '</g>' +
+      '<g class="tv-cp"><path class="tv-arc" d="' + arcd(MX, AY, 0, phi, 30) + '"/><path class="tv-ray" d="M' + f(MX) + ' ' + AY + 'L' + f(rb[0]) + ' ' + AY + '"/>' +
+        txt(rb[0] - 10, AY + 26, 'F₁', 'tv-f1') + '</g>' +
+      pts + txt(MX - 34, AY - 10, L[3]) + txt(NX - 36, BY + 26, L[4]) + '</svg>';
+    S = [
+      'Дано: при перетині прямих ' + L[0] + ' і ' + L[1] + ' січною ' + L[2] + ' відповідні кути рівні — обидва α. Довести: ' + L[0] + ' ∥ ' + L[1] + '.',
+      'Припустимо протилежне: ' + L[0] + ' і ' + L[1] + ' не паралельні, а перетинаються в деякій точці F. Тоді ∠' + L[3] + L[4] + 'F = α.',
+      'Не змінюючи міри, переносимо кут α при ' + L[3] + ' по січній — так, щоб точка ' + L[3] + ' потрапила в ' + L[4] + '. Його сторона стала променем ' + L[4] + 'F₁.',
+      'Тепер при ' + L[4] + ' два кути з променем ' + L[4] + L[3] + ': ∠' + L[3] + L[4] + 'F = α і ∠' + L[3] + L[4] + 'F₁ = α. Промені ' + L[4] + 'F і ' + L[4] + 'F₁ різні, а кути — рівні?',
+      'Так не буває: від променя ' + L[4] + L[3] + ' в один бік можна відкласти лише один кут α. Суперечність — отже, припущення хибне: ' + L[0] + ' ∥ ' + L[1] + '.'
+    ];
+    var cp = $('.tv-cp', box);
+    paint = function(st){
+      box.classList.toggle('asm', st >= 1 && st <= 3);
+      box.classList.toggle('two', st === 3);
+      box.classList.toggle('fin', st === 4);
+      cp.style.opacity = st >= 2 && st <= 3 ? 1 : 0;
+      cp.style.transform = st >= 2 ? 'translate(' + f(NX - MX) + 'px,' + (BY - AY) + 'px)' : 'none';
+      say.textContent = S[st];
+    };
+  }
+
+  say = asay(box);   /* після innerHTML — інакше розмітка режиму його стирає */
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(S.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st >= S.length) st = S.length - 1;
+    if(st === box.__at) return;
+    box.__at = st;
+    paint(st);
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C39 · .sqcube — звідки «квадрат» і «куб» числа
+     <div class="sqcube" data-sq="4" data-cu="3"></div>
+     data-sq — сторона квадрата з клітинок (2…8): пробіл — ряд клітинок,
+     у кінці 4 · 4 = 4² = 16. data-cu — ребро куба з кубиків (2…5):
+     пробіл — шар кубиків, у кінці 3 · 3 · 3 = 3³ = 27. Можна одне з двох;
+     обидва — стоять поруч, спершу квадрат, потім куб.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.sqcube').forEach(function(box){
+  var NS = 'http://www.w3.org/2000/svg';
+  var a = parseInt(box.dataset.sq, 10), c = parseInt(box.dataset.cu, 10);
+  a = a ? Math.max(2, Math.min(8, a)) : 0;
+  c = c ? Math.max(2, Math.min(5, c)) : 0;
+  if(!a && !c) a = 4;
+  box.textContent = '';
+  var parts = el('div','sc-parts'); box.appendChild(parts);
+  function svg(w, h){
+    var s = D.createElementNS(NS, 'svg');
+    s.setAttribute('viewBox', w.join(' '));
+    s.setAttribute('aria-hidden', 'true');
+    return s;
+  }
+  function node(t, at, par){
+    var e = D.createElementNS(NS, t);
+    for(var k in at) e.setAttribute(k, at[k]);
+    par.appendChild(e);
+    return e;
+  }
+  function pts(arr){ return arr.map(function(p){ return p[0].toFixed(2) + ',' + p[1].toFixed(2); }).join(' '); }
+
+  var F = [], sqCells = [], cuCubes = [], sqF, cuF;
+  if(a){
+    var pa = el('div','sc-part'), U = 10, m = 9;
+    var sv = svg([-m, -2, a * U + m + 2, a * U + m + 2]);
+    for(var r = 0; r < a; r++) for(var q = 0; q < a; q++){
+      var cell = node('rect', {x:q * U + 0.6, y:r * U + 0.6, width:U - 1.2, height:U - 1.2, rx:1.4, 'class':'c'}, sv);
+      cell.__row = r; sqCells.push(cell);
+    }
+    node('rect', {x:0, y:0, width:a * U, height:a * U, 'class':'fr'}, sv);
+    var t1 = node('text', {x:a * U / 2, y:a * U + 7, 'class':'lb'}, sv); t1.textContent = a;
+    var t2 = node('text', {x:-4.5, y:a * U / 2 + 2, 'class':'lb'}, sv); t2.textContent = a;
+    pa.appendChild(sv);
+    sqF = el('div','sc-f'); pa.appendChild(sqF);
+    parts.appendChild(pa);
+    F.push({sq:0, cu:0, say:'Квадрат зі стороною ' + a + '. Пробіл — заповнюємо клітинками ряд за рядом.'});
+    for(var k = 1; k <= a; k++) F.push({sq:k, cu:0, say:'Рядів: ' + k + ', у кожному ' + a + '. Клітинок: ' + a + ' · ' + k + ' = ' + (a * k) + '.'});
+    F.push({sq:a + 1, cu:0, say:'Клітинок у квадраті ' + a + ' · ' + a + '. Тому ' + a + '² кажуть «' + a + ' у квадраті» — квадрат числа ' + a + '.'});
+  }
+  if(c){
+    var pc = el('div','sc-part'), cs = 10 * Math.cos(Math.PI / 6), sn = 5, H = 10;
+    var P = function(x, y, z){ return [(x - y) * cs, (x + y) * sn - z * H]; };
+    var sv2 = svg([-c * cs - 4, -c * H - 4, 2 * c * cs + 18, 2 * c * H + 14]);
+    /* силует цілого куба — блідо, щоб було видно, куди ростемо */
+    node('polygon', {points: pts([P(0,0,c), P(c,0,c), P(c,0,0), P(c,c,0), P(0,c,0), P(0,c,c)]), 'class':'gh'}, sv2);
+    var list = [];
+    for(var z = 0; z < c; z++) for(var y = 0; y < c; y++) for(var x = 0; x < c; x++) list.push([x, y, z]);
+    list.sort(function(p1, p2){ return (p1[0] + p1[1] + p1[2]) - (p2[0] + p2[1] + p2[2]) || p1[2] - p2[2]; });
+    list.forEach(function(p){
+      var x = p[0], y = p[1], z = p[2];
+      var g = node('g', {'class':'cb'}, sv2);
+      node('polygon', {points: pts([P(x,y,z+1), P(x+1,y,z+1), P(x+1,y+1,z+1), P(x,y+1,z+1)]), 'class':'t'}, g);
+      node('polygon', {points: pts([P(x+1,y,z), P(x+1,y+1,z), P(x+1,y+1,z+1), P(x+1,y,z+1)]), 'class':'r'}, g);
+      node('polygon', {points: pts([P(x,y+1,z), P(x+1,y+1,z), P(x+1,y+1,z+1), P(x,y+1,z+1)]), 'class':'l'}, g);
+      g.__z = z; cuCubes.push(g);
+    });
+    var e1 = P(c / 2, c, 0), e2 = P(c, c / 2, 0), e3 = P(c, 0, c / 2);
+    var l1 = node('text', {x:e1[0] - 4, y:e1[1] + 7, 'class':'lb'}, sv2); l1.textContent = c;
+    var l2 = node('text', {x:e2[0] + 4, y:e2[1] + 7, 'class':'lb'}, sv2); l2.textContent = c;
+    var l3 = node('text', {x:e3[0] + 6, y:e3[1] + 2, 'class':'lb'}, sv2); l3.textContent = c;
+    pc.appendChild(sv2);
+    cuF = el('div','sc-f'); pc.appendChild(cuF);
+    parts.appendChild(pc);
+    var base = a ? a + 1 : 0;
+    F.push({sq:base, cu:0, say:'Куб із ребром ' + c + '. Пробіл — кладемо кубики шар за шаром.'});
+    for(var w = 1; w <= c; w++) F.push({sq:base, cu:w, say:'Шарів: ' + w + ', у кожному ' + c + ' · ' + c + ' = ' + (c * c) + '. Кубиків: ' + (c * c * w) + '.'});
+    F.push({sq:base, cu:c + 1, say:'Кубиків ' + c + ' · ' + c + ' · ' + c + '. Тому ' + c + '³ кажуть «' + c + ' у кубі» — куб числа ' + c + '.'});
+  }
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st >= F.length) st = F.length - 1;
+    if(st === box.__at) return;
+    box.__at = st;
+    var f = F[st];
+    sqCells.forEach(function(e){
+      e.classList.toggle('on', e.__row < f.sq);
+      e.classList.toggle('now', e.__row === f.sq - 1 && f.sq <= a);
+    });
+    cuCubes.forEach(function(g){
+      g.classList.toggle('on', g.__z < f.cu);
+      g.classList.toggle('now', g.__z === f.cu - 1 && f.cu <= c);
+    });
+    if(sqF) sqF.innerHTML = f.sq > a ? a + ' · ' + a + ' = <b>' + a + '²</b> = ' + (a * a)
+                         : f.sq ? a + ' · ' + f.sq + ' = ' + (a * f.sq) : '&nbsp;';
+    if(cuF) cuF.innerHTML = f.cu > c ? c + ' · ' + c + ' · ' + c + ' = <b>' + c + '³</b> = ' + (c * c * c)
+                         : f.cu ? c + ' · ' + c + ' · ' + f.cu + ' = ' + (c * c * f.cu) : '&nbsp;';
+    say.textContent = f.say;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   Трапеція — спільне для C40–C42: SVG-вузли й дуги кутів.
+   Кути — у градусах «як у математиці» (вісь y угору); у SVG y униз,
+   тому дуга проти годинникової стрілки — sweep-flag 0.
+   ───────────────────────────────────────────────────────────────────── */
+function trSvg(box, vb, label){
+  var NS = 'http://www.w3.org/2000/svg';
+  var s = D.createElementNS(NS, 'svg');
+  s.setAttribute('viewBox', vb); s.setAttribute('role', 'img');
+  s.setAttribute('aria-label', label);
+  var w = el('div', 'tr-svg'); w.appendChild(s); box.appendChild(w);
+  s.__n = function(t, at){
+    var e = D.createElementNS(NS, t);
+    for(var k in at) e.setAttribute(k, at[k]);
+    s.appendChild(e); return e;
+  };
+  return s;
+}
+function trArc(c, r, a0, a1){
+  function p(a){ return [c[0] + r*Math.cos(a*Math.PI/180), c[1] - r*Math.sin(a*Math.PI/180)]; }
+  var p0 = p(a0), p1 = p(a1);
+  return 'M ' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A ' + r + ' ' + r + ' 0 ' +
+         (Math.abs(a1 - a0) > 180 ? 1 : 0) + ' 0 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1);
+}
+function trPts(arr){ return arr.map(function(p){ return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' '); }
+function trAt(e, p, dx, dy){ e.setAttribute('x', (p[0] + (dx||0)).toFixed(1)); e.setAttribute('y', (p[1] + (dy||0)).toFixed(1)); }
+function trStep(marks, n){
+  var st = 0;
+  $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+  return Math.min(st, n - 1);
+}
+function trTick(e, p, q){
+  var mx = (p[0]+q[0])/2, my = (p[1]+q[1])/2, dx = q[0]-p[0], dy = q[1]-p[1];
+  var L = Math.sqrt(dx*dx + dy*dy) || 1, nx = -dy/L*8, ny = dx/L*8;
+  e.setAttribute('x1', mx+nx); e.setAttribute('y1', my+ny);
+  e.setAttribute('x2', mx-nx); e.setAttribute('y2', my-ny);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   C40 · .tr180 — кути при бічній стороні трапеції: разом 180°
+     <div class="tr180" data-angles="65,45,80,110"></div>
+     Пробіл — верхня основа їде вздовж своєї прямої, ∠A змінюється на
+     наступне число з data-angles, ∠B = 180° − ∠A, лічильник суми стоїть.
+     Останній крок — чому: основи паралельні, бічна — січна, кути
+     односторонні. data-labels="A,B,C,D" — свої букви.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.tr180').forEach(function(box){
+  var L = (box.dataset.labels || 'A,B,C,D').split(',');
+  var AS = (box.dataset.angles || '65,45,80,110').split(',').map(Number)
+             .filter(function(x){ return x >= 25 && x <= 155; });
+  if(!AS.length) AS = [65];
+  var Y0 = 200, Y1 = 80, H = Y0 - Y1, AX = 110, DX = 380, TOP = 120;
+  box.textContent = '';
+  var s = trSvg(box, '0 0 470 240', 'Трапеція, у якої зсувається верхня основа');
+  s.__n('line', {x1:8, y1:Y0, x2:462, y2:Y0, 'class':'pl'});
+  s.__n('line', {x1:8, y1:Y1, x2:462, y2:Y1, 'class':'pl'});
+  var poly = s.__n('polygon', {'class':'sh'});
+  var sec = s.__n('line', {'class':'sec'});
+  var aA = s.__n('path', {'class':'aA'}), aB = s.__n('path', {'class':'aB'});
+  var vA = s.__n('text', {'class':'vA'}), vB = s.__n('text', {'class':'vB'});
+  var lb = [0,1,2,3].map(function(i){ var t = s.__n('text', {'class':'lb'}); t.textContent = L[i]; return t; });
+  var sum = el('div', 'tr-f'); box.appendChild(sum);
+  var say = asay(box);
+  var F = [{a:AS[0], say:'Трапеція ' + L.join('') + ': основи ' + L[0] + L[3] + ' і ' + L[1] + L[2] +
+            ' паралельні. Дивимось на два кути при бічній стороні ' + L[0] + L[1] + '.'}];
+  for(var i = 1; i < AS.length; i++)
+    F.push({a:AS[i], say:'Зсуваємо верхню основу: ∠' + L[0] + ' = ' + AS[i] + '°, ∠' + L[1] + ' = ' +
+            (180 - AS[i]) + '°. Кути змінились — сума ні.'});
+  F.push({a:AS[AS.length-1], fin:true, say:L[0] + L[3] + ' ∥ ' + L[1] + L[2] + ', а ' + L[0] + L[1] +
+          ' — січна. ∠' + L[0] + ' і ∠' + L[1] + ' — односторонні кути, тому їхня сума завжди 180°.'});
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var cur = AS[0];
+  function draw(a){
+    var bx = AX + H/Math.tan(a*Math.PI/180);
+    var A = [AX, Y0], B = [bx, Y1], C = [bx + TOP, Y1], Dd = [DX, Y0];
+    poly.setAttribute('points', trPts([A, B, C, Dd]));
+    sec.setAttribute('x1', A[0]); sec.setAttribute('y1', A[1]);
+    sec.setAttribute('x2', B[0]); sec.setAttribute('y2', B[1]);
+    aA.setAttribute('d', trArc(A, 26, 0, a));
+    aB.setAttribute('d', trArc(B, 26, a + 180, 360));
+    var ra = a/2*Math.PI/180, rb = (a/2 + 270)*Math.PI/180;
+    trAt(vA, [A[0] + 50*Math.cos(ra), A[1] - 50*Math.sin(ra) + 6]);
+    trAt(vB, [B[0] + 50*Math.cos(rb), B[1] - 50*Math.sin(rb) + 6]);
+    var ai = Math.round(a);
+    vA.textContent = ai + '°'; vB.textContent = (180 - ai) + '°';
+    trAt(lb[0], A, -14, 20); trAt(lb[1], B, -10, -10); trAt(lb[2], C, 10, -10); trAt(lb[3], Dd, 14, 20);
+    sum.innerHTML = '∠' + L[0] + ' + ∠' + L[1] + ' = ' + ai + '° + ' + (180 - ai) + '° = <b>180°</b>';
+  }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    box.__at = st;
+    var f = F[st], from = cur;
+    box.classList.toggle('fin', !!f.fin);
+    say.textContent = f.say;
+    cur = f.a;
+    if(from !== f.a) atween(box, from, f.a, 650, draw); else draw(f.a);
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C41 · .trisos — рівнобічна трапеція: дві висоти й рівні трикутники
+     <div class="trisos" data-angle="60"></div>
+     Пробіл — висота BK, висота CM, прямокутник KBCM, трикутники ABK і
+     DCM, △ABK переїжджає на △DCM і збігається, висновок ∠A = ∠D, AK = MD.
+     data-angle — гострий кут при основі; data-abk="1" — у кінці ще
+     ∠ABK = 90° − ∠A (задачі «висота утворює з бічною стороною кут…»).
+     data-labels="A,B,C,D,K,M" — свої букви.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.trisos').forEach(function(box){
+  var L = (box.dataset.labels || 'A,B,C,D,K,M').split(',');
+  var a = Math.max(35, Math.min(80, parseFloat(box.dataset.angle) || 60));
+  var abk = box.dataset.abk === '1';
+  var Y0 = 200, Y1 = 80, h = Y0 - Y1, off = h/Math.tan(a*Math.PI/180);
+  var A = [70, Y0], Dd = [390, Y0], B = [70 + off, Y1], C = [390 - off, Y1];
+  var K = [B[0], Y0], M = [C[0], Y0];
+  box.textContent = '';
+  var s = trSvg(box, '0 0 460 240', 'Рівнобічна трапеція з двома висотами');
+  var rect = s.__n('polygon', {'class':'rc', points:trPts([K, B, C, M])});
+  var t1 = s.__n('polygon', {'class':'t1', points:trPts([A, B, K])});
+  var t2 = s.__n('polygon', {'class':'t2', points:trPts([Dd, C, M])});
+  var mv = s.__n('polygon', {'class':'tmv', points:trPts([A, B, K])});
+  s.__n('polygon', {'class':'sh', points:trPts([A, B, C, Dd])});
+  var hB = s.__n('line', {'class':'ht h1', x1:B[0], y1:B[1], x2:K[0], y2:K[1]});
+  var hC = s.__n('line', {'class':'ht h2', x1:C[0], y1:C[1], x2:M[0], y2:M[1]});
+  var rB = s.__n('path', {'class':'ra h1', d:'M ' + (K[0]+12) + ' ' + Y0 + ' L ' + (K[0]+12) + ' ' + (Y0-12) + ' L ' + K[0] + ' ' + (Y0-12)});
+  var rC = s.__n('path', {'class':'ra h2', d:'M ' + (M[0]-12) + ' ' + Y0 + ' L ' + (M[0]-12) + ' ' + (Y0-12) + ' L ' + M[0] + ' ' + (Y0-12)});
+  var k1 = s.__n('line', {'class':'tk'}), k2 = s.__n('line', {'class':'tk'});
+  trTick(k1, A, B); trTick(k2, Dd, C);
+  var aA = s.__n('path', {'class':'an', d:trArc(A, 24, 0, a)});
+  var aD = s.__n('path', {'class':'an', d:trArc(Dd, 24, 180 - a, 180)});
+  var vA = s.__n('text', {'class':'vv an'}), vD = s.__n('text', {'class':'vv an'});
+  trAt(vA, [A[0] + 46*Math.cos(a/2*Math.PI/180), A[1] - 46*Math.sin(a/2*Math.PI/180) + 6]);
+  trAt(vD, [Dd[0] - 46*Math.cos(a/2*Math.PI/180), Dd[1] - 46*Math.sin(a/2*Math.PI/180) + 6]);
+  vA.textContent = vD.textContent = Math.round(a) + '°';
+  var aK = s.__n('path', {'class':'ab', d:trArc(B, 22, 180 + a, 270)});
+  var vK = s.__n('text', {'class':'vv ab'});
+  trAt(vK, [B[0] - 14, B[1] + 44]); vK.textContent = Math.round(90 - a) + '°';
+  [[A,L[0],-14,20],[B,L[1],-8,-10],[C,L[2],8,-10],[Dd,L[3],14,20],[K,L[4],0,24],[M,L[5],0,24]].forEach(function(q){
+    var t = s.__n('text', {'class':'lb'}); t.textContent = q[1]; trAt(t, q[0], q[2], q[3]);
+  });
+  var ab = L[0]+L[1], cd = L[3]+L[2], bk = L[1]+L[4], cm = L[2]+L[5];
+  var F = [
+    {c:'', say:'Рівнобічна трапеція: бічні сторони рівні, ' + ab + ' = ' + L[2]+L[3] + '. Чому кути при основі теж рівні?'},
+    {c:'s1', say:'Опускаємо висоту ' + bk + ' на більшу основу.'},
+    {c:'s1 s2', say:'І висоту ' + cm + '. ' + L[4]+L[1]+L[2]+L[5] + ' — прямокутник, тому ' + bk + ' = ' + cm + '.'},
+    {c:'s1 s2 s3', say:'Прямокутні трикутники ' + L[0]+L[1]+L[4] + ' і ' + L[3]+L[2]+L[5] + ': гіпотенузи ' + ab + ' = ' + cd + ', катети ' + bk + ' = ' + cm + '.'},
+    {c:'s1 s2 s3 s4', mv:true, say:'Переносимо △' + L[0]+L[1]+L[4] + ' на △' + L[3]+L[2]+L[5] + ' — вони збігаються повністю.'},
+    {c:'s1 s2 s3 s4 s5', mv:true, say:'Отже, ∠' + L[0] + ' = ∠' + L[3] + ' і ' + L[0]+L[4] + ' = ' + L[5]+L[3] + '.' +
+      (abk ? ' А в △' + L[0]+L[1]+L[4] + ': ∠' + L[0]+L[1]+L[4] + ' = 90° − ∠' + L[0] + '.' : '')}
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box), was = false;
+  function place(k){
+    var src = [A, B, K], dst = [Dd, C, M];
+    mv.setAttribute('points', trPts(src.map(function(p, i){
+      return [p[0] + (dst[i][0]-p[0])*k, p[1] + (dst[i][1]-p[1])*k]; })));
+  }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    box.__at = st;
+    var f = F[st];
+    ['s1','s2','s3','s4','s5'].forEach(function(c){ box.classList.toggle(c, (' ' + f.c + ' ').indexOf(' ' + c + ' ') >= 0); });
+    box.classList.toggle('abk', abk);
+    if(f.mv && !was) atween(box, 0, 1, 800, place); else place(f.mv ? 1 : 0);
+    was = !!f.mv;
+    say.textContent = f.say;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C42 · .trkind — види трапеції: одна фігура перетікає
+     <div class="trkind"></div>
+     Пробіл — довільна → прямокутна (бічна ⊥ основам) → рівнобічна
+     (бічні рівні) → бічні стали паралельними: це вже паралелограм, НЕ
+     трапеція. Праворуч список ознак, що вмикається разом із фігурою.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.trkind').forEach(function(box){
+  var SH = {
+    gen:  [[60,200],[150,90],[280,90],[380,200]],
+    rt:   [[60,200],[60,90],[260,90],[380,200]],
+    iso:  [[60,200],[150,90],[290,90],[380,200]],
+    par:  [[60,200],[150,90],[470,90],[380,200]]
+  };
+  var F = [
+    {k:'gen', nm:'трапеція', p:[1,0,0,0], say:'Трапеція: дві сторони паралельні (основи), дві інші — ні (бічні сторони).'},
+    {k:'rt',  nm:'прямокутна трапеція', p:[1,1,0,0], say:'Бічна сторона стала перпендикулярною до основ — два прямі кути. Це прямокутна трапеція.'},
+    {k:'iso', nm:'рівнобічна трапеція', p:[1,0,1,0], say:'Бічні сторони рівні — рівнобічна трапеція. Вона симетрична, як дзеркало.'},
+    {k:'par', nm:'паралелограм — НЕ трапеція', p:[1,0,0,1], bad:true, say:'Якщо й бічні сторони стали паралельними — це вже паралелограм. У трапеції паралельна лише ОДНА пара сторін.'}
+  ];
+  box.textContent = '';
+  var s = trSvg(box, '0 0 530 250', 'Трапеція, що змінює вид');
+  var poly = s.__n('polygon', {'class':'sh'});
+  var r0 = s.__n('path', {'class':'ra'}), r1 = s.__n('path', {'class':'ra'});
+  var k1 = s.__n('line', {'class':'tk'}), k2 = s.__n('line', {'class':'tk'});
+  var b1 = s.__n('line', {'class':'bs'}), b2 = s.__n('line', {'class':'bs'});
+  var nm = s.__n('text', {'class':'nm', x:265, y:238});
+  var side = el('ul', 'tr-prop');
+  side.innerHTML = ['основи паралельні — і лише вони','бічна сторона ⊥ основам','бічні сторони рівні','бічні сторони теж паралельні']
+    .map(function(t){ return '<li><b>·</b><span>' + t + '</span></li>'; }).join('');
+  box.appendChild(side);
+  var pr = $$('li', side), say = asay(box);
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var cur = SH.gen.map(function(p){ return p.slice(); });
+  function paint(){
+    poly.setAttribute('points', trPts(cur));
+    var A = cur[0], B = cur[1], C = cur[2], Dd = cur[3];
+    r0.setAttribute('d', 'M ' + (A[0]+13) + ' ' + A[1] + ' L ' + (A[0]+13) + ' ' + (A[1]-13) + ' L ' + A[0] + ' ' + (A[1]-13));
+    r1.setAttribute('d', 'M ' + (B[0]+13) + ' ' + B[1] + ' L ' + (B[0]+13) + ' ' + (B[1]+13) + ' L ' + B[0] + ' ' + (B[1]+13));
+    trTick(k1, A, B); trTick(k2, Dd, C);
+    [[b1, B, C], [b2, A, Dd]].forEach(function(q){
+      var mx = (q[1][0]+q[2][0])/2, my = q[1][1];
+      q[0].setAttribute('x1', mx-8); q[0].setAttribute('y1', my-7);
+      q[0].setAttribute('x2', mx+2); q[0].setAttribute('y2', my);
+    });
+  }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var first = box.__at < 0;
+    box.__at = st;
+    var f = F[st], to = SH[f.k], from = cur.map(function(p){ return p.slice(); });
+    box.classList.remove('gen','rt','iso','par');
+    box.classList.add(f.k);
+    nm.textContent = f.nm; say.textContent = f.say;
+    f.p.forEach(function(v, i){
+      pr[i].classList.toggle('on', !!v); pr[i].classList.toggle('bad', !!(v && f.bad && i === 3));
+      $('b', pr[i]).textContent = v ? (f.bad && i === 3 ? '✗' : '✓') : '·';
+    });
+    if(first){ cur = to.map(function(p){ return p.slice(); }); paint(); }
+    else atween(box, 0, 1, 650, function(k){
+      cur = from.map(function(p, i){ return [p[0] + (to[i][0]-p[0])*k, p[1] + (to[i][1]-p[1])*k]; });
+      paint();
+    });
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   Коло й чотирикутник — спільне для C46–C47. Кути — як у трапеції:
+   у градусах, вісь y угору. Вершини й точки дотику йдуть ЗА годинниковою
+   стрілкою, тобто кути в data-at спадають (з точністю до 360°).
+   ───────────────────────────────────────────────────────────────────── */
+function qcPt(o, r, a){ return [o[0] + r*Math.cos(a*Math.PI/180), o[1] - r*Math.sin(a*Math.PI/180)]; }
+function qcCw(from, to){ return ((from - to) % 360 + 360) % 360; }
+/* Дужка кута при вершині v між променями на p і q; mid — місце для числа. */
+function qcAng(v, p, q, r, lr){
+  var a1 = Math.atan2(v[1]-p[1], p[0]-v[0])*180/Math.PI, a2 = Math.atan2(v[1]-q[1], q[0]-v[0])*180/Math.PI;
+  var d = ((a2 - a1) % 360 + 360) % 360;
+  if(d > 180){ a1 = a2; d = 360 - d; }
+  return {d:trArc(v, r, a1, a1 + d), mid:qcPt(v, lr, a1 + d/2)};
+}
+function qcLine(e, p, q){
+  e.setAttribute('x1', p[0].toFixed(1)); e.setAttribute('y1', p[1].toFixed(1));
+  e.setAttribute('x2', q[0].toFixed(1)); e.setAttribute('y2', q[1].toFixed(1));
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   C46 · .qinsc — вписаний чотирикутник: дві дуги складаються в коло
+     <div class="qinsc" data-at="200,120,40,290"></div>
+     Пробіл — ∠A і дуга BCD, на яку він спирається; ∠C і дуга BAD, що
+     домальовує коло; дуги разом 360°; тому ∠A + ∠C = 180°; те саме для
+     ∠B + ∠D. data-at — де на колі стоять A, B, C, D (градуси, за
+     годинниковою стрілкою); data-labels="A,B,C,D" — свої букви.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.qinsc').forEach(function(box){
+  var L = (box.dataset.labels || 'A,B,C,D').split(',');
+  var DEF = [200,120,40,290];
+  var T = (box.dataset.at || '').split(',').map(Number);
+  function ok(t){
+    if(t.length !== 4 || t.some(isNaN)) return false;
+    var g = [0,1,2,3].map(function(i){ return qcCw(t[i], t[(i+1)%4]); });
+    return g[0] + g[1] + g[2] + g[3] === 360 && Math.min.apply(null, g) >= 30;
+  }
+  if(!ok(T)) T = DEF;
+  var O = [230,140], R = 108;
+  var V = T.map(function(a){ return qcPt(O, R, a); });
+  var arc1 = qcCw(T[1], T[3]), arc2 = 360 - arc1;       /* дуги BCD і BAD */
+  var arc3 = qcCw(T[2], T[0]);                          /* дуга CDA */
+  var AN = [arc1/2, arc3/2, arc2/2, (360 - arc3)/2];
+  var n1 = L[1]+L[2]+L[3], n2 = L[1]+L[0]+L[3];
+  box.textContent = '';
+  var s = trSvg(box, '0 0 460 280', 'Чотирикутник, вписаний у коло');
+  s.__n('circle', {'class':'cr', cx:O[0], cy:O[1], r:R});
+  s.__n('polygon', {'class':'sh', points:trPts(V)});
+  var p1 = s.__n('path', {'class':'ar a1'}), p2 = s.__n('path', {'class':'ar a2'});
+  V.forEach(function(v, i){
+    var g = qcAng(v, V[(i+3)%4], V[(i+1)%4], 22, 42);
+    s.__n('path', {'class':'am m' + i, d:g.d});
+    var t = s.__n('text', {'class':'vv m' + i}); t.textContent = anum(AN[i]) + '°'; trAt(t, g.mid, 0, 6);
+    var lb = s.__n('text', {'class':'lb'}); lb.textContent = L[i]; trAt(lb, qcPt(O, R + 18, T[i]), 0, 7);
+  });
+  var f = el('div', 'tr-f'); box.appendChild(f);
+  f.innerHTML =
+    '<span class="f1">∠' + L[0] + ' = ½ дуги ' + n1 + ' = ' + anum(AN[0]) + '°</span>' +
+    '<span class="f2">∠' + L[2] + ' = ½ дуги ' + n2 + ' = ' + anum(AN[2]) + '°</span><br>' +
+    '<span class="f3">дуги разом: ' + arc1 + '° + ' + arc2 + '° = 360°</span>' +
+    '<span class="f4">∠' + L[0] + ' + ∠' + L[2] + ' = ½ · 360° = <b>180°</b></span><br>' +
+    '<span class="f5">∠' + L[1] + ' + ∠' + L[3] + ' = ' + anum(AN[1]) + '° + ' + anum(AN[3]) + '° = <b>180°</b></span>';
+  var q = L.join('');
+  var F = [
+    'Чотирикутник ' + q + ' вписаний у коло: усі чотири вершини лежать на колі. Як повʼязані протилежні кути ' + L[0] + ' і ' + L[2] + '?',
+    '∠' + L[0] + ' — вписаний кут: вершина на колі, сторони — хорди. Він спирається на дугу ' + n1 + ' і дорівнює її половині.',
+    '∠' + L[2] + ' теж вписаний. Він спирається на дугу ' + n2 + ' — на решту кола.',
+    'Дві дуги разом — усе коло, тобто 360°.',
+    'Кожен кут — половина своєї дуги, тому разом вони — половина кола: ∠' + L[0] + ' + ∠' + L[2] + ' = 180°.',
+    'Для другої пари міркування те саме: ∠' + L[1] + ' + ∠' + L[3] + ' = 180°. У вписаному чотирикутнику сума протилежних кутів дорівнює 180°.'
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  function arc(p, start, len){ p.setAttribute('d', len < .5 ? 'M 0 0' : trArc(O, R, start - len, start)); }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    for(var i = 1; i <= 5; i++) box.classList.toggle('s' + i, st >= i);
+    say.textContent = F[st];
+    if(st === 1 && prev === 0){ arc(p2, T[3], 0); atween(box, 0, arc1, 700, function(v){ arc(p1, T[1], v); }); }
+    else if(st === 2 && prev === 1){ arc(p1, T[1], arc1); atween(box, 0, arc2, 700, function(v){ arc(p2, T[3], v); }); }
+    else {
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      arc(p1, T[1], st >= 1 ? arc1 : 0); arc(p2, T[3], st >= 2 ? arc2 : 0);
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C47 · .qcirc — описаний чотирикутник: кольорові відрізки дотичних
+     <div class="qcirc" data-at="190,70,-20,-100"></div>
+     Пробіл — з вершини A два рівні відрізки дотичних (a), далі b, потім
+     c і d; сторони AB і CD злітають у смужку a + b + c + d, сторони AD і
+     BC — у другу; смужки однакові → AB + CD = AD + BC.
+     data-at — де на колі точки дотику сторін AB, BC, CD, DA (градуси,
+     за годинниковою стрілкою); data-labels="A,B,C,D,P,L,K,T" — свої букви
+     (вершини, потім точки дотику на AB, BC, CD, DA).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.qcirc').forEach(function(box){
+  var L = (box.dataset.labels || 'A,B,C,D,P,L,K,T').split(',');
+  var DEF = [190,70,-20,-100];
+  var T = (box.dataset.at || '').split(',').map(Number);
+  function gaps(t){ return [0,1,2,3].map(function(i){ return qcCw(t[(i+3)%4], t[i]); }); }
+  function ok(t){
+    if(t.length !== 4 || t.some(isNaN)) return false;
+    var g = gaps(t);
+    return g[0] + g[1] + g[2] + g[3] === 360 && Math.min.apply(null, g) >= 50 && Math.max.apply(null, g) <= 130;
+  }
+  if(!ok(T)) T = DEF;
+  var O = [130,140], R = 62, G = gaps(T);               /* G[i] — кут між радіусами біля вершини i */
+  var V = G.map(function(g, i){ return qcPt(O, R/Math.cos(g/2*Math.PI/180), T[i] + g/2); });
+  var P = T.map(function(a){ return qcPt(O, R, a); });  /* точки дотику на AB, BC, CD, DA */
+  var LEN = G.map(function(g){ return R*Math.tan(g/2*Math.PI/180); });
+  var NM = ['a','b','c','d'], KS = ['k1','k2','k3','k3'];
+  box.textContent = '';
+  var s = trSvg(box, '0 0 600 250', 'Чотирикутник, описаний навколо кола');
+  s.__n('polygon', {'class':'sh', points:trPts(V)});
+  s.__n('circle', {'class':'cr', cx:O[0], cy:O[1], r:R});
+  function out(p, k){ var dx = p[0]-O[0], dy = p[1]-O[1], n = Math.sqrt(dx*dx + dy*dy) || 1; return [p[0] + dx/n*k, p[1] + dy/n*k]; }
+  /* вершина i тримає два відрізки: до точки дотику i (своя сторона) і (i+3)%4 (попередня) */
+  V.forEach(function(v, i){
+    [P[i], P[(i+3)%4]].forEach(function(t){
+      qcLine(s.__n('line', {'class':'sg g' + i + ' ' + KS[i]}), v, t);
+      var m = out([(v[0]+t[0])/2, (v[1]+t[1])/2], 14);
+      var e = s.__n('text', {'class':'sl g' + i + ' ' + KS[i]}); e.textContent = NM[i]; trAt(e, m, 0, 6);
+    });
+  });
+  P.forEach(function(p, i){
+    s.__n('circle', {'class':'tp', cx:p[0].toFixed(1), cy:p[1].toFixed(1), r:3.5});
+    var e = s.__n('text', {'class':'lb'}); e.textContent = L[4+i]; trAt(e, qcPt(O, R - 15, T[i]), 0, 7);
+  });
+  V.forEach(function(v, i){ var e = s.__n('text', {'class':'lb'}); e.textContent = L[i]; trAt(e, out(v, 16), 0, 7); });
+  /* смужки: 1 — AB + CD, 2 — AD + BC; шматок = [вершина, точка дотику, номер відрізка] */
+  var sum = LEN[0] + LEN[1] + LEN[2] + LEN[3], X0 = 300, Kx = Math.min(1, 280/sum);
+  var ROWS = [
+    {y:92,  k:'k4', nm:L[0]+L[1] + ' + ' + L[2]+L[3], pcs:[[V[0],P[0],0],[P[0],V[1],1],[V[2],P[2],2],[P[2],V[3],3]]},
+    {y:182, k:'k5', nm:L[0]+L[3] + ' + ' + L[1]+L[2], pcs:[[V[0],P[3],0],[P[3],V[3],3],[V[1],P[1],1],[P[1],V[2],2]]}
+  ];
+  var FL = [];
+  ROWS.forEach(function(r, ri){
+    var x = X0, t = s.__n('text', {'class':'st ' + r.k, x:X0, y:r.y - 20}); t.textContent = r.nm;
+    r.pcs.forEach(function(pc){
+      var w = LEN[pc[2]]*Kx;
+      FL.push({set:ri, e:s.__n('line', {'class':'fl g' + pc[2] + ' ' + r.k}), p:pc[0], q:pc[1], P:[x + 1.5, r.y], Q:[x + w - 1.5, r.y]});
+      var e = s.__n('text', {'class':'sl g' + pc[2] + ' ' + r.k}); e.textContent = NM[pc[2]]; trAt(e, [x + w/2, r.y + 24]);
+      x += w;
+    });
+  });
+  var eq = s.__n('text', {'class':'eq k6', x:X0 + sum*Kx/2, y:147}); eq.textContent = '=';
+  var f = el('div', 'tr-f k6'); box.appendChild(f);
+  f.innerHTML = L[0]+L[1] + ' + ' + L[2]+L[3] + ' = <b>' + L[0]+L[3] + ' + ' + L[1]+L[2] + '</b>';
+  var F = [
+    'Чотирикутник ' + L.slice(0,4).join('') + ' описаний навколо кола: коло дотикається до всіх чотирьох сторін — у точках ' + L.slice(4).join(', ') + '.',
+    'З вершини ' + L[0] + ' до кола йдуть два відрізки дотичних — ' + L[0]+L[4] + ' і ' + L[0]+L[7] + '. Відрізки дотичних з однієї точки рівні: позначимо їх a.',
+    'Так само з вершини ' + L[1] + ': ' + L[1]+L[4] + ' = ' + L[1]+L[5] + ' = b.',
+    'З вершини ' + L[2] + ': ' + L[2]+L[5] + ' = ' + L[2]+L[6] + ' = c. З вершини ' + L[3] + ': ' + L[3]+L[6] + ' = ' + L[3]+L[7] + ' = d. Кожна сторона складена з двох кольорових відрізків.',
+    'Викладаємо в смужку протилежні сторони ' + L[0]+L[1] + ' і ' + L[2]+L[3] + ': вийшло a + b + c + d.',
+    'Тепер дві інші сторони — ' + L[0]+L[3] + ' і ' + L[1]+L[2] + ': a + d + b + c.',
+    'Смужки однакові: вони з тих самих чотирьох відрізків. Отже, ' + L[0]+L[1] + ' + ' + L[2]+L[3] + ' = ' + L[0]+L[3] + ' + ' + L[1]+L[2] + ' — суми протилежних сторін рівні.'
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  function place(set, k){
+    FL.forEach(function(o){
+      if(o.set !== set) return;
+      qcLine(o.e, [o.p[0] + (o.P[0]-o.p[0])*k, o.p[1] + (o.P[1]-o.p[1])*k],
+                  [o.q[0] + (o.Q[0]-o.q[0])*k, o.q[1] + (o.Q[1]-o.q[1])*k]);
+    });
+  }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    for(var i = 1; i <= 6; i++) box.classList.toggle('s' + i, st >= i);
+    say.textContent = F[st];
+    if(st === 4 && prev === 3){ place(1, 0); atween(box, 0, 1, 900, function(k){ place(0, k); }); }
+    else if(st === 5 && prev === 4){ place(0, 1); atween(box, 0, 1, 900, function(k){ place(1, k); }); }
+    else {
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      place(0, st >= 4 ? 1 : 0); place(1, st >= 5 ? 1 : 0);
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C51 · .thales — теорема Фалеса: рівні відрізки переходять на другу сторону
+     <div class="thales" data-n="3" data-a="3" data-angle="18" data-turn="36"></div>
+     Пробіл — на одній стороні кута рівні відрізки (риски, по data-a см);
+     через точки ростуть паралельні прямі; на другій стороні — рівні
+     відрізки з довжинами; другу сторону повертають (data-angle → data-turn):
+     числа біжать, але між собою лишаються рівні; останній крок — теорема.
+     data-n — скільки точок (3–5); data-labels="O,A,B" — свої букви.
+   ───────────────────────────────────────────────────────────────────── */
+function thSub(n){ return String(n).split('').map(function(d){ return '₀₁₂₃₄₅₆₇₈₉'[+d]; }).join(''); }
+function thRad(x){ return x*Math.PI/180; }
+/* Ланцюжок рівних відрізків між сусідніми точками: «A₁A₂ = A₂A₃ = …»;
+   з багатьма відрізками — перші два, «…» і останній */
+function thSeg(names){
+  var out = [];
+  for(var i = 0; i + 1 < names.length; i++) out.push(names[i] + names[i+1]);
+  if(out.length > 4) out = [out[0], out[1], '…', out[out.length - 1]];
+  return out.join(' = ');
+}
+function thPts(P, from, to){ var r = []; for(var k = from; k <= to; k++) r.push(P + thSub(k)); return r; }
+$$('.thales').forEach(function(box){
+  var L = (box.dataset.labels || 'O,A,B').split(',');
+  var n = Math.max(3, Math.min(5, +box.dataset.n || 3));
+  var a = +String(box.dataset.a || '3').replace(',', '.') || 3;
+  function cl(v, d){ v = +v; return isNaN(v) || !v ? d : Math.max(10, Math.min(45, v)); }
+  var b0 = cl(box.dataset.angle, 18), b1 = cl(box.dataset.turn, 36);
+  var G = 75;                                           /* напрям паралельних прямих */
+  var O = [0, 0], d = 330/(n + .6), T = [];
+  for(var k = 0; k < n; k++) T.push(d*.6 + k*d);
+  var A = T.map(function(t){ return [O[0] + t, O[1]]; });
+  function Bs(beta){ return T.map(function(t){ return qcPt(O, t*Math.sin(thRad(G))/Math.sin(thRad(G - beta)), beta); }); }
+  function blen(beta){ return Math.round(a*Math.sin(thRad(G))/Math.sin(thRad(G - beta))*10)/10; }
+  /* рамка креслення — за всіма положеннями другої сторони */
+  var X0 = -30, X1 = A[n-1][0] + 60, Y0 = 0;
+  for(var j = 0; j <= 8; j++){
+    var bb = Bs(b0 + (b1 - b0)*j/8), rr = bb[n-1];
+    var top = qcPt(O, Math.sqrt(rr[0]*rr[0] + rr[1]*rr[1]) + 45, b0 + (b1 - b0)*j/8);
+    X0 = Math.min(X0, bb[0][0] - 40); X1 = Math.max(X1, top[0] + 30); Y0 = Math.min(Y0, top[1] - 30);
+  }
+  box.textContent = '';
+  var s = trSvg(box, X0.toFixed(0) + ' ' + Y0.toFixed(0) + ' ' + (X1 - X0).toFixed(0) + ' ' + (62 - Y0).toFixed(0), 'Теорема Фалеса: паралельні прямі перетинають сторони кута');
+  qcLine(s.__n('line', {'class':'sd'}), O, [X1 - 20, O[1]]);
+  var sideB = s.__n('line', {'class':'sd'});
+  var PL = A.map(function(){ return s.__n('line', {'class':'pl2'}); });
+  var TB = [], NB = [], BP = [], BL = [];
+  for(k = 0; k < n; k++){
+    if(k < n - 1){
+      trTick(s.__n('line', {'class':'tk ka'}), A[k], A[k+1]);
+      var e = s.__n('text', {'class':'nm ka'}); e.textContent = anum(a) + ' см';
+      trAt(e, [(A[k][0] + A[k+1][0])/2, O[1]], 0, 50);
+      TB.push(s.__n('line', {'class':'tk kb'}));
+      NB.push(s.__n('text', {'class':'nm kb'}));
+    }
+    s.__n('circle', {'class':'pt ka', cx:A[k][0].toFixed(1), cy:A[k][1], r:4});
+    var t = s.__n('text', {'class':'lb ka'}); t.textContent = L[1] + thSub(k + 1); trAt(t, A[k], 0, 27);
+    BP.push(s.__n('circle', {'class':'pt kb', r:4}));
+    BL.push(s.__n('text', {'class':'lb kb'})); BL[k].textContent = L[2] + thSub(k + 1);
+  }
+  var ol = s.__n('text', {'class':'lb'}); ol.textContent = L[0]; trAt(ol, O, -16, 8);
+  function draw(beta, g){
+    var B = Bs(beta), last = B[n-1];
+    var r = Math.sqrt(Math.pow(last[0] - O[0], 2) + Math.pow(last[1] - O[1], 2));
+    qcLine(sideB, O, qcPt(O, r + 45, beta));
+    var u = [Math.cos(thRad(beta)), -Math.sin(thRad(beta))], nv = [u[1], -u[0]];
+    var w = [Math.cos(thRad(G)), -Math.sin(thRad(G))];
+    PL.forEach(function(e, i){
+      var q = [B[i][0] + w[0]*16, B[i][1] + w[1]*16];
+      qcLine(e, [A[i][0] - w[0]*14, A[i][1] - w[1]*14],
+                [A[i][0] + (q[0] - A[i][0])*g, A[i][1] + (q[1] - A[i][1])*g]);
+    });
+    var txt = anum(blen(beta)) + ' см';
+    for(var i = 0; i < n; i++){
+      BP[i].setAttribute('cx', B[i][0].toFixed(1)); BP[i].setAttribute('cy', B[i][1].toFixed(1));
+      trAt(BL[i], [B[i][0] + u[0]*14 + nv[0]*18, B[i][1] + u[1]*14 + nv[1]*18], 0, 7);
+      if(i < n - 1){
+        trTick(TB[i], B[i], B[i+1]);
+        trAt(NB[i], [(B[i][0] + B[i+1][0])/2 + nv[0]*26, (B[i][1] + B[i+1][1])/2 + nv[1]*26], 0, 6);
+        NB[i].textContent = txt;
+      }
+    }
+  }
+  var f = el('div', 'tr-f'); box.appendChild(f);
+  f.innerHTML = thSeg(thPts(L[1], 1, n)) + ' ⇒ <b>' + thSeg(thPts(L[2], 1, n)) + '</b>';
+  var pts = thPts(L[1], 1, n);
+  var F = [
+    'Кут з вершиною ' + L[0] + '. Проведемо паралельні прямі, що перетинають обидві його сторони. Що вийде на сторонах?',
+    'На одній стороні відкладемо рівні відрізки: ' + thSeg(thPts(L[1], 1, n)) + ' = ' + anum(a) + ' см.',
+    'Через точки ' + pts.join(', ') + ' проводимо паралельні прямі до перетину з другою стороною кута.',
+    'На другій стороні теж рівні відрізки: ' + thSeg(thPts(L[2], 1, n)) + ' = ' + anum(blen(b0)) + ' см.',
+    'Повертаємо другу сторону: тепер кожен відрізок ' + anum(blen(b1)) + ' см — довжина інша, але відрізки знову рівні між собою.',
+    'Теорема Фалеса: якщо паралельні прямі, які перетинають сторони кута, відтинають на одній стороні рівні відрізки, то вони відтинають рівні відрізки і на другій стороні.'
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    for(var i = 1; i <= 5; i++) box.classList.toggle('s' + i, st >= i);
+    say.textContent = F[st];
+    if(st === 2 && prev === 1) atween(box, 0, 1, 900, function(g){ if(box.__at === 2) draw(b0, g); });
+    else if(st === 4 && prev === 3) atween(box, b0, b1, 1400, function(v){ if(box.__at === 4) draw(v, 1); });
+    else {
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      draw(st >= 4 ? b1 : b0, st >= 2 ? 1 : 0);
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C52 · .divseg — поділ відрізка на рівні частини (побудова за Фалесом)
+     <div class="divseg" data-n="5"></div>
+     <div class="divseg" data-ratio="2:5"></div> — поділ у відношенні
+     Пробіл — з A росте довільний промінь; циркуль відкладає n рівних
+     кроків C₁ … Cₙ; пряма CₙB; паралельні їй через Cₙ₋₁ … C₁ по одній;
+     за теоремою Фалеса AB поділено на n рівних частин. З data-ratio ще
+     крок: m частин і k частин фарбуються, точка Dₘ ділить AB у відношенні.
+     data-labels="A,B,C,D" — свої букви.
+   ───────────────────────────────────────────────────────────────────── */
+function dsParts(m){
+  var d = m % 10, h = m % 100;
+  return m + ' ' + (d === 1 && h !== 11 ? 'частина' : d >= 2 && d <= 4 && (h < 12 || h > 14) ? 'частини' : 'частин');
+}
+$$('.divseg').forEach(function(box){
+  var L = (box.dataset.labels || 'A,B,C,D').split(',');
+  var R = String(box.dataset.ratio || '').split(':').map(Number);
+  var ratio = R.length === 2 && R[0] > 0 && R[1] > 0 && R[0] + R[1] <= 10;
+  var n = ratio ? R[0] + R[1] : Math.max(2, Math.min(10, +box.dataset.n || 5));
+  var A = [30, 205], B = [490, 205], RA = 32, RL = 340, sp = RL/n;
+  var u = [Math.cos(thRad(RA)), -Math.sin(thRad(RA))], nv = [u[1], -u[0]];
+  var C = [], D = [];
+  for(var k = 0; k <= n; k++){
+    C.push([A[0] + u[0]*sp*k, A[1] + u[1]*sp*k]);
+    D.push([A[0] + (B[0] - A[0])*k/n, A[1]]);
+  }
+  box.textContent = '';
+  var s = trSvg(box, '0 0 520 270', 'Поділ відрізка на рівні частини');
+  var ray = s.__n('line', {'class':'ray'});
+  var rl = s.__n('text', {'class':'lb cr0'}); rl.textContent = L[2];
+  trAt(rl, [A[0] + u[0]*(RL + 52), A[1] + u[1]*(RL + 52)], 0, 7);
+  var G1, G2;
+  if(ratio){
+    G1 = s.__n('line', {'class':'gr g1 k6'}); qcLine(G1, A, D[R[0]]);
+    G2 = s.__n('line', {'class':'gr g2 k6'}); qcLine(G2, D[R[0]], B);
+  }
+  qcLine(s.__n('line', {'class':'sd'}), A, B);
+  var CB = s.__n('line', {'class':'cb'});
+  var PAR = [];
+  for(k = n - 1; k >= 1; k--) PAR.push({k:k, e:s.__n('line', {'class':'par'})});
+  var CP = [];
+  for(k = 1; k <= n; k++){
+    var g = [];
+    g.push(s.__n('path', {'class':'arc cp', d:trArc(C[k-1], sp, RA - 14, RA + 14)}));
+    var tk = s.__n('line', {'class':'tk cp'}); trTick(tk, C[k-1], C[k]); g.push(tk);
+    g.push(s.__n('circle', {'class':'pt cp', cx:C[k][0].toFixed(1), cy:C[k][1].toFixed(1), r:4}));
+    var t = s.__n('text', {'class':'lb cp'}); t.textContent = L[2] + thSub(k);
+    trAt(t, [C[k][0] + nv[0]*20 - u[0]*4, C[k][1] + nv[1]*20 - u[1]*4], 0, 7); g.push(t);
+    CP.push(g);
+  }
+  for(k = 0; k < n; k++){
+    trTick(s.__n('line', {'class':'tk k5'}), D[k], D[k+1]);
+    if(k > 0){
+      s.__n('circle', {'class':'pt k5', cx:D[k][0].toFixed(1), cy:D[k][1], r:4});
+      var e = s.__n('text', {'class':'lb k5'}); e.textContent = L[3] + thSub(k); trAt(e, D[k], 0, 28);
+    }
+  }
+  [[A, L[0]], [B, L[1]]].forEach(function(p){
+    s.__n('circle', {'class':'pt', cx:p[0][0], cy:p[0][1], r:4.5});
+    var e = s.__n('text', {'class':'lb'}); e.textContent = p[1]; trAt(e, p[0], 0, 28);
+  });
+  if(ratio){
+    var t1 = s.__n('text', {'class':'nm t1 k6'}); t1.textContent = dsParts(R[0]); trAt(t1, [(A[0] + D[R[0]][0])/2, A[1]], 0, 56);
+    var t2 = s.__n('text', {'class':'nm t2 k6'}); t2.textContent = dsParts(R[1]); trAt(t2, [(D[R[0]][0] + B[0])/2, A[1]], 0, 56);
+  }
+  function grow(e, p, q, g){
+    qcLine(e, p, [p[0] + (q[0] - p[0])*g, p[1] + (q[1] - p[1])*g]);
+    e.style.visibility = g > .001 ? '' : 'hidden';           /* без крапки від кінця лінії */
+  }
+  function draw(st, g){
+    grow(ray, A, [A[0] + u[0]*(RL + 40), A[1] + u[1]*(RL + 40)], st > 1 ? 1 : st === 1 ? g : 0);
+    rl.classList.toggle('on', st > 1 || (st === 1 && g > .95));
+    var kc = st > 2 ? n : st === 2 ? Math.ceil(g*n - 1e-6) : 0;
+    CP.forEach(function(gr, i){ gr.forEach(function(x){ x.classList.toggle('on', i < kc); }); });
+    grow(CB, C[n], B, st > 3 ? 1 : st === 3 ? g : 0);
+    var m = st > 4 ? n - 1 : st === 4 ? g*(n - 1) : 0;
+    PAR.forEach(function(o, j){
+      var q = [D[o.k][0] + (D[o.k][0] - C[o.k][0])*.07, D[o.k][1] + (D[o.k][1] - C[o.k][1])*.07];
+      grow(o.e, C[o.k], q, Math.max(0, Math.min(1, m - j)));
+    });
+  }
+  var last = L[2] + thSub(n), cs = [];
+  for(k = n - 1; k >= 1; k--) cs.push(L[2] + thSub(k));
+  if(cs.length > 3) cs = [cs[0], '…', cs[cs.length - 1]];
+  var ab = L[0] + L[1];
+  var F = [
+    ratio ? 'Треба поділити відрізок ' + ab + ' у відношенні ' + R[0] + ' : ' + R[1] + '. Разом це ' + R[0] + ' + ' + R[1] + ' = ' + n + ' рівних частин. Лінійка без поділок — міряти не можна.'
+          : 'Треба поділити відрізок ' + ab + ' на ' + n + ' рівних частин. Лінійка без поділок — міряти не можна.',
+    'З точки ' + L[0] + ' проводимо довільний промінь ' + L[0] + L[2] + '.',
+    'Циркулем відкладаємо на промені ' + n + ' рівних відрізків: ' + thSeg([L[0]].concat(thPts(L[2], 1, n))) + '.',
+    'Сполучаємо останню точку ' + last + ' з точкою ' + L[1] + '.',
+    'Через ' + cs.join(', ') + ' косинцем і лінійкою проводимо прямі, паралельні ' + last + L[1] + '.',
+    'За теоремою Фалеса ці прямі поділили ' + ab + ' на ' + n + ' рівних частин: ' + thSeg([L[0]].concat(thPts(L[3], 1, n - 1), [L[1]])) + '.'
+  ];
+  if(ratio) F.push('Беремо ' + dsParts(R[0]) + ' і ' + dsParts(R[1]) + ': точка ' + L[3] + thSub(R[0]) + ' ділить ' + ab + ' у відношенні ' + R[0] + ' : ' + R[1] + ', тобто ' + L[0] + L[3] + thSub(R[0]) + ' : ' + L[3] + thSub(R[0]) + L[1] + ' = ' + R[0] + ' : ' + R[1] + '.');
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    for(var i = 1; i <= 6; i++) box.classList.toggle('s' + i, st >= i);
+    say.textContent = F[st];
+    var ms = [0, 700, 300*n, 700, 450*(n - 1)][st];
+    if(st >= 1 && st <= 4 && prev === st - 1) atween(box, 0, 1, ms, function(g){ if(box.__at === st) draw(st, g); });
+    else {
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      draw(st, 1);
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C53 · .midline — середня лінія трикутника
+     <div class="midline" data-ab="8"></div>
+     Пробіл — середини K і L сторін AC і BC (риски); відрізок KL — середня
+     лінія; копія KL без повороту зсувається на AB (KL ∥ AB), друга копія
+     заповнює AB рівно (KL = ½AB); вершина C їде — KL так само ∥ AB і
+     тієї ж довжини; останній крок — властивість.
+     data-ab — довжина AB, см.
+     <div class="midline" data-mode="four" data-sides="16,10,14"></div>
+     Пробіл — середини всіх сторін (сторони діляться навпіл); три середні
+     лінії ділять трикутник на 4; копія кожної лягає на половину
+     паралельної сторони; периметр трикутника з середніх ліній — половина.
+     data-sides — AB, BC, CA; data-unit="дм" — інша одиниця;
+     data-labels="A,B,C,K,L,M" — свої букви (K на AC, L на BC, M на AB).
+   ───────────────────────────────────────────────────────────────────── */
+function mlMid(p, q){ return [(p[0] + q[0])/2, (p[1] + q[1])/2]; }
+function mlAdd(p, d){ return [p[0] + d[0], p[1] + d[1]]; }
+function mlSub(p, q){ return [p[0] - q[0], p[1] - q[1]]; }
+function mlMix(p, q, k){ return [p[0] + (q[0] - p[0])*k, p[1] + (q[1] - p[1])*k]; }
+/* Точка на відстані r від p у бік від g (назовні трикутника) */
+function mlOut(p, g, r){
+  var d = mlSub(p, g), L = Math.sqrt(d[0]*d[0] + d[1]*d[1]) || 1;
+  return [p[0] + d[0]/L*r, p[1] + d[1]/L*r];
+}
+$$('.midline').forEach(function(box){
+  var L = (box.dataset.labels || 'A,B,C,K,L,M').split(',');
+  var four = box.dataset.mode === 'four';
+  var unit = box.dataset.unit || 'см';
+  var A, B, C0, C1, len;
+  if(four){
+    var sd = String(box.dataset.sides || '16,10,14').split(',').map(function(x){ return +String(x).replace(',', '.'); });
+    var c = sd[0], a = sd[1], b = sd[2];
+    if(!(a > 0 && b > 0 && c > 0 && a + b > c && a + c > b && b + c > a)){ c = 16; a = 10; b = 14; }
+    var cx = (b*b + c*c - a*a)/(2*c), cy = Math.sqrt(Math.max(1, b*b - cx*cx));
+    var x0 = Math.min(0, cx), x1 = Math.max(c, cx), k = Math.min(420/(x1 - x0), 220/cy);
+    A = [(0 - x0)*k, 240]; B = [(c - x0)*k, 240]; C0 = [(cx - x0)*k, 240 - cy*k]; C1 = C0;
+    len = {AB:c, BC:a, CA:b};
+  } else {
+    var ab = +String(box.dataset.ab || '8').replace(',', '.') || 8;
+    A = [20, 240]; B = [420, 240]; C0 = [130, 30]; C1 = [350, 50];
+    len = {AB:ab};
+  }
+  box.textContent = '';
+  box.classList.toggle('ml4', four);
+  var s = trSvg(box, '-40 -10 520 315', four ? 'Три середні лінії трикутника' : 'Середня лінія трикутника');
+  /* малюємо знизу вгору: заливки, сторони, копії, середні лінії, риски, точки, підписи */
+  var F4 = four ? [0,1,2,3].map(function(i){ return s.__n('polygon', {'class':'ml-q' + (i === 3 ? ' ml-in' : '')}); }) : [];
+  var SD = s.__n('polygon', {'class':'sd'});
+  var CP = [0, 1, 2].slice(0, four ? 3 : 2).map(function(j){ return s.__n('line', {'class':'ml-cp ml-c' + j}); });
+  var ML = [s.__n('line', {'class':'ml'})];
+  if(four){ ML.push(s.__n('line', {'class':'ml'})); ML.push(s.__n('line', {'class':'ml'})); }
+  var TK = [];                       /* риски половин: по дві на кожну сторону */
+  for(var i = 0; i < (four ? 6 : 4); i++) TK.push(s.__n('line', {'class':'tk ml-tk' + (i >> 1)}));
+  var PT = {}, LB = {};
+  ['A','B','C','K','L','M'].forEach(function(nm, j){
+    if(!four && nm === 'M') return;
+    PT[nm] = s.__n('circle', {'class':'pt' + (j >= 3 ? ' ml-m' : ''), r:4});
+    LB[nm] = s.__n('text', {'class':'lb' + (j >= 3 ? ' ml-m' : '')}); LB[nm].textContent = L[j];
+  });
+  var NM = {};
+  function num(key, cls){ NM[key] = s.__n('text', {'class':'nm ' + cls}); return NM[key]; }
+  if(four){
+    ['AB','BC','CA'].forEach(function(q){ num(q, 'ml-n0').textContent = anum(len[q]); });
+    ['AB','BC','CA'].forEach(function(q){ num(q + '1', 'ml-n1').textContent = anum(len[q]/2); num(q + '2', 'ml-n1').textContent = anum(len[q]/2); });
+    ['KL','LM','MK'].forEach(function(q){ num(q, 'ml-n3').textContent = anum({KL:len.AB, LM:len.CA, MK:len.BC}[q]/2); });
+  } else {
+    num('AB', 'ml-n0').textContent = anum(len.AB) + ' ' + unit;
+    num('c1', 'ml-n4').textContent = anum(len.AB/2);
+    num('c2', 'ml-n4').textContent = anum(len.AB/2);
+    num('KL', 'ml-n4').textContent = anum(len.AB/2) + ' ' + unit;
+  }
+  function draw(st, C, g){
+    var G = [(A[0] + B[0] + C[0])/3, (A[1] + B[1] + C[1])/3];
+    var K = mlMid(A, C), Lp = mlMid(B, C), M = mlMid(A, B);
+    var P = {A:A, B:B, C:C, K:K, L:Lp, M:M};
+    SD.setAttribute('points', trPts([A, B, C]));
+    for(var nm in PT){
+      PT[nm].setAttribute('cx', P[nm][0].toFixed(1)); PT[nm].setAttribute('cy', P[nm][1].toFixed(1));
+      trAt(LB[nm], mlOut(P[nm], G, nm === 'K' || nm === 'L' || nm === 'M' ? 24 : 22), 0, 7);
+    }
+    var halves = four ? [[A, K, K, C], [B, Lp, Lp, C], [A, M, M, B]] : [[A, K, K, C], [B, Lp, Lp, C]];
+    halves.forEach(function(h, j){ trTick(TK[2*j], h[0], h[1]); trTick(TK[2*j + 1], h[2], h[3]); });
+    /* підпис довжини біля відрізка pq, назовні від g */
+    function lab(key, p, q, r){ if(NM[key]) trAt(NM[key], mlOut(mlMid(p, q), G, r), 0, 6); }
+    if(four){
+      lab('AB', A, B, 30); lab('BC', B, C, 30); lab('CA', C, A, 30);
+      lab('AB1', A, M, 24); lab('AB2', M, B, 24); lab('BC1', B, Lp, 24); lab('BC2', Lp, C, 24);
+      lab('CA1', C, K, 24); lab('CA2', K, A, 24);
+      F4[0].setAttribute('points', trPts([A, M, K])); F4[1].setAttribute('points', trPts([M, B, Lp]));
+      F4[2].setAttribute('points', trPts([K, Lp, C])); F4[3].setAttribute('points', trPts([K, Lp, M]));
+      /* середні лінії і куди лягають їхні копії: KL → AM, LM → CK, MK → BL */
+      var seg = [[K, Lp, A, M], [Lp, M, C, K], [M, K, B, Lp]];
+      seg.forEach(function(q, j){
+        qcLine(ML[j], q[0], q[1]);
+        var d = mlSub(q[2], q[0]), kk = st >= 4 ? 1 : st === 3 ? g : 0;
+        qcLine(CP[j], mlAdd(q[0], [d[0]*kk, d[1]*kk]), mlAdd(q[1], [d[0]*kk, d[1]*kk]));
+        var mid = mlMid(q[0], q[1]);
+        trAt(NM[['KL','LM','MK'][j]], mlMix(mid, G, -0.35), 0, 6);
+      });
+    } else {
+      trAt(NM.AB, mlMid(A, B), 0, 58);
+      trAt(NM.c1, mlMid(A, M), 0, 30); trAt(NM.c2, mlMid(M, B), 0, 30);
+      qcLine(ML[0], K, Lp);
+      trAt(NM.KL, mlOut(mlMid(K, Lp), G, 20), 0, 4);
+      /* копія 1: K → A (лягає на AM), копія 2: K → M (лягає на MB) */
+      [[A, 3], [M, 4]].forEach(function(t, j){
+        var d = mlSub(t[0], K), kk = st > t[1] ? 1 : st === t[1] ? g : 0;
+        qcLine(CP[j], mlAdd(K, [d[0]*kk, d[1]*kk]), mlAdd(Lp, [d[0]*kk, d[1]*kk]));
+      });
+    }
+  }
+  var f = el('div', 'tr-f'); box.appendChild(f);
+  var a0 = L[0], b0 = L[1], c0 = L[2], k0 = L[3], l0 = L[4], m0 = L[5];
+  var F;
+  if(four){
+    var u = ' ' + unit, P1 = len.AB + len.BC + len.CA;
+    f.innerHTML = '<i>P</i><sub>' + k0 + l0 + m0 + '</sub> = ½ · <i>P</i><sub>' + a0 + b0 + c0 + '</sub>';
+    F = [
+      'Трикутник ' + a0 + b0 + c0 + ': ' + a0 + b0 + ' = ' + anum(len.AB) + u + ', ' + b0 + c0 + ' = ' + anum(len.BC) + u + ', ' + c0 + a0 + ' = ' + anum(len.CA) + u + '. Проведемо всі три середні лінії.',
+      m0 + ', ' + l0 + ', ' + k0 + ' — середини сторін ' + a0 + b0 + ', ' + b0 + c0 + ', ' + c0 + a0 + ': кожна сторона ділиться навпіл — ' + anum(len.AB/2) + ' і ' + anum(len.AB/2) + ', ' + anum(len.BC/2) + ' і ' + anum(len.BC/2) + ', ' + anum(len.CA/2) + ' і ' + anum(len.CA/2) + '.',
+      'Сполучаємо середини: три середні лінії ' + k0 + l0 + ', ' + l0 + m0 + ', ' + m0 + k0 + '. Трикутник розпався на чотири трикутники.',
+      'Копія кожної середньої лінії лягає на половину паралельної їй сторони: ' + k0 + l0 + ' = ' + anum(len.AB/2) + ', ' + l0 + m0 + ' = ' + anum(len.CA/2) + ', ' + m0 + k0 + ' = ' + anum(len.BC/2) + '. Чотири трикутники рівні.',
+      'Периметр ' + a0 + b0 + c0 + ' = ' + anum(len.AB) + ' + ' + anum(len.BC) + ' + ' + anum(len.CA) + ' = ' + anum(P1) + u + '. Периметр ' + k0 + l0 + m0 + ' = ' + anum(len.AB/2) + ' + ' + anum(len.BC/2) + ' + ' + anum(len.CA/2) + ' = ' + anum(P1/2) + u + ' — удвічі менший.'
+    ];
+  } else {
+    f.innerHTML = '<i>' + k0 + l0 + '</i> <span class="ml-par">∥</span> <i>' + a0 + b0 + '</i>, &nbsp;<i>' + k0 + l0 + '</i> = ½ <i>' + a0 + b0 + '</i>';
+    F = [
+      'Трикутник ' + a0 + b0 + c0 + ', ' + a0 + b0 + ' = ' + anum(len.AB) + ' ' + unit + '. Візьмемо середини двох інших сторін і сполучимо їх. Що вийде?',
+      k0 + ' — середина ' + a0 + c0 + ', ' + l0 + ' — середина ' + b0 + c0 + ': ' + a0 + k0 + ' = ' + k0 + c0 + ', ' + b0 + l0 + ' = ' + l0 + c0 + '.',
+      'Відрізок ' + k0 + l0 + ' сполучає середини двох сторін. Це середня лінія трикутника ' + a0 + b0 + c0 + '.',
+      'Зсуваємо копію ' + k0 + l0 + ' униз, не повертаючи: вона лягає точно на ' + a0 + b0 + '. Отже, ' + k0 + l0 + ' ∥ ' + a0 + b0 + '.',
+      'Ще одна копія — і ' + a0 + b0 + ' заповнено рівно двома: ' + k0 + l0 + ' = ' + anum(len.AB) + ' : 2 = ' + anum(len.AB/2) + ' ' + unit + '.',
+      'Рухаємо вершину ' + c0 + ': трикутник уже інший, а ' + k0 + l0 + ' так само паралельна ' + a0 + b0 + ' і дорівнює ' + anum(len.AB/2) + ' ' + unit + '.',
+      'Середня лінія трикутника паралельна третій стороні й дорівнює її половині.'
+    ];
+  }
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    for(var i = 1; i <= 6; i++) box.classList.toggle('s' + i, st >= i);
+    say.textContent = F[st];
+    var slide = four ? st === 3 : st === 3 || st === 4;
+    if(slide && prev === st - 1) atween(box, 0, 1, 1000, function(g){ if(box.__at === st) draw(st, C0, g); });
+    else if(!four && st === 5 && prev === 4) atween(box, 0, 1, 1400, function(g){ if(box.__at === 5) draw(5, mlMix(C0, C1, g), 1); });
+    else {
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      draw(st, !four && st >= 5 ? C1 : C0, 1);
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C35 · .dom — доменне імʼя розбираємо справа наліво
+     <div class="dom" data-name="school.regionserv.ua"
+          data-notes="Україна|сервер даних|імʼя ресурсу"></div>
+     Пробіл — наступний домен справа: спалахує, під ним рівень і підказка
+     (data-notes — справа наліво, через «|»). Останній крок — висновок.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.dom').forEach(function(box){
+  var parts = String(box.dataset.name || 'ranok.com.ua').split('.');
+  var notes = String(box.dataset.notes || '').split('|');
+  var n = parts.length;
+  box.textContent = '';
+  var line = el('div','dm-line'), cells = [];
+  parts.forEach(function(p, i){
+    if(i){ var d = el('span','dm-dot'); d.textContent = '.'; line.appendChild(d); }
+    var c = el('span','dm-c');
+    var nm = el('b'); nm.textContent = p;
+    var lv = el('small','dm-lv'); lv.textContent = (n - i) + '-й рівень';
+    var nt = el('small','dm-nt'); nt.textContent = notes[n - 1 - i] || '';
+    c.appendChild(nm); c.appendChild(lv); c.appendChild(nt);
+    line.appendChild(c); cells.push(c);
+  });
+  var arrow = el('div','dm-ar'); arrow.textContent = '← читаємо справа наліво';
+  box.appendChild(line); box.appendChild(arrow);
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(n + 2).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    cells.forEach(function(c, i){
+      var k = n - i;                              /* рівень цього домену */
+      c.classList.toggle('on', st >= k);
+      c.classList.toggle('now', st === k);
+    });
+    arrow.classList.toggle('on', st >= 1);
+    var cur = parts[n - st];
+    say.textContent = st === 0
+      ? 'Адреса ' + parts.join('.') + ' складається з ' + n + (n < 5 ? ' доменів' : ' доменів') + ', відокремлених крапками. З якого кінця її читати?'
+      : st <= n
+      ? 'Домен ' + st + '-го рівня: «' + cur + '»' + (notes[st - 1] ? ' — ' + notes[st - 1] : '') + '.' +
+        (st === 1 ? ' Він стоїть найправіше.' : '')
+      : 'Рівень зростає справа наліво: від найзагальнішого (' + parts[n - 1] + ') до конкретного ресурсу (' + parts[0] + ').';
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C36 · .req — запит біжить мережею й повертається сторінкою
+     <div class="req" data-site="ranok.com.ua" data-link="abetka.ukrlife.org"></div>
+     Компʼютер → провайдер → інтернет → сервер сайту; сторінка вертається
+     тим самим шляхом. Далі клік по гіперпосиланню — запит іде на ІНШИЙ
+     сервер (data-link). Один пробіл — один перебіг конверта.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.req').forEach(function(box){
+  var site = box.dataset.site || 'ranok.com.ua', link = box.dataset.link || '';
+  box.textContent = '';
+  var map = el('div','rq-map');
+  var N = {
+    pc:  { x:9,  y:50, ic:'💻', t:'Мій компʼютер' },
+    isp: { x:34, y:50, ic:'🏢', t:'Провайдер' },
+    net: { x:60, y:50, ic:'🌐', t:'Інтернет' },
+    s1:  { x:89, y:link ? 24 : 50, ic:'🗄️', t:site },
+    s2:  { x:89, y:77, ic:'🗄️', t:link }
+  };
+  var ns = link ? ['pc','isp','net','s1','s2'] : ['pc','isp','net','s1'];
+  var svg = D.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 100 100'); svg.setAttribute('preserveAspectRatio','none'); svg.setAttribute('class','rq-ln');
+  [['pc','isp'],['isp','net'],['net','s1']].concat(link ? [['net','s2']] : []).forEach(function(e){
+    var l = D.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',N[e[0]].x); l.setAttribute('y1',N[e[0]].y); l.setAttribute('x2',N[e[1]].x); l.setAttribute('y2',N[e[1]].y);
+    svg.appendChild(l);
+  });
+  map.appendChild(svg);
+  ns.forEach(function(k){
+    var d = el('div','rq-n'); d.style.left = N[k].x + '%'; d.style.top = N[k].y + '%';
+    d.innerHTML = '<span class="ic">' + N[k].ic + '</span><span class="tt"></span>';
+    $('.tt', d).textContent = N[k].t;
+    map.appendChild(d); N[k].el = d;
+  });
+  var env = el('div','rq-env'); env.textContent = '✉️'; map.appendChild(env);
+  box.appendChild(map);
+  var say = asay(box);
+  /* кроки: шлях конверта, що в ньому, які вузли світяться, текст */
+  var S = [
+    { path:['pc'], ic:'✉️', say:'Набираємо ' + site + ' і тиснемо Enter. Компʼютер складає запит: «дай мені цю сторінку».' },
+    { path:['pc','isp'], ic:'✉️', say:'Запит спершу йде до провайдера — організації, яка підключає нас до інтернету.' },
+    { path:['isp','net'], ic:'✉️', say:'Провайдер передає запит у глобальну мережу — інтернет, мережу з мільярдів компʼютерів.' },
+    { path:['net','s1'], ic:'✉️', say:'За доменним імʼям ' + site + ' мережа знаходить потрібний сервер — компʼютер, де лежить сайт.' },
+    { path:['s1','net','isp','pc'], ic:'📄', say:'Сервер надсилає вебсторінку назад тим самим шляхом. Браузер показує її на екрані.' }
+  ];
+  if(link){
+    S.push({ path:['pc','isp','net','s2'], ic:'✉️', say:'Клацаємо гіперпосилання — і новий запит летить уже до ІНШОГО сервера: ' + link + '.' });
+    S.push({ path:['s2','net','isp','pc'], ic:'📄', say:'Нова сторінка прийшла з іншого компʼютера, можливо з іншої країни. Так працює гіпертекст.' });
+  }
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(S.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  function place(x, y){ env.style.left = x + '%'; env.style.top = y + '%'; }
+  function lit(path){ ns.forEach(function(k){ N[k].el.classList.toggle('on', path.indexOf(k) >= 0); }); }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    var fwd = st === box.__at + 1;
+    box.__at = st;
+    var s = S[st], P = s.path.map(function(k){ return N[k]; });
+    env.textContent = s.ic;
+    lit(s.path);
+    say.textContent = s.say;
+    if(fwd && P.length > 1){
+      var segs = P.length - 1;
+      atween(box, 0, segs, 700 * segs, function(v){
+        var i = Math.min(segs - 1, Math.floor(v)), f = v - i;
+        place(P[i].x + (P[i+1].x - P[i].x) * f, P[i].y + (P[i+1].y - P[i].y) * f);
+      });
+    } else { var L = P[P.length - 1]; place(L.x, L.y); }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C34 · .fan — кути складаються в 180°: вертикальний кут переїжджає,
+     а три кути з одного боку прямої заповнюють розгорнутий кут.
+     <div class="fan" data-v="M" data-rays="A:180,B:120,C:100,P:0,L:-60,K:-80"
+          data-arcs="B-C:20,L-P:60,A-K:?" data-flip="B-C" data-line="A-P"></div>
+     data-rays — промені з вершини: імʼя і напрям у градусах (0 — праворуч,
+       проти годинникової). Імʼя з «_» не підписується (мал. без букв).
+     data-arcs — кути між двома променями: число (градуси), «?» (шукаємо)
+       або підпис («1», «2»…), якщо чисел немає.
+     data-flip — кут, який переїжджає на вертикальний (промені-доповнення
+       мають бути в data-rays). data-line — розгорнутий кут.
+     Три кроки по пробілу: переїзд → півколо 180° → відповідь.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.fan').forEach(function(box){
+  var NS = 'http://www.w3.org/2000/svg', V = box.dataset.v || '';
+  function sv(tag, at){ var e = D.createElementNS(NS, tag); for(var k in at) e.setAttribute(k, at[k]); return e; }
+  var rays = {}, order = [];
+  String(box.dataset.rays || '').split(',').forEach(function(x){
+    var m = x.split(':'); if(m.length < 2) return;
+    var nm = m[0].trim(); rays[nm] = +m[1]; order.push(nm);
+  });
+  function norm(a){ a %= 360; return a < 0 ? a + 360 : a; }
+  function opp(nm){
+    var want = norm(rays[nm] + 180), best = null;
+    order.forEach(function(o){ if(Math.abs(norm(rays[o]) - want) < 0.5) best = o; });
+    return best;
+  }
+  var arcs = String(box.dataset.arcs || '').split(',').map(function(x){
+    var m = x.split(':'), r = m[0].trim().split('-');
+    return { r1:r[0], r2:r[1], key:m[0].trim(), lab:(m[1] || '').trim(),
+             nm: r[0].charAt(0) === '_' || r[1].charAt(0) === '_' };   /* без букв — підпис «1» це імʼя, не градуси */
+  }).filter(function(a){ return a.r1 in rays && a.r2 in rays; });
+  function span(a){                       /* кут від r1 до r2 коротшим шляхом: [початок, розмах] */
+    var s = norm(rays[a.r1]), e = norm(rays[a.r2]), d = norm(e - s);
+    return d <= 180 ? [s, d] : [e, 360 - d];
+  }
+  function isNum(l, a){ return /^\d+$/.test(l) && !(a && a.nm); }
+  function nameOf(r1, r2, a){
+    if(r1.charAt(0) === '_' || r2.charAt(0) === '_') return '∠' + (a ? a.lab : '');
+    return r1 < r2 ? '∠' + r1 + V + r2 : '∠' + r2 + V + r1;
+  }
+  var flip = null, find = null;
+  arcs.forEach(function(a){ if(a.key === box.dataset.flip) flip = a; if(a.lab === '?') find = a; });
+  var ln = String(box.dataset.line || '').split('-');
+  if(!flip || ln.length < 2 || !(ln[0] in rays) || !(ln[1] in rays)) return;
+  var o1 = opp(flip.r2), o2 = opp(flip.r1);
+  var fs = span(flip), fmid = fs[0] + fs[1] / 2 + 180;
+
+  /* бік прямої, де збираються кути: середина переїханого кута */
+  var la = norm(rays[ln[0]]), lb = norm(rays[ln[1]]);
+  var side = norm(fmid - lb) < 180 ? lb : la;               /* півколо від side проти годинникової на 180° */
+
+  var R = 150, r0 = 52;
+  var svg = sv('svg', { viewBox:'-225 -205 450 410', role:'img' });
+  function pt(ang, rad){ var q = ang * Math.PI / 180; return [ (rad * Math.cos(q)).toFixed(1), (-rad * Math.sin(q)).toFixed(1) ]; }
+  function sector(s, d, rad){
+    var p1 = pt(s, rad), p2 = pt(s + d, rad);
+    return 'M0,0 L' + p1 + ' A' + rad + ',' + rad + ' 0 ' + (d > 180 ? 1 : 0) + ' 0 ' + p2 + ' Z';
+  }
+  var half = sv('path', { d:sector(side, 180, R - 12), 'class':'fn-half' });
+  svg.appendChild(half);
+  order.forEach(function(nm){
+    var e = pt(rays[nm], R);
+    svg.appendChild(sv('line', { x1:0, y1:0, x2:e[0], y2:e[1], 'class':'fn-ray' }));
+    if(nm.charAt(0) !== '_'){
+      var t = pt(rays[nm], R + 26), tx = sv('text', { x:t[0], y:+t[1] + 9, 'class':'fn-rn', 'text-anchor':'middle' });
+      tx.textContent = nm; svg.appendChild(tx);
+    }
+  });
+  svg.appendChild(sv('circle', { cx:0, cy:0, r:3.6, 'class':'fn-pt' }));
+  if(V){ var vt = sv('text', { x:10, y:-10, 'class':'fn-rn' }); vt.textContent = V; svg.appendChild(vt); }
+  var gs = {};
+  arcs.forEach(function(a, i){
+    var s = span(a), g = sv('g', { 'class':'fn-arc' + (a === find ? ' fn-find' : a === flip ? ' fn-flip' : '') });
+    var rad = r0 + (i % 2) * 10;
+    g.appendChild(sv('path', { d:sector(s[0], s[1], rad) }));
+    var lr = rad + (s[1] < 30 ? 40 : 28), lp = pt(s[0] + s[1] / 2, lr), lt = sv('text', { x:lp[0], y:+lp[1] + 9, 'text-anchor':'middle' });
+    lt.textContent = a.lab === '?' ? '?' : isNum(a.lab, a) ? a.lab + '°' : a.lab;
+    svg.appendChild(g); svg.appendChild(lt);        /* підпис окремо: при переїзді не перевертається */
+    lt.setAttribute('class', g.getAttribute('class'));
+    gs[a.key] = { g:g, t:lt, a:a, mid:s[0] + s[1] / 2, lr:lr };
+  });
+  box.textContent = '';
+  box.appendChild(svg);
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = '<i class="hide"></i><i class="hide"></i><i class="hide"></i>';
+  box.appendChild(marks);
+
+  /* кути на півколі по порядку */
+  var onSide = arcs.map(function(a){
+    var s = span(a), mid = a === flip ? norm(fmid) : norm(s[0] + s[1] / 2);
+    return { a:a, mid:mid, name: a === flip ? nameOf(o1, o2, a) : nameOf(a.r1, a.r2, a) };
+  }).filter(function(x){ return norm(x.mid - side) < 180; })
+    .sort(function(x, y){ return norm(x.mid - side) - norm(y.mid - side); });
+  var fName = nameOf(flip.r1, flip.r2, flip), vName = nameOf(o1, o2, flip);
+  var known = onSide.filter(function(x){ return x.a !== find && isNum(x.a.lab, x.a); }).map(function(x){ return +x.a.lab; });
+  var res = find ? 180 - known.reduce(function(p, q){ return p + q; }, 0) : null;
+  var lnName = (ln[0].charAt(0) === '_') ? 'розгорнутий кут' : 'розгорнутий кут ' + ln[0] + V + ln[1];
+
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    var F = gs[flip.key], G = F.g;
+    function turn(v){
+      G.setAttribute('transform', v ? 'rotate(' + (-v).toFixed(1) + ')' : '');
+      var q = pt(F.mid + v, F.lr); F.t.setAttribute('x', q[0]); F.t.setAttribute('y', +q[1] + 9);
+    }
+    if(st >= 1 && prev === 0) atween(box, 0, 180, 800, turn);
+    else turn(st >= 1 ? 180 : 0);
+    G.classList.toggle('now', st === 1);
+    half.classList.toggle('on', st >= 2);
+    if(find){ gs[find.key].g.classList.toggle('on', st >= 3); gs[find.key].t.classList.toggle('on', st >= 3); gs[find.key].t.textContent = st >= 3 ? res + '°' : '?'; }
+    var givens = arcs.filter(function(a){ return a !== find; })
+      .map(function(a){ return nameOf(a.r1, a.r2, a) + (isNum(a.lab, a) ? ' = ' + a.lab + '°' : ''); });
+    var names = onSide.map(function(x){ return x.name; });
+    say.textContent = st === 0
+      ? (find ? 'Дано: ' + givens.join(', ') + '. Шукаємо ' + nameOf(find.r1, find.r2, find) + '.'
+              : 'Шукаємо суму ' + arcs.map(function(a){ return nameOf(a.r1, a.r2, a); }).sort().join(' + ') + '.')
+      : st === 1 && fName === vName
+      ? 'Кут, вертикальний до ' + fName + ', дорівнює йому. Переносимо ' + fName + ' на протилежний бік — між іншими кутами.'
+      : st === 1
+      ? fName + ' і ' + vName + ' — вертикальні, отже рівні. Переносимо ' + (isNum(flip.lab, flip) ? flip.lab + '°' : fName) +
+        ' на протилежний бік: ' + vName + (isNum(flip.lab, flip) ? ' = ' + flip.lab + '°' : ' = ' + fName) + '.'
+      : st === 2
+      ? names.join(', ') + ' разом заповнюють ' + lnName + ' — це 180°.'
+      : find
+      ? nameOf(find.r1, find.r2, find) + ' = 180° − ' + known.map(function(k){ return k + '°'; }).join(' − ') + ' = ' + res + '°.'
+      : names.join(' + ') + ' = 180°, тобто ' +
+        arcs.map(function(a){ return '∠' + a.lab; }).sort().join(' + ') + ' = 180°.';
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C33 · .shl — множення на 10, 100, 1000: розряди їдуть уліво
+     <div class="shl" data-n="23" data-by="10,100,1000"></div>
+     Таблиця розрядів. На кожен множник — два кроки по пробілу:
+     1) новий рядок: цифри числа виїжджають на 1/2/3 розряди ліворуч
+        (одиниці стали десятками…), праві клітинки лишились порожні;
+     2) порожні розряди заповнюються нулями, праворуч — «= 230».
+     Останній крок — правило «скільки нулів у множнику, стільки дописуємо».
+   ───────────────────────────────────────────────────────────────────── */
+$$('.shl').forEach(function(box){
+  var n = String(box.dataset.n || '23').replace(/\D/g,'') || '23';
+  n = String(+n);
+  var by = String(box.dataset.by || '10,100,1000').split(',').map(function(x){ return x.replace(/\D/g,''); })
+             .filter(function(x){ return /^10+$/.test(x); });
+  if(!by.length) by = ['10'];
+  var ks = by.map(function(m){ return m.length - 1; });
+  var C = Math.max(4, n.length + Math.max.apply(null, ks));
+  var NM = ['одиниці','десятки','сотні','тисячі','дес. тисяч','сот. тисяч','мільйони','дес. мільйонів'];
+  var INS = ['одиницями','десятками','сотнями','тисячами','десятками тисяч','сотнями тисяч','мільйонами','десятками мільйонів'];
+  function fmt(x){ return String(x).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
+  box.textContent = '';
+  var tb = el('table','sh-t'), head = el('tr','sh-h');
+  head.appendChild(el('th','lb'));
+  for(var c = C - 1; c >= 0; c--) head.appendChild(el('th', '', NM[c] || ''));
+  head.appendChild(el('th','rs'));
+  tb.appendChild(head);
+  var rows = [];
+  function mkRow(label, k){
+    var r = el('tr','sh-r'), cells = [];
+    r.appendChild(el('td','lb', label));
+    for(var c2 = C - 1; c2 >= 0; c2--){ var td = el('td'); cells[c2] = td; r.appendChild(td); }
+    var rs = el('td','rs'); r.appendChild(rs);
+    tb.appendChild(r);
+    return { tr:r, cells:cells, rs:rs, k:k };
+  }
+  var base = mkRow(fmt(n), 0);
+  n.split('').reverse().forEach(function(d, i){ base.cells[i].innerHTML = '<b>' + d + '</b>'; });
+  by.forEach(function(m, q){ rows.push(mkRow(fmt(n) + ' · ' + fmt(m), ks[q])); });
+  box.appendChild(tb);
+  var say = asay(box);
+  var steps = by.length * 2 + 1;
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(steps + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  function plural(k){ return k === 1 ? 'розряд' : 'розряди'; }
+
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    var fwd = st > box.__at;
+    box.__at = st;
+    rows.forEach(function(R, q){
+      var phase = st >= q * 2 + 2 ? 2 : st >= q * 2 + 1 ? 1 : 0;   /* 0 — нема, 1 — поїхали, 2 — нулі */
+      R.tr.classList.toggle('on', phase > 0);
+      R.cells.forEach(function(td){ td.innerHTML = ''; td.classList.remove('hi','gap'); });
+      if(phase){
+        var anim = fwd && phase === 1 && st === q * 2 + 1;
+        n.split('').reverse().forEach(function(d, i){
+          var b = el('b', anim ? 'mv' : '', d);
+          b.style.setProperty('--k', R.k);
+          R.cells[i + R.k].appendChild(b);
+        });
+        for(var z = 0; z < R.k; z++){
+          R.cells[z].classList.add(phase === 2 ? 'hi' : 'gap');
+          if(phase === 2) R.cells[z].innerHTML = '<b class="z">0</b>';
+        }
+      }
+      R.rs.textContent = phase === 2 ? '= ' + fmt(n + new Array(R.k + 1).join('0')) : '';
+    });
+    var q = Math.floor((st - 1) / 2), R = rows[q];
+    var top = n.length - 1;
+    say.textContent = st === 0
+      ? 'Число ' + fmt(n) + ': ' + n.split('').map(function(d, i){ return d + ' — ' + (NM[top - i] || ''); }).join(', ') +
+        '. Що станеться з кожною цифрою, якщо помножити на ' + fmt(by[0]) + '?'
+      : st === steps
+      ? 'Правило: множимо на 10, 100, 1000 — дописуємо справа стільки нулів, скільки їх у множнику. ' +
+        'Це тому, що кожна цифра переїжджає на стільки ж розрядів ліворуч.'
+      : st % 2 === 1
+      ? 'Множимо на ' + fmt(by[q]) + ': кожна цифра стає в ' + fmt(by[q]) + ' разів більшою — переїжджає на ' + R.k + ' ' + plural(R.k) +
+        ' ліворуч: одиниці стали ' + INS[R.k] + (n.length > 1 ? ', десятки — ' + INS[R.k + 1] : '') + '. А праворуч — порожньо.'
+      : 'Порожній розряд не можна пропустити — там пишемо 0. ' + fmt(n) + ' · ' + fmt(by[q]) + ' = ' +
+        fmt(n + new Array(R.k + 1).join('0')) + ': дописали ' + R.k + ' ' + (R.k === 1 ? 'нуль' : 'нулі') + '.';
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C37 · .rainbow — розподільна властивість «веселкою», в обидва боки
+     <div class="rainbow" data-mul="7" data-in="a + 2"></div>
+     <div class="rainbow" data-mul="3" data-in="a + 7" data-side="right"></div>
+     <div class="rainbow" data-mul="15" data-in="100 + 2" data-side="right"></div>
+     <div class="rainbow" data-mode="collect" data-expr="7b + 5b"></div>
+   Розкриття дужок: від множника до КОЖНОГО доданка в дужках по черзі
+   виростає дуга, під нею зʼявляється добуток (7 · a, потім + 7 · 2),
+   далі — запис без крапок (7a + 14). Якщо в дужках лише числа — ще крок:
+   сума (1500 + 30 = 1530).
+   collect — навпаки: дуги збирають однакові букви в одну за дужки,
+   7b + 5b → (7 + 5) · b → 12b. Букву без числа (x) читаємо як 1x.
+   Кожен крок — пробіл; рядок, що відкрився останнім, підсвічено.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.rainbow').forEach(function(box){
+  var MUL = '·', MIN = '−';
+  function fmt(v){ return spaceNum(v); }
+  /* доданок: знак, число (може бути порожнє), буква (може бути порожня) */
+  function terms(s){
+    var out = [], re = /([+\-−])?(\d*)([a-zа-яіїєґ]?)/gi, m, guard = 0;
+    s = String(s || '').replace(/\s+/g,'');       /* пробіли геть: інакше збігом стає пробіл і зʼїдає знак */
+    while(s && (m = re.exec(s)) && guard++ < 20){
+      if(!m[0]){ re.lastIndex++; continue; }
+      if(!m[2] && !m[3]) return null;
+      out.push({ sg: m[1] ? (m[1] === '+' ? '+' : MIN) : '+', k: m[2] ? +m[2] : null, v: m[3] || '' });
+      if(re.lastIndex >= s.length) break;
+    }
+    return out.length ? out : null;
+  }
+  function tTxt(t){ return (t.k == null ? '' : fmt(t.k)) + t.v; }
+  function mono(k, v){ return v ? (k === 1 ? v : fmt(k) + v) : fmt(k); }   /* 7a, a, 14 */
+
+  var collect = box.dataset.mode === 'collect';
+  var T = terms(collect ? box.dataset.expr : box.dataset.in);
+  var M = +(String(box.dataset.mul || '').replace(/\D/g,''));
+  if(!T || (!collect && !M)) return;
+  var right = box.dataset.side === 'right';
+  box.textContent = '';
+  var top = el('div','rb-l rb-top'), svgW = el('div','rb-arc');
+  svgW.innerHTML = '<svg><g></g></svg>';
+  var lines = [], marks = el('div','hmk');
+  function sp(cls, txt){ var s = el('span', cls); s.textContent = txt; return s; }
+
+  var anchors = [], target = null, steps = [], fin;
+  if(!collect){
+    /* верхній рядок: 7 · (a + 2)  або  (a + 7) · 3 */
+    var mEl = sp('rb-m', fmt(M));
+    if(!right){ top.appendChild(mEl); top.appendChild(sp('op', MUL)); }
+    top.appendChild(sp('br','('));
+    T.forEach(function(t,i){
+      if(i || t.sg === MIN) top.appendChild(sp('op', t.sg));
+      anchors.push(top.appendChild(sp('rb-t', tTxt(t))));
+    });
+    top.appendChild(sp('br',')'));
+    if(right){ top.appendChild(sp('op', MUL)); top.appendChild(mEl); }
+    /* рядок добутків — росте по доданку */
+    var prod = el('div','rb-l rb-p');
+    T.forEach(function(t,i){
+      var g = el('span','rb-g');
+      if(i || t.sg === MIN) g.appendChild(sp('op', t.sg));
+      g.appendChild(sp('rb-m', fmt(M)));
+      g.appendChild(sp('op', MUL));
+      g.appendChild(sp('rb-t', tTxt(t)));
+      if(right){ g.textContent = ''; if(i || t.sg === MIN) g.appendChild(sp('op', t.sg));
+        g.appendChild(sp('rb-t', tTxt(t))); g.appendChild(sp('op', MUL)); g.appendChild(sp('rb-m', fmt(M))); }
+      prod.appendChild(g);
+    });
+    /* рядок без дужок і крапок */
+    var vals = T.map(function(t){ return { sg: t.sg, k: M * (t.k == null ? 1 : t.k), v: t.v }; });
+    var simp = el('div','rb-l rb-s');
+    vals.forEach(function(t,i){
+      if(i || t.sg === MIN) simp.appendChild(sp('op', t.sg));
+      simp.appendChild(sp('rb-r', mono(t.k, t.v)));
+    });
+    lines = [prod, simp];
+    var allNum = vals.every(function(t){ return !t.v; });
+    if(allNum){
+      var sum = vals.reduce(function(a,t){ return t.sg === MIN ? a - t.k : a + t.k; }, 0);
+      var tot = el('div','rb-l rb-s');
+      tot.appendChild(sp('op','='));
+      tot.appendChild(sp('rb-r', fmt(sum)));
+      lines.push(tot);
+      fin = fmt(sum);
+    } else fin = simp.textContent.replace(/\s+/g,' ');
+    T.forEach(function(t,i){
+      steps.push({ arc: i, say: 'Дуга ' + (i + 1) + ': множник ' + fmt(M) + ' іде до доданка ' + tTxt(t) +
+        ' — пишемо ' + (right ? tTxt(t) + ' · ' + fmt(M) : fmt(M) + ' · ' + tTxt(t)) +
+        (i ? '. Знак «' + t.sg + '» між ними лишається, як був у дужках.' : '.') });
+    });
+    steps.push({ say: 'Дужок більше немає. Множимо числа, букву пишемо поруч без крапки: ' +
+      vals.map(function(t,i){ return (right ? tTxt(T[i]) + ' · ' + fmt(M) : fmt(M) + ' · ' + tTxt(T[i])) + ' = ' + mono(t.k, t.v); }).join(', ') + '.' });
+    if(allNum) steps.push({ say: 'Лишилось порахувати: ' + vals.map(function(t,i){
+      return (i ? ' ' + t.sg + ' ' : (t.sg === MIN ? MIN : '')) + fmt(t.k); }).join('') + ' = ' + fin + '.' });
+  } else {
+    /* 7b + 5b → (7 + 5) · b → 12b */
+    var V = T[0].v;
+    box.classList.add('rb-col');
+    if(!V || T.some(function(t){ return t.v !== V; })) return;
+    T.forEach(function(t,i){
+      if(i || t.sg === MIN) top.appendChild(sp('op', t.sg));
+      if(t.k != null) top.appendChild(sp('rb-t', fmt(t.k)));
+      anchors.push(top.appendChild(sp('rb-v', V)));
+    });
+    var out = el('div','rb-l rb-p');
+    out.appendChild(sp('br','('));
+    T.forEach(function(t,i){
+      if(i || t.sg === MIN) out.appendChild(sp('op', t.sg));
+      out.appendChild(sp('rb-t', fmt(t.k == null ? 1 : t.k)));
+    });
+    out.appendChild(sp('br',')'));
+    out.appendChild(sp('op', MUL));
+    target = out.appendChild(sp('rb-v', V));
+    var K = T.reduce(function(a,t){ var k = t.k == null ? 1 : t.k; return t.sg === MIN ? a - k : a + k; }, 0);
+    var res = el('div','rb-l rb-s');
+    res.appendChild(sp('op','='));
+    res.appendChild(sp('rb-r', K ? mono(K, V) : '0'));
+    lines = [out, res];
+    fin = K ? mono(K, V) : '0';
+    var bare = T.filter(function(t){ return t.k == null; }).length;
+    T.forEach(function(t,i){
+      steps.push({ arc: i, say: 'Дуга ' + (i + 1) + ': забираємо букву ' + V + ' з доданка ' + tTxt(t) + ' — ' +
+        (t.k == null ? 'числа тут не видно, отже це 1' + V + ': лишається 1.' : 'число ' + t.k + ' лишається.') });
+    });
+    steps.push({ say: 'Усі ' + V + ' зібрали в одну й винесли за дужки. Числа — в дужках зі своїми знаками' +
+      (bare ? ' (там, де числа не видно, пишемо 1)' : '') + '.' });
+    steps.push({ say: 'Рахуємо в дужках: ' + T.map(function(t,i){ var k = t.k == null ? 1 : t.k;
+      return (i ? ' ' + t.sg + ' ' : (t.sg === MIN ? MIN : '')) + k; }).join('') + ' = ' + K + '. Відповідь: ' + fin + '.' });
+  }
+
+  box.appendChild(svgW);
+  box.appendChild(top);
+  lines.forEach(function(l){ box.appendChild(l); });
+  var say = asay(box);
+  marks.innerHTML = new Array(steps.length + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  var drawn = 0;
+  function arcs(n, anim){
+    var g = $('g', svgW), svg = $('svg', svgW);
+    g.innerHTML = '';
+    var br = box.getBoundingClientRect();
+    if(!br.width || !box.offsetWidth) return;
+    var k = br.width / box.offsetWidth || 1;           /* слайд масштабує fit() через transform */
+    svg.setAttribute('viewBox','0 0 ' + box.offsetWidth + ' ' + box.offsetHeight);
+    svg.style.width = box.offsetWidth + 'px'; svg.style.height = box.offsetHeight + 'px';
+    function c(e){ var r = e.getBoundingClientRect(); return { x: (r.left - br.left + r.width / 2) / k, t: (r.top - br.top) / k, b: (r.bottom - br.top) / k }; }
+    var html = '';
+    if(!collect){
+      var a = c(mEl), lift = Math.max(18, (a.b - a.t) * .9);
+      for(var i = 0; i < n; i++){
+        var b = c(anchors[i]), y = Math.min(a.t, b.t) + 2, h = lift * (1 + i * .3);
+        html += '<path class="rb-a' + (anim && i === n - 1 ? ' go' : '') + '" d="M ' + a.x.toFixed(1) + ' ' + y.toFixed(1) +
+          ' C ' + a.x.toFixed(1) + ' ' + (y - h).toFixed(1) + ', ' + b.x.toFixed(1) + ' ' + (y - h).toFixed(1) + ', ' +
+          b.x.toFixed(1) + ' ' + y.toFixed(1) + '"></path>';
+      }
+    } else if(n){
+      /* вершина — над серединою виразу: кожна буква піднімається туди своєю дугою */
+      var f0 = c(anchors[0]), fN = c(anchors[anchors.length - 1]);
+      var tr = top.getBoundingClientRect(), ax = (f0.x + fN.x) / 2, ay = (tr.top - br.top) / k + 4;
+      var R = Math.max(9, (f0.b - f0.t) * .42);
+      var cy = ay + R;
+      for(var j = 0; j < n; j++){
+        var p = c(anchors[j]), y0 = p.t + 2;
+        /* дуга закінчується на краю кружка, з боку своєї букви */
+        var dx = p.x - ax, dy = y0 - cy, L = Math.sqrt(dx * dx + dy * dy) || 1;
+        var ex = ax + dx / L * R, ey = cy + dy / L * R;
+        html += '<path class="rb-a' + (anim && j === n - 1 ? ' go' : '') + '" d="M ' + p.x.toFixed(1) + ' ' + y0.toFixed(1) +
+          ' C ' + p.x.toFixed(1) + ' ' + ((y0 + cy) / 2).toFixed(1) + ', ' + ex.toFixed(1) + ' ' + (ey + (y0 - ey) * .35).toFixed(1) + ', ' +
+          ex.toFixed(1) + ' ' + ey.toFixed(1) + '"></path>';
+      }
+      html += '<circle class="rb-dot" cx="' + ax.toFixed(1) + '" cy="' + (ay + R).toFixed(1) + '" r="' + R.toFixed(1) + '"></circle>' +
+        '<text class="rb-dl" x="' + ax.toFixed(1) + '" y="' + (ay + R).toFixed(1) + '">' + V + '</text>';
+    }
+    g.innerHTML = html;
+  }
+
+  box.__at = -1;
+  box.__paint = function(force){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at && !force){ if(st && box.offsetWidth && box.__drawn !== st){ box.__drawn = st; arcs(drawn, false); } return; }
+    var fwd = st > box.__at;
+    box.__at = st;
+    var nArc = 0;
+    if(!collect){
+      nArc = Math.min(st, T.length);
+      $$('.rb-g', lines[0]).forEach(function(g,i){ g.classList.toggle('on', i < nArc); });
+      lines[0].classList.toggle('on', st > 0);
+      for(var q = 1; q < lines.length; q++) lines[q].classList.toggle('on', st >= T.length + q);
+      anchors.forEach(function(e,i){ e.classList.toggle('hit', i < nArc); });
+      mEl.classList.toggle('hit', nArc > 0);
+    } else {
+      nArc = Math.min(st, T.length);
+      lines[0].classList.toggle('on', st >= T.length + 1);
+      lines[1].classList.toggle('on', st >= T.length + 2);
+      anchors.forEach(function(e,i){ e.classList.toggle('hit', i < nArc); });
+    }
+    var last = null;
+    lines.forEach(function(l){ l.classList.remove('now'); if(l.classList.contains('on')) last = l; });
+    if(last) last.classList.add('now');
+    say.textContent = st === 0
+      ? (collect ? 'Що спільного в доданках? Дивимось на букви.' :
+         'Множник ' + fmt(M) + ' стоїть ' + (right ? 'після дужок' : 'перед дужками') + '. Він має дістатися до КОЖНОГО доданка в дужках.')
+      : steps[st - 1].say;
+    fit();
+    drawn = nArc;
+    box.__drawn = box.offsetWidth ? st : -1;
+    arcs(nArc, fwd && !force);
+  };
+  on(W,'resize',function(){ if(box.__at > 0) setTimeout(function(){ arcs(drawn, false); }, 160); });
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C43 · .sepia — один піксель проходить через формули фільтра, кроки — пробілом
+     <div class="sepia" data-rgb="230,200,150"></div>
+     Ліворуч піксель «до»: квадратик кольору й три стовпчики R, G, B із
+     числами. Посередині три формули. Кожен крок рахує один новий канал:
+     у формулу підставляються числа, праворуч виростає стовпчик. Що вилізло
+     за 255, стирчить над лінією — останній крок його обрізає (np.clip,
+     далі .astype(np.uint8) відкидає дробову частину) і фарбує квадратик
+     «після». Учень бачить: фільтр — арифметика над трьома числами, та
+     сама для кожного пікселя.
+     data-m="0.393,0.769,0.189,…" — інші 9 коефіцієнтів (типово — сепія).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.sepia').forEach(function(box){
+  function nums(s){ return (s || '').split(/[,\s]+/).filter(Boolean).map(Number).filter(function(x){ return !isNaN(x); }); }
+  var P = nums(box.dataset.rgb); if(P.length !== 3) return;
+  var M = nums(box.dataset.m); if(M.length !== 9) M = [.393,.769,.189,.349,.686,.168,.272,.534,.131];
+  var NM = ['R','G','B'];
+  var RAW = [0,1,2].map(function(k){ return M[3*k]*P[0] + M[3*k+1]*P[1] + M[3*k+2]*P[2]; });
+  var OUT = RAW.map(function(v){ return Math.max(0, Math.min(255, Math.floor(v))); });
+  var TOP = Math.max(255, Math.max.apply(null, RAW)) * 1.06;
+  function dec(v){ return String(Math.round(v*10)/10).replace('.', ','); }
+  function rgb(a){ return 'rgb(' + a.join(',') + ')'; }
+  function h(v){ return (v/TOP*100) + '%'; }
+
+  box.textContent = '';
+  var wrap = el('div','sp-w'); box.appendChild(wrap);
+  function part(cap){
+    var p = el('div','sp-p'), sw = el('div','sp-sw'), bs = el('div','sp-bs'), bars = [];
+    p.appendChild(el('p','sp-cap', cap)); p.appendChild(sw); p.appendChild(bs);
+    NM.forEach(function(n, k){
+      var c = el('div','sp-c sp-' + n), b = el('div','sp-b');
+      b.innerHTML = '<b></b>'; c.appendChild(b); c.appendChild(el('i', '', n)); bs.appendChild(c); bars.push(b);
+    });
+    return {p:p, sw:sw, bs:bs, bars:bars};
+  }
+  var A = part('до'), B = part('після'), F = el('div','sp-f'), rows = [];
+  var lim = el('div','sp-lim', '<i>255</i>'); lim.style.bottom = h(255); B.bs.appendChild(lim);
+  NM.forEach(function(n, k){
+    var r = el('div','sp-r');
+    r.innerHTML = '<span class="g">' + n + '′ = ' + dec(M[3*k]) + '·R + ' + dec(M[3*k+1]) + '·G + ' + dec(M[3*k+2]) + '·B</span>' +
+      '<span class="n">= ' + dec(M[3*k]) + '·' + P[0] + ' + ' + dec(M[3*k+1]) + '·' + P[1] + ' + ' + dec(M[3*k+2]) + '·' + P[2] +
+      ' = <b>' + dec(RAW[k]) + '</b></span>';
+    F.appendChild(r); rows.push(r);
+  });
+  wrap.appendChild(A.p); wrap.appendChild(F); wrap.appendChild(B.p);
+  A.sw.style.background = rgb(P);
+  A.bars.forEach(function(b, k){ b.style.height = h(P[k]); $('b', b).textContent = P[k]; });
+  var say = asay(box);
+
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(5).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var n = 0;
+    $$('i.hide', marks).forEach(function(i){ if(i.classList.contains('on')) n++; });
+    if(n === box.__at) return;
+    box.__at = n;
+    var cut = n >= 4;
+    rows.forEach(function(r, k){ r.classList.toggle('on', k < n); r.classList.toggle('now', k === n - 1 && !cut); });
+    B.bars.forEach(function(b, k){
+      var open = k < n, v = cut ? OUT[k] : RAW[k];
+      b.style.height = open ? h(v) : '0';
+      b.classList.toggle('over', open && !cut && RAW[k] > 255);
+      $('b', b).textContent = !open ? '' : cut ? (RAW[k] > 255 ? dec(RAW[k]) + ' → ' : '') + OUT[k] : dec(RAW[k]);
+    });
+    lim.classList.toggle('on', n >= 1);
+    B.sw.style.background = cut ? rgb(OUT) : '';
+    B.sw.classList.toggle('on', cut);
+    var over = RAW.some(function(v){ return v > 255; });
+    say.textContent = n === 0 ? 'Піксель (' + P.join(', ') + '). Фільтр не бачить картинки — лише ці три числа.'
+      : !cut ? NM[n-1] + '′ = ' + dec(RAW[n-1]) + (RAW[n-1] > 255 ? ' — більше за 255! Такої яскравості в пікселі не буває.' : '.')
+      : (over ? 'np.clip: що вище за 255, обрізаємо до 255. ' : '') + 'Дробову частину відкидаємо — новий піксель (' + OUT.join(', ') + '). Те саме — з кожним пікселем фото.';
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C44 · .poster — постеризація: 256 відтінків злипаються в сходинки, кроки — пробілом
+     <div class="poster" data-step="32" data-v="200"></div>
+     Дві смуги 0…255: «було» — плавний перехід, «стало» — спершу така сама.
+     1) шкалу ріжуть на шматки по step;  2) кожен шматок у «стало» стає
+     одним кольором — своїм початком;  3) на «було» — число v і v // step;
+     4) на «стало» — куди воно впало: v // step · step. Учень бачить, звідки
+     «плакатні» плями: сусідні яскравості потрапляють на одну сходинку.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.poster').forEach(function(box){
+  var S = parseInt(box.dataset.step, 10) || 32, V = parseInt(box.dataset.v, 10);
+  if(S < 2 || S > 128) return;
+  if(isNaN(V)) V = 200;
+  var K = Math.ceil(256 / S), q = Math.floor(V / S), NV = q * S;
+  function pct(v){ return (v/256*100) + '%'; }
+  function gray(v){ return 'rgb(' + v + ',' + v + ',' + v + ')'; }
+
+  box.textContent = '';
+  function strip(cap){
+    var w = el('div','ps-s'), st = el('div','ps-st');
+    w.appendChild(el('p','ps-cap', cap)); w.appendChild(st); box.appendChild(w);
+    return st;
+  }
+  var top = strip('було: 256 відтінків'), bot = strip('стало: <b>' + K + '</b> відтінків');
+  var bands = [], lines = [];
+  for(var k = 0; k < K; k++){
+    var b = el('div','ps-b'); b.style.left = pct(k*S); b.style.width = pct(Math.min(S, 256 - k*S));
+    b.style.background = gray(k*S); b.style.color = k*S > 120 ? '#111' : '#eee';
+    if(S >= 16) b.textContent = k*S;
+    bot.appendChild(b); bands.push(b);
+  }
+  [top, bot].forEach(function(st){
+    for(var k = 1; k < K; k++){ var l = el('div','ps-l'); l.style.left = pct(k*S); st.appendChild(l); lines.push(l); }
+  });
+  var ax = el('div','ps-ax'); top.parentNode.insertBefore(ax, top.nextSibling);
+  for(var k2 = 0; k2 <= K; k2 += (K > 8 ? 2 : 1)){
+    var s = el('span'); s.textContent = Math.min(k2*S, 256); s.style.left = pct(Math.min(k2*S, 256)); ax.appendChild(s);
+  }
+  var mA = el('div','ps-m', '<i>' + V + '</i>'); mA.style.left = pct(V + .5); top.appendChild(mA);
+  var mB = el('div','ps-m', '<i>' + NV + '</i>'); mB.style.left = pct(NV + .5); bot.appendChild(mB);
+  var fm = el('p','ps-f'); box.appendChild(fm);
+  var say = asay(box);
+
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(5).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var n = 0;
+    $$('i.hide', marks).forEach(function(i){ if(i.classList.contains('on')) n++; });
+    if(n === box.__at) return;
+    box.__at = n;
+    lines.forEach(function(l){ l.classList.toggle('on', n >= 1); });
+    bands.forEach(function(b, k){ b.classList.toggle('on', n >= 2); b.classList.toggle('now', n >= 3 && k === q); });
+    mA.classList.toggle('on', n >= 3); mB.classList.toggle('on', n >= 4);
+    fm.innerHTML = n < 3 ? '' : V + ' // ' + S + ' = <b>' + q + '</b>' + (n >= 4 ? '  →  ' + q + ' · ' + S + ' = <b>' + NV + '</b>' : '');
+    say.textContent = n === 0 ? 'Плавний перехід від чорного до білого — 256 різних яскравостей.'
+      : n === 1 ? 'Ріжемо шкалу на шматки по ' + S + ': 256 / ' + S + ' = ' + K + ' сходинок.'
+      : n === 2 ? 'Кожен шматок фарбуємо одним кольором — його початком. Замість 256 відтінків лишилось ' + K + '.'
+      : n === 3 ? 'Беремо піксель ' + V + '. // — ділення без остачі: ' + q + ' повних сходинок до нього.'
+      : V + ' → ' + NV + '. І ' + NV + ', і ' + (NV + S - 1) + ' — усі падають на ту саму сходинку: сусіди злипаються в пляму.';
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C45 · .srch — пошуковий запит: слова із запиту світяться в сторінках
+     <div class="srch" data-queries='птахи|птахи України|"птахи України"|птахи України -зоопарк'
+          data-pages="Назва::текст сторінки|Назва::текст|Назва::текст"></div>
+     Пробіл — наступний запит у рядку пошуку. У міністорінках світяться
+     слова із запиту (ціле слово, без урахування регістру), сторінки
+     перешиковуються: більше збігів — лівіше. "фраза в лапках" — потрібні
+     ці слова поруч і в цьому порядку; -слово — сторінку з цим словом не
+     показуємо. Останній крок — висновок. data-says="…|…" — свої підписи
+     до кроків (перший — до порожнього рядка).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.srch').forEach(function(box){
+  var WORD = /[A-Za-zА-Яа-яІіЇїЄєҐґ0-9ʼ'’]+/g;
+  function low(s){ return String(s).toLowerCase().replace(/['’]/g, 'ʼ'); }
+  var queries = String(box.dataset.queries || 'птахи|птахи України').split('|');
+  var says = box.dataset.says ? String(box.dataset.says).split('|') : [];
+  var pages = String(box.dataset.pages || '').split('|').map(function(raw, i){
+    var cut = raw.indexOf('::');
+    return { i: i, title: cut < 0 ? 'Сторінка ' + (i + 1) : raw.slice(0, cut), text: cut < 0 ? raw : raw.slice(cut + 2) };
+  });
+  box.textContent = '';
+
+  var bar = el('div','sr-bar');
+  var lab = el('span','sr-lab'); lab.textContent = 'Пошук';
+  var qEl = el('span','sr-q'), nEl = el('span','sr-n');
+  bar.appendChild(lab); bar.appendChild(qEl); bar.appendChild(nEl);
+  var row = el('div','sr-row');
+  box.appendChild(bar); box.appendChild(row);
+
+  /* текст картки — по слову в <span>, щоб підсвітка не міняла висоту */
+  function fill(host, text, words){
+    var last = 0, m;
+    WORD.lastIndex = 0;
+    while((m = WORD.exec(text))){
+      if(m.index > last) host.appendChild(D.createTextNode(text.slice(last, m.index)));
+      var w = el('span','sr-w'); w.textContent = m[0];
+      host.appendChild(w); words.push({ el: w, w: low(m[0]) });
+      last = m.index + m[0].length;
+    }
+    if(last < text.length) host.appendChild(D.createTextNode(text.slice(last)));
+  }
+  pages.forEach(function(p){
+    p.card = el('div','sr-p'); p.words = [];
+    var h = el('h4'), t = el('p');
+    fill(h, p.title, p.words);
+    p.split = p.words.length;                 /* межа заголовок | текст: фраза через неї не тягнеться */
+    fill(t, p.text, p.words);
+    p.badge = el('span','sr-b');
+    p.card.appendChild(h); p.card.appendChild(t); p.card.appendChild(p.badge);
+    row.appendChild(p.card);
+  });
+
+  /* запит → слова, фрази в лапках, слова з дефісом */
+  function parse(q){
+    var out = { plus: [], phr: [], neg: [] };
+    String(q).replace(/"([^"]*)"|«([^»]*)»|(-?)([^\s"«»]+)/g, function(all, a, b, minus, w){
+      if(a != null || b != null){
+        var ws = low(a != null ? a : b).match(WORD) || [];
+        if(ws.length) out.phr.push(ws);
+      } else {
+        var one = (low(w).match(WORD) || [])[0];
+        if(one) (minus ? out.neg : out.plus).push(one);
+      }
+      return all;
+    });
+    return out;
+  }
+  function showQuery(q){
+    qEl.textContent = '';
+    String(q).split(/(\s+)/).forEach(function(part){
+      if(!part) return;
+      var s = el('span', part.charAt(0) === '-' ? 'neg' : /["«»]/.test(part) ? 'quo' : '');
+      s.textContent = part; qEl.appendChild(s);
+    });
+  }
+  function score(p, Q){
+    var hit = [], ban = [], seen = {}, k, j, ok;
+    p.words.forEach(function(x, idx){
+      if(Q.neg.indexOf(x.w) >= 0) ban.push(idx);
+      if(Q.plus.indexOf(x.w) >= 0){ hit.push(idx); seen[x.w] = 1; }
+    });
+    var phrOk = true;
+    Q.phr.forEach(function(ws){
+      var found = false;
+      for(k = 0; k + ws.length <= p.words.length; k++){
+        if(k < p.split && k + ws.length > p.split) continue;
+        ok = true;
+        for(j = 0; j < ws.length; j++) if(p.words[k + j].w !== ws[j]){ ok = false; break; }
+        if(ok){ found = true; for(j = 0; j < ws.length; j++) hit.push(k + j); }
+      }
+      if(!found) phrOk = false;
+    });
+    var kinds = Object.keys(seen).length + (phrOk ? Q.phr.length : 0);
+    var need = Q.plus.length + Q.phr.length;
+    return { hit: hit, ban: ban, kinds: kinds, n: hit.length,
+             off: ban.length > 0 || !phrOk || (need > 0 && hit.length === 0),
+             why: ban.length ? 'є слово після дефіса' : !phrOk ? 'немає такої фрази' : 'жодного слова' };
+  }
+
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(queries.length + 2).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var qi = Math.min(st, queries.length) - 1;           /* −1 — рядок пошуку ще порожній */
+    var q = qi < 0 ? '' : queries[qi], Q = parse(q), found = 0;
+    showQuery(q);
+    var was = pages.map(function(p){ return p.card.offsetLeft; });
+    pages.forEach(function(p){
+      p.r = qi < 0 ? { hit: [], ban: [], kinds: 0, n: 0, off: false } : score(p, Q);
+      p.words.forEach(function(x, idx){
+        x.el.classList.toggle('hit', p.r.hit.indexOf(idx) >= 0 && p.r.ban.indexOf(idx) < 0);
+        x.el.classList.toggle('ban', p.r.ban.indexOf(idx) >= 0);
+      });
+      p.card.classList.toggle('off', p.r.off);
+      if(!p.r.off && qi >= 0) found++;
+      p.badge.textContent = qi < 0 ? '' : p.r.off ? 'не показано: ' + p.r.why : 'збігів: ' + p.r.n;
+    });
+    var order = pages.slice().sort(function(a, b){
+      return (a.r.off - b.r.off) || (b.r.kinds - a.r.kinds) || (b.r.n - a.r.n) || (a.i - b.i);
+    });
+    order.forEach(function(p, k){
+      p.card.style.order = k;
+      p.card.classList.toggle('top', qi >= 0 && k === 0 && !p.r.off);
+    });
+    nEl.textContent = qi < 0 ? '' : 'знайдено: ' + found + ' із ' + pages.length;
+    /* переїзд картки на нове місце: offsetLeft — у пікселях розкладки, масштаб fit() його не чіпає */
+    pages.forEach(function(p, k){
+      var dx = was[k] - p.card.offsetLeft;
+      if(!dx) return;
+      p.card.style.transition = 'none';
+      p.card.style.transform = 'translateX(' + dx + 'px)';
+      void p.card.offsetWidth;
+      p.card.style.transition = 'transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s,border-color .3s';
+      p.card.style.transform = '';
+    });
+    var auto;
+    if(qi < 0) auto = 'Пошукова система не «розуміє питання». Вона шукає слова із запиту в текстах сторінок. Який запит напишемо?';
+    else if(st > queries.length) auto = 'Ключові слова — це слова, які мають стояти в тексті потрібної сторінки. Що точніший запит, то менше зайвого.';
+    else if(Q.neg.length) auto = 'Дефіс перед словом: сторінку, де є «' + Q.neg.join('», «') + '», не показувати.';
+    else if(Q.phr.length) auto = 'Лапки: шукати саме цю фразу — слова поруч і в такому порядку.';
+    else if(Q.plus.length > 1) auto = 'Кілька ключових слів: вище та сторінка, де є всі слова із запиту.';
+    else auto = 'Одне слово — підходить майже все: знайдено ' + found + ' із ' + pages.length + '. Запит занадто широкий.';
+    say.textContent = says[Math.min(st, queries.length + 1)] || auto;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C48 · .pult — пульт фільтра: живе фото з повзунками (не кроки, а руки)
+     <div class="pult"><img src="data:image/jpeg;base64,…" alt=""></div>
+     <div class="pult" data-targets="100,1,0,0|0,64,0,1"><img …></div>
+     Повзунки: яскравість (−100…100), сепія (0…100 %), сходинки (крок 1, 16,
+     32, 64, 128), кнопка «негатив». Порядок дій завжди той самий:
+     яскравість → сепія → негатив → сходинки. Під фото — числа ОДНОГО пікселя
+     «було → стало» (клік по фото обирає інший): учень бачить, що фільтр —
+     та сама арифметика для кожного пікселя.
+     data-targets — режим «вгадай рецепт»: поруч фото-ціль і лічильник
+     схожості; рецепт цілі — «сепія,крок,яскравість,негатив», кілька цілей
+     через «|». Схожість 100 % лише коли всі числа збіглися.
+     Без <img> малюється проста сцена (небо, сонце, пагорб) — щоб компонент
+     жив у шаблоні без мережі. «Своє фото» — файл з компʼютера, нікуди не
+     вантажиться. data-px="0.5,0.6" — де стоїть піксель-зразок (частки).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.pult').forEach(function(box){
+  var PW = 320, PH = 240, STEPS = [1, 16, 32, 64, 128];
+  var img = box.querySelector('img');
+  function recipe(raw){
+    var a = String(raw).split(',').map(function(x){ return parseInt(x, 10) || 0; });
+    return { s: Math.max(0, Math.min(100, a[0])), k: STEPS.indexOf(a[1]) < 0 ? 1 : a[1],
+             b: Math.max(-100, Math.min(100, a[2])), n: a[3] ? 1 : 0 };
+  }
+  var goals = box.dataset.targets ? String(box.dataset.targets).split('|').map(recipe) : [];
+  var game = goals.length > 0, gi = 0;
+  var R = { s: 0, k: 1, b: 0, n: 0 };
+  var at = String(box.dataset.px || '0.5,0.6').split(',').map(parseFloat);
+  if(!(at[0] >= 0 && at[0] <= 1)) at[0] = .5;
+  if(!(at[1] >= 0 && at[1] <= 1)) at[1] = .6;
+
+  box.textContent = '';
+  if(img) box.appendChild(img);
+  if(game) box.classList.add('game');
+  function view(cap, cls){
+    var f = el('figure','pu-f' + (cls ? ' ' + cls : '')), c = el('canvas','pu-c');
+    c.width = PW; c.height = PH;
+    f.appendChild(c); f.appendChild(el('figcaption', '', cap));
+    views.appendChild(f);
+    return c;
+  }
+  var views = el('div','pu-v'); box.appendChild(views);
+  var cv = view(game ? 'ваше фото' : 'клацніть по фото — інший піксель'), cx = cv.getContext('2d');
+  var gv = game ? view('ціль', 'pu-goal') : null, gx = gv ? gv.getContext('2d') : null;
+  var panel = el('div','pu-p'); box.appendChild(panel);
+
+  function slider(label, min, max, step, val){
+    var r = el('label','pu-r'), s = el('input','pu-s'), n = el('b','pu-n');
+    s.type = 'range'; s.min = min; s.max = max; s.step = step; s.value = val;
+    r.appendChild(el('span','pu-l', label)); r.appendChild(s); r.appendChild(n);
+    panel.appendChild(r);
+    on(s,'input', read);
+    on(s,'change', function(){ read(); s.blur(); });   /* інакше пробіл і стрілки лишаються в повзунка */
+    return { s: s, n: n };
+  }
+  var sB = slider('яскравість', -100, 100, 10, 0);
+  var sS = slider('сепія', 0, 100, 10, 0);
+  var sK = slider('сходинки', 0, STEPS.length - 1, 1, 0);
+  var row = arow(panel);
+  var bN = abtn(row, 'негатив', '', function(){ R.n = R.n ? 0 : 1; paint(); });
+  abtn(row, 'скинути', 'q', function(){ set({ s: 0, k: 1, b: 0, n: 0 }); });
+  var file = el('input'); file.type = 'file'; file.accept = 'image/*'; file.style.display = 'none';
+  panel.appendChild(file);
+  abtn(row, 'своє фото', 'q', function(){ file.click(); });
+  var gBtns = [];
+  if(goals.length > 1) goals.forEach(function(g, i){
+    gBtns.push(abtn(row, 'ціль ' + (i + 1), '', function(){ gi = i; set({ s: 0, k: 1, b: 0, n: 0 }); }));
+  });
+  var px = el('p','pu-px'); panel.appendChild(px);
+  var rc = el('p','pu-rc'); panel.appendChild(rc);
+  var meter = null, mBar = null, mTxt = null;
+  if(game){
+    meter = el('div','pu-m'); mBar = el('i'); mTxt = el('b');
+    meter.appendChild(mBar); meter.appendChild(mTxt); panel.appendChild(meter);
+  }
+  var say = game ? asay(panel) : null;   /* у пульті підказку каже рядок «рецепт» */
+  on(box,'click', function(e){ e.stopPropagation(); });   /* клік по пульту — не «наступний слайд» */
+
+  var orig = null, mine = cx.createImageData(PW, PH), goal = gx ? gx.createImageData(PW, PH) : null;
+
+  /* Запасна сцена: небо, сонце, пагорб, будиночок, доріжка. */
+  function scene(){
+    var g = cx.createLinearGradient(0, 0, 0, PH * .65);
+    g.addColorStop(0, 'rgb(110,160,220)'); g.addColorStop(1, 'rgb(170,205,240)');
+    cx.fillStyle = g; cx.fillRect(0, 0, PW, PH);
+    cx.fillStyle = 'rgb(250,220,120)'; cx.beginPath(); cx.arc(PW * .78, PH * .19, PH * .1, 0, 6.2832); cx.fill();
+    cx.fillStyle = 'rgb(70,140,60)'; cx.beginPath(); cx.moveTo(0, PH * .66);
+    for(var x = 0; x <= PW; x += 8) cx.lineTo(x, PH * .63 + PH * .06 * Math.sin(x / 40));
+    cx.lineTo(PW, PH); cx.lineTo(0, PH); cx.fill();
+    cx.fillStyle = 'rgb(200,60,50)'; cx.fillRect(PW * .14, PH * .48, PW * .25, PH * .23);
+    cx.fillStyle = 'rgb(110,60,40)'; cx.beginPath(); cx.moveTo(PW * .1, PH * .48); cx.lineTo(PW * .265, PH * .34);
+    cx.lineTo(PW * .43, PH * .48); cx.fill();
+    cx.fillStyle = 'rgb(230,200,150)'; cx.beginPath(); cx.moveTo(PW * .48, PH * .75); cx.lineTo(PW * .56, PH * .75);
+    cx.lineTo(PW * .7, PH); cx.lineTo(PW * .34, PH); cx.fill();
+  }
+  /* Фото вписуємо з обрізанням до 4:3 — пропорції не псуємо. */
+  function take(im){
+    var w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
+    if(!w || !h) return false;
+    var k = Math.max(PW / w, PH / h), dw = w * k, dh = h * k;
+    cx.drawImage(im, (PW - dw) / 2, (PH - dh) / 2, dw, dh);
+    return true;
+  }
+  function grab(){
+    try{ orig = cx.getImageData(0, 0, PW, PH).data; }
+    catch(e){ scene(); orig = cx.getImageData(0, 0, PW, PH).data; }
+  }
+  function one(r, g, b, Q){
+    var p = Q.s / 100, K = Q.k;
+    r += Q.b; g += Q.b; b += Q.b;
+    r = r < 0 ? 0 : r > 255 ? 255 : r; g = g < 0 ? 0 : g > 255 ? 255 : g; b = b < 0 ? 0 : b > 255 ? 255 : b;
+    if(p){
+      var sr = .393 * r + .769 * g + .189 * b, sg = .349 * r + .686 * g + .168 * b, sb = .272 * r + .534 * g + .131 * b;
+      r += ((sr > 255 ? 255 : sr) - r) * p; g += ((sg > 255 ? 255 : sg) - g) * p; b += ((sb > 255 ? 255 : sb) - b) * p;
+    }
+    r = Math.floor(r); g = Math.floor(g); b = Math.floor(b);   /* як .sepia і astype(uint8): дріб відкидаємо */
+    if(Q.n){ r = 255 - r; g = 255 - g; b = 255 - b; }
+    if(K > 1){ r = Math.floor(r / K) * K; g = Math.floor(g / K) * K; b = Math.floor(b / K) * K; }
+    return [r, g, b];
+  }
+  function run(out, Q){
+    for(var i = 0; i < orig.length; i += 4){
+      var c = one(orig[i], orig[i + 1], orig[i + 2], Q);
+      out[i] = c[0]; out[i + 1] = c[1]; out[i + 2] = c[2]; out[i + 3] = 255;
+    }
+  }
+  function words(Q){
+    var a = [];
+    if(Q.b) a.push('яскравість ' + (Q.b > 0 ? '+' : '−') + Math.abs(Q.b));
+    if(Q.s) a.push('сепія ' + Q.s + ' %');
+    if(Q.n) a.push('негатив');
+    if(Q.k > 1) a.push('сходинки по ' + Q.k);
+    return a.length ? a.join(' → ') : 'нічого не змінено';
+  }
+  function sw(c){ return '<i class="pu-sw" style="background:rgb(' + c.join(',') + ')"></i>(' + c.join(', ') + ')'; }
+
+  function read(){
+    R.b = parseInt(sB.s.value, 10) || 0; R.s = parseInt(sS.s.value, 10) || 0;
+    R.k = STEPS[parseInt(sK.s.value, 10) || 0];
+    paint();
+  }
+  function set(Q){
+    R = { s: Q.s, k: Q.k, b: Q.b, n: Q.n };
+    sB.s.value = R.b; sS.s.value = R.s; sK.s.value = STEPS.indexOf(R.k);
+    paint();
+  }
+  function paint(){
+    if(!orig) return;
+    sB.n.textContent = (R.b > 0 ? '+' : R.b < 0 ? '−' : '') + Math.abs(R.b);
+    sS.n.textContent = R.s + ' %';
+    sK.n.textContent = R.k === 1 ? '256 відтінків' : 'по ' + R.k + ' · ' + (256 / R.k) + ' відт.';
+    bN.setAttribute('aria-pressed', R.n ? 'true' : 'false');
+    gBtns.forEach(function(b, i){ b.setAttribute('aria-pressed', i === gi ? 'true' : 'false'); });
+    run(mine.data, R);
+    cx.putImageData(mine, 0, 0);
+    var X = Math.min(PW - 1, Math.round(at[0] * (PW - 1))), Y = Math.min(PH - 1, Math.round(at[1] * (PH - 1))), o = (Y * PW + X) * 4;
+    var was = [orig[o], orig[o + 1], orig[o + 2]], now = [mine.data[o], mine.data[o + 1], mine.data[o + 2]];
+    cx.lineWidth = 3; cx.strokeStyle = '#000'; cx.beginPath(); cx.arc(X, Y, 7, 0, 6.2832); cx.stroke();
+    cx.lineWidth = 1.5; cx.strokeStyle = '#fff'; cx.beginPath(); cx.arc(X, Y, 7, 0, 6.2832); cx.stroke();
+    px.innerHTML = 'піксель: ' + sw(was) + ' → ' + sw(now);
+    rc.innerHTML = 'рецепт: <b>' + words(R) + '</b>';
+    if(game){
+      run(goal.data, goals[gi]);
+      gx.putImageData(goal, 0, 0);
+      var d = 0, a = mine.data, t = goal.data;
+      for(var i = 0; i < a.length; i += 4) d += Math.abs(a[i] - t[i]) + Math.abs(a[i + 1] - t[i + 1]) + Math.abs(a[i + 2] - t[i + 2]);
+      var pc = d === 0 ? 100 : Math.min(99, Math.floor(100 - d / (PW * PH * 3 * 255) * 100));
+      mBar.style.width = pc + '%'; mTxt.textContent = 'схожість ' + pc + ' %';
+      meter.classList.toggle('ok', pc === 100);
+      say.textContent = pc === 100 ? 'Рецепт вгадано: ' + words(R) + '. Фільтр — це набір чисел, а не «магія».'
+        : 'Підберіть повзунки так, щоб ваше фото збіглося з ціллю. Порядок дій: яскравість → сепія → негатив → сходинки.';
+    }
+  }
+
+  on(cv,'click', function(e){
+    var r = cv.getBoundingClientRect();
+    if(!r.width || !r.height) return;
+    at = [Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), Math.max(0, Math.min(1, (e.clientY - r.top) / r.height))];
+    paint();
+  });
+  on(file,'change', function(){
+    var f = file.files && file.files[0];
+    if(!f || !W.FileReader) return;
+    var fr = new FileReader();
+    fr.onload = function(){
+      var im = new Image();
+      im.onload = function(){ cx.fillStyle = '#000'; cx.fillRect(0, 0, PW, PH); if(take(im)){ grab(); paint(); } };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(f);
+  });
+
+  /* Початковий стан — синхронно: сцена або вже розкодоване фото; фото, що ще вантажиться, підмінить сцену. */
+  scene();
+  if(img && img.complete && img.naturalWidth) take(img);
+  else if(img) on(img,'load', function(){ if(take(img)){ grab(); paint(); fit(); } });
+  grab(); paint(); fit();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C49 · .ppt — макет вікна PowerPoint, кроки — пробілом
+     <div class="ppt" data-parts="file,tabs,ribbon,thumbs,slide,notes,views"></div>
+       Режим «частини» (типовий): пробіл — наступна частина вікна
+       підсвічується, отримує номер і підпис. Можна: title (рядок заголовка),
+       file, tabs, ribbon, thumbs, slide, notes, status, views, zoom.
+     <div class="ppt" data-mode="slides" data-title="Мій котик Мурчик"
+          data-sub="презентація учня 5-З класу"
+          data-slides="Раціон Мурчика|Розваги Мурчика|Дякуємо за увагу"
+          data-move="3>2"></div>
+       Режим «слайди»: пробіл 1 — титульний слайд заповнено; далі кожен
+       пробіл — «Створити слайд»: на панелі зліва зʼявляється мініатюра,
+       в області слайда — звичайний макет (заголовок + текст); останній
+       пробіл — мініатюра № 3 перетягується на місце № 2, номери
+       перераховуються. data-move не задано — без кроку перетягування.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.ppt').forEach(function(box){
+  var mode = box.dataset.mode === 'slides' ? 'slides' : 'parts';
+  var title = box.dataset.title || 'Мій котик Мурчик';
+  var sub = box.dataset.sub || 'презентація учня 5 класу';
+  var extra = box.dataset.slides ? String(box.dataset.slides).split('|') : ['Розваги', 'Раціон', 'Дякуємо за увагу'];
+  var mv = String(box.dataset.move || '').match(/^(\d+)\s*>\s*(\d+)$/);
+  var PARTS = {
+    title:  ['рядок заголовка',              'Угорі — назва файлу й програми: «Презентація1 — PowerPoint».'],
+    file:   ['кнопка «Файл»',                'Тут створюють, відкривають і зберігають презентацію.'],
+    tabs:   ['вкладки',                      'Основне, Вставлення, Конструктор… Клацнув вкладку — змінилась стрічка під нею.'],
+    ribbon: ['стрічка інструментів',         'Кнопки, зібрані в групи. На вкладці «Основне» — «Створити слайд» і «Макет».'],
+    thumbs: ['панель перегляду слайдів',     'Мініатюри всіх слайдів по порядку. Тут їх додають, перетягують, вилучають.'],
+    slide:  ['область відображення слайда',  'Великим — слайд, який зараз редагуємо.'],
+    notes:  ['область нотаток',              'Підказки для доповідача: глядачі їх не бачать.'],
+    status: ['рядок стану',                  'Номер слайда й скільки їх усього: «Слайд 1 з 1».'],
+    views:  ['кнопки режиму перегляду',      'Звичайний режим, сортувальник слайдів і показ на весь екран.'],
+    zoom:   ['масштаб',                      'Повзунок: слайд більший чи менший на екрані, сам слайд не змінюється.']
+  };
+  var order = mode === 'parts'
+    ? String(box.dataset.parts || 'file,tabs,ribbon,thumbs,slide,notes,views').split(',').map(function(s){ return s.trim(); }).filter(function(k){ return PARTS[k]; })
+    : [];
+  box.textContent = '';
+  var win = el('div', 'pp-win'), P = {};
+  function part(k, node){ node.dataset.pp = k; P[k] = node; var n = el('span', 'pp-n'); node.appendChild(n); return node; }
+  /* рядок заголовка */
+  var tb = part('title', el('div', 'pp-title'));
+  var fname = el('span', 'pp-fn'); fname.textContent = 'Презентація1 — PowerPoint';
+  tb.appendChild(fname);
+  var wb = el('span', 'pp-wb'); wb.innerHTML = '<i>─</i><i>▢</i><i>✕</i>'; tb.appendChild(wb);
+  win.appendChild(tb);
+  /* вкладки з кнопкою «Файл» */
+  var tabs = el('div', 'pp-tabs');
+  var fb = part('file', el('span', 'pp-file')); fb.insertBefore(D.createTextNode('Файл'), fb.firstChild);
+  tabs.appendChild(fb);
+  var tl = part('tabs', el('span', 'pp-tl'));
+  ['Основне', 'Вставлення', 'Конструктор', 'Переходи', 'Анімація', 'Показ слайдів'].forEach(function(t, i){
+    var s = el('span', i ? '' : 'cur'); s.textContent = t; tl.insertBefore(s, tl.lastChild);
+  });
+  tabs.appendChild(tl); win.appendChild(tabs);
+  /* стрічка */
+  var rb = part('ribbon', el('div', 'pp-rib'));
+  var gSl = el('div', 'pp-g'), newBtn = el('span', 'pp-big'), lay = el('span', 'pp-sm');
+  newBtn.innerHTML = '<b>＋</b>Створити слайд'; lay.textContent = 'Макет ▾';
+  gSl.appendChild(newBtn); gSl.appendChild(lay);
+  var gl = el('small'); gl.textContent = 'Слайди'; gSl.appendChild(gl);
+  rb.insertBefore(gSl, rb.firstChild);
+  [['Шрифт', '<b>Ж</b> <i>К</i> <u>П</u>'], ['Абзац', '≡ ☰ ⋮']].forEach(function(g){
+    var d = el('div', 'pp-g'), c = el('span', 'pp-sm'); c.innerHTML = g[1]; d.appendChild(c);
+    var l = el('small'); l.textContent = g[0]; d.appendChild(l); rb.insertBefore(d, rb.lastChild);
+  });
+  win.appendChild(rb);
+  /* тіло: мініатюри + слайд + нотатки */
+  var body = el('div', 'pp-body');
+  var th = part('thumbs', el('div', 'pp-th'));
+  var main = el('div', 'pp-main');
+  var sl = part('slide', el('div', 'pp-sl'));
+  var slIn = el('div', 'pp-slin'); sl.insertBefore(slIn, sl.firstChild);
+  var nt = part('notes', el('div', 'pp-nt')); nt.insertBefore(D.createTextNode('Клацніть, щоб додати нотатки'), nt.firstChild);
+  main.appendChild(sl); main.appendChild(nt);
+  body.appendChild(th); body.appendChild(main); win.appendChild(body);
+  /* рядок стану */
+  var stb = part('status', el('div', 'pp-st'));
+  var stt = el('span', 'pp-stt'); stb.insertBefore(stt, stb.firstChild);
+  var vw = part('views', el('span', 'pp-vw')); vw.insertBefore(D.createTextNode('▭ ▦ ▶'), vw.firstChild);
+  var zm = part('zoom', el('span', 'pp-zm')); zm.insertBefore(D.createTextNode('－ ━━●━━ ＋  60%'), zm.firstChild);
+  stb.appendChild(vw); stb.appendChild(zm); win.appendChild(stb);
+  box.appendChild(win);
+  var say = asay(box);
+
+  /* слайди: {t: заголовок, s: підзаголовок/текст, kind: 'title'|'body'} */
+  function face(node, s, big){
+    node.textContent = '';
+    node.className = (big ? 'pp-slin ' : 'pp-mi ') + (s.kind === 'title' ? 'k-title' : 'k-body');
+    var h = el('div', 'pp-h'), p = el('div', 'pp-p');
+    h.textContent = s.t || (big ? 'Клацніть, щоб додати заголовок' : '');
+    p.textContent = s.s || (big ? (s.kind === 'title' ? 'Клацніть, щоб додати підзаголовок' : '• Клацніть, щоб додати текст') : '');
+    h.classList.toggle('ph', !s.t); p.classList.toggle('ph', !s.s);
+    node.appendChild(h); node.appendChild(p);
+  }
+  var thumbs = [];                       /* DOM-мініатюри, у порядку створення */
+  function mkThumb(){
+    var w = el('div', 'pp-tw'), num = el('span', 'pp-tn'), mi = el('div', 'pp-mi');
+    w.appendChild(num); w.appendChild(mi); th.insertBefore(w, th.lastChild);
+    thumbs.push({ w: w, num: num, mi: mi });
+  }
+  var maxN = mode === 'slides' ? 1 + extra.length : 1;
+  for(var i = 0; i < maxN; i++) mkThumb();
+  th.style.height = 'calc(' + Math.max(4, maxN) + ' * var(--pp-pitch) + var(--pp-pad))';
+
+  var steps = mode === 'parts' ? order.length + 1 : 1 + extra.length + (mv ? 1 : 0);
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(steps + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  box.__at = -1;
+
+  function slideState(st){
+    /* список слайдів у поточному порядку + який вибрано */
+    var list = [{ kind: 'title', t: st >= 1 ? title : '', s: st >= 1 ? sub : '', id: 0 }];
+    var made = Math.max(0, Math.min(extra.length, st - 1));
+    for(var j = 0; j < made; j++) list.push({ kind: 'body', t: extra[j], s: '', id: j + 1 });
+    var sel = list.length - 1, moved = false;
+    if(mv && st >= 1 + extra.length + 1){
+      var from = +mv[1] - 1, to = +mv[2] - 1;
+      if(list[from] && list[to]){ var x = list.splice(from, 1)[0]; list.splice(to, 0, x); sel = to; moved = true; }
+    }
+    return { list: list, sel: sel, moved: moved };
+  }
+
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    if(mode === 'parts'){
+      Object.keys(P).forEach(function(k){
+        var idx = order.indexOf(k), node = P[k];
+        node.classList.toggle('on', idx >= 0 && idx < st);
+        node.classList.toggle('now', idx >= 0 && idx === st - 1);
+        $('.pp-n', node).textContent = idx >= 0 ? String(idx + 1) : '';
+      });
+      face(slIn, { kind: 'title' }, true);
+      thumbs.forEach(function(t, i){ face(t.mi, { kind: 'title' }, false); t.num.textContent = i + 1; t.w.style.top = 'calc(var(--pp-pad) + ' + i + ' * var(--pp-pitch))'; t.w.classList.add('in', 'sel'); });
+      stt.textContent = 'Слайд 1 з 1';
+      var k = order[st - 1];
+      say.textContent = st === 0
+        ? 'Так виглядає вікно PowerPoint. Що де — назвемо по черзі.'
+        : st <= order.length
+        ? st + ' — ' + PARTS[k][0] + '. ' + PARTS[k][1]
+        : 'Усі ' + order.length + ' частин названо. Найважливіші для роботи: стрічка, панель слайдів зліва й область слайда.';
+    } else {
+      var S = slideState(st);
+      thumbs.forEach(function(t){ t.w.classList.remove('in', 'sel', 'lift'); });
+      S.list.forEach(function(s, pos){
+        var t = thumbs[s.id];
+        t.w.classList.add('in');
+        t.w.classList.toggle('sel', pos === S.sel);
+        t.w.classList.toggle('lift', S.moved && pos === S.sel);
+        t.w.style.top = 'calc(var(--pp-pad) + ' + pos + ' * var(--pp-pitch))';
+        t.num.textContent = pos + 1;
+        face(t.mi, s, false);
+      });
+      thumbs.forEach(function(t, i){ if(!t.w.classList.contains('in')) t.w.style.top = 'calc(var(--pp-pad) + ' + i + ' * var(--pp-pitch))'; });
+      face(slIn, S.list[S.sel], true);
+      newBtn.classList.toggle('now', st >= 2 && st <= 1 + extra.length);
+      th.classList.toggle('drag', S.moved);
+      stt.textContent = 'Слайд ' + (S.sel + 1) + ' з ' + S.list.length;
+      var made = S.list.length - 1;
+      say.textContent = st === 0
+        ? 'Нова презентація — один титульний слайд: місце для заголовка й підзаголовка.'
+        : st === 1
+        ? 'Титульний слайд: заголовок — назва презентації, підзаголовок — хто автор.'
+        : st <= 1 + extra.length
+        ? '«Створити слайд» (вкладка «Основне») — зʼявився слайд ' + (made + 1) + ', звичайний: заголовок і текст. Заголовок: «' + extra[made - 1] + '».'
+        : 'Слайд ' + mv[1] + ' перетягнули на панелі зліва на місце ' + mv[2] + '. Номери слайдів перерахувались самі.';
+    }
     fit();
   };
   box.__paint();
@@ -3342,7 +7081,7 @@ function fsToggle(){
 }
 function bind(id,fn){ var b = $('#'+id); if(b) on(b,'click',function(e){ e.stopPropagation(); fn(); }); }
 bind('next',next); bind('prev',prev); bind('fs',fsToggle);
-bind('btnOv',toggleOv); bind('btnHelp',openHelp); bind('btnTh',cycleTheme);
+bind('btnOv',toggleOv); bind('btnHelp',openHelp); bind('btnTh',toggleThPop);
 bind('btnInk',function(){ setInk(inkMode === 'off' ? 'pen' : 'off'); });
 
 var downXY = null;
@@ -3373,6 +7112,8 @@ on(D,'keydown',function(e){
     return;
   }
   if(ov.classList.contains('on')) return;
+  if(k === 'KeyZ' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); undoInk(); return; }
+  if(e.ctrlKey || e.metaKey) return;          /* Cmd+C, Ctrl+P тощо — браузерові */
   if(k === 'ArrowRight' || k === 'Space' || k === 'PageDown' || k === 'Enter'){ e.preventDefault(); next(); }
   else if(k === 'ArrowLeft' || k === 'PageUp'){ e.preventDefault(); prev(); }
   else if(k === 'Home'){ e.preventDefault(); go(0,false); }
@@ -3383,7 +7124,8 @@ on(D,'keydown',function(e){
   else if(k === 'KeyF'){ e.preventDefault(); fsToggle(); }
   else if(k === 'KeyD'){ e.preventDefault(); setInk(inkMode === 'pen' ? 'off' : 'pen'); }
   else if(k === 'KeyL'){ e.preventDefault(); setInk(inkMode === 'laser' ? 'off' : 'laser'); }
-  else if(k === 'KeyC'){ e.preventDefault(); clearInk(); }
+  else if(k === 'KeyC'){ e.preventDefault(); if(e.shiftKey) clearAllInk(); else clearInk(); }
+  else if(k === 'KeyE'){ e.preventDefault(); setInk(inkMode === 'erase' ? 'pen' : 'erase'); }
   else if(k === 'KeyB'){ e.preventDefault(); toggleBlack(); }
   else if(k === 'KeyY'){ e.preventDefault(); cycleTheme(); }
   else if(k === 'KeyP'){ e.preventDefault(); toggleProj(); }
@@ -3401,4 +7143,70 @@ if(st.ask !== false) offerResume(st.ask);
 remember();
 setTimeout(fit, 60);
 
+})();
+
+/* ═══════════════════════════════════════════════════════════════════════
+   D12 · поле крапель mimory (21.10.2026). Набір і орбіти — LiquidBackground.tsx
+   лендингу mimory.space; кольори — класи .k1….k5 у стилях (тон предмета й тема).
+   Гортання слайда — не поштовх швидкості (легкі краплі від нього відлітали через
+   пів екрана, 5-З урок 42), а обмежене відставання цілі: стеля LAG px, ціль плавно
+   повертається додому, крапля без пружини підтягується за нею.
+   ═══════════════════════════════════════════════════════════════════════ */
+(function(){
+  if(!document.body || document.getElementById('mm-field')) return;
+  var SET=[
+    [13,20,300,1,225,145,.055,.041,0.0,1.35,17],[40,46,235,2,230,175,.043,.062,1.7,1.05,21],
+    [79,18,275,3,220,165,.061,.037,3.1,1.20,15],[56,58,215,4,240,160,.038,.057,4.4,0.95,24],
+    [90,74,170,5,200,210,.067,.045,2.2,0.75,13],[21,79,255,2,235,155,.049,.053,5.6,1.15,19],
+    [63,33,104,4,290,230,.083,.071,0.9,0.42,9],[34,66,88,5,305,245,.074,.089,3.8,0.36,8]];
+  var field=document.createElement('div'),layer=document.createElement('div');
+  field.id='mm-field';field.setAttribute('aria-hidden','true');layer.className='mm-blur';field.appendChild(layer);
+  document.body.insertBefore(field,document.body.firstChild);
+  var drops=SET.map(function(d){
+    var el=document.createElement('i');el.className='k'+d[3];el.style.setProperty('--mm-m',d[10]+'s');
+    layer.appendChild(el);
+    return {el:el,x:d[0],y:d[1],r:d[2],ax:d[4],ay:d[5],fx:d[6],fy:d[7],ph:d[8],m:d[9],ox:0,oy:0,tx:0,ty:0};
+  });
+  var W=0,H=0,S=1;
+  function size(){W=layer.offsetWidth;H=layer.offsetHeight;S=Math.max(.55,Math.min(1.35,window.innerWidth/1440));
+    drops.forEach(function(d){d.el.style.width=d.el.style.height=d.r*S+'px'})}
+  size();window.addEventListener('resize',size);
+  function place(t){drops.forEach(function(d){var p=d.r*S,
+    x=d.x/100*W+Math.sin(t*d.fx*2*Math.PI+d.ph)*d.ax*S*.6+d.ox-p/2,
+    y=d.y/100*H+Math.cos(t*d.fy*2*Math.PI+d.ph*1.3)*d.ay*S*.6+d.oy-p/2;
+    d.el.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)'})}
+  /* headless Chrome (check_decks.py, скріни.py): нескінченні rAF і CSS-анімація під blur з
+     --virtual-time-budget проганяють тисячі кадрів; у паралельному прогоні — тайм-аут.
+     Краплі ставимо один раз і зупиняємо (.still) */
+  if(/HeadlessChrome/.test(navigator.userAgent) ||
+     (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){
+    field.className = 'still'; place(0); return; }
+
+  var LAG=38,cur=null,all=[].slice.call(document.querySelectorAll('.slide'));
+  function cap(v){return Math.max(-LAG,Math.min(LAG,v))}
+  function watch(){
+    var on=document.querySelector('.slide.on');
+    if(!on || on===cur) return;
+    if(cur){var dir=all.indexOf(on)>all.indexOf(cur)?1:-1;
+      drops.forEach(function(d,i){var k=Math.sqrt(d.m);
+        d.tx=cap(d.tx-dir*(14+4*(i%3))/k); d.ty=cap(d.ty+((i%2)?-1:1)*6/k)})}
+    cur=on;
+  }
+  new MutationObserver(watch).observe(document.getElementById('sheet')||document.body,
+    {subtree:true,attributes:true,attributeFilter:['class']});
+  watch();
+
+  var t0=performance.now(),last=t0;
+  function tick(now){
+    var dt=Math.min(3,(now-last)/16.67);last=now;
+    if(!document.hidden && document.documentElement.getAttribute('data-proj')!=='1'){
+      drops.forEach(function(d){
+        var back=Math.pow(.985,dt),ease=1-Math.pow(1-.035/Math.max(.6,d.m),dt);
+        d.tx*=back; d.ty*=back; d.ox+=(d.tx-d.ox)*ease; d.oy+=(d.ty-d.oy)*ease;
+      });
+      place((now-t0)/1000);
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 })();

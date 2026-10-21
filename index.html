@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Уроки</title>
 <meta name="description" content="Презентації уроків для учнів: математика, алгебра, геометрія, інформатика.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;800&family=JetBrains+Mono:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Serif:ital@1&family=Cormorant+Garamond:ital,wght@1,500&display=swap">
 <style>
 /* Палітра та сама, що в презентаціях: один тон --h, решта виводиться формулою. */
 :root{
@@ -289,6 +289,113 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 #plan h3{margin:14px 0 6px;font-size:1rem}
 #plan ol{margin:0;padding-left:1.4em;color:var(--soft)}
 #plan li.done{color:var(--ink);text-decoration:line-through;opacity:.55}
+/* ══ MIMORY (21.10.2026) — сайт у стилістиці mimory.space, як деки «Урок 42 — mimory*.html».
+   Типово темна (темна сторона словникової картки mimory: #1a1846 → #241f5e → #3b2eb8);
+   перемикач ◐ дає світлу (кремовий #f6f3ec, frost-картки). Позаду — поле крапель (скрипт
+   #mm-drops). Заголовки — Bricolage Grotesque, кирилиця в них — Manrope; акцент — курсив
+   Instrument Serif, кирилиця — Cormorant Garamond. :not(#mm) — вага id над старими правилами. ══ */
+html:root:not(#mm){
+  --h:277;--rad:22px;
+  --penL:51.1%;--penC:.24;--penSL:94.5%;--penSC:.035;
+  --paper:#f6f3ec;--card:rgba(255,255,255,.74);--sunk:#efeaf9;--grid:transparent;
+  --ink:#13123b;--soft:#6a6892;--edge:rgba(19,18,59,.10);
+  --pen:#6d5ef5;--pen-soft:#ece8ff;--on-pen:#fff;
+  --check:#15803d;--check-soft:#dcfce7;--marker:#dc2626;--marker-soft:#fee2e2;
+  --sun:#b45309;--sun-soft:#fef3c7;--note:#8b5cf6;--note-soft:#f3e8ff;
+  --sh1:0 1px 0 rgba(255,255,255,.6) inset,0 4px 14px rgba(19,18,59,.06);
+  --sh2:0 1px 0 rgba(255,255,255,.6) inset,0 12px 30px rgba(60,42,180,.12),0 2px 6px rgba(19,18,59,.06);
+  --sh3:0 1px 0 rgba(255,255,255,.6) inset,0 30px 60px rgba(60,42,180,.22),0 8px 18px rgba(19,18,59,.08);
+  --mm-head:"Bricolage Grotesque","Manrope",ui-sans-serif,system-ui,sans-serif;
+  --mm-it:"Instrument Serif","Cormorant Garamond",Georgia,serif;
+  --mm-glass:rgba(255,255,255,.55);--mm-line:rgba(19,18,59,.10);--mm-acc:#3b2eb8;
+  color-scheme:light;background:#f6f3ec}
+html:root:not(#mm):not([data-theme="light"]){
+  --penL:78%;--penC:.14;--penSL:30%;--penSC:.09;
+  --paper:#12113a;--card:rgba(255,255,255,.07);--sunk:rgba(255,255,255,.05);
+  --ink:#f4f2ff;--soft:#a9a6d6;--edge:rgba(255,255,255,.13);
+  --pen:#b6a9ff;--pen-soft:#2c2670;--on-pen:#12113a;
+  --check:#4ade80;--check-soft:rgba(34,197,94,.16);--marker:#fb7185;--marker-soft:rgba(239,68,68,.16);
+  --sun:#fcd34d;--sun-soft:rgba(251,191,36,.14);--note:#d8b4fe;--note-soft:rgba(139,92,246,.18);
+  --sh1:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(0,0,0,.25);
+  --sh2:inset 0 1px 0 rgba(255,255,255,.1),0 14px 32px rgba(8,6,30,.45);
+  --sh3:inset 0 1px 0 rgba(255,255,255,.12),0 30px 60px rgba(8,6,30,.55),0 0 0 1px rgba(182,169,255,.25);
+  --mm-glass:rgba(26,24,70,.6);--mm-line:rgba(255,255,255,.12);--mm-acc:#cdbfff;
+  color-scheme:dark;background:#12113a linear-gradient(150deg,#12113a 0%,#1a1846 45%,#241f5e 100%) fixed}
+/* предмети лишають свій тон, але в яскравості й насиченості mimory */
+@supports (color: oklch(50% .1 200)){
+  html:root:not(#mm) .subj{--pen:oklch(var(--penL) var(--penC) var(--h));--pen-soft:oklch(var(--penSL) var(--penSC) var(--h))}
+}
+html:root:not(#mm) body{background-color:transparent;background-image:none;font-family:"Manrope",ui-sans-serif,system-ui,sans-serif}
+
+#mm-field{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}/*compat{*/@supports not ((inset:0)){#mm-field{top:0;right:0;bottom:0;left:0}}/*}compat*/
+#mm-field .mm-blur{position:absolute;inset:-10%;filter:blur(46px) saturate(1.08)}/*compat{*/@supports not ((inset:0)){#mm-field .mm-blur{top:-10%;right:-10%;bottom:-10%;left:-10%}}/*}compat*/
+#mm-field i{position:absolute;left:0;top:0;display:block;will-change:transform;
+  border-radius:58% 42% 53% 47%/46% 55% 45% 54%;animation:mm-morph var(--mm-m,18s) ease-in-out infinite alternate}
+@keyframes mm-morph{
+  0%  {border-radius:58% 42% 53% 47%/46% 55% 45% 54%}
+  50% {border-radius:42% 58% 47% 53%/58% 41% 59% 42%}
+  100%{border-radius:51% 49% 38% 62%/43% 62% 38% 57%}}
+#mm-field::after{content:"";position:absolute;inset:0;background:rgba(246,243,236,.30)}/*compat{*/@supports not ((inset:0)){#mm-field::after{top:0;right:0;bottom:0;left:0}}/*}compat*/
+html:root:not(#mm):not([data-theme="light"]) #mm-field .mm-blur{opacity:.62;filter:blur(54px) saturate(1.2)}
+html:root:not(#mm):not([data-theme="light"]) #mm-field::after{
+  background:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px) 0 0/24px 24px,rgba(18,17,58,.30)}
+@media (prefers-reduced-motion: reduce){ #mm-field i{animation:none} }
+
+/* типографіка */
+html:root:not(#mm) h1{font-family:var(--mm-head);font-weight:700;letter-spacing:-.045em;line-height:1}
+html:root:not(#mm) h1 em{font-family:var(--mm-it);font-style:italic;font-weight:500;letter-spacing:-.01em;
+  background:linear-gradient(100deg,#3b2eb8,#8b7bff 55%,#6d5ef5);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;padding-right:.08em}
+html:root:not(#mm):not([data-theme="light"]) h1 em{background-image:linear-gradient(100deg,#e8e2ff,#b6a9ff 50%,#ffe6a8)}
+html:root:not(#mm) .eyebrow{font-family:var(--mm-head);display:inline-flex;align-items:center;gap:7px;
+  font-weight:700;letter-spacing:.09em;color:var(--mm-acc);
+  background:var(--card);border:1px solid var(--mm-line);border-radius:999px;padding:.5em 1.05em .5em .85em;box-shadow:var(--sh1)}/*compat{*/html.no-fgap:root:not(#mm) .eyebrow>*{margin-right:7px}html.no-fgap:root:not(#mm) .eyebrow>*:last-child{margin-right:0}/*}compat*/
+html:root:not(#mm) .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--pen);box-shadow:0 0 0 3px rgba(139,123,255,.22)}
+html:root:not(#mm) .cls > h2,html:root:not(#mm) .sect,html:root:not(#mm) #plan h3{font-family:var(--mm-head);font-weight:650;letter-spacing:-.03em}
+html:root:not(#mm) .subj > h3,html:root:not(#mm) .theme > .th .nm,html:root:not(#mm) .card .t,html:root:not(#mm) .card .thumb .mini b,
+html:root:not(#mm) .flag,html:root:not(#mm) .chip,html:root:not(#mm) .btn,html:root:not(#mm) #plan-btn{font-family:var(--mm-head)}
+html:root:not(#mm) .card .t{font-weight:600;letter-spacing:-.02em}
+html:root:not(#mm) .subj > h3::after{height:1px;background:var(--mm-line)}
+
+/* бренд над заголовком: логотип mimory */
+html:root:not(#mm) .wrap > section > header,html:root:not(#mm) #app > header{position:relative}
+html:root:not(#mm) .mm-brand{display:flex;align-items:center;gap:10px;margin:0 0 clamp(18px,3vw,30px);
+  font-family:var(--mm-head);font-weight:700;font-size:20px;letter-spacing:-.03em;color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){html:root:not(#mm) .mm-brand{margin:0 0 18px}}/*}compat*//*compat{*/html.no-fgap:root:not(#mm) .mm-brand>*{margin-right:10px}html.no-fgap:root:not(#mm) .mm-brand>*:last-child{margin-right:0}/*}compat*/
+html:root:not(#mm) .mm-brand i{width:34px;height:34px;flex:none;background:linear-gradient(160deg,#8b7bff,#3b2eb8);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='190 180 650 600'%3E%3Cg transform='translate%280,1024%29 scale%28.1,-.1%29'%3E%3Cpath d='M5306 8315 c-44 -248 -104 -375 -241 -511 -101 -101 -223 -166 -371 -199 l-96 -21 57 -13 c167 -37 293 -102 397 -203 133 -130 208 -277 249 -488 l12 -65 23 100 c38 169 83 265 184 391 90 113 245 213 385 247 33 8 74 18 90 22 26 7 18 10 -58 26 -120 24 -271 98 -355 174 -140 127 -218 280 -256 500 -13 78 -13 79 -20 40z'/%3E%3Cpath d='M2769 7770 c-357 -61 -652 -298 -743 -600 -47 -152 -46 -126 -46 -1715 0 -976 4 -1523 10 -1565 30 -189 135 -382 274 -507 115 -102 296 -188 446 -212 36 -6 112 -11 170 -11 199 0 330 -25 450 -86 95 -47 222 -154 443 -372 l227 -226 0 1397 c0 768 2 1397 5 1397 3 0 139 -111 303 -248 538 -449 573 -477 630 -515 132 -87 272 -100 403 -35 84 42 116 69 611 515 191 172 350 313 353 313 3 0 5 -632 5 -1405 0 -773 2 -1405 4 -1405 3 0 121 117 263 259 211 212 275 270 351 319 164 106 322 142 618 142 378 0 701 185 858 490 59 114 84 199 96 333 8 75 10 580 8 1542 l-4 1430 -22 83 c-76 284 -272 504 -552 619 -123 51 -217 68 -370 67 -191 -1 -335 -41 -500 -138 -88 -52 -105 -67 -542 -466 -183 -167 -439 -401 -568 -519 -129 -118 -338 -309 -463 -424 l-228 -208 -57 48 c-73 62 -317 279 -458 408 -60 55 -204 186 -319 290 -115 105 -297 271 -404 369 -108 98 -239 218 -291 266 -265 242 -411 326 -637 365 -90 16 -246 18 -324 5z m5104 -2651 c63 -32 76 -101 26 -143 l-31 -26 -429 0 c-440 0 -457 1 -486 39 -14 18 -17 80 -5 97 4 5 18 18 32 27 22 15 67 17 448 17 292 0 430 -3 445 -11z m31 -430 c34 -40 33 -74 -3 -110 l-29 -29 -442 0 -441 0 -24 25 c-17 16 -25 35 -25 60 0 25 8 44 25 60 l24 25 445 0 444 0 26 -31z m-401 -381 c53 -28 63 -88 23 -135 l-24 -28 -251 -3 -252 -3 -29 30 c-39 38 -41 91 -5 126 l24 25 246 0 c168 0 253 -4 268 -12z m-4883 -33 c35 -18 60 -62 60 -105 0 -92 -96 -148 -180 -105 -43 22 -60 53 -60 108 0 42 5 54 34 83 28 28 42 34 75 34 23 0 55 -7 71 -15z m419 -11 c87 -73 38 -214 -75 -214 -85 0 -146 92 -114 171 29 68 131 92 189 43z m417 -7 c46 -42 56 -100 25 -150 -38 -62 -125 -78 -180 -31 -86 72 -37 214 74 214 37 0 52 -6 81 -33z'/%3E%3Cpath d='M5790 7230 c0 -67 -110 -180 -175 -180 -30 0 -14 -16 34 -33 60 -21 127 -90 136 -141 7 -36 25 -50 25 -21 0 28 38 91 72 121 31 27 54 39 113 59 16 5 9 10 -33 24 -29 10 -67 31 -83 47 -33 31 -69 93 -69 118 0 8 -4 18 -10 21 -5 3 -10 -3 -10 -15z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='190 180 650 600'%3E%3Cg transform='translate%280,1024%29 scale%28.1,-.1%29'%3E%3Cpath d='M5306 8315 c-44 -248 -104 -375 -241 -511 -101 -101 -223 -166 -371 -199 l-96 -21 57 -13 c167 -37 293 -102 397 -203 133 -130 208 -277 249 -488 l12 -65 23 100 c38 169 83 265 184 391 90 113 245 213 385 247 33 8 74 18 90 22 26 7 18 10 -58 26 -120 24 -271 98 -355 174 -140 127 -218 280 -256 500 -13 78 -13 79 -20 40z'/%3E%3Cpath d='M2769 7770 c-357 -61 -652 -298 -743 -600 -47 -152 -46 -126 -46 -1715 0 -976 4 -1523 10 -1565 30 -189 135 -382 274 -507 115 -102 296 -188 446 -212 36 -6 112 -11 170 -11 199 0 330 -25 450 -86 95 -47 222 -154 443 -372 l227 -226 0 1397 c0 768 2 1397 5 1397 3 0 139 -111 303 -248 538 -449 573 -477 630 -515 132 -87 272 -100 403 -35 84 42 116 69 611 515 191 172 350 313 353 313 3 0 5 -632 5 -1405 0 -773 2 -1405 4 -1405 3 0 121 117 263 259 211 212 275 270 351 319 164 106 322 142 618 142 378 0 701 185 858 490 59 114 84 199 96 333 8 75 10 580 8 1542 l-4 1430 -22 83 c-76 284 -272 504 -552 619 -123 51 -217 68 -370 67 -191 -1 -335 -41 -500 -138 -88 -52 -105 -67 -542 -466 -183 -167 -439 -401 -568 -519 -129 -118 -338 -309 -463 -424 l-228 -208 -57 48 c-73 62 -317 279 -458 408 -60 55 -204 186 -319 290 -115 105 -297 271 -404 369 -108 98 -239 218 -291 266 -265 242 -411 326 -637 365 -90 16 -246 18 -324 5z m5104 -2651 c63 -32 76 -101 26 -143 l-31 -26 -429 0 c-440 0 -457 1 -486 39 -14 18 -17 80 -5 97 4 5 18 18 32 27 22 15 67 17 448 17 292 0 430 -3 445 -11z m31 -430 c34 -40 33 -74 -3 -110 l-29 -29 -442 0 -441 0 -24 25 c-17 16 -25 35 -25 60 0 25 8 44 25 60 l24 25 445 0 444 0 26 -31z m-401 -381 c53 -28 63 -88 23 -135 l-24 -28 -251 -3 -252 -3 -29 30 c-39 38 -41 91 -5 126 l24 25 246 0 c168 0 253 -4 268 -12z m-4883 -33 c35 -18 60 -62 60 -105 0 -92 -96 -148 -180 -105 -43 22 -60 53 -60 108 0 42 5 54 34 83 28 28 42 34 75 34 23 0 55 -7 71 -15z m419 -11 c87 -73 38 -214 -75 -214 -85 0 -146 92 -114 171 29 68 131 92 189 43z m417 -7 c46 -42 56 -100 25 -150 -38 -62 -125 -78 -180 -31 -86 72 -37 214 74 214 37 0 52 -6 81 -33z'/%3E%3Cpath d='M5790 7230 c0 -67 -110 -180 -175 -180 -30 0 -14 -16 34 -33 60 -21 127 -90 136 -141 7 -36 25 -50 25 -21 0 28 38 91 72 121 31 27 54 39 113 59 16 5 9 10 -33 24 -29 10 -67 31 -83 47 -33 31 -69 93 -69 118 0 8 -4 18 -10 21 -5 3 -10 -3 -10 -15z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
+html:root:not(#mm):not([data-theme="light"]) .mm-brand i{background:linear-gradient(160deg,#e8e2ff,#8b7bff)}
+
+/* картки, поля, кнопки — frost */
+html:root:not(#mm) .card,html:root:not(#mm) .work,html:root:not(#mm) .gatebox{
+  background:var(--card);border:1px solid var(--mm-line);border-radius:22px;box-shadow:var(--sh2)}
+html:root:not(#mm) .card:hover{border-color:rgba(139,123,255,.55);transform:translateY(-2px);box-shadow:var(--sh3)}
+html:root:not(#mm) #list .card{border-radius:18px;padding:14px 18px}
+html:root:not(#mm) #list .card .num{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.04em}
+html:root:not(#mm) .card.off,html:root:not(#mm) .card.soon,html:root:not(#mm) #list .card.offline{
+  background:transparent;box-shadow:none;border:1px dashed var(--mm-line)}
+html:root:not(#mm) .work{border:1px solid rgba(139,123,255,.5)}
+html:root:not(#mm) .work .kind{background:linear-gradient(160deg,#8b7bff,#6d5ef5);color:#fff;box-shadow:0 6px 12px rgba(109,94,245,.3)}
+html:root:not(#mm) .work.done{border-color:var(--mm-line)}
+html:root:not(#mm) .work.done .kind{background:var(--soft);box-shadow:none}
+
+html:root:not(#mm) .chip,html:root:not(#mm) #plan-btn,html:root:not(#mm) #theme,html:root:not(#mm) #q,html:root:not(#mm) #kod,html:root:not(#mm) .btn.ghost{
+  border:1px solid var(--mm-line);background:var(--card);color:var(--ink);box-shadow:var(--sh1)}
+html:root:not(#mm) .chip:hover,html:root:not(#mm) #plan-btn:hover,html:root:not(#mm) #theme:hover,html:root:not(#mm) .btn.ghost:hover{
+  border-color:rgba(139,123,255,.6);color:var(--ink)}
+html:root:not(#mm) .chip[aria-pressed="true"],html:root:not(#mm) #plan-btn[aria-expanded="true"],html:root:not(#mm) .btn:not(.ghost){
+  background:linear-gradient(160deg,#8b7bff,#6d5ef5);border-color:transparent;color:#fff;box-shadow:0 8px 16px rgba(109,94,245,.32)}
+html:root:not(#mm) #q:focus,html:root:not(#mm) #kod:focus{border-color:#8b7bff;box-shadow:0 0 0 4px rgba(139,123,255,.22)}
+html:root:not(#mm) .search kbd,html:root:not(#mm) footer kbd{background:var(--card);border-color:var(--mm-line)}
+html:root:not(#mm) .flag{border-width:1px}
+html:root:not(#mm) .flag.new{background:rgba(251,191,36,.16);border-color:transparent}
+html:root:not(#mm) .flag.seen{background:var(--check-soft);border-color:transparent}
+html:root:not(#mm) .flag.live{background:var(--marker-soft);border-color:transparent}
+html:root:not(#mm) #plan{border:1px dashed var(--mm-line);border-radius:22px;background:var(--mm-glass)}
+html:root:not(#mm) footer{border-top:1px solid var(--mm-line)}
+html:root:not(#mm) .note.bad{color:var(--marker)}
+html:root:not(#mm) .note.ok{color:var(--check)}
+
 </style>
 <script id="compat-fgap">/* флекс-gap з Safari 14.1: де його нема, стилі дають дітям відступи (tools/сумісність.py) */(function(){try{var d=document.createElement("div"),r=document.documentElement;d.style.cssText="display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden";d.appendChild(document.createElement("div"));d.appendChild(document.createElement("div"));r.appendChild(d);var ok=d.scrollHeight===1;r.removeChild(d);if(!ok)r.className+=" no-fgap";}catch(e){}})();</script>
 </head>
@@ -298,8 +405,9 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 <!-- ── ворота: код учня ─────────────────────────────────────────────── -->
 <section id="gate">
   <header>
+    <div class="mm-brand" aria-hidden="true"><i></i></div>
     <p class="eyebrow">Онлайн-уроки</p>
-    <h1>Вхід</h1>
+    <h1>Вхід <em>за кодом</em></h1>
     <p class="lede">Введи свій код учня — вісім знаків, які дав учитель.
     За ним відкриються уроки твого класу, самостійні й контрольні.
     Код запамʼятається, вдруге вводити не доведеться.</p>
@@ -321,8 +429,9 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 <!-- ── основне ──────────────────────────────────────────────────────── -->
 <div id="app" hidden>
 <header>
+  <div class="mm-brand" aria-hidden="true"><i></i></div>
   <p class="eyebrow"><span id="who">—</span></p>
-  <h1>Уроки</h1>
+  <h1>Твої <em>уроки</em></h1>
   <p class="lede">Відкривай презентацію того уроку, який тобі потрібен.
   Усі відповіді в них відкриті, тож удома можна повторити все, що ми робили.</p>
 </header>
@@ -5423,7 +5532,7 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   } catch(e){}
 
   var ЗНАК_КЛАС = { 'A':'5-З', 'B':'7-І', 'C':'8-К', 'D':'9-А' };
-  var HUE = { 'Математика':258, 'Алгебра':300, 'Геометрія':150, 'Інформатика':40 };
+  var HUE = { 'Математика':277, 'Алгебра':300, 'Геометрія':150, 'Інформатика':40 };
   function hueOf(s){ return HUE[s] != null ? HUE[s] : 258; }
 
   function store(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
@@ -5435,7 +5544,7 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
   if (saved === 'dark' || saved === 'light') D.documentElement.dataset.theme = saved;
   themeBtn.addEventListener('click', function(){
     var cur = D.documentElement.dataset.theme;
-    if (!cur) cur = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    if (!cur) cur = 'dark';   // mimory: типово темна (21.10.2026)
     var next = cur === 'dark' ? 'light' : 'dark';
     D.documentElement.dataset.theme = next;
     store('theme', next);
@@ -5774,6 +5883,63 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
     if (к.length === 8){ kod.value = к; D.getElementById('enter').disabled = false; увійти(к); return; }
     if (load('пропущено') === '1') відкрити('', load('клас') || '', '');
   })();
+})();
+</script>
+<script id="mm-drops">/* MIMORY · поле крапель сайту. Набори й орбіти — LiquidBackground.tsx лендингу mimory.space
+   (широкий і телефонний); прокрутка дає обмежене відставання (стеля LAG px), а не поштовх. */
+(function(){
+  var WIDE=[
+    [13,20,300,0,225,145,.055,.041,0.0,1.35,17],[40,46,235,1,230,175,.043,.062,1.7,1.05,21],
+    [79,18,275,2,220,165,.061,.037,3.1,1.20,15],[56,58,215,3,240,160,.038,.057,4.4,0.95,24],
+    [90,74,170,4,200,210,.067,.045,2.2,0.75,13],[21,79,255,1,235,155,.049,.053,5.6,1.15,19],
+    [63,33,104,5,290,230,.083,.071,0.9,0.42,9],[34,66,88,6,305,245,.074,.089,3.8,0.36,8]];
+  var PHONE=[
+    [20,15,215,0,72,78,.055,.041,0.0,1.30,17],[80,37,185,1,88,145,.043,.062,1.7,1.05,21],
+    [28,66,205,2,82,135,.061,.037,3.1,1.15,15],[84,86,145,4,68,88,.067,.045,2.2,0.80,13],
+    [52,50,76,5,118,190,.081,.069,0.9,0.38,9]];
+  var LIGHT=[['#b9aaff','#dcd4ff'],['#cdbfff','#e8e2ff'],['#c1b3ff','#e2dbff'],['#8b7bff','#b6a9ff'],
+             ['#ffe6a8','#fff4d4'],['#8b7bff','#c3b8ff'],['#ffe6a8','#fff6de']];
+  var DARK=[['#6d5ef5','#9b8cff'],['#4a3bd0','#7c6cff'],['#8b5cf6','#b69cff'],['#a78bfa','#d4c6ff'],
+            ['#f5a524','#ffd27a'],['#c4b5fd','#ede9fe'],['#fb923c','#fed7aa']];
+  var root=document.documentElement,field=document.createElement('div'),layer=document.createElement('div');
+  field.id='mm-field';layer.className='mm-blur';field.appendChild(layer);
+  document.body.insertBefore(field,document.body.firstChild);
+  var drops=[],W=0,H=0,S=1,set=null;
+  function dark(){return root.dataset.theme!=='light'}
+  function paint(){var pal=dark()?DARK:LIGHT;drops.forEach(function(d){var c=pal[d.c];
+    d.el.style.background='radial-gradient(circle at 34% 30%,'+c[1]+','+c[0]+' 68%)'})}
+  function build(){
+    var want=window.innerWidth<600?PHONE:WIDE;
+    if(want!==set){set=want;layer.innerHTML='';drops=want.map(function(d){
+      var el=document.createElement('i');el.style.setProperty('--mm-m',d[10]+'s');layer.appendChild(el);
+      return {el:el,x:d[0],y:d[1],r:d[2],c:d[3],ax:d[4],ay:d[5],fx:d[6],fy:d[7],ph:d[8],m:d[9],ox:0,oy:0,ty:0}});paint()}
+    W=layer.offsetWidth;H=layer.offsetHeight;
+    S=set===PHONE?1:Math.max(.55,Math.min(1.35,window.innerWidth/1440));
+    drops.forEach(function(d){d.el.style.width=d.el.style.height=d.r*S+'px'});
+  }
+  build();window.addEventListener('resize',build);
+  new MutationObserver(paint).observe(root,{attributes:true,attributeFilter:['data-theme']});
+  function place(t){drops.forEach(function(d){var p=d.r*S,a=set===PHONE?1:S*.6,
+    x=d.x/100*W+Math.sin(t*d.fx*2*Math.PI+d.ph)*d.ax*a+d.ox-p/2,
+    y=d.y/100*H+Math.cos(t*d.fy*2*Math.PI+d.ph*1.3)*d.ay*a+d.oy-p/2;
+    d.el.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)'})}
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){place(0);return}
+  var LAG=42,sy=window.scrollY,sv=0,t0=performance.now(),last=t0;
+  function tick(now){
+    var dt=Math.min(3,(now-last)/16.67);last=now;
+    if(!document.hidden){
+      var y=window.scrollY,dy=Math.max(-120,Math.min(120,y-sy));sy=y;
+      sv+=(dy-sv)*.18;
+      drops.forEach(function(d){
+        var lag=-LAG*(1-Math.exp(-Math.abs(sv)/22))*(sv<0?-1:1)/Math.sqrt(d.m);
+        d.ty=Math.max(-LAG*1.6,Math.min(LAG*1.6,lag));
+        d.oy+=(d.ty-d.oy)*(1-Math.pow(1-.06/Math.max(.6,d.m),dt));
+      });
+      place((now-t0)/1000);
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 })();
 </script>
 </body>
