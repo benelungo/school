@@ -340,6 +340,7 @@ html:root:not(#mm):not([data-theme="light"]) #mm-field .mm-blur{opacity:.62;filt
 html:root:not(#mm):not([data-theme="light"]) #mm-field::after{
   background:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px) 0 0/24px 24px,rgba(18,17,58,.30)}
 @media (prefers-reduced-motion: reduce){ #mm-field i{animation:none} }
+#mm-field.still i{animation:none}
 
 /* типографіка */
 html:root:not(#mm) h1{font-family:var(--mm-head);font-weight:700;letter-spacing:-.045em;line-height:1}
@@ -6121,7 +6122,8 @@ html:root:not(#mm) .note.ok{color:var(--check)}
     x=d.x/100*W+Math.sin(t*d.fx*2*Math.PI+d.ph)*d.ax*a+d.ox-p/2,
     y=d.y/100*H+Math.cos(t*d.fy*2*Math.PI+d.ph*1.3)*d.ay*a+d.oy-p/2;
     d.el.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)'})}
-  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){place(0);return}
+  /* фон нерухомий (учитель, 23.10.2026); рух — лише з data-still="0" на <html> */
+  if(root.getAttribute('data-still')!=='0'||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){field.className='still';place(0);return}
   var LAG=42,sy=window.scrollY,sv=0,t0=performance.now(),last=t0;
   function tick(now){
     var dt=Math.min(3,(now-last)/16.67);last=now;

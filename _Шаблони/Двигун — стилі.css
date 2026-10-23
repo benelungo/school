@@ -12,6 +12,7 @@
      data-theme="light|dark"   (немає — як у системі)   тема             (A8)
      data-hue="258|295|…"     (немає — як у предмета) колір палітри    (A8a)
      data-proj="1"                                      режим проєктора  (A8)
+     data-still="0"            (немає — фон стоїть)     фон рухається    (B10)
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* Геометричні знаки (15.10.2026). У Manrope «∥» — вузька плямка, схожа на «ı»:
@@ -1312,6 +1313,7 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .regroup .rline span{display:inline-block}
 .regroup .rline .op{margin:0 .3em;color:var(--soft)}
 .regroup .rline .n{padding:0 .05em}
+.regroup .rline .lt{font-family:"Charter",Georgia,serif;font-style:italic;font-weight:400}
 .regroup .to{color:var(--check);transition:opacity .45s}
 .regroup .to span{opacity:.18;transition:opacity .45s}
 .regroup.done .to span{opacity:1}
@@ -2239,6 +2241,58 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .transv.two .tv-arcf,.transv.two .tv-cp .tv-arc{stroke-width:5}
 .transv.fin .tv-b0{stroke:var(--check);stroke-width:4}
 .transv.fin .tv-bt0{fill:var(--check)}
+/* parax prop — a ∥ c, b ∥ c ⇒ a ∥ b: припущення штрихом, прямі сходяться в N */
+.parax.px-prop .px-l{transform-box:view-box;transition:transform .9s cubic-bezier(.4,0,.2,1)}
+.parax.px-prop .px-l line{stroke:currentColor;stroke-width:3}
+.parax.px-prop .px-c{stroke:var(--sun);stroke-width:3}
+.parax.px-prop .px-ct{fill:var(--sun)}
+.parax.px-prop.asm .px-l line{stroke:var(--marker);stroke-dasharray:12 8}
+.parax.px-prop.asm .px-l text{fill:var(--marker)}
+.parax.px-prop.two .px-l line{stroke-width:4.6}
+.parax.px-prop.two .px-c{stroke-width:4.6}
+.parax.px-prop .px-n,.parax.px-prop .px-nt{fill:var(--marker);opacity:0;transition:opacity .3s}
+.parax.px-prop .px-nt{font-style:normal;font-weight:700}
+.parax.px-prop.asm .px-n,.parax.px-prop.asm .px-nt{opacity:1;transition-delay:.8s}
+.parax.px-prop.fin .px-l line{stroke:var(--check);stroke-width:4}
+.parax.px-prop.fin .px-l text{fill:var(--check)}
+/* transv cons / vals / conv — властивості кутів при паралельних прямих (§ 10) */
+.transv .tv-gh .tv-w.tv-no{opacity:0}
+.transv.tv-vals svg{height:clamp(120px,calc(20*var(--u)),250px)}
+.transv.tv-cons.fin .tv-w.w1,.transv.tv-vals.fin .tv-w.w1{opacity:.7}
+.transv .tv-vals{display:grid;grid-template-columns:repeat(4,auto);justify-content:center;gap:.15em 1.2em;
+  font:600 clamp(15px,calc(2*var(--u)),24px) "Manrope",sans-serif;margin-top:.3em}
+.transv .tv-vals span{color:var(--soft);transition:color .4s}
+.transv .tv-vals span.on{color:var(--ink)}
+.transv .tv-vals span.on b{color:var(--pen)}
+.transv .tv-m1{opacity:0;transition:opacity .5s}
+.transv.mb .tv-m1{opacity:1}
+.transv .tv-arcm{stroke:var(--pen)}
+.transv.tv-conv .tv-am{stroke:currentColor;stroke-width:3}
+.transv.tv-conv.asm .tv-am{stroke:var(--marker);stroke-dasharray:12 8}
+.transv.tv-conv.asm .tv-amt{fill:var(--marker)}
+.transv.tv-conv.two .tv-am,.transv.tv-conv.two .tv-ray{stroke-width:4.8}
+.transv.tv-conv.two .tv-b0{stroke:var(--check)}
+.transv.tv-conv.fin .tv-am{stroke:var(--check);stroke-width:4}
+.transv.tv-conv.fin .tv-amt,.transv.tv-conv.fin .tv-al{fill:var(--check)}
+.transv.tv-conv.fin .tv-arc1,.transv.tv-conv.fin .tv-arc2{stroke:var(--check)}
+/* C·conv — пряма й обернена теорема: картки умови й висновку міняються місцями */
+.conv{position:relative}
+.conv .hmk{display:none}
+.conv .cv-row{margin:.2em 0 .5em}
+.conv .cv-tag{font:700 clamp(11px,calc(1.3*var(--u)),15px) "Manrope",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+.conv .cv-st{font-size:clamp(16px,calc(2.15*var(--u)),26px);line-height:2.5;padding-top:.3em}
+.conv .cv-c{display:inline-block;position:relative;padding:.05em .4em;border-radius:var(--r-m);border:2px solid;margin:0 .1em;line-height:1.3}
+.conv .cv-p{border-color:var(--sun);background:var(--sun-soft)}
+.conv .cv-q{border-color:var(--pen);background:var(--pen-soft)}
+.conv .cv-c i{position:absolute;left:.3em;bottom:100%;font:700 clamp(10px,calc(1.15*var(--u)),13px) "Manrope",sans-serif;font-style:normal;
+  color:var(--soft);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.conv .cv-2{opacity:0;transition:opacity .3s}
+.conv .cv-2.on{opacity:1}
+.conv .cv-2 .cv-c{transition:transform .9s cubic-bezier(.4,0,.2,1)}
+.conv .cv-v{font-weight:700;font-size:clamp(15px,calc(2*var(--u)),24px);opacity:0;transition:opacity .4s}
+.conv .cv-v.on{opacity:1}
+.conv .cv-v.ok{color:var(--check)}
+.conv .cv-v.no{color:var(--marker)}
 /* A8a · панель вибору теми й кольору */
 #thpop{position:fixed;z-index:60;background:var(--card);color:var(--ink);border:2px solid var(--edge);border-radius:var(--r-m);
   box-shadow:var(--sh3);padding:12px 14px;display:grid;gap:8px;max-width:calc(100vw - 16px)}

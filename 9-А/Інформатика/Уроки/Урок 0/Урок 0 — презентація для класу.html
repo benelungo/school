@@ -20,6 +20,7 @@
      data-theme="light|dark"   (немає — як у системі)   тема             (A8)
      data-hue="258|295|…"     (немає — як у предмета) колір палітри    (A8a)
      data-proj="1"                                      режим проєктора  (A8)
+     data-still="0"            (немає — фон стоїть)     фон рухається    (B10)
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* Геометричні знаки (15.10.2026). У Manrope «∥» — вузька плямка, схожа на «ı»:
@@ -1325,6 +1326,7 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .regroup .rline span{display:inline-block}
 .regroup .rline .op{margin:0 .3em;color:var(--soft)}
 .regroup .rline .n{padding:0 .05em}
+.regroup .rline .lt{font-family:"Charter",Georgia,serif;font-style:italic;font-weight:400}
 .regroup .to{color:var(--check);transition:opacity .45s}
 .regroup .to span{opacity:.18;transition:opacity .45s}
 .regroup.done .to span{opacity:1}
@@ -2252,6 +2254,58 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .transv.two .tv-arcf,.transv.two .tv-cp .tv-arc{stroke-width:5}
 .transv.fin .tv-b0{stroke:var(--check);stroke-width:4}
 .transv.fin .tv-bt0{fill:var(--check)}
+/* parax prop — a ∥ c, b ∥ c ⇒ a ∥ b: припущення штрихом, прямі сходяться в N */
+.parax.px-prop .px-l{transform-box:view-box;transition:transform .9s cubic-bezier(.4,0,.2,1)}
+.parax.px-prop .px-l line{stroke:currentColor;stroke-width:3}
+.parax.px-prop .px-c{stroke:var(--sun);stroke-width:3}
+.parax.px-prop .px-ct{fill:var(--sun)}
+.parax.px-prop.asm .px-l line{stroke:var(--marker);stroke-dasharray:12 8}
+.parax.px-prop.asm .px-l text{fill:var(--marker)}
+.parax.px-prop.two .px-l line{stroke-width:4.6}
+.parax.px-prop.two .px-c{stroke-width:4.6}
+.parax.px-prop .px-n,.parax.px-prop .px-nt{fill:var(--marker);opacity:0;transition:opacity .3s}
+.parax.px-prop .px-nt{font-style:normal;font-weight:700}
+.parax.px-prop.asm .px-n,.parax.px-prop.asm .px-nt{opacity:1;transition-delay:.8s}
+.parax.px-prop.fin .px-l line{stroke:var(--check);stroke-width:4}
+.parax.px-prop.fin .px-l text{fill:var(--check)}
+/* transv cons / vals / conv — властивості кутів при паралельних прямих (§ 10) */
+.transv .tv-gh .tv-w.tv-no{opacity:0}
+.transv.tv-vals svg{height:clamp(120px,calc(20*var(--u)),250px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.transv.tv-vals svg{height:120px}}/*}compat*/
+.transv.tv-cons.fin .tv-w.w1,.transv.tv-vals.fin .tv-w.w1{opacity:.7}
+.transv .tv-vals{display:grid;grid-template-columns:repeat(4,auto);justify-content:center;gap:.15em 1.2em;
+  font:600 clamp(15px,calc(2*var(--u)),24px) "Manrope",sans-serif;margin-top:.3em}/*compat{*/@supports not ((gap:1px)){.transv .tv-vals{grid-gap:.15em 1.2em}}/*}compat*//*compat{*/@supports not ((width:clamp(1px,2px,3px))){.transv .tv-vals{font:600 15px "Manrope",sans-serif}}/*}compat*/
+.transv .tv-vals span{color:var(--soft);transition:color .4s}
+.transv .tv-vals span.on{color:var(--ink)}
+.transv .tv-vals span.on b{color:var(--pen)}
+.transv .tv-m1{opacity:0;transition:opacity .5s}
+.transv.mb .tv-m1{opacity:1}
+.transv .tv-arcm{stroke:var(--pen)}
+.transv.tv-conv .tv-am{stroke:currentColor;stroke-width:3}
+.transv.tv-conv.asm .tv-am{stroke:var(--marker);stroke-dasharray:12 8}
+.transv.tv-conv.asm .tv-amt{fill:var(--marker)}
+.transv.tv-conv.two .tv-am,.transv.tv-conv.two .tv-ray{stroke-width:4.8}
+.transv.tv-conv.two .tv-b0{stroke:var(--check)}
+.transv.tv-conv.fin .tv-am{stroke:var(--check);stroke-width:4}
+.transv.tv-conv.fin .tv-amt,.transv.tv-conv.fin .tv-al{fill:var(--check)}
+.transv.tv-conv.fin .tv-arc1,.transv.tv-conv.fin .tv-arc2{stroke:var(--check)}
+/* C·conv — пряма й обернена теорема: картки умови й висновку міняються місцями */
+.conv{position:relative}
+.conv .hmk{display:none}
+.conv .cv-row{margin:.2em 0 .5em}
+.conv .cv-tag{font:700 clamp(11px,calc(1.3*var(--u)),15px) "Manrope",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.conv .cv-tag{font:700 11px "Manrope",sans-serif}}/*}compat*/
+.conv .cv-st{font-size:clamp(16px,calc(2.15*var(--u)),26px);line-height:2.5;padding-top:.3em}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.conv .cv-st{font-size:16px}}/*}compat*/
+.conv .cv-c{display:inline-block;position:relative;padding:.05em .4em;border-radius:var(--r-m);border:2px solid;margin:0 .1em;line-height:1.3}
+.conv .cv-p{border-color:var(--sun);background:var(--sun-soft)}
+.conv .cv-q{border-color:var(--pen);background:var(--pen-soft)}
+.conv .cv-c i{position:absolute;left:.3em;bottom:100%;font:700 clamp(10px,calc(1.15*var(--u)),13px) "Manrope",sans-serif;font-style:normal;
+  color:var(--soft);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.conv .cv-c i{font:700 10px "Manrope",sans-serif}}/*}compat*/
+.conv .cv-2{opacity:0;transition:opacity .3s}
+.conv .cv-2.on{opacity:1}
+.conv .cv-2 .cv-c{transition:transform .9s cubic-bezier(.4,0,.2,1)}
+.conv .cv-v{font-weight:700;font-size:clamp(15px,calc(2*var(--u)),24px);opacity:0;transition:opacity .4s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.conv .cv-v{font-size:15px}}/*}compat*/
+.conv .cv-v.on{opacity:1}
+.conv .cv-v.ok{color:var(--check)}
+.conv .cv-v.no{color:var(--marker)}
 /* A8a · панель вибору теми й кольору */
 #thpop{position:fixed;z-index:60;background:var(--card);color:var(--ink);border:2px solid var(--edge);border-radius:var(--r-m);
   box-shadow:var(--sh3);padding:12px 14px;display:grid;gap:8px;max-width:calc(100vw - 16px)}/*compat{*/@supports not ((gap:1px)){#thpop{grid-gap:8px}}/*}compat*/
@@ -3422,7 +3476,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -5719,16 +5773,45 @@ $$('.lnk').forEach(function(box){
    який змінився, підсвічується. Показує те, чого не видно в готовому
    записі: куди подівся кожен доданок і чому «+» став «−».
    ───────────────────────────────────────────────────────────────────── */
+/* data-mode="mono" (з 22.10.2026, 7-І алг. 26) — множники одночлена: числа, «(−5)», букви
+   зі степенем (a²), «−a»; їдуть так само, як числа: 4a² · (−5)ac → 4 · (−5) · a² · a · c */
+function monoTok(s){
+  var T = [], i = 0, n = s.length, sup = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+  function letter(j){ return /[a-zA-Zа-яА-ЯіїєґІЇЄҐ]/.test(s.charAt(j)); }
+  while(i < n){
+    var c = s.charAt(i);
+    if(c === ' '){ i++; continue; }
+    if(c === '·' || c === '*'){ T.push({k:'o', v:'·'}); i++; continue; }
+    if(c === '('){ var j0 = s.indexOf(')', i); if(j0 < 0) return null; T.push({k:'n', s:s.slice(i, j0 + 1)}); i = j0 + 1; continue; }
+    if(/[0-9−-]/.test(c)){
+      var j = i + 1;
+      while(j < n && /[0-9,]/.test(s.charAt(j))) j++;
+      if(j === i + 1 && c !== '−' && c !== '-' || j > i + 1){ T.push({k:'n', s:s.slice(i, j)}); i = j; continue; }
+      if(!letter(j)) return null;
+      i++; c = '−' + s.charAt(j); j++;          /* «−a»: мінус їде разом з буквою */
+      while(j < n && sup.indexOf(s.charAt(j)) >= 0){ c += s.charAt(j); j++; }
+      T.push({k:'n', s:c, L:1}); i = j; continue;
+    }
+    if(letter(i)){
+      var j1 = i + 1;
+      while(j1 < n && sup.indexOf(s.charAt(j1)) >= 0) j1++;
+      T.push({k:'n', s:s.slice(i, j1), L:1}); i = j1; continue;
+    }
+    return null;
+  }
+  return T.length ? T : null;
+}
 $$('.regroup').forEach(function(box){
-  var A = opTok(box.dataset.from || ''), B = opTok(box.dataset.to || '');
+  var MONO = box.dataset.mode === 'mono', TK = MONO ? monoTok : opTok;
+  var A = TK(box.dataset.from || ''), B = TK(box.dataset.to || '');
   if(!A || !B) return;
   box.textContent = '';
 
   function line(toks, cls){
     var d = el('div','rline ' + cls);
     toks.forEach(function(t,i){
-      var e = el('span', t.k === 'o' ? 'op' : (t.k === 'n' ? 'n' : 'br'));
-      e.textContent = opText(t);
+      var e = el('span', t.k === 'o' ? 'op' : (t.k === 'n' ? 'n' + (t.L ? ' lt' : '') : 'br'));
+      e.textContent = t.s != null ? t.s : opText(t);
       e.dataset.i = i;
       d.appendChild(e);
     });
@@ -5817,11 +5900,13 @@ $$('.regroup').forEach(function(box){
     pairs.forEach(function(p, q){ if(q < n){ p.a.style.opacity = '.25'; p.b.style.opacity = '1'; } });
     $$('.chg', l2).forEach(function(e){ e.classList.remove('chg'); });
     if(done) changed.forEach(function(i){ var e = $('[data-i="' + i + '"]', l2); if(e) e.classList.add('chg'); });
-    say.textContent = st === 0 ? 'Дивимось, куди переїде кожне число — по одному.'
+    var WH = MONO ? 'Множник ' : 'Число ';
+    say.textContent = st === 0 ? (MONO ? 'Дивимось, куди переїде кожен множник — по одному.' : 'Дивимось, куди переїде кожне число — по одному.')
+      : done && MONO ? 'Усе на місцях: числа — попереду, однакові букви — поруч. Добуток від перестановки не змінився.'
       : done ? (changed.length ? 'Усе на місцях. Знак, що змінився, підсвічено.'
                                : 'Усе на місцях. Числа ті самі — змінився лише порядок, а рахувати стало зручніше.')
-      : (stay(pairs[n - 1]) ? 'Число ' + pairs[n - 1].a.textContent + ' лишається на своєму місці.'
-                            : 'Число ' + pairs[n - 1].a.textContent + ' переїхало на своє нове місце.');
+      : (stay(pairs[n - 1]) ? WH + pairs[n - 1].a.textContent + ' лишається на своєму місці.'
+                            : WH + pairs[n - 1].a.textContent + (MONO ? ' переїхав' : ' переїхало') + ' на своє нове місце.');
     fit();
     box.__drawn = box.offsetWidth ? st : -1;
     if(box.offsetWidth) arrows(n, fwd && !done && st === n);
@@ -5840,6 +5925,10 @@ $$('.regroup').forEach(function(box){
    ───────────────────────────────────────────────────────────────────── */
 $$('.subst').forEach(function(box){
   var V = box.dataset.var || 'a', VAL = box.dataset.value;
+  /* кілька букв (з 22.10.2026): data-var="a,b" data-value="3,4" — кожна своє число */
+  var VS = V.split(',').map(function(x){ return x.trim(); }),
+      VALS = (VAL == null ? '' : VAL).split(VS.length > 1 ? (VAL.indexOf(';') >= 0 ? ';' : ',') : '\u0000').map(function(x){ return x.trim(); });
+  var PH = VS.map(function(v,i){ return v + ' ставимо ' + VALS[i]; }).join(', замість ');
   /* data-list="Василь|9a − 7; Михайло|95 − 10a" — кілька виразів одного завдання:
      тоді кроки веде кнопка, а не пробіл (інакше на слайд лягло б 15 пробілів). */
   var LIST = (box.dataset.list || '').split(';')
@@ -5860,7 +5949,7 @@ $$('.subst').forEach(function(box){
     while(i < ex.length){
       var c = ex.charAt(i);
       if(c === ' '){ i++; continue; }
-      if(c === V){ T.push({k:'v'}); i++; continue; }
+      if(VS.indexOf(c) >= 0){ T.push({k:'v', i:VS.indexOf(c)}); i++; continue; }
       /* показник степеня: x² → після підстановки 3², рахує .ordops (з 04.10.2026) */
       if('⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(c) >= 0){
         var j3 = i; while(j3 < ex.length && '⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(ex.charAt(j3)) >= 0) j3++;
@@ -5882,7 +5971,7 @@ $$('.subst').forEach(function(box){
       if(t.k === 'v'){
         var pr = T[k-1];
         if(pr && (pr.k === 'n' || (pr.k === 'o' && pr.s === ')'))) out += ' · ';
-        out += VAL;
+        out += VALS[t.i];
       } else if(t.k === 'p') out += t.s;
       else out += (t.s === '(' || t.s === ')' ? t.s : ' ' + t.s + ' ');
     });
@@ -5900,7 +5989,7 @@ $$('.subst').forEach(function(box){
     view.innerHTML = '';
     T.forEach(function(t){
       var e = el('span', t.k === 'v' ? 'v' : (t.k === 'o' ? 'o' : ''));
-      e.textContent = t.k === 'v' ? V : t.s;
+      e.textContent = t.k === 'v' ? VS[t.i] : t.s;
       view.appendChild(e);
     });
   }
@@ -5949,7 +6038,7 @@ $$('.subst').forEach(function(box){
       if(shown <= 0){                      /* нічого не відкрито — перший вираз із буквою */
         T = ITEM[0].T; F = ITEM[0].F; lab.textContent = ITEM[0].lab;
         box.classList.remove('gone'); drawStart();
-        say.textContent = 'Замість ' + V + ' ставимо ' + VAL + '.';
+        say.textContent = 'Замість ' + PH + '.';
         fit(); return;
       }
       /* знайти, чий це вираз і який крок усередині нього */
@@ -5959,7 +6048,7 @@ $$('.subst').forEach(function(box){
       T = it.T; F = it.F; lab.textContent = it.lab;
       if(off && left <= 1){
         box.classList.remove('gone'); drawStart();
-        say.textContent = (it.lab ? it.lab + ': ' : '') + 'замість ' + V + ' ставимо ' + VAL + '.';
+        say.textContent = (it.lab ? it.lab + ': ' : '') + 'замість ' + PH + '.';
         fit(); return;
       }
       box.classList.add('gone');
@@ -5976,7 +6065,7 @@ $$('.subst').forEach(function(box){
     lab.textContent = ITEM[0].lab;
     T = ITEM[0].T; F = ITEM[0].F;
     drawStart();
-    say.textContent = 'Замість ' + V + ' ставимо ' + VAL + '.';
+    say.textContent = 'Замість ' + PH + '.';
     return;
   }
   box.__at = -1;
@@ -5989,7 +6078,8 @@ $$('.subst').forEach(function(box){
     if(shown === 0){
       box.classList.remove('gone');
       drawStart();
-      say.textContent = 'Замість букви ' + V + ' скрізь ставимо її значення — ' + VAL + '.';
+      say.textContent = VS.length > 1 ? 'Замість кожної букви ставимо її значення: ' + VS.map(function(v,i){ return v + ' = ' + VALS[i]; }).join(', ') + '.'
+        : 'Замість букви ' + V + ' скрізь ставимо її значення — ' + VAL + '.';
     } else {
       if(pop && shown === 1){
         /* спершу буква тане, і лише потім на її місці число */
@@ -6297,6 +6387,55 @@ $$('.flip').forEach(function(box){
     } else {
       bn.style.transform = ''; bd.style.transform = '';
     }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C·conv · пряма й обернена теорема: умова й висновок міняються місцями (з 23.10.2026)
+     <div class="conv" data-p="відповідні кути рівні" data-q="прямі паралельні"
+          data-name="Ознака паралельності|Властивість відповідних кутів" data-ok="1"></div>
+     Пробіл: «Якщо [умова], то [висновок]» → другий рядок: картки
+     переїжджають навхрест (умова стає висновком) → вердикт: data-ok="1" —
+     ✓ «обернена теорема: <друга назва>»; data-ok="0" — ✗ і data-why
+     (контрприклад). Колір картки йде за змістом, підпис «умова/висновок» —
+     за місцем.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.conv').forEach(function(box){
+  var nm = (box.dataset.name || 'Пряма теорема|').split('|'), ok = box.dataset.ok !== '0';
+  var p = box.dataset.p || '', q = box.dataset.q || '';
+  function card(cls, tag, s){ return '<span class="cv-c ' + cls + '"><i>' + tag + '</i>' + s + '</span>'; }
+  function row(cls, tag, a, ca, b, cb){
+    return '<div class="cv-row ' + cls + '"><div class="cv-tag">' + tag + '</div><div class="cv-st">Якщо ' +
+      card(ca, 'умова', a) + ', то ' + card(cb, 'висновок', b) + '.</div></div>';
+  }
+  box.innerHTML = row('cv-1', nm[0], p, 'cv-p', q, 'cv-q') + row('cv-2', 'Міняємо місцями', q, 'cv-q', p, 'cv-p') +
+    '<div class="cv-v ' + (ok ? 'ok' : 'no') + '">' + (ok ? '✓ Правильне — це теорема, обернена до даної' + (nm[1] ? ': ' + nm[1].toLowerCase() : '') + '.'
+      : '✗ Неправильне' + (box.dataset.why ? ': ' + box.dataset.why : '') + '. Оберненої теореми немає.') + '</div>';
+  var r2 = $('.cv-2', box), v = $('.cv-v', box);
+  var pairs = [[$('.cv-2 .cv-q', box), $('.cv-1 .cv-q', box)], [$('.cv-2 .cv-p', box), $('.cv-1 .cv-p', box)]];
+  var marks = el('div','hmk');
+  marks.innerHTML = '<i class="hide"></i><i class="hide"></i>';
+  box.appendChild(marks);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    var fwd = st === 1 && box.__at === 0;
+    box.__at = st;
+    r2.classList.toggle('on', st >= 1);
+    if(fwd) pairs.forEach(function(pr){   /* FLIP: картка стартує з місця в першому рядку */
+      var d = pr[0], s = pr[1];
+      d.style.transition = 'none';
+      d.style.transform = 'translate(' + (s.offsetLeft - d.offsetLeft) + 'px,' + (s.offsetTop - d.offsetTop) + 'px)';
+      void d.offsetWidth;
+      d.style.transition = '';
+      d.style.transform = 'none';
+    });
+    v.classList.toggle('on', st >= 2);
+    $('.cv-tag', r2).textContent = st >= 2 ? (ok ? 'Обернена теорема' : 'Обернене твердження') : 'Міняємо місцями';
     fit();
   };
   box.__paint();
@@ -7416,8 +7555,13 @@ $$('.powop').forEach(function(box){
      точка перетину X з b тікає вбік, на 6° — уже за екраном (стрілка «перетин
      далі»), на 0° спільної точки немає — a ∥ b; далі X виринає з іншого боку.
      Останній крок — знову 0°: «лише одна пряма через K паралельна b».
+   <div class="parax" data-mode="prop"></div>   data-labels="a,b,c,N" (з 23.10.2026)
+     Властивість паралельних: a ∥ c, b ∥ c ⇒ a ∥ b, від супротивного.
+     Пробіл: три паралельні → припущення (штрихом): a і b сходяться в N →
+     через N дві прямі ∥ c → суперечність з аксіомою → a і b знову ∥.
    ───────────────────────────────────────────────────────────────────── */
 $$('.parax').forEach(function(box){
+  if(box.dataset.mode === 'prop') return paraxProp(box);
   var L = (box.dataset.labels || 'K,b,a').split(',');
   var W = 600, H = 250, KX = 300, KY = 70, BY = 200;
   var NS = 'http://www.w3.org/2000/svg';
@@ -7476,6 +7620,51 @@ $$('.parax').forEach(function(box){
   };
   box.__paint();
 });
+
+function paraxProp(box){
+  box.classList.add('px-prop');
+  var L = (box.dataset.labels || 'a,b,c,N').split(',');
+  var W = 600, H = 250, AY = 50, BY = 125, CY = 215, NX = 300, NY = 88, TH = 9;
+  function line(cls, y, lab){
+    return '<g class="' + cls + '" style="transform-origin:' + NX + 'px ' + y + 'px"><line x1="-600" y1="' + y + '" x2="1200" y2="' + y + '"/>' +
+      '<text x="' + (W - 32) + '" y="' + (y - 10) + '">' + lab + '</text></g>';
+  }
+  box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="властивість паралельних прямих">' +
+    '<line class="px-c" x1="10" y1="' + CY + '" x2="' + (W - 10) + '" y2="' + CY + '"/>' +
+    '<text class="px-ct" x="' + (W - 32) + '" y="' + (CY - 10) + '">' + L[2] + '</text>' +
+    line('px-l px-la', AY, L[0]) + line('px-l px-lb', BY, L[1]) +
+    '<circle class="px-n" r="6" cx="' + NX + '" cy="' + NY + '"/><text class="px-nt" x="' + (NX - 8) + '" y="' + (NY - 16) + '">' + L[3] + '</text>' +
+    '</svg>';
+  var la = $('.px-la', box), lb = $('.px-lb', box);
+  var S = [
+    'Дано: ' + L[0] + ' ∥ ' + L[2] + ' і ' + L[1] + ' ∥ ' + L[2] + '. Довести: ' + L[0] + ' ∥ ' + L[1] + '.',
+    'Припустимо протилежне: ' + L[0] + ' і ' + L[1] + ' не паралельні, а перетинаються в деякій точці ' + L[3] + '.',
+    'Тоді через точку ' + L[3] + ' проходять дві різні прямі ' + L[0] + ' і ' + L[1] + ' — і обидві паралельні ' + L[2] + '.',
+    'Але за аксіомою через ' + L[3] + ' проходить лише одна пряма, паралельна ' + L[2] + '. Суперечність — отже, ' + L[0] + ' ∥ ' + L[1] + '.'
+  ];
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(S.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st >= S.length) st = S.length - 1;
+    if(st === box.__at) return;
+    box.__at = st;
+    var asm = st === 1 || st === 2;
+    /* припущення: обидві прямі зсуваються до N і нахиляються в різні боки */
+    la.style.transform = asm ? 'translate(0px,' + (NY - AY) + 'px) rotate(' + (-TH) + 'deg)' : 'none';
+    lb.style.transform = asm ? 'translate(0px,' + (NY - BY) + 'px) rotate(' + TH + 'deg)' : 'none';
+    box.classList.toggle('asm', asm);
+    box.classList.toggle('two', st === 2);
+    box.classList.toggle('fin', st === 3);
+    say.textContent = S[st];
+    fit();
+  };
+  box.__paint();
+}
 
 /* ─────────────────────────────────────────────────────────────────────
    C·setsq · побудова паралельної прямої косинцем і лінійкою (з 15.10.2026)
@@ -7546,6 +7735,18 @@ $$('.setsq').forEach(function(box){
        Доведення від супротивного (мал. 9.2–9.4): припускаємо перетин у F →
        кут α при M переїжджає по січній у N → промені NF і NF₁ різні, а кути
        з NM обидва α — суперечність → a ∥ b.
+     З 23.10.2026 — властивості кутів при паралельних прямих (§ 10):
+     <div class="transv" data-mode="conv" data-phi="60"></div>
+       Обернена до ознаки, від супротивного: a ∥ b, ∠1 і ∠2 відповідні →
+       припущення ∠1 ≠ ∠2 (a нахилена, штрихом) → MB₁ під кутом ∠2 →
+       MB₁ ∥ b за ознакою → дві паралельні b через M → a лягає на MB₁.
+     <div class="transv" data-mode="cons"></div>
+       Наслідки: ∠4 = ∠6 (∠2 відповідний до ∠6 їде по січній, ∠2 і ∠4
+       вертикальні) → ∠4 + ∠5 = 180° (∠5 і ∠6 суміжні, ∠6 = ∠4).
+     <div class="transv" data-mode="vals" data-given="2" data-val="140"></div>
+       Один кут відомий → вертикальний → суміжні → хрест їде на другу точку;
+       під кресленням рядок ∠1 … ∠8 заповнюється. Креслення будується під
+       даний кут (data-phi не потрібен).
      data-labels="a,b,c,M,N" — підписи прямих і точок.
    ───────────────────────────────────────────────────────────────────── */
 $$('.transv').forEach(function(box){
@@ -7553,6 +7754,11 @@ $$('.transv').forEach(function(box){
   box.classList.add('tv-' + mode);
   var L = (box.dataset.labels || 'a,b,c,M,N').split(',');
   var phi = parseFloat(box.dataset.phi) || 62;
+  /* vals: креслення під даний кут — ∠2, ∠4, ∠6, ∠8 дорівнюють φ, решта 180° − φ */
+  if(mode === 'vals' && !box.dataset.phi && box.dataset.val){
+    var gv0 = parseFloat(box.dataset.val);
+    phi = (parseInt(box.dataset.given, 10) || 2) % 2 ? 180 - gv0 : gv0;
+  }
   var W = 600, H = 250, AY = 70, BY = 185, R = Math.PI / 180;
   var sh = (BY - AY) / Math.tan(phi * R);
   var MX = 300 + sh / 2, NX = 300 - sh / 2;
@@ -7574,20 +7780,35 @@ $$('.transv').forEach(function(box){
   var pts = '<circle class="tv-pt" r="5" cx="' + f(MX) + '" cy="' + AY + '"/><circle class="tv-pt" r="5" cx="' + f(NX) + '" cy="' + BY + '"/>';
   var say, S = [], paint;
 
-  if(mode === 'names'){
-    var POS = { M: [MX, AY], N: [NX, BY] }, Q = quad(0);
-    var NUM = [['M','UL',1],['M','UR',2],['M','LR',3],['M','LL',4],['N','UL',5],['N','UR',6],['N','LR',7],['N','LL',8]];
+  /* вісім кутів з номерами (мал. 9.1 Істера: 1–4 при M, 5–8 при N); gv — вершина,
+     чий хрест кутів може їхати по січній (tv-gh), gc — класи його клинів */
+  var POS = { M: [MX, AY], N: [NX, BY] }, Q = quad(0);
+  var NUM = [['M','UL',1],['M','UR',2],['M','LR',3],['M','LL',4],['N','UL',5],['N','UR',6],['N','LR',7],['N','LL',8]];
+  function eight(label, gv, gc){
     var w = '', n = '', gh = '';
     NUM.forEach(function(q){
       var v = POS[q[0]], t = Q[q[1]], mid = (t[0] + t[1]) / 2, p = P(v[0], v[1], mid, 40);
       w += '<path class="tv-w" data-k="' + q[2] + '" d="' + wedge(v[0], v[1], t[0], t[1], 28) + '"/>';
       n += txt(p[0] - 6, p[1] + 7, q[2], 'tv-n');
-      if(q[0] === 'M') gh += '<path class="tv-w w' + q[2] + '" d="' + wedge(v[0], v[1], t[0], t[1], 28) + '"/>';
+      if(q[0] === gv) gh += '<path class="tv-w ' + gc(q[2]) + '" d="' + wedge(v[0], v[1], t[0], t[1], 28) + '"/>';
     });
-    box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="кути при перетині двох прямих січною">' +
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + label + '">' +
       '<rect class="tv-band" x="0" y="' + AY + '" width="' + W + '" height="' + (BY - AY) + '"/>' + w +
       '<g class="tv-gh">' + gh + '</g>' + base +
       '<path class="tv-b" d="M10 ' + BY + 'H' + (W - 10) + '"/>' + txt(W - 32, BY - 10, L[1]) + pts + n + '</svg>';
+  }
+  function hl(cm){
+    $$('svg > .tv-w', box).forEach(function(p){
+      p.setAttribute('class', 'tv-w' + (cm[p.dataset.k] ? ' w' + cm[p.dataset.k] : ''));
+    });
+  }
+  function slide(ghost, on, from, to){
+    ghost.style.opacity = on ? 1 : 0;
+    ghost.style.transform = on ? 'translate(' + f(POS[to][0] - POS[from][0]) + 'px,' + (POS[to][1] - POS[from][1]) + 'px)' : 'none';
+  }
+
+  if(mode === 'names'){
+    box.innerHTML = eight('кути при перетині двох прямих січною', 'M', function(k){ return 'w' + k; });
     var ST = [
       [{}, 'Пряма ' + L[2] + ' перетинає прямі ' + L[0] + ' і ' + L[1] + ' у двох точках. Таку пряму називають січною для ' + L[0] + ' і ' + L[1] + '.'],
       [{}, 'Утворилось вісім кутів: 1, 2, 3, 4 — при першій точці, 5, 6, 7, 8 — при другій.'],
@@ -7599,15 +7820,114 @@ $$('.transv').forEach(function(box){
     S = ST;
     var band = $('.tv-band', box), ghost = $('.tv-gh', box);
     paint = function(st){
-      var cm = ST[st][0];
-      $$('svg > .tv-w', box).forEach(function(p){
-        p.setAttribute('class', 'tv-w' + (cm[p.dataset.k] ? ' w' + cm[p.dataset.k] : ''));
-      });
+      hl(ST[st][0]);
       box.classList.toggle('nums', st >= 1);
       band.style.opacity = st === 2 ? 1 : 0;
-      ghost.style.opacity = st === 5 ? 1 : 0;
-      ghost.style.transform = st === 5 ? 'translate(' + f(NX - MX) + 'px,' + (BY - AY) + 'px)' : 'none';
+      slide(ghost, st === 5, 'M', 'N');
       say.textContent = ST[st][1];
+    };
+  }
+
+  else if(mode === 'cons'){
+    /* наслідки з теореми про відповідні кути: ∠4 = ∠6 (через ∠2), ∠4 + ∠5 = 180° (через ∠6) */
+    box.innerHTML = eight('наслідки: внутрішні різносторонні й односторонні кути при паралельних прямих', 'M', function(k){ return k === 2 ? 'w1' : 'tv-no'; });
+    box.classList.add('nums');
+    var CS = [
+      [{4:1, 6:1}, 0, L[0] + ' ∥ ' + L[1] + '. Кути 4 і 6 — внутрішні різносторонні. Чи рівні вони?'],
+      [{2:1, 6:1}, 1, '∠2 і ∠6 — відповідні. ' + L[0] + ' ∥ ' + L[1] + ', тому ∠2 = ∠6: кут 2 зʼїжджає по січній і лягає на кут 6.'],
+      [{2:1, 4:1}, 0, '∠2 і ∠4 — вертикальні, тому ∠4 = ∠2.'],
+      [{4:1, 6:1}, 0, 'Отже, ∠4 = ∠6: внутрішні різносторонні кути рівні.'],
+      [{4:2, 5:2}, 0, 'Кути 4 і 5 — внутрішні односторонні. Чому дорівнює їх сума?'],
+      [{5:2, 6:1}, 0, '∠5 і ∠6 — суміжні: ∠5 + ∠6 = 180°.'],
+      [{4:1, 5:2}, 0, 'А ∠6 = ∠4 (щойно довели). Тому ∠4 + ∠5 = 180°: сума внутрішніх односторонніх — 180°.']
+    ];
+    S = CS;
+    var cg = $('.tv-gh', box);
+    paint = function(st){
+      hl(CS[st][0]);
+      slide(cg, !!CS[st][1], 'M', 'N');
+      box.classList.toggle('fin', st === CS.length - 1);
+      say.textContent = CS[st][2];
+    };
+  }
+
+  else if(mode === 'vals'){
+    /* один кут відомий → решта сім: вертикальний, суміжні, хрест їде на другу вершину */
+    var gk = parseInt(box.dataset.given, 10) || 2, gvv = parseFloat(box.dataset.val) || phi;
+    var acute = { 2:1, 4:1, 6:1, 8:1 };   /* UR і LL при кожній вершині — це φ */
+    var u = 180 - gvv, vOf = function(k){ return acute[k] === acute[gk] ? gvv : u; };
+    var GV = gk <= 4 ? 'M' : 'N', OV = GV === 'M' ? 'N' : 'M', off = GV === 'M' ? 0 : 4;
+    var vert = { 1:3, 2:4, 3:1, 4:2 }, rel = (gk - 1) % 4 + 1, vk = vert[rel] + off;
+    var adj = [1, 2, 3, 4].filter(function(k){ return k !== rel && k !== vert[rel]; }).map(function(k){ return k + off; });
+    var cls = function(k){ return vOf(k) === gvv ? 'w1' : 'w2'; };
+    box.innerHTML = eight('за одним кутом знайти решту сім', GV, cls);
+    box.classList.add('nums');
+    var vals = el('div', 'tv-vals');
+    for(var k = 1; k <= 8; k++) vals.innerHTML += '<span data-k="' + k + '">∠' + k + ' = <b>?</b></span>';
+    box.appendChild(vals);
+    var known = [[gk], [gk, vk], [gk, vk].concat(adj), [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8]];
+    S = [
+      'Відомо: ∠' + gk + ' = ' + gvv + '°.',
+      '∠' + vk + ' — вертикальний до ∠' + gk + ', тому ∠' + vk + ' = ' + gvv + '°.',
+      '∠' + adj[0] + ' і ∠' + adj[1] + ' — суміжні з ∠' + gk + ': 180° − ' + gvv + '° = ' + u + '°.',
+      L[0] + ' ∥ ' + L[1] + ': відповідні кути рівні — хрест кутів зʼїжджає по січній на другу точку.',
+      'Чотири кути по ' + gvv + '° і чотири по ' + u + '°.'
+    ];
+    var vg = $('.tv-gh', box);
+    paint = function(st){
+      var kn = {};
+      known[st].forEach(function(k){ kn[k] = 1; });
+      var cm = {};
+      for(var k = 1; k <= 8; k++) if(kn[k]) cm[k] = cls(k) === 'w1' ? 1 : 2;
+      hl(cm);
+      $$('span', vals).forEach(function(s){
+        var k = +s.dataset.k, on = !!kn[k];
+        s.classList.toggle('on', on);
+        $('b', s).textContent = on ? vOf(k) + '°' : '?';
+      });
+      slide(vg, st === 3, GV, OV);
+      box.classList.toggle('fin', st === 4);
+      say.textContent = S[st];
+    };
+  }
+
+  else if(mode === 'conv'){
+    /* теорема про відповідні кути (обернена до ознаки), від супротивного:
+       припущення — a нахилена (штрихом), MB₁ під кутом ∠2 → MB₁ ∥ b → дві паралельні через M */
+    var TB = 13, rb1 = P(MX, AY, 0, 230);
+    box.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="властивість відповідних кутів при паралельних прямих">' +
+      '<path class="tv-c" d="' + seg(NX, BY, phi, 330) + '"/>' + txt(cTop[0] + 10, Math.max(22, cTop[1] + 28), L[2]) +
+      '<path class="tv-b tv-b0" d="M10 ' + BY + 'H' + (W - 10) + '"/><text class="tv-bt0" x="' + (W - 32) + '" y="' + (BY - 10) + '">' + L[1] + '</text>' +
+      '<path class="tv-arc tv-arc2" d="' + arcd(NX, BY, 0, phi, 30) + '"/>' + txt(P(NX, BY, phi / 2, 46)[0] - 6, P(NX, BY, phi / 2, 46)[1] + 8, '2', 'tv-n tv-al2') +
+      '<g class="tv-m1"><path class="tv-ray" d="M' + f(MX - 230) + ' ' + AY + 'L' + f(rb1[0]) + ' ' + AY + '"/>' +
+        '<path class="tv-arc tv-arcm" d="' + arcd(MX, AY, 0, phi, 46) + '"/>' + txt(rb1[0] - 18, AY + 28, 'B₁', 'tv-f1') + '</g>' +
+      '<path class="tv-am" d=""/><text class="tv-amt" x="0" y="0">' + L[0] + '</text>' +
+      '<path class="tv-arc tv-arc1" d=""/><text class="tv-n tv-al" x="0" y="0">1</text>' +
+      pts + txt(MX - 34, AY - 12, L[3]) + txt(NX - 36, BY + 26, L[4]) + '</svg>';
+    var am = $('.tv-am', box), amt = $('.tv-amt', box), a1 = $('.tv-arc1', box), l1 = $('.tv-al', box);
+    var drawA = function(b){
+      am.setAttribute('d', seg(MX, AY, b, 900));
+      var e = P(MX, AY, b, 205); amt.setAttribute('x', f(e[0])); amt.setAttribute('y', f(e[1] - 12));
+      a1.setAttribute('d', arcd(MX, AY, b, phi, 30));
+      var m = P(MX, AY, (b + phi) / 2, 50); l1.setAttribute('x', f(m[0] - 6)); l1.setAttribute('y', f(m[1] + 8));
+    };
+    var BT = [0, TB, TB, TB, 0];
+    S = [
+      'Дано: ' + L[0] + ' ∥ ' + L[1] + ', ' + L[2] + ' — січна. ∠1 і ∠2 — відповідні. Довести: ∠1 = ∠2.',
+      'Припустимо протилежне: ∠1 ≠ ∠2. Малюємо так, ніби ' + L[0] + ' йде під іншим кутом (штрихом).',
+      'Проведемо через ' + L[3] + ' пряму ' + L[3] + 'B₁ так, щоб відповідний кут дорівнював ∠2.',
+      'За ознакою ' + L[3] + 'B₁ ∥ ' + L[1] + '. А за умовою ще й ' + L[0] + ' ∥ ' + L[1] + '. Через ' + L[3] + ' — дві прямі, паралельні ' + L[1] + '!',
+      'Це суперечить аксіомі паралельності: така пряма лише одна. Отже, ' + L[0] + ' збігається з ' + L[3] + 'B₁, і ∠1 = ∠2.'
+    ];
+    var pb = 0;
+    drawA(0);
+    paint = function(st){
+      atween(box, pb, BT[st], 800, drawA); pb = BT[st];
+      box.classList.toggle('asm', st >= 1 && st <= 3);
+      box.classList.toggle('mb', st >= 2 && st <= 3);
+      box.classList.toggle('two', st === 3);
+      box.classList.toggle('fin', st === 4);
+      say.textContent = S[st];
     };
   }
 
@@ -10079,7 +10399,9 @@ setTimeout(fit, 60);
   /* headless Chrome (check_decks.py, скріни.py): нескінченні rAF і CSS-анімація під blur з
      --virtual-time-budget проганяють тисячі кадрів; у паралельному прогоні — тайм-аут.
      Краплі ставимо один раз і зупиняємо (.still) */
+  /* Фон нерухомий за замовчуванням (учитель, 23.10.2026); рух — лише з data-still="0" на <html> */
   if(/HeadlessChrome/.test(navigator.userAgent) ||
+     document.documentElement.getAttribute('data-still') !== '0' ||
      (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){
     field.className = 'still'; place(0); return; }
 

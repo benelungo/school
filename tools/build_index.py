@@ -362,6 +362,29 @@ def collect():
     return {"lessons": lessons, "works": works, "plans": plans_out}
 
 
+def only_published(data, extra=()):
+    """Лишає уроки, чий дек у git або в `extra` (шляхи, що йдуть цим комітом).
+
+    Уроки без посилання (очно, КР) не чіпає. Відкинутим урокам знімає й
+    позначку «done» у панелі майбутніх, інакше непроведений урок з готовим
+    деком виглядав би проведеним.
+    """
+    from urllib.parse import unquote
+    out = subprocess.run(["git", "-c", "core.quotepath=off", "ls-files"],
+                         capture_output=True, text=True, cwd=ROOT).stdout
+    ok = set(out.splitlines()) | set(extra)
+    dropped = {(x["cls"], x["subject"], x["n"]) for x in data["lessons"]
+               if "href" in x and unquote(x["href"]) not in ok}
+    data["lessons"] = [x for x in data["lessons"]
+                       if (x["cls"], x["subject"], x["n"]) not in dropped]
+    for p in data["plans"]:
+        for t in p["themes"]:
+            for l in t["lessons"]:
+                if (p["cls"], p["subject"], l["n"]) in dropped:
+                    l["done"] = False
+    return dropped
+
+
 def write_index(data):
     if not INDEX.is_file():
         sys.exit("Немає index.html у корені проєкту — спершу створи його.")
