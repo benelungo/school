@@ -279,6 +279,25 @@ footer kbd{font-family:"JetBrains Mono",monospace;border:1.5px solid var(--edge)
 #list .card .grow{flex:1 1 auto;min-width:0}
 #list .card .tag{white-space:nowrap}
 #list .card.offline{border-style:dashed}
+
+/* Кнопка «Здати ДЗ» біля уроку.
+   Картка уроку — сама по собі <a>, тож кнопку в неї вкласти не можна:
+   розмітка була б невалідна, а картка з'їдала б клік. Тому кнопка — сусід
+   у рядку, і вона теж <a>: це просте посилання на сторінку домашнього. */
+#list .row{display:flex;gap:8px;align-items:stretch}/*compat{*/.no-fgap #list .row>*{margin-right:8px;margin-bottom:8px}/*}compat*/
+#list .row>.card{flex:1 1 auto;min-width:0}
+#list .dz{display:flex;align-items:center;gap:8px;white-space:nowrap;text-decoration:none;
+  padding:12px 16px;border:2px solid var(--edge);border-radius:var(--rad);
+  background:var(--card);color:inherit;font-weight:700;font-size:clamp(12px,1.2vw,14px);
+  box-shadow:var(--sh1);transition:border-color .16s,transform .16s,box-shadow .16s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){#list .dz{font-size:12px}}/*}compat*//*compat{*/.no-fgap #list .dz>*{margin-right:8px}.no-fgap #list .dz>*:last-child{margin-right:0}/*}compat*/
+#list .dz:hover{border-color:var(--pen);transform:translateY(-3px);box-shadow:var(--sh3)}
+#list .dz:focus-visible{outline:3px solid var(--pen);outline-offset:2px}
+#list .dz.done{border-style:dashed;color:var(--soft);font-weight:400;box-shadow:none}
+#list .dz.done:hover{transform:none;box-shadow:none;border-color:var(--edge)}
+@media (max-width:520px){
+  #list .row{flex-wrap:wrap}
+  #list .dz{width:100%;justify-content:center}
+}
 @media (max-width:520px){
   #list .card{flex-wrap:wrap;gap:6px 12px}/*compat{*/.no-fgap #list .card>*{margin-right:12px;margin-bottom:6px}/*}compat*/
   #list .card .grow{flex-basis:100%;order:3}
@@ -1182,6 +1201,30 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "title": "Числові вирази. Буквені вирази та формули",
    "slides": 20,
    "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2042/%D0%A3%D1%80%D0%BE%D0%BA%2042%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 43,
+   "lesson": "Урок 43",
+   "theme": "Тема 4. Числові та буквені вирази. Рівняння (8 год)",
+   "themeTotal": 8,
+   "title": "Числові вирази. Буквені вирази та формули",
+   "slides": 18,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2043/%D0%A3%D1%80%D0%BE%D0%BA%2043%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "fresh": true
+  },
+  {
+   "cls": "5-З",
+   "subject": "Математика",
+   "n": 44,
+   "lesson": "Урок 44",
+   "theme": "Тема 4. Числові та буквені вирази. Рівняння (8 год)",
+   "themeTotal": 8,
+   "title": "Числові вирази. Буквені вирази та формули",
+   "slides": 16,
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2044/%D0%A3%D1%80%D0%BE%D0%BA%2044%20%E2%80%94%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D1%96%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "fresh": true
   },
   {
@@ -2284,6 +2327,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Математика",
    "theme": "Натуральні числа. Додавання і віднімання натуральних чисел",
    "minutes": 30,
+   "date": "",
    "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2018/%D0%A3%D1%80%D0%BE%D0%BA%2018%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "5-З",
    "lesson": "Урок 18",
@@ -2295,6 +2339,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Математика",
    "theme": "Натуральні числа. Додавання і віднімання натуральних чисел",
    "minutes": 35,
+   "date": "",
    "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2019/%D0%A3%D1%80%D0%BE%D0%BA%2019%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "5-З",
    "lesson": "Урок 19",
@@ -2306,6 +2351,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Математика",
    "theme": "Множення натуральних чисел. Степінь натурального числа",
    "minutes": 30,
+   "date": "",
    "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2030/%D0%A3%D1%80%D0%BE%D0%BA%2030%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "5-З",
    "lesson": "Урок 30",
@@ -2317,6 +2363,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Математика",
    "theme": "Множення натуральних чисел. Степінь натурального числа",
    "minutes": 35,
+   "date": "",
    "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2031/%D0%A3%D1%80%D0%BE%D0%BA%2031%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "5-З",
    "lesson": "Урок 31",
@@ -2328,6 +2375,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Математика",
    "theme": "Ділення натуральних чисел. Ділення з остачею",
    "minutes": 30,
+   "date": "",
    "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2039/%D0%A3%D1%80%D0%BE%D0%BA%2039%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "5-З",
    "lesson": "Урок 39",
@@ -2339,10 +2387,44 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Математика",
    "theme": "Ділення натуральних чисел. Ділення з остачею",
    "minutes": 35,
+   "date": "",
    "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2040/%D0%A3%D1%80%D0%BE%D0%BA%2040%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "5-З",
    "lesson": "Урок 40",
    "key": "5-З | Математика | Контрольна робота № 3"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 1",
+   "subject": "Алгебра",
+   "theme": "Повторення за курс математики 5–6 класів",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%201%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "cls": "7-І",
+   "key": "7-І | Алгебра | Додаткова робота № 1"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 2",
+   "subject": "Алгебра",
+   "theme": "Лінійні рівняння з однією змінною",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%202%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "cls": "7-І",
+   "key": "7-І | Алгебра | Додаткова робота № 2"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 3",
+   "subject": "Алгебра",
+   "theme": "Вирази зі змінними. Тотожності. Степінь",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%203%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "cls": "7-І",
+   "key": "7-І | Алгебра | Додаткова робота № 3"
   },
   {
    "kind": "самостійна",
@@ -2350,6 +2432,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Алгебра",
    "theme": "Раціональні числа та дії з ними",
    "minutes": 18,
+   "date": "",
    "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "7-І",
    "lesson": "Урок 5",
@@ -2361,6 +2444,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Алгебра",
    "theme": "Лінійні рівняння з однією змінною",
    "minutes": 30,
+   "date": "",
    "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2014/%D0%A3%D1%80%D0%BE%D0%BA%2014%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "7-І",
    "lesson": "Урок 14",
@@ -2372,6 +2456,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Алгебра",
    "theme": "Лінійні рівняння з однією змінною",
    "minutes": 35,
+   "date": "",
    "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2015/%D0%A3%D1%80%D0%BE%D0%BA%2015%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "7-І",
    "lesson": "Урок 15",
@@ -2383,10 +2468,33 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Алгебра",
    "theme": "Властивості степеня з натуральним показником",
    "minutes": 30,
+   "date": "",
    "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2025/%D0%A3%D1%80%D0%BE%D0%BA%2025%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "7-І",
    "lesson": "Урок 25",
    "key": "7-І | Алгебра | Самостійна робота № 3"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 1",
+   "subject": "Геометрія",
+   "theme": "Елементарні геометричні фігури. Суміжні та вертикальні кути",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%201%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "cls": "7-І",
+   "key": "7-І | Геометрія | Додаткова робота № 1"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 2",
+   "subject": "Геометрія",
+   "theme": "Перпендикулярні та паралельні прямі",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%202%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "cls": "7-І",
+   "key": "7-І | Геометрія | Додаткова робота № 2"
   },
   {
    "kind": "самостійна",
@@ -2394,6 +2502,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Геометрія",
    "theme": "Елементарні геометричні фігури та їхні властивості",
    "minutes": 30,
+   "date": "",
    "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "7-І",
    "lesson": "Урок 7",
@@ -2405,6 +2514,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Геометрія",
    "theme": "Елементарні геометричні фігури. Суміжні та вертикальні кути",
    "minutes": 30,
+   "date": "",
    "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "7-І",
    "lesson": "Урок 11",
@@ -2416,6 +2526,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Геометрія",
    "theme": "Елементарні геометричні фігури. Суміжні та вертикальні кути",
    "minutes": 35,
+   "date": "",
    "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2012/%D0%A3%D1%80%D0%BE%D0%BA%2012%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "7-І",
    "lesson": "Урок 12",
@@ -2427,6 +2538,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Алгебра",
    "theme": "Додавання та віднімання дробів з однаковими знаменниками",
    "minutes": 30,
+   "date": "",
    "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2013/%D0%A3%D1%80%D0%BE%D0%BA%2013%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "8-К",
    "lesson": "Урок 13",
@@ -2438,6 +2550,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Алгебра",
    "theme": "Раціональні дроби. Додавання і віднімання дробів",
    "minutes": 30,
+   "date": "",
    "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2019/%D0%A3%D1%80%D0%BE%D0%BA%2019%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "8-К",
    "lesson": "Урок 19",
@@ -2449,6 +2562,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Алгебра",
    "theme": "Раціональні дроби. Додавання і віднімання дробів",
    "minutes": 40,
+   "date": "",
    "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2020/%D0%A3%D1%80%D0%BE%D0%BA%2020%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "8-К",
    "lesson": "Урок 20",
@@ -2460,6 +2574,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Геометрія",
    "theme": "Чотирикутник. Паралелограм і його види",
    "minutes": 30,
+   "date": "",
    "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "8-К",
    "lesson": "Урок 11",
@@ -2471,6 +2586,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
    "subject": "Геометрія",
    "theme": "Чотирикутник. Паралелограм і його види",
    "minutes": 35,
+   "date": "",
    "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2012/%D0%A3%D1%80%D0%BE%D0%BA%2012%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
    "cls": "8-К",
    "lesson": "Урок 12",
@@ -3099,12 +3215,12 @@ html:root:not(#mm) .note.ok{color:var(--check)}
       {
        "n": 43,
        "title": "Числові вирази. Буквені вирази та формули",
-       "done": false
+       "done": true
       },
       {
        "n": 44,
        "title": "Числові вирази. Буквені вирази та формули",
-       "done": false
+       "done": true
       },
       {
        "n": 45,
@@ -5731,6 +5847,10 @@ html:root:not(#mm) .note.ok{color:var(--check)}
   } catch(e){}
 
   var ЗНАК_КЛАС = { 'A':'5-З', 'B':'7-І', 'C':'8-К', 'D':'9-А' };
+  /* Як підписати тип роботи в смузі. Раніше тут був тернар «самостійна чи
+     контрольна», і будь-який новий тип мовчки ставав контрольною. */
+  var ЯРЛИК = { 'контрольна':'Контрольна', 'самостійна':'Самостійна',
+                'додаткова':'Додаткова', 'домашнє':'Домашнє' };
   var HUE = { 'Математика':277, 'Алгебра':300, 'Геометрія':150, 'Інформатика':40 };
   function hueOf(s){ return HUE[s] != null ? HUE[s] : 258; }
 
@@ -5950,6 +6070,10 @@ html:root:not(#mm) .note.ok{color:var(--check)}
       tabs.appendChild(b);
     });
 
+    /* Перечитуємо перед кожним малюванням: позначку могли поставити в
+       сусідній вкладці, де учень щойно здав домашнє. */
+    try { зданоДЗ = JSON.parse(load('дз') || '{}') || {}; } catch(e){}
+
     малюватиРоботи();
     малюватиУроки(мої.filter(function(l){ return l.subject === предмет; }));
     малюватиПлан();
@@ -5992,7 +6116,7 @@ html:root:not(#mm) .note.ok{color:var(--check)}
       a.className = 'work' + (seen['w:' + w.key] ? ' done' : '');
       a.href = w.href + (стан.код ? '?код=' + encodeURIComponent(стан.код) : '');
       a.style.setProperty('--h', hueOf(w.subject));
-      a.innerHTML = '<span class="kind">' + (w.kind === 'самостійна' ? 'Самостійна' : 'Контрольна') + '</span>' +
+      a.innerHTML = '<span class="kind">' + esc(ЯРЛИК[w.kind] || 'Робота') + '</span>' +
         '<span class="grow"><b>' + esc(w.title) + '</b><br><span class="mins">' +
         esc(w.subject) + (w.theme ? ' · ' + esc(w.theme) : '') + '</span></span>' +
         '<span class="mins">' + (w.minutes ? w.minutes + ' хв' : '') +
@@ -6006,6 +6130,26 @@ html:root:not(#mm) .note.ok{color:var(--check)}
 
   function esc(t){ return String(t == null ? '' : t)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  /* Домашнє завдання цього уроку, якщо воно взагалі зроблене. Сторінка ДЗ
+     лежить у теці уроку, як і будь-яка інша робота, тож шукаємо серед робіт
+     за трійкою клас+предмет+урок. Приймач про відкритість не питаємо:
+     у домашнього вікна немає, здати можна коли завгодно. */
+  function домашнєУроку(l){
+    var знайдене = null;
+    ДАНІ.works.forEach(function(w){
+      if (w.kind === 'домашнє' && w.cls === l.cls && w.subject === l.subject
+          && w.lesson === l.lesson) знайдене = w;
+    });
+    return знайдене;
+  }
+
+  /* Позначку «здано» ставить сама сторінка роботи після підтвердженої
+     здачі — сайт її лише читає. На сервері цього факту немає: показник
+     здачі — оцінка в журналі (вчитель, 27.10.2026). Ключ містить код учня,
+     щоб на спільному планшеті двоє не бачили позначок одне одного. */
+  var зданоДЗ = {};
+  try { зданоДЗ = JSON.parse(load('дз') || '{}') || {}; } catch(e){ зданоДЗ = {}; }
 
   function малюватиУроки(мої){
     // Від нових до старих: найсвіжіший урок угорі.
@@ -6032,7 +6176,26 @@ html:root:not(#mm) .note.ok{color:var(--check)}
       if (l.href && seen[l.href]) мітки += '<span class="tag">Переглянуто</span>';
       карта.innerHTML = '<span class="num">' + esc(l.lesson || '') + '</span>' +
         '<span class="grow"><b>' + esc(l.title || '') + '</b></span>' + мітки;
-      list.appendChild(карта);
+
+      /* Домашнє завдання цього уроку — окремим посиланням поруч із карткою.
+         Без коду кнопки немає взагалі (рішення вчителя 27.10.2026): нікому
+         виставляти оцінку, та й сторінка все одно попросить код. */
+      var дз = стан.код ? домашнєУроку(l) : null;
+      if (!дз){ list.appendChild(карта); return; }
+
+      var рядок = D.createElement('div');
+      рядок.className = 'row';
+      рядок.appendChild(карта);
+
+      var кн = D.createElement('a');
+      var здано = !!зданоДЗ[стан.код + '|' + дз.key];
+      кн.className = 'dz' + (здано ? ' done' : '');
+      кн.href = дз.href + '?код=' + encodeURIComponent(стан.код);
+      кн.style.setProperty('--h', hueOf(l.subject));
+      кн.textContent = здано ? '✓ ДЗ здано' : 'Здати ДЗ';
+      кн.title = дз.title + (дз.date ? ' · на ' + дз.date : '');
+      рядок.appendChild(кн);
+      list.appendChild(рядок);
     });
     empty.hidden = мої.length > 0;
     found.textContent = мої.length

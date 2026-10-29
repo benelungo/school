@@ -5,6 +5,7 @@
 
 Сканує структуру проєкту:
     <Клас>/<Предмет>/Уроки/Урок N/Урок N — презентація для класу.html
+    <Клас>/<Предмет>/Додаткові/… — додаткова для класу.html
 
 і вписує знайдене між мітками <!-- BUILD:LESSONS --> … <!-- /BUILD:LESSONS -->
 в index.html.
@@ -34,7 +35,19 @@ INDEX = ROOT / "index.html"
 # файл, який бачать учні
 STUDENT_SUFFIX = " — презентація для класу.html"
 # Сторінки перевірочних робіт лежать ПОРУЧ З УРОКОМ, як і презентації.
-WORK_SUFFIXES = (" — контрольна для класу.html", " — самостійна для класу.html")
+WORK_SUFFIXES = (" — контрольна для класу.html", " — самостійна для класу.html",
+                 " — додаткова для класу.html", " — домашнє завдання для класу.html")
+
+# тип роботи → як його підписати людині. Одне джерело і для сайту, і для
+# відновлення назви, коли в сторінці її не вписали.
+WORK_RODS = {
+    "контрольна": "Контрольна робота",
+    "самостійна": "Самостійна робота",
+    "додаткова": "Додаткова робота",
+    "домашнє": "Домашнє завдання",
+}
+# Додаткові роботи не належать жодному уроку й лежать окремою текою предмета.
+EXTRA_DIR = "Додаткові"
 DONE_MARK = "проведено.txt"   # мітка проведеного уроку-контрольної
 # учительська хронокарта: сама не публікується, але позначає урок як очний
 TEACHER_SUFFIX = " — презентація.html"
@@ -166,13 +179,13 @@ def read_work(path):
         return int(m.group(1)) if m else default
 
     kind = field("тип")
-    if kind not in ("контрольна", "самостійна"):
+    if kind not in WORK_RODS:
         # Тип не прочитався — вгадуємо з імені файлу, щоб робота не зникла.
-        kind = "самостійна" if "самостійна" in path.name else "контрольна"
+        kind = next((k for k in WORK_RODS if k in path.name), "контрольна")
 
     title = field("назва")
     if not title:
-        rod = "Самостійна робота" if kind == "самостійна" else "Контрольна робота"
+        rod = WORK_RODS[kind]
         num = number("номер", 0)
         title = f"{rod} № {num}" if num else rod
 
@@ -182,6 +195,9 @@ def read_work(path):
         "subject": field("предмет"),
         "theme": field("тема"),
         "minutes": number("хвилин", 0) or default_minutes(kind),
+        # дата уроку за КТП — лише в домашніх завдань; саме нею підписана
+        # колонка в сітці оцінок, і її ж показуємо на картці уроку
+        "date": field("дата"),
         "href": href_for(path),
     }
 
@@ -260,6 +276,22 @@ def collect():
             if not lessons_dir.is_dir():
                 continue
             themes, ktp = read_ktp(subject_dir)
+
+            # Додаткові — для бажаючих, не до конкретного уроку, тому лежать
+            # окремою текою предмета, а не в теці уроку (рішення вчителя
+            # 29.10.2026). На сайт вони йдуть у смугу «Роботи», де урок і не
+            # потрібен: там досить клас + ключ + посилання.
+            extra_dir = subject_dir / EXTRA_DIR
+            if extra_dir.is_dir():
+                for wpath in sorted(extra_dir.glob("*" + WORK_SUFFIXES[2])):
+                    w = read_work(wpath)
+                    if not w:
+                        continue
+                    w["cls"] = class_dir.name
+                    w["subject"] = w["subject"] or subject_dir.name
+                    w["key"] = f'{w["cls"]} | {w["subject"]} | {w["title"]}'
+                    works.append(w)
+
             theme_size = {}
             for _t, _ in ktp.values():
                 theme_size[_t] = theme_size.get(_t, 0) + 1
@@ -418,6 +450,18 @@ def write_index(data):
 
 def main():
     data = collect()
+
+    # Лише проведені уроки (рішення вчителя, [[github-pages-site]]). Фільтр
+    # був написаний для autopublish.py, а його вимкнули 05.09.2026 — і разом
+    # з ним перестало працювати правило: `build_index.py` руками вносив до
+    # index.html уроки з готовими, але ще не закоміченими деками, тобто
+    # посилання на сторінки, яких на сайті немає. Спіймано 29.10.2026 на
+    # уроках 7-І алгебра 26, 7-І геометрія 19, 9-А інформатика 8.
+    dropped = only_published(data)
+    if dropped:
+        print("Непроведені уроки (деки є, але не в git) — у список не йдуть: "
+              + ", ".join(f"{c} {s} урок {n}" for c, s, n in sorted(dropped)))
+
     changed = write_index(data)
 
     lessons = data["lessons"]
