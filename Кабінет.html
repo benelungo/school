@@ -1,0 +1,1482 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Кабінет учителя</title>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="description" content="Класи, оцінки, вікна робіт і резервні посилання. Вхід лише за кодом учителя.">
+<!--
+  КАБІНЕТ УЧИТЕЛЯ
+
+  Сторінка публічна (GitHub Pages віддає будь-який файл репозиторію), тому
+  в ній НЕМА і не має бути нічого, крім коду самої сторінки: ні прізвищ, ні
+  оцінок, ні ключів відповідей, ні пароля вчителя. Усі дані приходять від
+  приймача у відповідь на код учителя — той самий 8-значний код, яким
+  відкриваються й сторінки робіт (див. кодУчителя_ у «Роботи — приймач.gs»).
+
+  Токен приймача тут є — він і так видний у джерелі кожної роботи й на
+  головній: це ключ під килимком, що відсікає випадкові запити, а не замок.
+
+  Поля крапель MIMORY тут немає навмисно: кабінет — робочий інструмент, його
+  відкривають десятки разів на день, і декоративне тло лише сповільнювало б
+  перший кадр. Решта вигляду — та сама, що на головній.
+
+  Увесь скрипт — ES5: межа iOS 12 / Android 5 / Chrome 109 тримається для
+  всього сайту. Запасні стилі для старих рушіїв дописує tools/сумісність.py,
+  маніфест робіт — tools/build_index.py між мітками BUILD:LESSONS.
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+/* Палітра та сама, що на головній і в презентаціях: один тон --h. */
+:root{
+  --h:258; --cell:30px;
+  --paper:oklch(98.4% .006 var(--h));
+  --card:oklch(100% 0 0);
+  --sunk:oklch(96.6% .009 var(--h));
+  --grid:oklch(89% .024 var(--h));
+  --ink:oklch(24% .035 var(--h));
+  --soft:oklch(51% .028 var(--h));
+  --edge:oklch(90% .015 var(--h));
+  --penL:50%; --penC:.19; --penSL:95.5%; --penSC:.036;
+  --pen:oklch(var(--penL) var(--penC) var(--h));
+  --pen-soft:oklch(var(--penSL) var(--penSC) var(--h));
+  --on-pen:oklch(100% 0 0);
+  --check:oklch(52% .14 150);     --check-soft:oklch(95.5% .04 150);
+  --marker:oklch(55% .21 22);     --marker-soft:oklch(95.5% .04 22);
+  --sun:oklch(58% .13 78);        --sun-soft:oklch(96% .05 88);
+  --note:oklch(52% .16 300);      --note-soft:oklch(95.5% .04 300);
+  --sh1:0 1px 2px oklch(24% .04 var(--h)/.06);
+  --sh2:0 4px 10px -3px oklch(24% .04 var(--h)/.10), 0 2px 4px -2px oklch(24% .04 var(--h)/.06);
+  --sh3:0 18px 40px -16px oklch(24% .04 var(--h)/.22);
+  color-scheme:light;
+}/*compat{*/@supports not ((color:oklch(50% .1 200))){:root{--paper:#f7fafe;--card:#ffffff;--sunk:#f0f4fa;--grid:#d1dceb;--ink:#152030;--soft:#5c6776;--edge:#d8dfe8;--pen:#005ccc;--pen-soft:#e2f2ff;--on-pen:#ffffff;--check:#0a7e3a;--check-soft:#def8e2;--marker:#d01a34;--marker-soft:#ffe6e4;--sun:#a46e00;--sun-soft:#fff1cc;--note:#794db6;--note-soft:#f4ebff;--sh1:0 1px 2px rgba(19,32,50,0.06);--sh2:0 4px 10px -3px rgba(19,32,50,0.1), 0 2px 4px -2px rgba(19,32,50,0.06);--sh3:0 18px 40px -16px rgba(19,32,50,0.22)}}/*}compat*/
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ color-scheme:dark;
+  --paper:oklch(17% .022 var(--h)); --card:oklch(21.5% .025 var(--h)); --sunk:oklch(19% .022 var(--h));
+  --grid:oklch(30% .03 var(--h)); --ink:oklch(95% .015 var(--h)); --soft:oklch(72% .025 var(--h));
+  --edge:oklch(31% .028 var(--h));
+  --penL:78%; --penC:.13; --penSL:29%; --penSC:.07;
+  --on-pen:oklch(17% .02 var(--h));
+  --check:oklch(80% .16 150); --check-soft:oklch(28% .06 150);
+  --marker:oklch(74% .16 22);  --marker-soft:oklch(29% .07 22);
+  --sun:oklch(84% .14 88);     --sun-soft:oklch(29% .06 78);
+  --note:oklch(80% .13 300);   --note-soft:oklch(29% .06 300);
+  --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
+}/*compat{*/@supports not ((color:oklch(50% .1 200))){:root:not([data-theme="light"]){--paper:#091019;--card:#121a25;--sunk:#0e141e;--grid:#242e3d;--ink:#e8eff9;--soft:#9ba5b5;--edge:#28313f;--on-pen:#0a1018;--check:#66da85;--check-soft:#0f3118;--marker:#ff7d7c;--marker-soft:#481b1b;--sun:#f0c551;--sun-soft:#3b2700;--note:#cbaaff;--note-soft:#302445}}/*}compat*/}
+:root[data-theme="dark"]{ color-scheme:dark;
+  --paper:oklch(17% .022 var(--h)); --card:oklch(21.5% .025 var(--h)); --sunk:oklch(19% .022 var(--h));
+  --grid:oklch(30% .03 var(--h)); --ink:oklch(95% .015 var(--h)); --soft:oklch(72% .025 var(--h));
+  --edge:oklch(31% .028 var(--h));
+  --penL:78%; --penC:.13; --penSL:29%; --penSC:.07;
+  --on-pen:oklch(17% .02 var(--h));
+  --check:oklch(80% .16 150); --check-soft:oklch(28% .06 150);
+  --marker:oklch(74% .16 22);  --marker-soft:oklch(29% .07 22);
+  --sun:oklch(84% .14 88);     --sun-soft:oklch(29% .06 78);
+  --note:oklch(80% .13 300);   --note-soft:oklch(29% .06 300);
+  --sh1:0 1px 2px #0006; --sh2:0 4px 12px -4px #0008; --sh3:0 20px 44px -18px #000a;
+}/*compat{*/@supports not ((color:oklch(50% .1 200))){:root[data-theme="dark"]{--paper:#091019;--card:#121a25;--sunk:#0e141e;--grid:#242e3d;--ink:#e8eff9;--soft:#9ba5b5;--edge:#28313f;--on-pen:#0a1018;--check:#66da85;--check-soft:#0f3118;--marker:#ff7d7c;--marker-soft:#481b1b;--sun:#f0c551;--sun-soft:#3b2700;--note:#cbaaff;--note-soft:#302445}}/*}compat*/
+
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--paper);color:var(--ink);min-height:100vh;
+  font-family:"Manrope","Segoe UI",system-ui,sans-serif;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:var(--cell) var(--cell);background-position:center top;
+  -webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+.wrap{max-width:1320px;margin:0 auto;
+  padding:calc(clamp(18px,3vw,40px) + env(safe-area-inset-top,0px)) clamp(12px,3vw,32px)
+          calc(clamp(30px,5vw,64px) + env(safe-area-inset-bottom,0px))}/*compat{*/@supports not ((width:clamp(1px,2px,3px)) and (padding:env(safe-area-inset-top,1px))){.wrap{padding:calc(18px + 0px) 12px
+          calc(30px + 0px)}}/*}compat*/
+h1{font-family:"Unbounded","Manrope",sans-serif;font-weight:800;
+   font-size:clamp(30px,5vw,56px);line-height:1.04;letter-spacing:-.03em;margin:0}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){h1{font-size:30px}}/*}compat*/
+h1 em{font-style:normal;color:var(--pen)}
+h2.sect{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(15px,1.8vw,20px);margin:26px 0 10px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){h2.sect{font-size:15px}}/*}compat*/
+.eyebrow{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+   font-size:clamp(10px,1.1vw,13px);letter-spacing:.2em;text-transform:uppercase;
+   color:var(--pen);margin:0 0 10px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eyebrow{font-size:10px}}/*}compat*/
+.lede{font-size:clamp(15px,1.7vw,19px);color:var(--soft);line-height:1.45;
+   margin:14px 0 0;max-width:52ch}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.lede{font-size:15px}}/*}compat*/
+
+/* ─────────── керування ─────────── */
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:22px 0 14px}/*compat{*/.no-fgap .controls>*{margin-right:8px;margin-bottom:8px}/*}compat*/
+.chips{display:flex;flex-wrap:wrap;gap:6px}/*compat{*/.no-fgap .chips>*{margin-right:6px;margin-bottom:6px}/*}compat*/
+.chip{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,1.3vw,15px);letter-spacing:.03em;
+  border:2px solid var(--edge);background:var(--card);color:var(--ink);
+  border-radius:99px;padding:9px 15px;cursor:pointer;line-height:1;box-shadow:var(--sh1);
+  transition:background .15s,border-color .15s,color .15s,transform .1s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.chip{font-size:12px}}/*}compat*/
+.chip:hover{border-color:var(--pen)}
+.chip:active{transform:translateY(1px)}
+.chip[aria-pressed="true"]{background:var(--pen);border-color:var(--pen);color:var(--on-pen)}
+.chip.sm{font-size:12px;padding:7px 12px}
+.btn{cursor:pointer;font-family:"Unbounded","Manrope",sans-serif;font-weight:600;
+  font-size:clamp(12px,1.3vw,15px);letter-spacing:.03em;line-height:1;
+  padding:12px 22px;border-radius:99px;box-shadow:var(--sh1);
+  border:2px solid var(--pen);background:var(--pen);color:var(--on-pen);
+  transition:background .15s,border-color .15s,color .15s,transform .1s,box-shadow .15s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.btn{font-size:12px}}/*}compat*/
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:var(--sh3)}
+.btn:active:not(:disabled){transform:translateY(1px);box-shadow:var(--sh1)}
+.btn.ghost{background:var(--card);color:var(--ink);border-color:var(--edge)}
+.btn.ghost:hover{border-color:var(--pen);color:var(--pen)}
+.btn.sm{padding:8px 14px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.linkish{background:none;border:0;color:var(--pen);cursor:pointer;font:inherit;
+  text-decoration:underline;text-underline-offset:3px;padding:0}
+.note{color:var(--soft);font-size:.9rem;margin:10px 0 0}
+.note.bad{color:var(--marker);font-weight:700}
+.note.ok{color:var(--check);font-weight:700}
+
+/* ─────────── ворота ─────────── */
+.gatebox{background:var(--card);border:1px solid var(--edge);border-radius:14px;
+  padding:22px;box-shadow:var(--sh2);margin-top:18px;max-width:520px}
+.gatebox label{display:block;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:8px}
+#kod{width:100%;padding:16px 18px;border:2px solid var(--edge);border-radius:14px;
+  background:var(--card);color:var(--ink);box-shadow:var(--sh1);
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:clamp(20px,3.4vw,30px);
+  font-weight:700;letter-spacing:.34em;text-transform:uppercase;text-align:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){#kod{font-size:20px}}/*}compat*/
+#kod:focus{outline:none;border-color:var(--pen);box-shadow:0 0 0 4px var(--pen-soft)}
+.gatebtns{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0;align-items:center}/*compat{*/.no-fgap .gatebtns>*{margin-right:10px;margin-bottom:10px}/*}compat*/
+
+/* ─────────── картки ─────────── */
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}/*compat{*/@supports not ((gap:1px)){.cards{grid-gap:12px}}/*}compat*/
+.card{background:var(--card);border:2px solid var(--edge);border-radius:14px;
+  padding:14px 16px;box-shadow:var(--sh1)}
+.card h3{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:16px;
+  margin:0 0 2px;letter-spacing:-.01em}
+.card .sub{font-size:12px;color:var(--soft);margin:0 0 10px}
+.card .дія{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}/*compat{*/.no-fgap .card .дія>*{margin-right:6px;margin-bottom:6px}/*}compat*/
+.мітка{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;
+  border-radius:99px;padding:3px 9px;border:1.5px solid var(--edge);color:var(--soft)}
+.мітка.відкрита{background:var(--check-soft);border-color:var(--check);color:var(--check)}
+.мітка.закрита{background:var(--sunk)}
+.мітка.кр{background:var(--marker-soft);border-color:var(--marker);color:var(--marker)}
+.мітка.ср{background:var(--pen-soft);border-color:var(--pen);color:var(--pen)}
+.мітка.дод{background:var(--note-soft);border-color:var(--note);color:var(--note)}
+.мітка.дз{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+
+/* ─────────── таблиці ─────────── */
+.прокрут{overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border:2px solid var(--edge);border-radius:14px;background:var(--card);box-shadow:var(--sh1)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
+th,td{padding:7px 9px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--grid)}
+thead th{position:-webkit-sticky;position:sticky;top:0;z-index:2;background:var(--card);
+  font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:11px;
+  border-bottom:2px solid var(--edge)}
+th.ліва,td.ліва{position:-webkit-sticky;position:sticky;left:0;z-index:3;background:var(--card);
+  text-align:left;border-right:2px solid var(--edge);max-width:210px;overflow:hidden;
+  text-overflow:ellipsis;font-weight:600}
+thead th.ліва{z-index:4}
+tbody tr:hover td{background:var(--sunk)}
+tbody tr:hover td.ліва{background:var(--sunk)}
+td.оц{font-family:"JetBrains Mono",monospace;font-weight:700;cursor:pointer}
+td.оц.n1{background:var(--marker-soft);color:var(--marker)}
+td.оц.n4{background:var(--sun-soft);color:var(--sun)}
+td.оц.n7{background:var(--pen-soft);color:var(--pen)}
+td.оц.n10{background:var(--check-soft);color:var(--check)}
+td.пусто{color:var(--edge)}
+tr.нема-в-списку td.ліва{background:var(--marker-soft);color:var(--marker)}
+.сер{font-family:"JetBrains Mono",monospace;color:var(--soft)}
+
+/* ─────────── роботи ─────────── */
+.робота{background:var(--card);border:2px solid var(--edge);border-radius:14px;
+  padding:13px 15px;box-shadow:var(--sh1);margin-bottom:10px}
+.робота .шапка{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}/*compat{*/.no-fgap .робота .шапка>*{margin-right:8px;margin-bottom:8px}/*}compat*/
+.робота .назва{font-family:"Unbounded","Manrope",sans-serif;font-weight:600;font-size:15px}
+.робота .де{font-size:12px;color:var(--soft)}
+.вікно{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}/*compat{*/.no-fgap .вікно>*{margin-right:6px;margin-bottom:6px}/*}compat*/
+.вікно label{font-size:11px;color:var(--soft);letter-spacing:.1em;text-transform:uppercase}
+.вікно input{font:inherit;font-size:13px;color:inherit;background:var(--card);
+  border:2px solid var(--edge);border-radius:9px;padding:7px 9px}
+.вікно input:focus{outline:none;border-color:var(--pen)}
+.учні{display:grid;gap:4px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));margin-top:10px}/*compat{*/@supports not ((gap:1px)){.учні{grid-gap:4px}}/*}compat*/
+.учень{display:flex;gap:6px;align-items:center;justify-content:space-between;
+  background:var(--sunk);border-radius:9px;padding:5px 7px 5px 10px;font-size:13px}/*compat{*/.no-fgap .учень>*{margin-right:6px}.no-fgap .учень>*:last-child{margin-right:0}/*}compat*/
+.учень b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.код{font-family:"JetBrains Mono",monospace;font-weight:700;letter-spacing:.08em}
+
+/* ─────────── панель деталей і експорт ─────────── */
+.панель{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);
+  border-top:2px solid var(--pen);box-shadow:var(--sh3);padding:14px 16px;
+  padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}/*compat{*/@supports not ((padding:env(safe-area-inset-top,1px))){.панель{padding-bottom:calc(14px + 0px)}}/*}compat*/
+.панель h3{font-family:"Unbounded","Manrope",sans-serif;font-size:15px;margin:0 0 6px}
+.панель dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0;font-size:13px}/*compat{*/@supports not ((gap:1px)){.панель dl{grid-gap:2px 12px}}/*}compat*/
+.панель dt{color:var(--soft)}
+.панель dd{margin:0;font-family:"JetBrains Mono",monospace}
+textarea{width:100%;min-height:150px;font-family:"JetBrains Mono",monospace;font-size:12px;
+  color:inherit;background:var(--card);border:2px solid var(--edge);border-radius:12px;padding:10px}
+textarea:focus{outline:none;border-color:var(--pen)}
+footer{margin-top:40px;border-top:2px solid var(--edge);padding-top:16px;
+  font-size:13px;color:var(--soft);line-height:1.6}
+.сірий{color:var(--soft)}
+.жирний{font-weight:700}
+</style>
+<script id="compat-fgap">/* флекс-gap з Safari 14.1: де його нема, стилі дають дітям відступи (tools/сумісність.py) */(function(){try{var d=document.createElement("div"),r=document.documentElement;d.style.cssText="display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden";d.appendChild(document.createElement("div"));d.appendChild(document.createElement("div"));r.appendChild(d);var ok=d.scrollHeight===1;r.removeChild(d);if(!ok)r.className+=" no-fgap";}catch(e){}})();</script>
+</head>
+<body>
+<div class="wrap">
+
+<section id="gate">
+  <p class="eyebrow">Кабінет</p>
+  <h1>Вхід <em>за кодом</em></h1>
+  <p class="lede">Код учителя — вісім знаків. За ним відкриваються всі класи,
+  усі оцінки, вікна робіт і резервні посилання. Той самий код працює й на
+  головній сторінці, і в будь-якій роботі — там він показує сторінку такою,
+  якою її бачить учень.</p>
+
+  <div class="gatebox">
+    <label for="kod">Код учителя</label>
+    <input id="kod" type="text" maxlength="8" autocomplete="off" spellcheck="false"
+           autocapitalize="characters" placeholder="8 знаків">
+    <p class="note" id="kod-note"></p>
+    <p class="gatebtns">
+      <button class="btn" id="enter" type="button" disabled>Увійти</button>
+      <button class="btn ghost" id="theme0" type="button" aria-label="Змінити тему">◐</button>
+    </p>
+  </div>
+</section>
+
+<div id="app" hidden>
+<header>
+  <p class="eyebrow"><span id="who">—</span> · київський час <span id="zaraz">—</span></p>
+  <h1>Кабінет <em>учителя</em></h1>
+</header>
+
+<div class="controls">
+  <div class="chips" id="tabs" role="group" aria-label="Розділ"></div>
+  <button class="btn ghost sm" id="refresh" type="button">Оновити</button>
+  <button class="btn ghost sm" id="theme" type="button" aria-label="Змінити тему">◐</button>
+  <button class="linkish" id="logout" type="button">Вийти</button>
+</div>
+
+<section id="v-класи"></section>
+
+<section id="v-журнал" hidden>
+  <div class="controls">
+    <div class="chips" id="ж-класи" role="group" aria-label="Клас"></div>
+    <div class="chips" id="ж-предмети" role="group" aria-label="Предмет"></div>
+  </div>
+  <div class="controls">
+    <div class="chips" id="ж-типи" role="group" aria-label="Тип робіт"></div>
+  </div>
+  <p class="note" id="ж-нота"></p>
+  <div id="ж-табл"></div>
+</section>
+
+<section id="v-роботи" hidden>
+  <div class="controls">
+    <div class="chips" id="р-класи" role="group" aria-label="Клас"></div>
+  </div>
+  <p class="note" id="р-нота"></p>
+  <div id="р-список"></div>
+</section>
+
+<section id="v-учні" hidden>
+  <div class="controls">
+    <div class="chips" id="у-класи" role="group" aria-label="Клас"></div>
+  </div>
+  <p class="note" id="у-нота"></p>
+  <div id="у-список"></div>
+</section>
+
+<section id="v-експорт" hidden>
+  <h2 class="sect">Зібрати оцінки для «Мрії»</h2>
+  <p class="note">Виберіть роботу — кабінет віддасть готовий об’єкт <b>G</b> для скіла
+  <code>/grades</code> і список тих, хто не здавав. Дата колонки в журналі — найчастіша
+  дата здачі.</p>
+  <div class="controls">
+    <div class="chips" id="е-класи" role="group" aria-label="Клас"></div>
+  </div>
+  <div class="controls">
+    <div class="chips" id="е-роботи" role="group" aria-label="Робота"></div>
+  </div>
+  <div id="е-вихід"></div>
+</section>
+
+<footer>
+  <p style="margin:0">Дані беруться з приймача робіт і з таблиць на Drive — другого
+  джерела правди немає. Оцінка 12-бальна: <b>ceil(бал ÷ макс × 12)</b>, не менше 1,
+  з кількох спроб лишається найкраща — так само рахує скіл <code>/grades</code>.</p>
+  <p style="margin:8px 0 0">Вікна КР/СР змінюються одразу, без перевикочування приймача.
+  Резервне посилання — це особисте посилання на окрему сторінку <code>…, резерв.html</code>:
+  вона має бути вже зроблена <code>tools/резерв.py</code> і запушена.</p>
+</footer>
+</div>
+
+<div class="панель" id="панель" hidden></div>
+</div>
+
+<!-- BUILD:LESSONS -->
+<script id="lessons" type="application/json">
+{
+ "works": [
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 2",
+   "subject": "Математика",
+   "theme": "Натуральні числа. Додавання і віднімання натуральних чисел",
+   "minutes": 30,
+   "date": "",
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2018/%D0%A3%D1%80%D0%BE%D0%BA%2018%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2018/%D0%A3%D1%80%D0%BE%D0%BA%2018%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "5-З",
+   "lesson": "Урок 18",
+   "key": "5-З | Математика | Самостійна робота № 2"
+  },
+  {
+   "kind": "контрольна",
+   "title": "Контрольна робота № 1",
+   "subject": "Математика",
+   "theme": "Натуральні числа. Додавання і віднімання натуральних чисел",
+   "minutes": 35,
+   "date": "",
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2019/%D0%A3%D1%80%D0%BE%D0%BA%2019%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2019/%D0%A3%D1%80%D0%BE%D0%BA%2019%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "5-З",
+   "lesson": "Урок 19",
+   "key": "5-З | Математика | Контрольна робота № 1"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 3",
+   "subject": "Математика",
+   "theme": "Множення натуральних чисел. Степінь натурального числа",
+   "minutes": 30,
+   "date": "",
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2030/%D0%A3%D1%80%D0%BE%D0%BA%2030%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2030/%D0%A3%D1%80%D0%BE%D0%BA%2030%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "5-З",
+   "lesson": "Урок 30",
+   "key": "5-З | Математика | Самостійна робота № 3"
+  },
+  {
+   "kind": "контрольна",
+   "title": "Контрольна робота № 2",
+   "subject": "Математика",
+   "theme": "Множення натуральних чисел. Степінь натурального числа",
+   "minutes": 35,
+   "date": "",
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2031/%D0%A3%D1%80%D0%BE%D0%BA%2031%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2031/%D0%A3%D1%80%D0%BE%D0%BA%2031%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "5-З",
+   "lesson": "Урок 31",
+   "key": "5-З | Математика | Контрольна робота № 2"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 4",
+   "subject": "Математика",
+   "theme": "Ділення натуральних чисел. Ділення з остачею",
+   "minutes": 30,
+   "date": "",
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2039/%D0%A3%D1%80%D0%BE%D0%BA%2039%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2039/%D0%A3%D1%80%D0%BE%D0%BA%2039%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "5-З",
+   "lesson": "Урок 39",
+   "key": "5-З | Математика | Самостійна робота № 4"
+  },
+  {
+   "kind": "контрольна",
+   "title": "Контрольна робота № 3",
+   "subject": "Математика",
+   "theme": "Ділення натуральних чисел. Ділення з остачею",
+   "minutes": 35,
+   "date": "",
+   "href": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2040/%D0%A3%D1%80%D0%BE%D0%BA%2040%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "5-%D0%97/%D0%9C%D0%B0%D1%82%D0%B5%D0%BC%D0%B0%D1%82%D0%B8%D0%BA%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2040/%D0%A3%D1%80%D0%BE%D0%BA%2040%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "5-З",
+   "lesson": "Урок 40",
+   "key": "5-З | Математика | Контрольна робота № 3"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 1",
+   "subject": "Алгебра",
+   "theme": "Повторення за курс математики 5–6 класів",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%201%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "key": "7-І | Алгебра | Додаткова робота № 1"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 2",
+   "subject": "Алгебра",
+   "theme": "Лінійні рівняння з однією змінною",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%202%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "key": "7-І | Алгебра | Додаткова робота № 2"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 3",
+   "subject": "Алгебра",
+   "theme": "Вирази зі змінними. Тотожності. Степінь",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%203%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "key": "7-І | Алгебра | Додаткова робота № 3"
+  },
+  {
+   "kind": "домашнє",
+   "title": "Домашнє завдання № 1",
+   "subject": "Алгебра",
+   "theme": "Повторення: натуральні числа, подільність",
+   "minutes": 0,
+   "date": "2026-09-03",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%201/%D0%A3%D1%80%D0%BE%D0%BA%201%20%E2%80%94%20%D0%B4%D0%BE%D0%BC%D0%B0%D1%88%D0%BD%D1%94%20%D0%B7%D0%B0%D0%B2%D0%B4%D0%B0%D0%BD%D0%BD%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "lesson": "Урок 1",
+   "key": "7-І | Алгебра | Домашнє завдання № 1"
+  },
+  {
+   "kind": "домашнє",
+   "title": "Домашнє завдання № 2",
+   "subject": "Алгебра",
+   "theme": "Повторення: десяткові та звичайні дроби, відсотки",
+   "minutes": 0,
+   "date": "2026-09-05",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%202/%D0%A3%D1%80%D0%BE%D0%BA%202%20%E2%80%94%20%D0%B4%D0%BE%D0%BC%D0%B0%D1%88%D0%BD%D1%94%20%D0%B7%D0%B0%D0%B2%D0%B4%D0%B0%D0%BD%D0%BD%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "lesson": "Урок 2",
+   "key": "7-І | Алгебра | Домашнє завдання № 2"
+  },
+  {
+   "kind": "домашнє",
+   "title": "Домашнє завдання № 3",
+   "subject": "Алгебра",
+   "theme": "Відношення і пропорції",
+   "minutes": 0,
+   "date": "2026-09-07",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%203/%D0%A3%D1%80%D0%BE%D0%BA%203%20%E2%80%94%20%D0%B4%D0%BE%D0%BC%D0%B0%D1%88%D0%BD%D1%94%20%D0%B7%D0%B0%D0%B2%D0%B4%D0%B0%D0%BD%D0%BD%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "lesson": "Урок 3",
+   "key": "7-І | Алгебра | Домашнє завдання № 3"
+  },
+  {
+   "kind": "домашнє",
+   "title": "Домашнє завдання № 4",
+   "subject": "Алгебра",
+   "theme": "Раціональні числа та дії з ними",
+   "minutes": 0,
+   "date": "2026-09-09",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%204/%D0%A3%D1%80%D0%BE%D0%BA%204%20%E2%80%94%20%D0%B4%D0%BE%D0%BC%D0%B0%D1%88%D0%BD%D1%94%20%D0%B7%D0%B0%D0%B2%D0%B4%D0%B0%D0%BD%D0%BD%D1%8F%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "lesson": "Урок 4",
+   "key": "7-І | Алгебра | Домашнє завдання № 4"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 1",
+   "subject": "Алгебра",
+   "theme": "Раціональні числа та дії з ними",
+   "minutes": 18,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%205/%D0%A3%D1%80%D0%BE%D0%BA%205%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "7-І",
+   "lesson": "Урок 5",
+   "key": "7-І | Алгебра | Самостійна робота № 1"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 2",
+   "subject": "Алгебра",
+   "theme": "Лінійні рівняння з однією змінною",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2014/%D0%A3%D1%80%D0%BE%D0%BA%2014%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2014/%D0%A3%D1%80%D0%BE%D0%BA%2014%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "7-І",
+   "lesson": "Урок 14",
+   "key": "7-І | Алгебра | Самостійна робота № 2"
+  },
+  {
+   "kind": "контрольна",
+   "title": "Контрольна робота № 1",
+   "subject": "Алгебра",
+   "theme": "Лінійні рівняння з однією змінною",
+   "minutes": 35,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2015/%D0%A3%D1%80%D0%BE%D0%BA%2015%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2015/%D0%A3%D1%80%D0%BE%D0%BA%2015%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "7-І",
+   "lesson": "Урок 15",
+   "key": "7-І | Алгебра | Контрольна робота № 1"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 3",
+   "subject": "Алгебра",
+   "theme": "Властивості степеня з натуральним показником",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2025/%D0%A3%D1%80%D0%BE%D0%BA%2025%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "7-%D0%86/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2025/%D0%A3%D1%80%D0%BE%D0%BA%2025%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "7-І",
+   "lesson": "Урок 25",
+   "key": "7-І | Алгебра | Самостійна робота № 3"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 1",
+   "subject": "Геометрія",
+   "theme": "Елементарні геометричні фігури. Суміжні та вертикальні кути",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%201%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "key": "7-І | Геометрія | Додаткова робота № 1"
+  },
+  {
+   "kind": "додаткова",
+   "title": "Додаткова робота № 2",
+   "subject": "Геометрія",
+   "theme": "Перпендикулярні та паралельні прямі",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D1%96/%D0%94%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82%D0%B0%20%E2%84%96%202%20%E2%80%94%20%D0%B4%D0%BE%D0%B4%D0%B0%D1%82%D0%BA%D0%BE%D0%B2%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": null,
+   "cls": "7-І",
+   "key": "7-І | Геометрія | Додаткова робота № 2"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 1",
+   "subject": "Геометрія",
+   "theme": "Елементарні геометричні фігури та їхні властивості",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%207/%D0%A3%D1%80%D0%BE%D0%BA%207%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "7-І",
+   "lesson": "Урок 7",
+   "key": "7-І | Геометрія | Самостійна робота № 1"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 2",
+   "subject": "Геометрія",
+   "theme": "Елементарні геометричні фігури. Суміжні та вертикальні кути",
+   "minutes": 30,
+   "date": "",
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "7-І",
+   "lesson": "Урок 11",
+   "key": "7-І | Геометрія | Самостійна робота № 2"
+  },
+  {
+   "kind": "контрольна",
+   "title": "Контрольна робота № 1",
+   "subject": "Геометрія",
+   "theme": "Елементарні геометричні фігури. Суміжні та вертикальні кути",
+   "minutes": 35,
+   "date": "",
+   "href": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2012/%D0%A3%D1%80%D0%BE%D0%BA%2012%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "7-%D0%86/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2012/%D0%A3%D1%80%D0%BE%D0%BA%2012%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "7-І",
+   "lesson": "Урок 12",
+   "key": "7-І | Геометрія | Контрольна робота № 1"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 1",
+   "subject": "Алгебра",
+   "theme": "Додавання та віднімання дробів з однаковими знаменниками",
+   "minutes": 30,
+   "date": "",
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2013/%D0%A3%D1%80%D0%BE%D0%BA%2013%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2013/%D0%A3%D1%80%D0%BE%D0%BA%2013%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "8-К",
+   "lesson": "Урок 13",
+   "key": "8-К | Алгебра | Самостійна робота № 1"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 2",
+   "subject": "Алгебра",
+   "theme": "Раціональні дроби. Додавання і віднімання дробів",
+   "minutes": 30,
+   "date": "",
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2019/%D0%A3%D1%80%D0%BE%D0%BA%2019%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2019/%D0%A3%D1%80%D0%BE%D0%BA%2019%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "8-К",
+   "lesson": "Урок 19",
+   "key": "8-К | Алгебра | Самостійна робота № 2"
+  },
+  {
+   "kind": "контрольна",
+   "title": "Контрольна робота № 1",
+   "subject": "Алгебра",
+   "theme": "Раціональні дроби. Додавання і віднімання дробів",
+   "minutes": 40,
+   "date": "",
+   "href": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2020/%D0%A3%D1%80%D0%BE%D0%BA%2020%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "8-%D0%9A/%D0%90%D0%BB%D0%B3%D0%B5%D0%B1%D1%80%D0%B0/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2020/%D0%A3%D1%80%D0%BE%D0%BA%2020%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "8-К",
+   "lesson": "Урок 20",
+   "key": "8-К | Алгебра | Контрольна робота № 1"
+  },
+  {
+   "kind": "самостійна",
+   "title": "Самостійна робота № 1",
+   "subject": "Геометрія",
+   "theme": "Чотирикутник. Паралелограм і його види",
+   "minutes": 30,
+   "date": "",
+   "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2011/%D0%A3%D1%80%D0%BE%D0%BA%2011%20%E2%80%94%20%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D1%96%D0%B9%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "8-К",
+   "lesson": "Урок 11",
+   "key": "8-К | Геометрія | Самостійна робота № 1"
+  },
+  {
+   "kind": "контрольна",
+   "title": "Контрольна робота № 1",
+   "subject": "Геометрія",
+   "theme": "Чотирикутник. Паралелограм і його види",
+   "minutes": 35,
+   "date": "",
+   "href": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2012/%D0%A3%D1%80%D0%BE%D0%BA%2012%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BA%D0%BB%D0%B0%D1%81%D1%83.html",
+   "резерв": "8-%D0%9A/%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80%D1%96%D1%8F/%D0%A3%D1%80%D0%BE%D0%BA%D0%B8/%D0%A3%D1%80%D0%BE%D0%BA%2012/%D0%A3%D1%80%D0%BE%D0%BA%2012%20%E2%80%94%20%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%B0%2C%20%D1%80%D0%B5%D0%B7%D0%B5%D1%80%D0%B2.html",
+   "cls": "8-К",
+   "lesson": "Урок 12",
+   "key": "8-К | Геометрія | Контрольна робота № 1"
+  }
+ ]
+}
+</script>
+<!-- /BUILD:LESSONS -->
+
+<script>
+/* Увесь код — ES5 навмисно: межа iOS 12 / Android 5 / Chrome 109. */
+(function(){
+  'use strict';
+  var D = document;
+
+  var ПРИЙМАЧ = { url: 'https://script.google.com/macros/s/AKfycbzazR__pCCYXgsBWx-hCJW01NVw1sD55LaJRcE-WkFsDPlGUIythESh7M35TJnkKdk9/exec', токен: 'fowenf93nuf3eeno3ef9u3f' };
+  var САЙТ = 'https://benelungo.github.io/school/';
+
+  var ТИПИ = ['контрольна', 'самостійна', 'додаткова', 'домашнє'];
+  var ЯРЛИК = { 'контрольна':'Контрольні', 'самостійна':'Самостійні',
+                'додаткова':'Додаткові', 'домашнє':'Домашні' };
+  var КОРОТКО = { 'контрольна':'КР', 'самостійна':'СР', 'додаткова':'Дод', 'домашнє':'ДЗ' };
+  var ТОН = { 'контрольна':'кр', 'самостійна':'ср', 'додаткова':'дод', 'домашнє':'дз' };
+  var HUE = { 'Математика':277, 'Алгебра':300, 'Геометрія':150, 'Інформатика':40 };
+
+  var РОБОТИ_МАНІФЕСТУ = [];
+  try {
+    var сире = JSON.parse(D.getElementById('lessons').textContent);
+    РОБОТИ_МАНІФЕСТУ = (сире && сире.works) || [];
+  } catch(e){}
+  var ЗА_КЛЮЧЕМ = {};
+  for (var мi = 0; мi < РОБОТИ_МАНІФЕСТУ.length; мi++)
+    ЗА_КЛЮЧЕМ[РОБОТИ_МАНІФЕСТУ[мi].key] = РОБОТИ_МАНІФЕСТУ[мi];
+
+  var СТАН = { код:'', класи:[], зк:{}, роботи:[], колонкиМрії:{},
+               вид:'класи', клас:'', предмет:'', типи:{},
+               журнал:{}, резерв:{} };
+  for (var тi = 0; тi < ТИПИ.length; тi++) СТАН.типи[ТИПИ[тi]] = true;
+
+  function $(id){ return D.getElementById(id); }
+  function store(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function текст(вузол, т){ вузол.textContent = т == null ? '' : String(т); return вузол; }
+  function ел(тег, клас, т){
+    var в = D.createElement(тег);
+    if (клас) в.className = клас;
+    if (т != null) в.textContent = String(т);
+    return в;
+  }
+  function очистити(вузол){ while (вузол.firstChild) вузол.removeChild(вузол.firstChild); }
+
+  /* ─────────────────── тема ─────────────────── */
+  var збережена = load('theme');
+  if (збережена === 'dark' || збережена === 'light') D.documentElement.setAttribute('data-theme', збережена);
+  function перемкнутиТему(){
+    var зараз = D.documentElement.getAttribute('data-theme') || 'dark';
+    var далі = зараз === 'dark' ? 'light' : 'dark';
+    D.documentElement.setAttribute('data-theme', далі);
+    store('theme', далі);
+  }
+  $('theme').onclick = перемкнутиТему;
+  $('theme0').onclick = перемкнутиТему;
+
+  /* ─────────────────── JSONP ───────────────────────────────────────────
+     Тег <script src> не підпадає під CORS; fetch до Apps Script іде через
+     редірект на googleusercontent.com і в частині браузерів мовчки падає.
+
+     Після тайм-ауту НЕ глухнемо (той самий урок, що на головній, 28.09.2026):
+     тайм-аут лише каже «поки немає», а пізня відповідь усе одно доїжджає
+     другим викликом. Тому тут 45 с на читання журналу (холодний старт
+     Apps Script плюс відкриття книги — це 5–20 с), а не 12, як на головній. */
+  function jsonp(параметри, коли, мс){
+    if (!ПРИЙМАЧ.url) return коли(null, 'немає');
+    var імʼя = 'кб' + Math.random().toString(36).slice(2);
+    var тег = D.createElement('script');
+    var готово = false;
+    var годинник = setTimeout(function(){ if (!готово) коли(null, 'час'); }, мс || 45000);
+    function прибрати(від, чому){
+      if (готово) return;
+      готово = true; clearTimeout(годинник);
+      try { delete window[імʼя]; } catch(e){ window[імʼя] = undefined; }
+      if (тег.parentNode) тег.parentNode.removeChild(тег);
+      коли(від, чому);
+    }
+    window[імʼя] = function(від){ прибрати(від); };
+    тег.onerror = function(){ прибрати(null, 'блок'); };
+    параметри.токен = ПРИЙМАЧ.токен; параметри.кб = імʼя;
+    var q = [];
+    for (var k in параметри) if (параметри.hasOwnProperty(k))
+      q.push(encodeURIComponent(k) + '=' + encodeURIComponent(параметри[k]));
+    тег.src = ПРИЙМАЧ.url + '?' + q.join('&');
+    D.head.appendChild(тег);
+  }
+
+  function спитати(дія, параметри, коли, мс){
+    параметри = параметри || {};
+    параметри.дія = дія;
+    параметри.код = СТАН.код;
+    jsonp(параметри, коли, мс);
+  }
+
+  /* ─────────────────── ворота ─────────────────── */
+  var КИРИЛИЦЯ = /[Ѐ-ӿ]/;
+  var кирилицю = false;
+  var kod = $('kod'), kodNote = $('kod-note');
+  function чистий(к){ return String(к||'').toUpperCase().replace(/[^0-9A-Z]/g,'').slice(0,8); }
+  function нота(т, кл){ kodNote.className = 'note' + (кл ? ' ' + кл : ''); текст(kodNote, т); }
+
+  kod.oninput = function(){
+    var сире = kod.value, к = чистий(сире);
+    if (kod.value !== к) kod.value = к;
+    $('enter').disabled = к.length !== 8;
+    /* Фільтр вище викидає кирилицю мовчки: з українською розкладкою в полі
+       не з'являється нічого, і «Увійти» лишається сірою без пояснення
+       (24.09.2026, 7-І). Самі розкладку не виправляємо — «К» це і K, і R. */
+    if (КИРИЛИЦЯ.test(сире) || (кирилицю && !к.length))
+      нота('Це українські літери. Перемкніть клавіатуру на англійську — Alt+Shift (на Mac Ctrl+Пробіл).', 'bad');
+    else
+      нота(к.length && к.length < 8 ? 'Ще ' + (8 - к.length) : '');
+    кирилицю = КИРИЛИЦЯ.test(сире);
+  };
+  $('enter').onclick = function(){ увійти(чистий(kod.value)); };
+  kod.onkeydown = function(e){ if (e.key === 'Enter' && чистий(kod.value).length === 8) увійти(чистий(kod.value)); };
+
+  function увійти(код){
+    if (код.length !== 8) return;
+    нота('Перевіряємо код…');
+    СТАН.код = код;
+    спитати('вхід', {}, function(від, чому){
+      if (від && від.ок && від.роль === 'вчитель'){
+        store('вчитель:код', код);
+        СТАН.класи = від.класи || [];
+        СТАН.зк = від.роботиЗаКласом || {};
+        СТАН.клас = load('вчитель:клас') || СТАН.класи[0] || '';
+        текст($('who'), від.учень || 'Учитель');
+        текст($('zaraz'), від.зараз || '');
+        $('gate').hidden = true; $('app').hidden = false;
+        почати();
+        return;
+      }
+      if (!від){
+        нота(чому === 'час' ? 'Приймач відповідає повільно — зачекайте або спробуйте ще раз.'
+                            : 'Немає звʼязку з приймачем.', 'bad');
+        return;
+      }
+      if (від.ок) нота('Це код учня, не вчителя.', 'bad');
+      else нота(від.помилка || 'Код не підходить.', 'bad');
+    }, 20000);
+  }
+
+  $('logout').onclick = function(){ store('вчитель:код',''); location.href = location.pathname; };
+
+  /* ─────────────────── розділи ─────────────────── */
+  var ВИДИ = [['класи','Класи'],['журнал','Журнал'],['роботи','Роботи'],
+              ['учні','Учні й коди'],['експорт','Експорт у «Мрію»']];
+
+  function намалюватиЧіпи(куди, значення, вибране, коли, малий){
+    очистити(куди);
+    for (var i = 0; i < значення.length; i++){
+      (function(з){
+        var к = ел('button', 'chip' + (малий ? ' sm' : ''), з[1]);
+        к.type = 'button';
+        к.setAttribute('aria-pressed', з[0] === вибране ? 'true' : 'false');
+        к.onclick = function(){ коли(з[0]); };
+        куди.appendChild(к);
+      })(значення[i]);
+    }
+  }
+  function класиЧіпи(куди, коли){
+    var пари = [];
+    for (var i = 0; i < СТАН.класи.length; i++) пари.push([СТАН.класи[i], СТАН.класи[i]]);
+    намалюватиЧіпи(куди, пари, СТАН.клас, коли);
+  }
+
+  function показати(вид){
+    СТАН.вид = вид;
+    for (var i = 0; i < ВИДИ.length; i++) $('v-' + ВИДИ[i][0]).hidden = ВИДИ[i][0] !== вид;
+    намалюватиЧіпи($('tabs'), ВИДИ, вид, показати);
+    $('панель').hidden = true;
+    if (вид === 'класи') малюватиКласи();
+    if (вид === 'журнал') малюватиЖурнал();
+    if (вид === 'роботи') малюватиРоботи();
+    if (вид === 'учні') малюватиУчнів();
+    if (вид === 'експорт') малюватиЕкспорт();
+  }
+
+  function почати(){
+    показати('класи');
+    спитати('роботи', {}, function(від){
+      if (!від || !від.ок) return;
+      СТАН.роботи = від.роботи || [];
+      СТАН.колонкиМрії = від.колонкиМрії || {};
+      текст($('zaraz'), від.зараз || '');
+      if (СТАН.вид === 'класи') малюватиКласи();
+      if (СТАН.вид === 'роботи') малюватиРоботи();
+      if (СТАН.вид === 'експорт') малюватиЕкспорт();
+    }, 25000);
+  }
+
+  $('refresh').onclick = function(){
+    СТАН.журнал = {}; СТАН.резерв = {};
+    почати();
+  };
+
+  /* ─────────────────── дані з приймача ─────────────────── */
+  function журнал(клас, предмет, тип, коли){
+    var ключ = клас + '|' + предмет + '|' + тип;
+    if (СТАН.журнал[ключ]) return коли(СТАН.журнал[ключ]);
+    спитати('журнал', { клас:клас, предмет:предмет, тип:тип }, function(від){
+      if (від && від.ок) СТАН.журнал[ключ] = від;
+      коли(від);
+    });
+  }
+  function резерв(клас, коли){
+    if (СТАН.резерв[клас]) return коли(СТАН.резерв[клас]);
+    спитати('резерв', { клас:клас }, function(від){
+      if (від && від.ок) СТАН.резерв[клас] = від;
+      коли(від);
+    }, 25000);
+  }
+  function предметиКласу(клас){
+    var знайдені = [], i;
+    for (i = 0; i < СТАН.роботи.length; i++)
+      if (СТАН.роботи[i].клас === клас && знайдені.indexOf(СТАН.роботи[i].предмет) < 0)
+        знайдені.push(СТАН.роботи[i].предмет);
+    if (!знайдені.length){                         // ще не прийшов перелік робіт
+      var зк = СТАН.зк[клас] || [];
+      for (i = 0; i < зк.length; i++){
+        var п = зк[i].split(' | ')[1];
+        if (знайдені.indexOf(п) < 0) знайдені.push(п);
+      }
+    }
+    знайдені.sort();
+    return знайдені;
+  }
+  function роботиКласу(клас, предмет){
+    var з = [];
+    for (var i = 0; i < СТАН.роботи.length; i++){
+      var w = СТАН.роботи[i];
+      if (w.клас === клас && (!предмет || w.предмет === предмет)) з.push(w);
+    }
+    return з;
+  }
+
+  /* ─────────────────── 1. класи ─────────────────── */
+  function малюватиКласи(){
+    var куди = $('v-класи');
+    очистити(куди);
+    if (!СТАН.роботи.length){
+      куди.appendChild(ел('p', 'note', 'Питаємо приймач про роботи…'));
+      return;
+    }
+    /* «Відкрито зараз» — лише про роботи з вікном, тобто контрольні й
+       самостійні. Додаткові відкриті завжди, домашні здають скільки
+       завгодно разів: показувати їх тут означало б щодня бачити десяток
+       «відкритих» робіт і не помічати справжню. */
+    var відкриті = [];
+    for (var i = 0; i < СТАН.роботи.length; i++){
+      var w = СТАН.роботи[i];
+      if (w.відкрита && !w.завждиВідкрита && !w.сітка) відкриті.push(w);
+    }
+
+    куди.appendChild(текст(ел('h2', 'sect'), відкриті.length
+      ? 'Відкрито зараз: ' + відкриті.length
+      : 'Зараз не відкрито жодної контрольної чи самостійної'));
+    if (відкриті.length){
+      var сітка = ел('div', 'cards');
+      for (var o = 0; o < відкриті.length; o++) сітка.appendChild(карткаВідкритої(відкриті[o]));
+      куди.appendChild(сітка);
+    }
+
+    куди.appendChild(текст(ел('h2', 'sect'), 'Класи'));
+    var кс = ел('div', 'cards');
+    for (var k = 0; k < СТАН.класи.length; k++){
+      var клас = СТАН.класи[k];
+      var предмети = предметиКласу(клас);
+      for (var p = 0; p < предмети.length; p++) кс.appendChild(карткаПредмета(клас, предмети[p]));
+      if (!предмети.length) кс.appendChild(карткаПредмета(клас, ''));
+    }
+    куди.appendChild(кс);
+  }
+
+  function карткаВідкритої(w){
+    var c = ел('div', 'card');
+    c.style.setProperty('--h', HUE[w.предмет] || 258);
+    c.appendChild(текст(ел('h3'), w.назва));
+    c.appendChild(текст(ел('p', 'sub'), w.клас + ' · ' + w.предмет));
+    c.appendChild(ел('span', 'мітка відкрита', w.вікно && w.вікно.до ? 'до ' + w.вікно.до : 'відкрита'));
+    var дії = ел('div', 'дія');
+    var м = ЗА_КЛЮЧЕМ[w.ключ];
+    if (м) дії.appendChild(посиланняНаРоботу(м, 'Відкрити як учень'));
+    var b = ел('button', 'btn ghost sm', 'Журнал');
+    b.type = 'button';
+    b.onclick = function(){ СТАН.клас = w.клас; СТАН.предмет = w.предмет; показати('журнал'); };
+    дії.appendChild(b);
+    c.appendChild(дії);
+    return c;
+  }
+
+  function карткаПредмета(клас, предмет){
+    var c = ел('div', 'card');
+    c.style.setProperty('--h', HUE[предмет] || 258);
+    c.appendChild(текст(ел('h3'), клас + (предмет ? ' · ' + предмет : '')));
+    var список = роботиКласу(клас, предмет), скільки = {}, i;
+    for (i = 0; i < список.length; i++) скільки[список[i].тип] = (скільки[список[i].тип] || 0) + 1;
+    var рядок = [];
+    for (i = 0; i < ТИПИ.length; i++) if (скільки[ТИПИ[i]])
+      рядок.push(КОРОТКО[ТИПИ[i]] + ' ' + скільки[ТИПИ[i]]);
+    c.appendChild(текст(ел('p', 'sub'), рядок.length ? рядок.join(' · ') : 'робіт ще немає'));
+    var дії = ел('div', 'дія');
+    if (предмет){
+      var ж = ел('button', 'btn sm', 'Журнал');
+      ж.type = 'button';
+      ж.onclick = function(){ СТАН.клас = клас; СТАН.предмет = предмет; показати('журнал'); };
+      дії.appendChild(ж);
+    }
+    var р = ел('button', 'btn ghost sm', 'Роботи');
+    р.type = 'button';
+    р.onclick = function(){ СТАН.клас = клас; показати('роботи'); };
+    дії.appendChild(р);
+    var як = ел('a', 'btn ghost sm', 'Очима учня');
+    як.href = 'index.html?код=' + encodeURIComponent(СТАН.код) + '&клас=' + encodeURIComponent(клас);
+    як.target = '_blank';
+    як.style.textDecoration = 'none';
+    дії.appendChild(як);
+    c.appendChild(дії);
+    return c;
+  }
+
+  function посиланняНаРоботу(м, підпис){
+    var a = ел('a', 'btn ghost sm', підпис);
+    a.href = м.href + '?код=' + encodeURIComponent(СТАН.код);
+    a.target = '_blank';
+    a.style.textDecoration = 'none';
+    return a;
+  }
+
+  /* ─────────────────── 2. журнал ─────────────────── */
+  function малюватиЖурнал(){
+    класиЧіпи($('ж-класи'), function(к){ СТАН.клас = к; store('вчитель:клас', к); СТАН.предмет = ''; малюватиЖурнал(); });
+    var предмети = предметиКласу(СТАН.клас), пари = [], i;
+    for (i = 0; i < предмети.length; i++) пари.push([предмети[i], предмети[i]]);
+    if (!СТАН.предмет || предмети.indexOf(СТАН.предмет) < 0) СТАН.предмет = предмети[0] || '';
+    намалюватиЧіпи($('ж-предмети'), пари, СТАН.предмет, function(п){ СТАН.предмет = п; малюватиЖурнал(); });
+
+    var типи = [];
+    for (i = 0; i < ТИПИ.length; i++) типи.push([ТИПИ[i], ЯРЛИК[ТИПИ[i]] + (СТАН.типи[ТИПИ[i]] ? ' ✓' : '')]);
+    намалюватиЧіпи($('ж-типи'), типи, null, function(т){
+      СТАН.типи[т] = !СТАН.типи[т]; малюватиЖурнал();
+    }, true);
+    var чіпи = $('ж-типи').childNodes;
+    for (i = 0; i < чіпи.length; i++)
+      чіпи[i].setAttribute('aria-pressed', СТАН.типи[ТИПИ[i]] ? 'true' : 'false');
+
+    if (!СТАН.предмет){ текст($('ж-нота'), 'У цьому класі ще немає робіт.'); очистити($('ж-табл')); return; }
+
+    var потрібні = [];
+    for (i = 0; i < ТИПИ.length; i++) if (СТАН.типи[ТИПИ[i]]) потрібні.push(ТИПИ[i]);
+    текст($('ж-нота'), 'Читаємо журнал: ' + СТАН.клас + ' · ' + СТАН.предмет + '…');
+
+    var зібрано = [], чекаємо = потрібні.length;
+    if (!чекаємо){ очистити($('ж-табл')); текст($('ж-нота'), 'Жодного типу не вибрано.'); return; }
+    for (i = 0; i < потрібні.length; i++){
+      (function(тип){
+        журнал(СТАН.клас, СТАН.предмет, тип, function(від){
+          чекаємо--;
+          if (від && від.ок) зібрано.push(від);
+          if (чекаємо === 0) таблицяЖурналу(зібрано);
+        });
+      })(потрібні[i]);
+    }
+  }
+
+  function таблицяЖурналу(частини){
+    var куди = $('ж-табл');
+    очистити(куди);
+    /* Порядок типів сталий, а не «хто перший відповів». */
+    частини.sort(function(a,b){ return ТИПИ.indexOf(a.тип) - ТИПИ.indexOf(b.тип); });
+
+    var колонки = [], учні = [], маєОцінки = {}, i, j, k;
+    for (i = 0; i < частини.length; i++){
+      var ч = частини[i];
+      for (j = 0; j < ч.учні.length; j++){
+        var у = ч.учні[j];
+        if (!маєОцінки[у.учень]) маєОцінки[у.учень] = { учень:у.учень, усписку:у.усписку, оцінки:{} };
+        for (k in у.оцінки) if (у.оцінки.hasOwnProperty(k))
+          маєОцінки[у.учень].оцінки[ч.тип + '|' + k] = у.оцінки[k];
+        if (учні.indexOf(у.учень) < 0) учні.push(у.учень);
+      }
+      for (j = 0; j < ч.роботи.length; j++){
+        var w = ч.роботи[j];
+        /* Сітка ДЗ має колонки на всі дати уроків року наперед — показуємо
+           лише ті, де вже є хоч одна оцінка, інакше таблиця була б із
+           п'ятдесяти порожніх стовпців. */
+        if (ч.тип === 'домашнє' && !дехтоМає(ч, w.назва)) continue;
+        колонки.push({ тип:ч.тип, назва:w.назва, дата:w.дата, макс:w.макс,
+                       id:ч.тип + '|' + w.назва });
+      }
+    }
+    if (!колонки.length){
+      текст($('ж-нота'), 'Оцінок ще немає — жодної здачі в цих типах робіт.');
+      return;
+    }
+    текст($('ж-нота'), 'Учнів: ' + учні.length + ' · робіт: ' + колонки.length +
+                       ' · клітинка — 12-бальна, клік показує подробиці.');
+
+    var табл = ел('table'), шапка = ел('thead'), р = ел('tr');
+    р.appendChild(текст(ел('th', 'ліва'), 'Учень'));
+    for (i = 0; i < колонки.length; i++){
+      var th = ел('th');
+      th.appendChild(ел('span', 'мітка ' + ТОН[колонки[i].тип], підписКолонки(колонки[i])));
+      if (колонки[i].дата) th.appendChild(ел('div', 'сірий', колонки[i].дата));
+      th.title = колонки[i].назва + ' (' + ЯРЛИК[колонки[i].тип] + ')';
+      р.appendChild(th);
+    }
+    р.appendChild(текст(ел('th'), 'сер.'));
+    шапка.appendChild(р); табл.appendChild(шапка);
+
+    var тіло = ел('tbody');
+    var сумаКолонки = {}, лічКолонки = {};
+    for (i = 0; i < учні.length; i++){
+      var дані = маєОцінки[учні[i]];
+      var рядок = ел('tr', дані.усписку ? '' : 'нема-в-списку');
+      var ліва = текст(ел('td', 'ліва'), дані.учень);
+      ліва.title = дані.учень + (дані.усписку ? '' : ' — немає у «Списках учнів»');
+      рядок.appendChild(ліва);
+      var сума = 0, лічильник = 0;
+      for (j = 0; j < колонки.length; j++){
+        var о = дані.оцінки[колонки[j].id];
+        var td = ел('td');
+        if (о && о.оцінка != null){
+          td.className = 'оц ' + рівень(о.оцінка);
+          текст(td, о.оцінка);
+          сума += о.оцінка; лічильник++;
+          сумаКолонки[колонки[j].id] = (сумаКолонки[колонки[j].id] || 0) + о.оцінка;
+          лічКолонки[колонки[j].id] = (лічКолонки[колонки[j].id] || 0) + 1;
+          (function(о, w, хто){ td.onclick = function(){ подробиці(хто, w, о); }; })(о, колонки[j], дані.учень);
+        } else if (о){
+          td.className = 'оц';
+          текст(td, '—');
+          td.title = о.причина || 'не здав';
+        } else {
+          td.className = 'пусто';
+          текст(td, '·');
+        }
+        рядок.appendChild(td);
+      }
+      рядок.appendChild(текст(ел('td', 'сер'), лічильник ? (сума / лічильник).toFixed(1) : ''));
+      тіло.appendChild(рядок);
+    }
+    var підсумок = ел('tr');
+    підсумок.appendChild(текст(ел('td', 'ліва'), 'середнє по роботі'));
+    for (j = 0; j < колонки.length; j++)
+      підсумок.appendChild(текст(ел('td', 'сер'), лічКолонки[колонки[j].id]
+        ? (сумаКолонки[колонки[j].id] / лічКолонки[колонки[j].id]).toFixed(1) : ''));
+    підсумок.appendChild(ел('td'));
+    тіло.appendChild(підсумок);
+    табл.appendChild(тіло);
+
+    var обгортка = ел('div', 'прокрут');
+    обгортка.appendChild(табл);
+    куди.appendChild(обгортка);
+  }
+
+  function дехтоМає(частина, назва){
+    for (var i = 0; i < частина.учні.length; i++){
+      var о = частина.учні[i].оцінки[назва];
+      if (о && о.оцінка != null) return true;
+    }
+    return false;
+  }
+  function підписКолонки(к){
+    if (к.тип === 'домашнє') return 'ДЗ ' + к.назва;
+    var м = /№\s*(\d+)/.exec(к.назва);
+    return КОРОТКО[к.тип] + (м ? ' ' + м[1] : '');
+  }
+  function рівень(о){ return о >= 10 ? 'n10' : о >= 7 ? 'n7' : о >= 4 ? 'n4' : 'n1'; }
+
+  function подробиці(учень, колонка, о){
+    var п = $('панель');
+    очистити(п);
+    п.hidden = false;
+    п.appendChild(текст(ел('h3'), учень + ' · ' + колонка.назва));
+    var dl = ел('dl');
+    function пара(к, з){
+      if (з == null || з === '') return;
+      dl.appendChild(текст(ел('dt'), к));
+      dl.appendChild(текст(ел('dd'), з));
+    }
+    пара('оцінка', о.оцінка + ' з 12');
+    пара('бал', о.бал == null ? null : о.бал + ' з ' + о.макс);
+    пара('варіант', о.варіант);
+    пара('спроб', о.спроб);
+    пара('час', о.витрачено);
+    пара('виходів', о.виходів);
+    пара('дата', о.дата);
+    пара('причина', о.причина);
+    пара('примітка', о.примітка);
+    п.appendChild(dl);
+    var з = ел('button', 'btn ghost sm', 'Закрити');
+    з.type = 'button';
+    з.onclick = function(){ п.hidden = true; };
+    з.style.marginTop = '10px';
+    п.appendChild(з);
+  }
+
+  /* ─────────────────── 3. роботи: вікна й резервні посилання ─────────── */
+  function малюватиРоботи(){
+    класиЧіпи($('р-класи'), function(к){ СТАН.клас = к; store('вчитель:клас', к); малюватиРоботи(); });
+    var куди = $('р-список');
+    очистити(куди);
+    var список = роботиКласу(СТАН.клас, '');
+    if (!список.length){
+      текст($('р-нота'), СТАН.роботи.length ? 'У цьому класі робіт немає.' : 'Питаємо приймач…');
+      return;
+    }
+    текст($('р-нота'), 'Час у полях — київський. Зміна вікна діє одразу, перевикочувати приймач не треба.');
+    резерв(СТАН.клас, function(){ /* коди підтягнуться для кнопок резерву */ });
+
+    for (var i = 0; i < ТИПИ.length; i++){
+      var тип = ТИПИ[i], свої = [];
+      for (var j = 0; j < список.length; j++) if (список[j].тип === тип) свої.push(список[j]);
+      if (!свої.length) continue;
+      куди.appendChild(текст(ел('h2', 'sect'), ЯРЛИК[тип]));
+      for (j = 0; j < свої.length; j++) куди.appendChild(карткаРоботи(свої[j]));
+    }
+  }
+
+  function карткаРоботи(w){
+    var c = ел('div', 'робота');
+    c.style.setProperty('--h', HUE[w.предмет] || 258);
+    var шапка = ел('div', 'шапка');
+    шапка.appendChild(текст(ел('span', 'назва'), w.назва));
+    шапка.appendChild(текст(ел('span', 'де'), w.предмет));
+    шапка.appendChild(ел('span', 'мітка ' + ТОН[w.тип], КОРОТКО[w.тип]));
+    if (w.завждиВідкрита) шапка.appendChild(ел('span', 'мітка відкрита', 'відкрита завжди'));
+    else if (w.сітка) шапка.appendChild(ел('span', 'мітка', 'сітка оцінок'));
+    else шапка.appendChild(ел('span', 'мітка ' + (w.відкрита ? 'відкрита' : 'закрита'),
+                              w.відкрита ? 'відкрита зараз' : 'закрита'));
+    if (!w.ключіє) шапка.appendChild(ел('span', 'мітка', 'ключів немає'));
+    c.appendChild(шапка);
+
+    var дії = ел('div', 'дія');
+    var м = ЗА_КЛЮЧЕМ[w.ключ];
+    if (м) дії.appendChild(посиланняНаРоботу(м, 'Відкрити як учень'));
+
+    /* Вікно й резерв є лише в контрольних і самостійних: додаткові відкриті
+       завжди, а домашні йдуть сіткою оцінок — обом вікна не заводять
+       (рішення вчителя 27.10.2026). */
+    var звікном = !w.сітка && !w.завждиВідкрита;
+    var список = null;
+    if (звікном){
+      var р = ел('button', 'btn ghost sm', 'Резервні посилання');
+      р.type = 'button';
+      список = ел('div', 'учні');
+      список.hidden = true;
+      р.onclick = function(){
+        список.hidden = !список.hidden;
+        if (!список.hidden) резервніПосилання(список, w);
+      };
+      дії.appendChild(р);
+    }
+    c.appendChild(дії);
+    if (звікном){ c.appendChild(вікноРоботи(w)); c.appendChild(список); }
+    return c;
+  }
+
+  function вікноРоботи(w){
+    var обгортка = ел('div', 'вікно');
+    var від = поділитиЧас(w.вікно ? w.вікно.від : '');
+    var до = поділитиЧас(w.вікно ? w.вікно.до : '');
+    var дВід = ел('input'), чВід = ел('input'), дДо = ел('input'), чДо = ел('input');
+    дВід.type = дДо.type = 'date'; чВід.type = чДо.type = 'time';
+    дВід.value = від[0]; чВід.value = від[1]; дДо.value = до[0]; чДо.value = до[1];
+    обгортка.appendChild(текст(ел('label'), 'від'));
+    обгортка.appendChild(дВід); обгортка.appendChild(чВід);
+    обгортка.appendChild(текст(ел('label'), 'до'));
+    обгортка.appendChild(дДо); обгортка.appendChild(чДо);
+
+    var нота = ел('span', 'note');
+    нота.style.margin = '0';
+    function зберегти(параметри){
+      текст(нота, 'Зберігаємо…');
+      параметри.ключ = w.ключ;
+      спитати('вікно', параметри, function(від2){
+        if (!від2 || !від2.ок){
+          нота.className = 'note bad';
+          текст(нота, (від2 && від2.помилка) || 'Не збереглося.');
+          return;
+        }
+        w.вікно = від2.вікно; w.відкрита = від2.приймає;
+        нота.className = 'note ok';
+        текст(нота, 'Збережено: ' + (від2.видно ? 'учень бачить роботу' : 'учень роботи не бачить')
+                    + (від2.приймає ? ', здачу приймаємо' : ', здачу не приймаємо'));
+      }, 25000);
+    }
+    var збер = ел('button', 'btn sm', 'Зберегти');
+    збер.type = 'button';
+    збер.onclick = function(){
+      var a = зібратиЧас(дВід.value, чВід.value), b = зібратиЧас(дДо.value, чДо.value);
+      if ((дВід.value && !чВід.value) || (дДо.value && !чДо.value)){
+        нота.className = 'note bad'; текст(нота, 'Вкажіть і дату, і годину.'); return;
+      }
+      зберегти({ 'від': a, 'до': b });
+    };
+    var знять = ел('button', 'btn ghost sm', 'Без вікна');
+    знять.type = 'button';
+    знять.onclick = function(){
+      дВід.value = чВід.value = дДо.value = чДо.value = '';
+      зберегти({ 'від': '', 'до': '' });
+    };
+    var скинути = ел('button', 'btn ghost sm', 'Як у коді');
+    скинути.type = 'button';
+    скинути.onclick = function(){ зберегти({ скинути: '1' }); };
+    обгортка.appendChild(збер); обгортка.appendChild(знять); обгортка.appendChild(скинути);
+    обгортка.appendChild(нота);
+    return обгортка;
+  }
+
+  function поділитиЧас(с){
+    var м = /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})$/.exec(String(с || ''));
+    return м ? [м[1], м[2]] : ['', ''];
+  }
+  /* Рядок складаємо руками: toISOString() перевів би київський час у UTC
+     і посунув вікно на дві-три години. */
+  function зібратиЧас(дата, година){
+    if (!дата) return '';
+    return дата + ' ' + (година || '00:00');
+  }
+
+  function резервніПосилання(куди, w){
+    очистити(куди);
+    var дані = СТАН.резерв[СТАН.клас];
+    if (!дані){
+      куди.appendChild(ел('p', 'note', 'Питаємо коди учнів…'));
+      резерв(СТАН.клас, function(){ if (!куди.hidden) резервніПосилання(куди, w); });
+      return;
+    }
+    var м = ЗА_КЛЮЧЕМ[w.ключ];
+    var шлях = м && м.резерв;
+    var дозволено = (дані.дозволено || []).indexOf(w.ключ) >= 0;
+    if (!шлях || !дозволено){
+      var чому = ел('p', 'note bad');
+      текст(чому, !шлях
+        ? 'Резервної сторінки для цієї роботи ще немає. Зробіть її в терміналі — і вона тут зʼявиться:'
+        : 'Сторінка є, але резерв для цієї роботи в приймачі не відкрито. Допишіть ключ у НАЛАШТУВАННЯ.резерв і викотіть приймач.');
+      куди.appendChild(чому);
+      var код = ел('p', 'note');
+      код.appendChild(текст(ел('code'), !шлях
+        ? 'python3 tools/резерв.py "' + (м ? decodeURIComponent(м.href) : '<бойова копія>') + '"'
+        : 'sh "tools/оновити_приймач.sh" "резерв для ' + w.назва + '"'));
+      куди.appendChild(код);
+      return;
+    }
+    for (var i = 0; i < дані.учні.length; i++){
+      (function(у){
+        var рядок = ел('div', 'учень');
+        рядок.appendChild(текст(ел('b'), у.учень));
+        var b = ел('button', 'btn ghost sm', 'Посилання');
+        b.type = 'button';
+        b.onclick = function(){
+          /* Імена параметрів теж кодуємо — рівно так, як це робить
+             tools/резерв.py (urlencode з quote_via=quote). Сторінка роботи
+             читає їх через URLSearchParams, якій байдуже, але посилання з
+             двох джерел мусять бути символ у символ однакові. */
+          копіювати(САЙТ + шлях +
+            '?' + encodeURIComponent('учень') + '=' + encodeURIComponent(у.учень) +
+            '&' + encodeURIComponent('код') + '=' + encodeURIComponent(у.код), b);
+        };
+        рядок.appendChild(b);
+        куди.appendChild(рядок);
+      })(дані.учні[i]);
+    }
+  }
+
+  function копіювати(текстДоБуфера, кнопка){
+    var було = кнопка.textContent;
+    function сказати(ок){
+      кнопка.textContent = ок ? 'Скопійовано' : 'Не вдалося';
+      setTimeout(function(){ кнопка.textContent = було; }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(текстДоБуфера).then(function(){ сказати(true); },
+                                                         function(){ запасне(); });
+      return;
+    }
+    запасне();
+    function запасне(){
+      var поле = D.createElement('textarea');
+      поле.value = текстДоБуфера;
+      поле.style.position = 'fixed'; поле.style.opacity = '0';
+      D.body.appendChild(поле);
+      поле.select();
+      var ок = false;
+      try { ок = D.execCommand('copy'); } catch(e){}
+      D.body.removeChild(поле);
+      сказати(ок);
+    }
+  }
+
+  /* ─────────────────── 4. учні й коди ─────────────────── */
+  function малюватиУчнів(){
+    класиЧіпи($('у-класи'), function(к){ СТАН.клас = к; store('вчитель:клас', к); малюватиУчнів(); });
+    var куди = $('у-список');
+    очистити(куди);
+    текст($('у-нота'), 'Код виводиться з прізвища й секрету: змінилось прізвище — змінився код.');
+    резерв(СТАН.клас, function(від){
+      очистити(куди);
+      if (!від || !від.ок){
+        куди.appendChild(ел('p', 'note bad', (від && від.помилка) || 'Приймач не відповів.'));
+        return;
+      }
+      var сітка = ел('div', 'учні');
+      for (var i = 0; i < від.учні.length; i++){
+        (function(у){
+          var рядок = ел('div', 'учень');
+          рядок.appendChild(текст(ел('b'), у.учень));
+          var код = ел('span', 'код', у.код);
+          рядок.appendChild(код);
+          var b = ел('button', 'btn ghost sm', 'Копія');
+          b.type = 'button';
+          b.onclick = function(){ копіювати(у.код, b); };
+          рядок.appendChild(b);
+          сітка.appendChild(рядок);
+        })(від.учні[i]);
+      }
+      куди.appendChild(сітка);
+      текст($('у-нота'), СТАН.клас + ' · учнів: ' + від.учні.length +
+            ' · резерв відкрито для робіт: ' + (від.дозволено || []).length);
+    });
+  }
+
+  /* ─────────────────── 5. експорт у «Мрію» ─────────────────── */
+  function малюватиЕкспорт(){
+    класиЧіпи($('е-класи'), function(к){ СТАН.клас = к; store('вчитель:клас', к); малюватиЕкспорт(); });
+    var пари = [], список = роботиКласу(СТАН.клас, '');
+    for (var i = 0; i < список.length; i++){
+      var w = список[i];
+      if (w.сітка) continue;                    // ДЗ експортуються датою, не назвою
+      пари.push([w.ключ, w.предмет + ' · ' + КОРОТКО[w.тип] + ' ' + (номер(w.назва) || w.назва)]);
+    }
+    намалюватиЧіпи($('е-роботи'), пари, null, обратиДляЕкспорту, true);
+    if (!пари.length) очистити($('е-вихід'));
+  }
+  function номер(назва){ var м = /№\s*(\d+)/.exec(назва); return м ? м[1] : ''; }
+
+  function обратиДляЕкспорту(ключ){
+    var ч = ключ.split(' | '), куди = $('е-вихід');
+    var w = null;
+    for (var i = 0; i < СТАН.роботи.length; i++) if (СТАН.роботи[i].ключ === ключ) w = СТАН.роботи[i];
+    if (!w) return;
+    очистити(куди);
+    куди.appendChild(ел('p', 'note', 'Збираємо…'));
+    спитати('експорт', { клас:ч[0], предмет:ч[1], тип:w.тип, робота:ч[2] }, function(від){
+      очистити(куди);
+      if (!від || !від.ок){
+        куди.appendChild(ел('p', 'note bad', (від && від.помилка) || 'Не вийшло.'));
+        return;
+      }
+      var імена = [], k;
+      for (k in від.G) if (від.G.hasOwnProperty(k)) імена.push(k);
+      імена.sort();
+      куди.appendChild(текст(ел('h2', 'sect'), ч[0] + ' · ' + ч[1] + ' · ' + ч[2]));
+      var дати = [], d;
+      for (d in від.дати) if (від.дати.hasOwnProperty(d)) дати.push(d + ' — ' + від.дати[d]);
+      куди.appendChild(ел('p', 'note', 'Оцінок: ' + імена.length + ' · максимум ' + від.макс +
+        ' · колонка «Мрії» (score_type_id): ' + (від.score_type_id || 'не вибрано') +
+        ' · дати здач: ' + (дати.join(', ') || '—')));
+
+      var рядки = [];
+      for (var i2 = 0; i2 < імена.length; i2++) рядки.push(імена[i2] + ' ' + від.G[імена[i2]]);
+      var поле = ел('textarea');
+      поле.readOnly = true;
+      поле.value = рядки.join('\n');
+      куди.appendChild(поле);
+
+      var дії = ел('div', 'дія');
+      var b1 = ел('button', 'btn sm', 'Скопіювати «прізвище оцінка»');
+      b1.type = 'button';
+      b1.onclick = function(){ копіювати(рядки.join('\n'), b1); };
+      дії.appendChild(b1);
+      var b2 = ел('button', 'btn ghost sm', 'Скопіювати JSON для /grades');
+      b2.type = 'button';
+      b2.onclick = function(){
+        копіювати(JSON.stringify({ G: від.G, 'без': від['без'], 'дати': від.дати,
+                                   score_type_id: від.score_type_id }), b2);
+      };
+      дії.appendChild(b2);
+      куди.appendChild(дії);
+
+      if ((від['без'] || []).length){
+        куди.appendChild(текст(ел('h2', 'sect'), 'Без оцінки: ' + від['без'].length));
+        var список2 = ел('div', 'учні');
+        for (var j = 0; j < від['без'].length; j++)
+          список2.appendChild(текст(ел('div', 'учень'), від['без'][j]));
+        куди.appendChild(список2);
+      }
+    });
+  }
+
+  /* ─────────────────── старт ─────────────────── */
+  /* Параметр з адреси. Регексом по location.search його не взяти: браузер
+     кодує кириличне ІМʼЯ параметра, і «?код=» приїжджає як «?%D0%BA…=».
+     URLSearchParams це вміє, але її немає в WebView Android 5, а межу ми
+     тримаємо, — тож розбираємо самі. */
+  function зАдреси(імʼя){
+    var пари = String(location.search || '').replace(/^\?/, '').split('&');
+    for (var i = 0; i < пари.length; i++){
+      if (!пари[i]) continue;
+      var рівно = пари[i].indexOf('=');
+      var к = рівно < 0 ? пари[i] : пари[i].slice(0, рівно);
+      var з = рівно < 0 ? '' : пари[i].slice(рівно + 1);
+      try { к = decodeURIComponent(к.replace(/\+/g, ' ')); } catch(e){}
+      if (к !== імʼя) continue;
+      try { return decodeURIComponent(з.replace(/\+/g, ' ')); } catch(e){ return з; }
+    }
+    return '';
+  }
+
+  var код = чистий(зАдреси('код') || load('вчитель:код') || '');
+  if (код.length === 8){ kod.value = код; $('enter').disabled = false; увійти(код); }
+  else kod.focus();
+})();
+</script>
+</body>
+</html>

@@ -31,6 +31,9 @@ import сумісність  # noqa: E402  (запасні стилі для с�
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX = ROOT / "index.html"
+# Кабінет учителя отримує той самий маніфест, але лише масив works: уроки й
+# плани йому не потрібні, а 293 КБ копіювати нíзащо.
+CABINET = ROOT / "Кабінет.html"
 
 # файл, який бачать учні
 STUDENT_SUFFIX = " — презентація для класу.html"
@@ -199,7 +202,26 @@ def read_work(path):
         # колонка в сітці оцінок, і її ж показуємо на картці уроку
         "date": field("дата"),
         "href": href_for(path),
+        # Адреса резервної сторінки — щоб кнопка «резервне посилання» в
+        # кабінеті не робила в ES5 хірургію над закодованим href. Поле є
+        # лише тоді, коли файл справді існує; опублікованість перевіряє
+        # only_published: резервні сторінки на сайті не значаться, тож
+        # їхня відсутність у git означає «посилання нікуди не веде».
+        "резерв": reserve_href(path),
     }
+
+
+def reserve_href(path):
+    """Шлях сусідньої сторінки «…, резерв.html», якщо вона вже зроблена.
+
+    Її робить tools/резерв.py із поточного шаблону. Додаткові й домашні
+    резерву не мають — у них немає часового вікна, — тож для них поля не буде.
+    """
+    for suffix in WORK_SUFFIXES[:2]:
+        if path.name.endswith(suffix):
+            сестра = path.with_name(path.name[: -len(" для класу.html")] + ", резерв.html")
+            return href_for(сестра) if сестра.is_file() else None
+    return None
 
 
 def class_sort_key(name):
@@ -405,6 +427,11 @@ def only_published(data, extra=()):
     out = subprocess.run(["git", "-c", "core.quotepath=off", "ls-files"],
                          capture_output=True, text=True, cwd=ROOT).stdout
     ok = set(out.splitlines()) | set(extra)
+    # Резервна сторінка, якої немає в git, на сайті недосяжна — кнопка в
+    # кабінеті мусить сказати «зробіть її», а не дати мертве посилання.
+    for w in data["works"]:
+        if w.get("резерв") and unquote(w["резерв"]) not in ok:
+            w["резерв"] = None
     dropped = {(x["cls"], x["subject"], x["n"]) for x in data["lessons"]
                if "href" in x and unquote(x["href"]) not in ok}
     data["lessons"] = [x for x in data["lessons"]
@@ -417,15 +444,21 @@ def only_published(data, extra=()):
     return dropped
 
 
-def write_index(data):
-    if not INDEX.is_file():
-        sys.exit("Немає index.html у корені проєкту — спершу створи його.")
+def write_index(data, target=INDEX, keys=None):
+    """Вписує маніфест між мітками BUILD:LESSONS у цільовий файл.
 
-    html = INDEX.read_text(encoding="utf-8")
+    `keys` звужує маніфест: кабінетові потрібні лише роботи.
+    """
+    if not target.is_file():
+        sys.exit("Немає %s — спершу створи його." % target.name)
+
+    html = target.read_text(encoding="utf-8")
     if START not in html or END not in html:
-        sys.exit("В index.html немає міток BUILD:LESSONS — вставити список нікуди.")
+        sys.exit("В %s немає міток BUILD:LESSONS — вставити список нікуди." % target.name)
 
-    payload = json.dumps(data, ensure_ascii=False, indent=1)
+    payload = json.dumps(
+        data if keys is None else {k: data[k] for k in keys},
+        ensure_ascii=False, indent=1)
     block = (
         START
         + '\n<script id="lessons" type="application/json">\n'
@@ -444,7 +477,7 @@ def write_index(data):
     new = сумісність.process_html(new)[0]
     changed = new != html
     if changed:
-        INDEX.write_text(new, encoding="utf-8")
+        target.write_text(new, encoding="utf-8")
     return changed
 
 
@@ -463,6 +496,10 @@ def main():
               + ", ".join(f"{c} {s} урок {n}" for c, s, n in sorted(dropped)))
 
     changed = write_index(data)
+    if CABINET.is_file():
+        # кабінетові перелік робіт потрібен для посилань «відкрити як учень»
+        # і для кнопки «резервне посилання»
+        changed = write_index(data, CABINET, keys=("works",)) or changed
 
     lessons = data["lessons"]
     by_class = {}
@@ -489,7 +526,9 @@ def main():
         print("Перевірочних робіт не знайдено.")
     тем = sum(len(p["themes"]) for p in data["plans"])
     print(f"Планів із КТП: {len(data['plans'])} (тем усього {тем}).")
-    print("index.html оновлено." if changed else "index.html і так актуальний.")
+    резервних = sum(1 for w in data["works"] if w.get("резерв"))
+    print(f"Резервних сторінок у git: {резервних}.")
+    print("Сторінки оновлено." if changed else "Сторінки і так актуальні.")
 
 
 if __name__ == "__main__":
