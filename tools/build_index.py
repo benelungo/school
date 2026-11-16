@@ -72,7 +72,7 @@ def git_dates():
     час зміни файла не годиться — масове оновлення двигуна оновлює всі файли."""
     try:
         out = subprocess.run(
-            ["git", "log", "--name-only", "--format=%ct", "--diff-filter=A"],
+            ["git", "-c", "core.quotepath=off", "log", "--name-only", "--format=%ct", "--diff-filter=A"],
             cwd=ROOT, capture_output=True, text=True, timeout=30).stdout
     except (OSError, subprocess.SubprocessError):
         return {}
