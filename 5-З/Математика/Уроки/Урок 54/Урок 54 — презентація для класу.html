@@ -1363,6 +1363,10 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .eqop .eo-rec .ln.wb .bar{opacity:1}
 .eqop .eo-rec .ck{color:var(--check);font-weight:700;font-size:.85em;opacity:0;transition:opacity .3s}
 .eqop .eo-rec .ck.on{opacity:1}
+/* data-full: вдвічі більше рядків — запис ширший і щільніший, щоб не дрібнішав слайд */
+.eqop[data-full] .eo{grid-template-columns:1fr 1.7fr}
+.eqop[data-full] .eo-rec{line-height:1.3;font-size:clamp(14px,calc(1.8*var(--u)),24px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop[data-full] .eo-rec{font-size:14px}}/*}compat*/
+.eqop[data-full] .eo-s .t{font-size:clamp(15px,calc(2.2*var(--u)),30px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop[data-full] .eo-s .t{font-size:15px}}/*}compat*/
 .eqop .asay{margin-top:clamp(6px,1vw,12px);min-height:2.8em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .asay{margin-top:6px;font-size:12px}}/*}compat*/
 /* C15 · .vang — вертикальні кути */
 .vang{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,20px);align-items:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.vang{gap:8px}}/*}compat*//*compat{*/.no-fgap .vang>*{margin-right:8px;margin-bottom:8px}/*}compat*/
@@ -2108,6 +2112,39 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .thales .sd,.divseg .sd{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
 .thales .pt,.divseg .pt{fill:var(--ink)}
 .thales .nm,.divseg .nm{font:700 17px "JetBrains Mono",monospace;text-anchor:middle;stroke:none}
+/* C51a · .thgen — узагальнена теорема Фалеса */
+.thgen .hmk{display:none}
+.thgen{display:flex;flex-direction:column;align-items:center}
+.thgen .tr-svg{max-width:min(100%,calc(60*var(--u)))}/*compat{*/@supports not ((width:min(1px,2px))){.thgen .tr-svg{max-width:100%}}/*}compat*/
+.thgen .asay{text-align:center;min-height:2.8em;font-size:clamp(15px,calc(1.8*var(--u)),22px);line-height:1.4}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.thgen .asay{font-size:15px}}/*}compat*/
+.thgen .tr-f{text-align:center;opacity:0;transition:opacity .35s;font-size:clamp(18px,calc(2.2*var(--u)),28px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.thgen .tr-f{font-size:18px}}/*}compat*/
+.thgen .tr-svg svg{max-height:var(--fh,40vh)}
+.thgen .sd{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
+.thgen .pt{fill:var(--ink)}
+.thgen .pm{stroke:var(--ink);stroke-width:3.2;stroke-linecap:round}
+.thgen .pl2{stroke:var(--pen);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:6 5;opacity:0;transition:opacity .35s}
+.thgen .nm{font:700 17px "JetBrains Mono",monospace;text-anchor:middle;stroke:none;fill:var(--marker)}
+.thgen .g1,.thgen .g2{stroke-width:9;stroke-linecap:round;opacity:0;transition:opacity .35s}
+.thgen .g1{stroke:var(--marker)}
+.thgen .g2{stroke:var(--check)}
+.thgen .du,.thgen .dv{opacity:0;transition:opacity .35s}
+.thgen.s1 .du,.thgen.s2 .pl2,.thgen.s3 .dv,.thgen.s4 .tr-f{opacity:1}
+.thgen.s4 .g1,.thgen.s4 .g2{opacity:.45}
+/* C60 · .polysim — зведення подібних членів многочлена */
+.polysim{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.8vw,10px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.polysim{gap:4px}}/*}compat*//*compat{*/.no-fgap .polysim>*{margin-bottom:4px}.no-fgap .polysim>*:last-child{margin-bottom:0}/*}compat*/
+.polysim .hmk{display:none}
+.polysim .ps-l{font:600 clamp(18px,calc(2.6*var(--u)),36px)/1.35 "Charter",Georgia,serif;text-align:center;max-width:100%}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.polysim .ps-l{font:600 18px/1.35 "Charter",Georgia,serif}}/*}compat*/
+.polysim .ps-l>span{white-space:nowrap}
+.polysim .ps-l i{font-style:italic}
+.polysim .ps-2,.polysim .ps-3{opacity:0;transition:opacity .35s}
+.polysim.s2 .ps-2,.polysim.s3 .ps-3{opacity:1}
+.polysim .ps-t{padding:0 .08em;border-bottom:4px solid transparent;transition:color .3s,border-color .3s}
+.polysim .c0{color:var(--marker);border-bottom-color:var(--marker)}
+.polysim .c1{color:var(--check);border-bottom-color:var(--check)}
+.polysim .c2{color:var(--pen);border-bottom-color:var(--pen)}
+.polysim .c3{color:var(--sun);border-bottom-color:var(--sun)}
+.polysim.s3 .ps-3{font-weight:800}
+.polysim .asay{text-align:center;min-height:2.8em;font-size:clamp(15px,calc(1.8*var(--u)),22px);line-height:1.4}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.polysim .asay{font-size:15px}}/*}compat*/
 /* .thales */
 .thales .pl2{stroke:var(--pen);stroke-width:2.2;stroke-linecap:round}
 .thales .ka,.thales .kb,.thales .pl2{opacity:0;transition:opacity .35s}
@@ -3576,7 +3613,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.thgen,.polysim,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -9234,6 +9271,214 @@ $$('.thales').forEach(function(box){
 });
 
 /* ─────────────────────────────────────────────────────────────────────
+   C51a · .thgen — узагальнена теорема Фалеса: пропорційні відрізки
+     <div class="thgen" data-ratio="2:3" data-angle="22" data-turn="38"></div>
+     Кут O, AB ∥ CD (жирні). Пробіл — OA і AC розбиваються на рівні
+     частинки (p і q); через точки поділу ростуть паралельні; на другій
+     стороні теж p і q рівних частинок; OA, OB і AC, BD фарбуються,
+     OA : AC = OB : BD = p : q; другу сторону повертають — довжини інші,
+     частинок так само; останній крок — теорема.
+     data-labels="O,A,C,B,D" — свої букви; p + q ≤ 8.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.thgen').forEach(function(box){
+  var L = (box.dataset.labels || 'O,A,C,B,D').split(',');
+  var R = String(box.dataset.ratio || '2:3').split(':').map(Number);
+  var p = Math.max(1, R[0] || 2), q = Math.max(1, R[1] || 3);
+  if(p + q > 8){ p = 2; q = 3; }
+  var N = p + q;
+  function cl(v, d){ v = +v; return isNaN(v) || !v ? d : Math.max(10, Math.min(45, v)); }
+  var b0 = cl(box.dataset.angle, 22), b1 = cl(box.dataset.turn, 38);
+  var G = 70, O = [0, 0], d = 380/(N + .5), T = [];
+  for(var k = 1; k <= N; k++) T.push(k*d);
+  var A = T.map(function(t){ return [t, 0]; });
+  function Bs(beta){ return T.map(function(t){ return qcPt(O, t*Math.sin(thRad(G))/Math.sin(thRad(G - beta)), beta); }); }
+  var X0 = -30, X1 = A[N-1][0] + 50, Y0 = 0;
+  for(var j = 0; j <= 8; j++){
+    var bt = b0 + (b1 - b0)*j/8, rr = Bs(bt)[N-1];
+    var top = qcPt(O, Math.sqrt(rr[0]*rr[0] + rr[1]*rr[1]) + 40, bt);
+    X1 = Math.max(X1, top[0] + 30); Y0 = Math.min(Y0, top[1] - 30);
+  }
+  box.textContent = '';
+  var s = trSvg(box, X0.toFixed(0) + ' ' + Y0.toFixed(0) + ' ' + (X1 - X0).toFixed(0) + ' ' + (66 - Y0).toFixed(0), 'Узагальнена теорема Фалеса: паралельні прямі відтинають пропорційні відрізки');
+  /* кольорові відрізки — під сторонами */
+  var cA1 = s.__n('line', {'class':'g1'}), cA2 = s.__n('line', {'class':'g2'});
+  var cB1 = s.__n('line', {'class':'g1'}), cB2 = s.__n('line', {'class':'g2'});
+  qcLine(cA1, O, A[p-1]); qcLine(cA2, A[p-1], A[N-1]);
+  qcLine(s.__n('line', {'class':'sd'}), O, [X1 - 15, 0]);
+  var sideB = s.__n('line', {'class':'sd'});
+  var PL = [];
+  for(k = 0; k < N; k++) PL.push(s.__n('line', {'class': (k === p-1 || k === N-1) ? 'pm' : 'pl2'}));
+  var DB = [];
+  for(k = 0; k < N; k++){
+    var main = (k === p-1 || k === N-1);
+    s.__n('circle', {'class':'pt' + (main ? '' : ' du'), cx:A[k][0].toFixed(1), cy:0, r: main ? 4.5 : 3.2});
+    DB.push(s.__n('circle', {'class':'pt' + (main ? '' : ' dv'), r: main ? 4.5 : 3.2}));
+  }
+  var nA1 = s.__n('text', {'class':'nm du'}), nA2 = s.__n('text', {'class':'nm du'});
+  nA1.textContent = p + ' ч.'; nA2.textContent = q + ' ч.';
+  trAt(nA1, [A[p-1][0]/2, 0], 0, 46); trAt(nA2, [(A[p-1][0] + A[N-1][0])/2, 0], 0, 46);
+  var nB1 = s.__n('text', {'class':'nm dv'}), nB2 = s.__n('text', {'class':'nm dv'});
+  nB1.textContent = p + ' ч.'; nB2.textContent = q + ' ч.';
+  function lab(t, P, dx, dy){ var e = s.__n('text', {'class':'lb'}); e.textContent = t; trAt(e, P, dx, dy); return e; }
+  lab(L[0], O, -16, 8); lab(L[1], A[p-1], 0, 27); lab(L[2], A[N-1], 0, 27);
+  var lB = lab(L[3], [0, 0]), lD = lab(L[4], [0, 0]);
+  function draw(beta, g){
+    var B = Bs(beta), last = B[N-1];
+    var r = Math.sqrt(last[0]*last[0] + last[1]*last[1]);
+    qcLine(sideB, O, qcPt(O, r + 40, beta));
+    qcLine(cB1, O, B[p-1]); qcLine(cB2, B[p-1], B[N-1]);
+    var u = [Math.cos(thRad(beta)), -Math.sin(thRad(beta))], nv = [u[1], -u[0]];
+    var w = [Math.cos(thRad(G)), -Math.sin(thRad(G))];
+    PL.forEach(function(e, i){
+      var gg = (i === p-1 || i === N-1) ? 1 : g;
+      var qq = [B[i][0] + w[0]*16, B[i][1] + w[1]*16];
+      qcLine(e, [A[i][0] - w[0]*14, A[i][1] - w[1]*14],
+                [A[i][0] + (qq[0] - A[i][0])*gg, A[i][1] + (qq[1] - A[i][1])*gg]);
+    });
+    for(var i = 0; i < N; i++){ DB[i].setAttribute('cx', B[i][0].toFixed(1)); DB[i].setAttribute('cy', B[i][1].toFixed(1)); }
+    trAt(lB, [B[p-1][0] + u[0]*14 + nv[0]*18, B[p-1][1] + u[1]*14 + nv[1]*18], 0, 7);
+    trAt(lD, [last[0] + u[0]*14 + nv[0]*18, last[1] + u[1]*14 + nv[1]*18], 0, 7);
+    trAt(nB1, [B[p-1][0]/2 + nv[0]*30, B[p-1][1]/2 + nv[1]*30], 0, 6);
+    trAt(nB2, [(B[p-1][0] + last[0])/2 + nv[0]*30, (B[p-1][1] + last[1])/2 + nv[1]*30], 0, 6);
+  }
+  var f = el('div', 'tr-f'); box.appendChild(f);
+  f.innerHTML = L[0] + L[1] + ' : ' + L[1] + L[2] + ' = <b>' + L[0] + L[3] + ' : ' + L[3] + L[4] + '</b> = ' + p + ' : ' + q;
+  var F = [
+    'Кут ' + L[0] + ', ' + L[1] + L[3] + ' ∥ ' + L[2] + L[4] + '. Порівняємо відношення ' + L[0] + L[1] + ' : ' + L[1] + L[2] + ' і ' + L[0] + L[3] + ' : ' + L[3] + L[4] + '.',
+    'Розібʼємо сторону на рівні частинки: ' + L[0] + L[1] + ' — ' + p + ' ч., ' + L[1] + L[2] + ' — ' + q + ' ч.',
+    'Через кожну точку поділу проводимо пряму, паралельну ' + L[1] + L[3] + '.',
+    'За теоремою Фалеса на другій стороні частинки теж рівні: ' + L[0] + L[3] + ' — ' + p + ' ч., ' + L[3] + L[4] + ' — ' + q + ' ч.',
+    'Отже, обидва відношення дорівнюють ' + p + ' : ' + q + ' — відрізки пропорційні.',
+    'Повертаємо другу сторону: довжини інші, а частинок так само ' + p + ' і ' + q + ' — відношення те саме.',
+    'Узагальнена теорема Фалеса: паралельні прямі, які перетинають сторони кута, відтинають на сторонах кута пропорційні відрізки.'
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    for(var i = 1; i <= 6; i++) box.classList.toggle('s' + i, st >= i);
+    say.textContent = F[st];
+    if(st === 2 && prev === 1) atween(box, 0, 1, 900, function(g){ if(box.__at === 2) draw(b0, g); });
+    else if(st === 5 && prev === 4) atween(box, b0, b1, 1400, function(v){ if(box.__at === 5) draw(v, 1); });
+    else {
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      draw(st >= 5 ? b1 : b0, st >= 2 ? 1 : 0);
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C60 · .polysim — зведення подібних членів многочлена
+     <div class="polysim" data-expr="4x² + 3x − x² + 5x − 7" data-deg="2"></div>
+     Пробіл — члени многочлена; далі кожна група подібних фарбується своїм
+     кольором («однакова буквена частина»); рядок (4 − 1)x² + (3 + 5)x − 7;
+     многочлен стандартного вигляду 3x² + 8x − 7; з data-deg — його степінь.
+     Члени — ціле число (або десятковий дріб з комою) і буквена частина.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.polysim').forEach(function(box){
+  var MIN = '−';
+  var src = String(box.dataset.expr || '').trim();
+  var re = /\s*([+\-−]?)\s*([^+\-−]+)/g, m, T = [], guard = 0;
+  while((m = re.exec(src)) && guard++ < 20){
+    var body = m[2].replace(/\s+/g, '');
+    if(!body) continue;
+    var mm = body.match(/^(\d+(?:,\d+)?)?(.*)$/);
+    T.push({ sg: (m[1] === '-' || m[1] === MIN) ? -1 : 1,
+             k: mm[1] ? parseFloat(mm[1].replace(',', '.')) : 1,
+             v: mm[2], raw: body });
+  }
+  if(!T.length) return;
+  function num(v){ return String(Math.round(v*1000)/1000).replace('.', ','); }
+  function lit(v){ return v.replace(/([a-zа-яіїєґ])/gi, '<i>$1</i>'); }
+  function mono(k, v){ return (v && k === 1 ? '' : num(k)) + lit(v); }
+  /* групи подібних — у порядку першої появи */
+  var G = [], key = {};
+  T.forEach(function(t, i){
+    if(!(t.v in key)){ key[t.v] = G.length; G.push({ v: t.v, idx: [] }); }
+    G[key[t.v]].idx.push(i);
+  });
+  var multi = G.filter(function(g){ return g.idx.length > 1; });
+  box.textContent = '';
+  function row(cls){ var d = el('div', 'ps-l ' + cls); box.appendChild(d); return d; }
+  var r1 = row('ps-1'), r2 = row('ps-2'), r3 = row('ps-3');
+  var spans = [];
+  T.forEach(function(t, i){
+    var g = el('span', 'ps-t');
+    g.innerHTML = (i ? ' ' + (t.sg < 0 ? MIN : '+') + ' ' : (t.sg < 0 ? MIN : '')) + mono(t.k, t.v);
+    r1.appendChild(g); spans.push(g);
+  });
+  /* рядок 2: (4 − 1)x² + (3 + 5)x − 7 */
+  var h2 = [], h3 = [], first3 = true;
+  G.forEach(function(g, gi){
+    var s = 0;
+    g.idx.forEach(function(i){ s += T[i].sg*T[i].k; });
+    var ci = multi.indexOf(g);
+    var cls = ci >= 0 ? ' class="c' + (ci % 4) + '"' : '';
+    var lead = gi ? ' + ' : '';
+    if(g.idx.length > 1){
+      var inner = g.idx.map(function(i, j){
+        var t = T[i]; return (j ? (t.sg < 0 ? ' − ' : ' + ') : (t.sg < 0 ? MIN : '')) + num(t.k);
+      }).join('');
+      h2.push(lead + '<span' + cls + '>(' + inner + ')' + lit(g.v) + '</span>');
+    } else {
+      var t = T[g.idx[0]];
+      h2.push((gi ? (t.sg < 0 ? ' − ' : ' + ') : (t.sg < 0 ? MIN : '')) + mono(t.k, t.v));
+    }
+    g.s = s; g.cls = cls;
+  });
+  /* стандартний вигляд — члени за спаданням степеня */
+  function deg(v){
+    var SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹', d = 0, re2 = /([a-zа-яіїєґ])([⁰¹²³⁴⁵⁶⁷⁸⁹]*)/gi, q;
+    while((q = re2.exec(v))){ d += q[2] ? +q[2].split('').map(function(c){ return SUP.indexOf(c); }).join('') : 1; }
+    return d;
+  }
+  G.slice().sort(function(a, b){ return deg(b.v) - deg(a.v); }).forEach(function(g){
+    if(g.s === 0) return;
+    h3.push((first3 ? (g.s < 0 ? MIN : '') : (g.s < 0 ? ' − ' : ' + ')) + '<span' + g.cls + '>' + mono(Math.abs(g.s), g.v) + '</span>');
+    first3 = false;
+  });
+  r2.innerHTML = '= ' + h2.join('');
+  r3.innerHTML = '= ' + (h3.length ? h3.join('') : '0');
+  var plain = function(h){ var d = D.createElement('div'); d.innerHTML = h; return d.textContent; };
+  var F = ['Многочлен — сума одночленів. Його члени: ' + T.map(function(t){ return (t.sg < 0 ? MIN : '') + plain(mono(t.k, t.v)); }).join(';  ') + '.'];
+  multi.forEach(function(g){
+    F.push('Подібні: ' + g.idx.map(function(i){ return (T[i].sg < 0 ? MIN : '') + plain(mono(T[i].k, T[i].v)); }).join(' і ') +
+           ' — однакова буквена частина ' + plain(lit(g.v)) + '.');
+  });
+  F.push('Зводимо: коефіцієнти подібних додаємо, буквену частину переписуємо.');
+  F.push('Многочлен стандартного вигляду — подібних членів більше немає.');
+  if(box.dataset.deg) F.push('Степінь многочлена — найбільший зі степенів його членів: ' + box.dataset.deg + '.');
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    box.__at = st;
+    spans.forEach(function(s){ s.className = 'ps-t'; });
+    multi.forEach(function(g, ci){
+      if(st >= ci + 1) g.idx.forEach(function(i){ spans[i].classList.add('c' + (ci % 4)); });
+    });
+    var k2 = multi.length + 1;
+    box.classList.toggle('s2', st >= k2);
+    box.classList.toggle('s3', st >= k2 + 1);
+    box.classList.toggle('s4', st >= k2 + 2);
+    say.textContent = F[st];
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
    C52 · .divseg — поділ відрізка на рівні частини (побудова за Фалесом)
      <div class="divseg" data-n="5"></div>
      <div class="divseg" data-ratio="2:5"></div> — поділ у відношенні
@@ -11524,6 +11769,10 @@ $$('.receipt').forEach(function(box){
        data-steps="2(x + 3) + 4 = 20 | − 4; 2(x + 3) = 16 | : 2; x + 3 = 8 | − 3; x = 5"
        data-steps="5x + 4 = 2x + 25 | − 2x; 3x + 4 = 25 | − 4; 3x = 21 | : 3; x = 7"
      Перевірку двигун рахує сам (підстановка в обидві частини).
+     data-full — детальний запис у зошит (5-З, 16.11.2026: «більше детально
+     писати у зошит по усім діям»): після кожної дії ще рядок, де вона
+     виконана з обома частинами (7x + 9 − 9 = 72 − 9), а перевірка — по
+     одній дії (7 · 9 + 9 = 63 + 9 = 72).
    ───────────────────────────────────────────────────────────────────── */
 $$('.eqop').forEach(function(box){
   var X = box.dataset.x || 'x';
@@ -11576,6 +11825,39 @@ $$('.eqop').forEach(function(box){
   S.forEach(function(q){ q.lt = L(q); q.rt = N(q.r); });
   }
   function OP(op){ return '<b class="op">' + op.o + ' ' + op.v + '</b>'; }
+  var FULL = box.hasAttribute('data-full');
+  /* «7 · 9 + 9» → «7 · 9 + 9 = 63 + 9 = 72»: по одній дії, спершу найглибші
+     дужки, у них спершу · і :, потім + і − зліва направо */
+  function chain(t){
+    var e = String(t).replace(/-/g, '−').replace(/\s+/g, ' ').trim(), out = [e], n = 0;
+    var R = function(v){ return Math.round(v * 1000) / 1000; };
+    var one = function(g){
+      var m1 = /(−?\d+(?:\.\d+)?) ([·:]) (\d+(?:\.\d+)?)/.exec(g) || /(−?\d+(?:\.\d+)?) ([+−]) (\d+(?:\.\d+)?)/.exec(g);
+      if(!m1) return null;
+      var a = +m1[1].replace('−', '-'), b = +m1[3], v = m1[2] === '·' ? a * b : m1[2] === ':' ? a / b : m1[2] === '+' ? a + b : a - b;
+      return g.slice(0, m1.index) + String(R(v)).replace('-', '−') + g.slice(m1.index + m1[0].length);
+    };
+    while(n++ < 20){
+      var pm = /\(([^()]*)\)/.exec(e), nx;
+      if(pm){
+        var g = one(pm[1]);
+        var pre = e.slice(0, pm.index), post = e.slice(pm.index + pm[0].length);
+        if(g === null){ e = pre.replace(/(\d)\s*$/, '$1 · ') + pm[1] + post; continue; }   /* лишилось число — дужки геть */
+        nx = / [+−·:] /.test(g) ? pre + '(' + g + ')' + post : pre.replace(/(\d)\s*$/, '$1 · ') + g + post;
+      } else { nx = one(e); if(nx === null) break; }
+      e = nx; out.push(e);
+    }
+    return out.join(' = ');
+  }
+  if(FULL){
+    if(MAN){
+      var L0f = S[0].L0, R0f = S[0].R0;
+      var subf = function(t){ return t.replace(/-/g, '−').replace(new RegExp('(\\d)' + X, 'g'), '$1 · ' + x0).replace(new RegExp('(\\d)\\(', 'g'), '$1 · (').split(X).join(x0); };
+      chk = chain(subf(L0f)) + (R0f.indexOf(X) >= 0 ? ';  ' + chain(subf(R0f)) : '');
+    } else {
+      chk = chain(chk.split(' = ')[0]);
+    }
+  }
 
   box.textContent = '';
   var top = el('div','eo-w');
@@ -11586,10 +11868,16 @@ $$('.eqop').forEach(function(box){
   top.appendChild(ls); top.appendChild(eqs); top.appendChild(rs); top.appendChild(act);
   var rec = el('div','box nb eo-rec'), grd = el('div','eo-g'), rows = [];
   rec.appendChild(grd);
+  var mids = [];
   S.forEach(function(s, i){
     var ln = el('div','ln');
     ln.innerHTML = '<span class="e">' + s.lt + ' = ' + s.rt + '</span>' + (ops[i] ? '<span class="bar">| ' + ops[i].o + ' ' + ops[i].v + '</span>' : '');
     grd.appendChild(ln); rows.push(ln);
+    if(FULL && ops[i]){   /* дія, виконана з обома частинами */
+      var mn = el('div','ln mid'), oo = ' ' + ops[i].o + ' ' + ops[i].v;
+      mn.innerHTML = '<span class="e">' + s.lt + oo + ' = ' + s.rt + oo + '</span><span class="bar"></span>';
+      grd.appendChild(mn); mids.push(mn);
+    }
   });
   var ck = el('div','ck'); ck.textContent = 'Перевірка: ' + chk + ' ✓'; rec.appendChild(ck);
   var wrap = el('div','eo'); wrap.appendChild(top); wrap.appendChild(rec); box.appendChild(wrap);
@@ -11619,6 +11907,7 @@ $$('.eqop').forEach(function(box){
       r.classList.toggle('now', q === i && st < last + 1);
       r.classList.toggle('wb', q < i || (q === i && ph >= 1));
     });
+    mids.forEach(function(r, q){ r.classList.toggle('on', q < i || (q === i && ph >= 3 && st <= last)); });
     ck.classList.toggle('on', st > last);
     var what = !op ? '' : MAN ? 'Що заважає ' + X + '? Прибираємо: ' + op.o + ' ' + op.v.replace(/<[^>]+>/g, '')
       : op.o === '−' ? 'Число ' + op.v + ' додається — щоб його прибрати, віднімаємо ' + op.v
@@ -11628,6 +11917,7 @@ $$('.eqop').forEach(function(box){
     var TX = function(h){ return String(h).replace(/<[^>]+>/g, ''); };
     var calc = op ? TX(s.rt) + ' ' + op.o + ' ' + TX(op.v) + ' = ' + TX(S[i + 1].rt) : '';
     say.textContent = st > last ? 'Перевірка: ставимо ' + x0 + ' замість ' + X + ' у початкове рівняння: ' + chk + ' ✓. Корінь знайдено.'
+      : FULL && ph === 3 ? 'Те саме — з правою. У зошит: ' + $('.e', mids[i]).textContent + ', а праворуч рахуємо: ' + calc + '.'
       : st === 0 ? 'Ліва частина — до знака «=», права — після. Що робимо з лівою частиною, те саме робимо з правою — і рівність не порушується.'
       : i === ops.length ? 'Лишився сам ' + X + ': ' + X + ' = ' + TX(s.rt) + '. Останній пробіл — перевірка.'
       : ph === 0 ? 'Нове рівняння: ' + $('.e', rows[i]).textContent + '. Що ще заважає ' + X + '?'

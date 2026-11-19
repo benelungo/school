@@ -110,6 +110,8 @@ function __comp(){ return {
     sqcubeBoxes:document.querySelectorAll('.sqcube').length,
     tr180:[].filter.call(document.querySelectorAll('.tr180'),function(b){var p=b.querySelector('.tr-svg .sh');return p&&p.getAttribute('points');}).length,
     tr180Boxes:document.querySelectorAll('.tr180').length,
+    zz:[].filter.call(document.querySelectorAll('.zz'),function(b){var p=b.querySelector('.tr-svg .zz-br');return p&&p.getAttribute('points');}).length,
+    zzBoxes:document.querySelectorAll('.zz').length,
     trisos:[].filter.call(document.querySelectorAll('.trisos'),function(b){var p=b.querySelector('.tr-svg .sh');return p&&p.getAttribute('points');}).length,
     trisosBoxes:document.querySelectorAll('.trisos').length,
     trkind:[].filter.call(document.querySelectorAll('.trkind'),function(b){var p=b.querySelector('.tr-svg .sh');return p&&p.getAttribute('points');}).length,
@@ -240,7 +242,10 @@ function __report(){
     var modes=[].map.call(s.querySelectorAll('.mode'),function(m){return m.textContent.toLowerCase()}).join(' ');
     /* легенда «як відповідаємо» з чипами — не задача: задача має умову або таймер */
     var task = (s.querySelector('.cond') || s.hasAttribute('data-timer')) && !s.querySelector('.nb-legend');
-    var writes = task && (s.querySelector('.mode.solo') || /у зошит/.test(modes));
+    /* «самостійно у Word / на компʼютері» — практична за ПК, у зошит нічого не пишуть (9-А урок 10) */
+    var solo = s.querySelector('.mode.solo');
+    var pcSolo = solo && /word|excel|компʼютер|комп'ютер|на пк|у програм/i.test(solo.textContent);
+    var writes = task && ((solo && !pcSolo) || /у зошит/.test(modes));
     if(!writes) return;
     if(!s.querySelector('.nb, .nbw')) noNb.push(i+1);
     /* Самостійна в зошит, а відповіді — у рамці «усно — не записуємо»: учень
@@ -403,7 +408,7 @@ def main():
                                  ("jump", "jumpBoxes"), ("sgn", "sgnBoxes"),
                                  ("hist", "histBoxes"),
                                  ("ocr", "ocrBoxes"), ("colmul", "colmulBoxes"), ("coldiv", "coldivBoxes"),
-                                 ("packs", "packsBoxes"), ("pow", "powBoxes"), ("sqcube", "sqcubeBoxes"), ("tr180", "tr180Boxes"), ("trisos", "trisosBoxes"), ("trkind", "trkindBoxes"), ("qinsc", "qinscBoxes"), ("qcirc", "qcircBoxes"), ("shl", "shlBoxes"), ("rainbow", "rainbowBoxes"), ("fan", "fanBoxes"), ("dom", "domBoxes"), ("req", "reqBoxes"), ("sepia", "sepiaBoxes"), ("poster", "posterBoxes"), ("srch", "srchBoxes"), ("pult", "pultBoxes"), ("ppt", "pptBoxes"), ("flip", "flipBoxes")):
+                                 ("packs", "packsBoxes"), ("pow", "powBoxes"), ("sqcube", "sqcubeBoxes"), ("tr180", "tr180Boxes"), ("trisos", "trisosBoxes"), ("trkind", "trkindBoxes"), ("qinsc", "qinscBoxes"), ("qcirc", "qcircBoxes"), ("shl", "shlBoxes"), ("rainbow", "rainbowBoxes"), ("fan", "fanBoxes"), ("dom", "domBoxes"), ("req", "reqBoxes"), ("sepia", "sepiaBoxes"), ("poster", "posterBoxes"), ("srch", "srchBoxes"), ("pult", "pultBoxes"), ("ppt", "pptBoxes"), ("flip", "flipBoxes"), ("zz", "zzBoxes")):
                     b = data.get("built") or data
                     if b[box] and b[key] < b[box]:
                         miss.append(f"{key}: {b[key]}/{b[box]}")

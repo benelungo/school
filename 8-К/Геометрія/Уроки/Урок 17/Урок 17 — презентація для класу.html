@@ -690,7 +690,7 @@ table.cl td.op{color:var(--soft);padding-right:.25em;vertical-align:middle}
   font-size:clamp(12px,calc(1.35*var(--u)),16px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.steps .st .i{font-size:12px}}/*}compat*/
 .steps .st.now .i{background:var(--pen);color:var(--on-pen)}
 .steps .st .tx{flex:1;min-width:0}
-.steps .st .eq{font-family:"JetBrains Mono",monospace;font-weight:700;
+.steps .st .eq{font-family:"DeckSym","JetBrains Mono",monospace;font-weight:700;
   font-size:clamp(15px,calc(2*var(--u)),24px);line-height:1.35;font-variant-numeric:tabular-nums}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.steps .st .eq{font-size:15px}}/*}compat*/
 .steps .st .cm{font-size:clamp(12px,calc(1.35*var(--u)),17px);color:var(--soft);margin-top:4px;line-height:1.4}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.steps .st .cm{font-size:12px}}/*}compat*/
 
@@ -1166,6 +1166,190 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .mv.done .mvres{opacity:1;transform:none}
 .mv .mvsl{flex:1;min-width:140px;accent-color:var(--pen)}
 
+/* C14a · .vst — s = v · t, одне тіло по годинах */
+.vst .vsts{max-width:min(100%,calc(66*var(--u)));margin:0 auto}/*compat{*/@supports not ((width:min(1px,2px))){.vst .vsts{max-width:100%}}/*}compat*/
+.vst svg{width:100%;height:auto;display:block}
+.vst .rd{stroke:var(--edge);stroke-width:3}
+.vst .tick{stroke:var(--edge);stroke-width:2}
+.vst .sg{fill:var(--pen);opacity:0;transition:opacity .35s}
+.vst .sg.on{opacity:.45}.vst .sg.now{opacity:.9}
+.vst .sv,.vst .st{font-family:"JetBrains Mono",monospace;font-size:16px;font-weight:700;opacity:0;transition:opacity .35s}
+.vst .sv{fill:var(--pen)}.vst .st{fill:var(--soft);font-weight:600;font-size:13px}
+.vst .sv.on,.vst .st.on{opacity:1}
+.vst .car{transition:transform .6s ease}
+.vst .car rect{fill:var(--marker)}.vst .car circle{fill:var(--ink)}
+.vst .car .nm{fill:var(--marker);font-family:"Manrope",sans-serif;font-size:14px;font-weight:700}
+.vst .vsum{text-align:center;margin:clamp(4px,.8vw,10px) 0 0;font-size:clamp(16px,calc(2*var(--u)),26px);font-family:"JetBrains Mono",monospace;min-height:1.4em}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.vst .vsum{margin:4px 0 0;font-size:16px}}/*}compat*/
+.vst .vsum .mut{font-family:"Manrope",sans-serif;font-size:.7em}
+.vst .asay{text-align:center;min-height:2.6em}
+.vst .olog{display:none}
+.vst .sg.s2{fill:var(--sun)}
+.vst .c2 rect{fill:var(--sun)}.vst .c2 .nm{fill:var(--sun)}
+.vst .vsum sub{font-size:.6em}
+.vst .gapl{stroke:var(--ink);stroke-width:2;stroke-dasharray:6 4}
+.vst .gapa{stroke:var(--soft);stroke-width:1.5;stroke-dasharray:3 3}
+.vst .gpt{fill:var(--ink);font-family:"JetBrains Mono",monospace;font-size:16px;font-weight:700;paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.vst .nogap .gapl,.vst .nogap .gapa{opacity:0}
+/* C14b · .river — власна швидкість і течія */
+.river .rvs{max-width:min(100%,calc(66*var(--u)));margin:0 auto}/*compat{*/@supports not ((width:min(1px,2px))){.river .rvs{max-width:100%}}/*}compat*/
+.river svg{width:100%;height:auto;display:block}
+.river .wt{fill:var(--pen);opacity:.12}
+.river .wv{fill:none;stroke:var(--pen);stroke-width:2;opacity:.35}
+.river .bt{transition:transform .7s ease}
+.river .bt path,.river .bt rect{fill:var(--ink)}.river .bt .sail{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
+.river .ac,.river .ao,.river .ar{opacity:0;transition:opacity .35s}
+.river .ac.on,.river .ao.on,.river .ar.on{opacity:1}
+.river .ln{stroke-width:6;stroke-linecap:round}
+.river .tx{font-family:"JetBrains Mono",monospace;font-size:17px;font-weight:700}
+.river .ac .ln{stroke:var(--pen)}.river .ac .hd,.river .ac .tx{fill:var(--pen)}
+.river .ao .ln{stroke:var(--marker)}.river .ao .hd,.river .ao .tx{fill:var(--marker)}
+.river .ar .ln{stroke:var(--check)}.river .ar .hd,.river .ar .tx{fill:var(--check)}
+.river .rveq{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 26px;margin:clamp(4px,.8vw,10px) 0 0;
+  font-size:clamp(16px,calc(2*var(--u)),26px);min-height:1.4em}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.river .rveq{margin:4px 0 0;font-size:16px}}/*}compat*//*compat{*/.no-fgap .river .rveq>*{margin-right:26px;margin-bottom:6px}/*}compat*/
+.river .rveq b{font-family:"JetBrains Mono",monospace;color:var(--check)}
+.river .asay{text-align:center;min-height:2.6em}
+.river .olog{display:none}
+/* C54 · .arr — список як ряд шафок з номерами */
+.arr .hmk{display:none}
+.arr .ar-wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:clamp(12px,2vw,28px);align-items:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px)) and (gap:1px)){.arr .ar-wrap{grid-gap:12px}}/*}compat*//*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-wrap{gap:12px}}/*}compat*/
+@media(max-width:820px){.arr .ar-wrap{grid-template-columns:1fr}}
+.arr .ar-code{font-family:"JetBrains Mono",monospace;font-size:clamp(12px,calc(1.6*var(--u)),20px);line-height:1.5;
+  border:2px solid var(--edge);border-radius:var(--r-m);background:var(--card);padding:clamp(8px,1.2vw,14px) clamp(10px,1.4vw,16px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-code{font-size:12px;padding:8px 10px}}/*}compat*/
+.arr .ar-ln{white-space:pre;padding:.05em .35em;border-radius:5px;transition:background .3s;display:flex;flex-wrap:wrap;column-gap:1em}/*compat{*/.no-fgap .arr .ar-ln>*{margin-right:1em}/*}compat*/
+.arr .ar-ln.done{color:var(--soft)}
+.arr .ar-ln.now{background:var(--sun-soft);color:var(--ink);box-shadow:inset 4px 0 0 var(--sun)}
+.arr .ar-out{color:var(--check);font-weight:700}
+.arr .ar-ln.err .ar-out{color:var(--marker)}
+.arr .ar-row{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(4px,.7vw,9px);padding-top:1.7em}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-row{gap:4px}}/*}compat*//*compat{*/.no-fgap .arr .ar-row>*{margin-right:4px;margin-bottom:4px}/*}compat*/
+.arr .ar-c{position:relative;display:flex;flex-direction:column;align-items:center;min-width:clamp(44px,calc(6.4*var(--u)),82px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-c{min-width:44px}}/*}compat*/
+.arr .ar-v{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;
+  height:clamp(42px,calc(6*var(--u)),76px);padding:0 .3em;font-family:"JetBrains Mono",monospace;font-weight:700;
+  font-size:clamp(15px,calc(2.3*var(--u)),30px);border:2.5px solid var(--edge);border-radius:8px 8px 4px 4px;background:var(--card);
+  transition:background .35s,border-color .35s,color .35s,transform .35s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-v{height:42px;font-size:15px}}/*}compat*/
+.arr .ar-i{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--pen);font-size:clamp(14px,calc(1.9*var(--u)),24px);line-height:1.3}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-i{font-size:14px}}/*}compat*/
+.arr .ar-n{font-family:"JetBrains Mono",monospace;color:var(--soft);font-size:clamp(10px,calc(1.15*var(--u)),14px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-n{font-size:10px}}/*}compat*/
+.arr .ar-p{position:absolute;top:-1.6em;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:"JetBrains Mono",monospace;
+  font-weight:800;color:var(--sun);font-size:clamp(12px,calc(1.5*var(--u)),19px);opacity:0;transition:opacity .25s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-p{font-size:12px}}/*}compat*/
+.arr .ar-p::after{content:" ↓"}
+.arr .ar-c.ptr .ar-p{opacity:1}
+.arr .ar-c.hi .ar-v{border-color:var(--sun);background:var(--sun-soft);transform:translateY(-4px)}
+.arr .ar-c.chg .ar-v{border-color:var(--check);background:var(--check-soft);color:var(--check)}
+.arr .ar-c.past .ar-v{border-color:color-mix(in srgb,var(--check) 45%,var(--edge))}/*compat{*/@supports not ((color:color-mix(in srgb,red,blue))){.arr .ar-c.past .ar-v{border-color:var(--edge)}}/*}compat*/
+.arr .ar-c.add{animation:ar-in .5s ease-out}
+@keyframes ar-in{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+.arr .ar-c.ghost .ar-v{border-style:dashed;border-color:var(--marker);background:var(--marker-soft);color:var(--marker)}
+.arr .ar-c.ghost .ar-i{color:var(--marker)}
+.arr .ar-c.cnt::before{content:attr(data-c);position:absolute;top:-1.5em;font-weight:800;color:var(--check);
+  font-size:clamp(12px,calc(1.5*var(--u)),19px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-c.cnt::before{font-size:12px}}/*}compat*/
+.arr .ar-acc{margin:clamp(10px,1.4vw,18px) auto 0;width:max-content;max-width:100%;font-family:"JetBrains Mono",monospace;
+  font-size:clamp(16px,calc(2.3*var(--u)),30px);border:2.5px solid var(--pen);border-radius:var(--r-m);padding:.15em .7em;background:var(--pen-soft)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-acc{margin:10px auto 0;font-size:16px}}/*}compat*/
+.arr .ar-acc b{color:var(--pen)}
+.arr .ar-acc.flash b{color:var(--check)}
+.arr .ar-log{margin:clamp(8px,1.2vw,14px) auto 0;border-collapse:collapse;font-family:"JetBrains Mono",monospace;font-size:clamp(11px,calc(1.4*var(--u)),17px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .ar-log{margin:8px auto 0;font-size:11px}}/*}compat*/
+.arr .ar-log th,.arr .ar-log td{border:1.5px solid var(--edge);padding:.12em .7em;text-align:center}
+.arr .ar-log th{color:var(--pen);font-weight:800}
+.arr .ar-log td:last-child{text-align:left}
+.arr .ar-log tr.now td{background:var(--sun-soft)}
+.arr .asay{margin-top:clamp(8px,1.2vw,14px);min-height:2.8em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.arr .asay{margin-top:8px;font-size:12px}}/*}compat*/
+/* C55 · .bal — рівняння як терези */
+.bal .hmk{display:none}
+.bal .bl-wrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(12px,2vw,28px);align-items:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px)) and (gap:1px)){.bal .bl-wrap{grid-gap:12px}}/*}compat*//*compat{*/@supports not ((width:clamp(1px,2px,3px))){.bal .bl-wrap{gap:12px}}/*}compat*/
+@media(max-width:820px){.bal .bl-wrap{grid-template-columns:1fr}}
+.bal .bl-scale{--tilt:0;position:relative;font-size:clamp(11px,calc(1.45*var(--u)),18px);width:26em;max-width:100%;margin:0 auto;height:14em}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.bal .bl-scale{font-size:11px}}/*}compat*/
+.bal .bl-beam{position:absolute;left:1em;right:1em;top:1.2em;height:.45em;background:var(--ink);border-radius:.3em;
+  transform:rotate(calc(var(--tilt) * -6deg));transition:transform .7s cubic-bezier(.3,1.4,.5,1)}
+.bal .bl-stand{position:absolute;left:50%;top:1.3em;width:0;height:0;transform:translateX(-50%);
+  border-left:1.6em solid transparent;border-right:1.6em solid transparent;border-bottom:10.4em solid color-mix(in srgb,var(--ink) 25%,transparent)}/*compat{*/@supports not ((color:color-mix(in srgb,red,blue))){.bal .bl-stand{border-bottom:10.4em solid transparent}}/*}compat*/
+.bal .bl-pan{position:absolute;top:.2em;width:10.5em;transform:translateX(-50%);
+  transform:rotate(calc(var(--tilt) * 6deg))}
+.bal .bl-pan.l{left:2em;transform-origin:top left}
+.bal .bl-pan.r{right:2em;transform-origin:top right}
+.bal .bl-pan::before{content:"";position:absolute;left:50%;top:0;height:9.4em;border-left:2px solid color-mix(in srgb,var(--soft) 45%,transparent)}/*compat{*/@supports not ((color:color-mix(in srgb,red,blue))){.bal .bl-pan::before{border-left:2px solid transparent}}/*}compat*/
+.bal .bl-pan.l::before{left:0}.bal .bl-pan.r::before{left:auto;right:0}
+.bal .bl-in{position:absolute;top:9.4em;transform:translateY(-100%);width:10.5em;min-height:2.6em;display:flex;flex-wrap:wrap-reverse;align-content:flex-start;justify-content:center;align-items:flex-end;gap:.25em;
+  padding:.3em .3em .5em;border-bottom:.4em solid var(--ink);border-radius:0 0 50% 50%/0 0 1.2em 1.2em}/*compat{*/.no-fgap .bal .bl-in>*{margin-right:.25em;margin-bottom:.25em}/*}compat*/
+.bal .bl-pan.l .bl-in{left:-5.25em}.bal .bl-pan.r .bl-in{right:-5.25em}
+.bal .bl-bag{display:inline-flex;align-items:center;justify-content:center;min-width:1.9em;height:1.9em;padding:0 .2em;border-radius:45% 45% 30% 30%;
+  background:var(--pen-soft);border:2px solid var(--pen);color:var(--pen);font-family:"Manrope",sans-serif;font-style:italic;font-weight:800;font-size:1.05em}
+.bal .bl-bag.wide{min-width:3em}
+.bal .bl-bag.part{min-width:3.6em;height:1.9em;border-style:dashed;border-radius:30%;font-size:.95em;white-space:nowrap}
+.bal .bl-cut{display:contents}.bal .bl-cut .bl-bag{opacity:.18;border-style:dashed}
+.bal .bl-w{display:inline-flex;align-items:center;justify-content:center;min-width:2.6em;height:2.2em;padding:0 .45em;border-radius:.35em .35em .2em .2em;
+  background:var(--sun-soft);border:2px solid var(--sun);color:var(--sun);font-family:"JetBrains Mono",monospace;font-weight:800;font-size:1.1em;transition:opacity .4s}
+.bal .bl-w.big{height:2.6em;font-size:1.3em}
+.bal .bl-w s{opacity:.5;font-size:.7em;margin-right:.35em}
+.bal .bl-w.gone{opacity:.25;border-style:dashed;text-decoration:line-through}
+.bal .bl-ball{display:inline-flex;align-items:center;justify-content:center;width:2.4em;height:2.4em;border-radius:50%;
+  background:var(--marker-soft);border:2px dashed var(--marker);color:var(--marker);font-family:"JetBrains Mono",monospace;font-weight:800}
+.bal .bl-rec{font-size:clamp(15px,calc(2.2*var(--u)),28px);line-height:1.55}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.bal .bl-rec{font-size:15px}}/*}compat*/
+.bal .bl-rec .bl-l0{color:var(--soft)}
+.bal .bl-rec .bl-l.now{color:var(--nb);font-weight:700}
+.bal .bl-rec .bl-l.ck{font-size:.8em;color:var(--check);font-weight:700;margin-top:.2em}
+.bal .asay{margin-top:clamp(8px,1.2vw,14px);min-height:2.8em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.bal .asay{margin-top:8px;font-size:12px}}/*}compat*/
+/* C56 · .receipt — кошик і касовий чек: ціна · кількість = вартість */
+.receipt .hmk{display:none}
+.receipt .rc-w{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(10px,1.6vw,22px);align-items:start}/*compat{*/@supports not ((width:clamp(1px,2px,3px)) and (gap:1px)){.receipt .rc-w{grid-gap:10px}}/*}compat*//*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-w{gap:10px}}/*}compat*/
+.receipt .rc-cart{display:flex;flex-wrap:wrap;gap:clamp(6px,1vw,12px);align-content:flex-start;justify-content:center;
+  min-height:clamp(64px,calc(9*var(--u)),110px);padding:clamp(6px,.9vw,12px);border:2px dashed var(--soft);border-radius:14px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-cart{gap:6px;min-height:64px;padding:6px}}/*}compat*//*compat{*/.no-fgap .receipt .rc-cart>*{margin-right:6px;margin-bottom:6px}/*}compat*/
+.receipt .rc-it{display:flex;flex-direction:column;align-items:center;gap:2px;padding:clamp(4px,.6vw,8px) clamp(6px,.8vw,10px);
+  border:2px solid var(--marker);border-radius:10px;background:var(--card);opacity:0;transform:translateY(-18px) scale(.9);
+  transition:opacity .35s,transform .35s,box-shadow .3s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-it{padding:4px 6px}}/*}compat*//*compat{*/.no-fgap .receipt .rc-it>*{margin-bottom:2px}.no-fgap .receipt .rc-it>*:last-child{margin-bottom:0}/*}compat*/
+.receipt .rc-it.on{opacity:1;transform:none}
+.receipt .rc-it.now{box-shadow:0 0 0 4px var(--marker)}
+.receipt .rc-it .e{font-size:clamp(22px,calc(3.2*var(--u)),40px);line-height:1}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-it .e{font-size:22px}}/*}compat*/
+.receipt .rc-it b{font-family:"JetBrains Mono",monospace;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--pen);white-space:nowrap}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-it b{font-size:12px}}/*}compat*/
+.receipt .rc-bill{font-family:"JetBrains Mono",monospace;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink);
+  background:var(--card);border:1px solid var(--soft);border-radius:4px;padding:clamp(6px,.9vw,12px);line-height:1.35}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-bill{font-size:12px;padding:6px}}/*}compat*/
+.receipt .rc-h{text-align:center;font-weight:800;letter-spacing:.12em;border-bottom:2px dashed var(--soft);padding-bottom:4px;margin-bottom:4px}
+.receipt .rc-ln{display:flex;justify-content:space-between;gap:10px;opacity:0;transition:opacity .3s}/*compat{*/.no-fgap .receipt .rc-ln>*{margin-right:10px}.no-fgap .receipt .rc-ln>*:last-child{margin-right:0}/*}compat*/
+.receipt .rc-ln.on{opacity:1}
+.receipt .rc-ln.now{color:var(--marker);font-weight:700}
+.receipt .rc-tot{border-top:2px dashed var(--soft);margin-top:4px;padding-top:4px;font-weight:800;color:var(--check);text-align:right}
+.receipt .rc-mul{display:flex;justify-content:center;align-items:flex-start;gap:clamp(8px,1.4vw,18px);
+  margin-top:clamp(6px,.9vw,10px);opacity:0;transform:scale(.85);transition:opacity .4s,transform .4s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-mul{gap:8px;margin-top:6px}}/*}compat*//*compat{*/.no-fgap .receipt .rc-mul>*{margin-right:8px}.no-fgap .receipt .rc-mul>*:last-child{margin-right:0}/*}compat*/
+.receipt .rc-mul.on{opacity:1;transform:none}
+.receipt .rc-mul .f{display:flex;flex-direction:column;align-items:center}
+.receipt .rc-mul em{font-style:normal;font-family:"JetBrains Mono",monospace;font-weight:800;font-size:clamp(24px,calc(3.4*var(--u)),44px);line-height:1.1}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-mul em{font-size:24px}}/*}compat*/
+.receipt .rc-mul .o{font-family:"JetBrains Mono",monospace;font-weight:800;font-size:clamp(24px,calc(3.4*var(--u)),44px);line-height:1.1;color:var(--soft)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-mul .o{font-size:24px}}/*}compat*/
+.receipt .rc-mul small{font-size:clamp(11px,calc(1.3*var(--u)),16px);color:var(--ink);font-weight:800}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-mul small{font-size:11px}}/*}compat*/
+.receipt .a em,.receipt .rc-fm .a{color:var(--pen)}
+.receipt .n em,.receipt .rc-fm .n{color:var(--marker)}
+.receipt .C em,.receipt .rc-fm .C{color:var(--check)}
+.receipt .rc-fm{text-align:center;font-family:"Charter",Georgia,serif;font-size:clamp(20px,calc(2.8*var(--u)),34px);font-weight:700;
+  margin-top:clamp(2px,.5vw,6px);opacity:0;transition:opacity .4s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .rc-fm{font-size:20px;margin-top:2px}}/*}compat*/
+.receipt .rc-fm.on{opacity:1}
+.receipt .rc-fm i{font-style:italic}
+.receipt .asay{margin-top:clamp(6px,1vw,12px);min-height:2.8em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.receipt .asay{margin-top:6px;font-size:12px}}/*}compat*/
+/* C57 · .eqop — ліва частина / права частина, дія за рискою */
+.eqop .hmk{display:none}
+.eqop .eo{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(10px,1.6vw,22px);align-items:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px)) and (gap:1px)){.eqop .eo{grid-gap:10px}}/*}compat*//*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .eo{gap:10px}}/*}compat*/
+.eqop .eo-w{display:flex;align-items:center;justify-content:center;gap:clamp(4px,.8vw,12px);flex-wrap:nowrap}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .eo-w{gap:4px}}/*}compat*//*compat{*/.no-fgap .eqop .eo-w>*{margin-right:4px;margin-bottom:4px}/*}compat*/
+.eqop .eo-s{display:flex;flex-direction:column;align-items:center;gap:4px;padding:clamp(6px,1vw,12px) clamp(10px,1.4vw,18px);
+  border:2px solid var(--edge);border-radius:12px;transition:box-shadow .3s,border-color .3s}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .eo-s{padding:6px 10px}}/*}compat*//*compat{*/.no-fgap .eqop .eo-s>*{margin-bottom:4px}.no-fgap .eqop .eo-s>*:last-child{margin-bottom:0}/*}compat*/
+.eqop .eo-s.hot{border-color:var(--marker);box-shadow:0 0 0 4px var(--marker)}
+.eqop .eo-s small{font-size:clamp(10px,calc(1.2*var(--u)),14px);font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .eo-s small{font-size:10px}}/*}compat*/
+.eqop .eo-s .t{font-family:"JetBrains Mono",monospace;font-weight:800;font-size:clamp(17px,calc(2.7*var(--u)),38px);line-height:1.15;white-space:nowrap;color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .eo-s .t{font-size:17px}}/*}compat*/
+.eqop .eo-eq{font-family:"JetBrains Mono",monospace;font-weight:800;font-size:clamp(22px,calc(3.4*var(--u)),44px);color:var(--soft)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .eo-eq{font-size:22px}}/*}compat*/
+.eqop .eo-a{font-family:"JetBrains Mono",monospace;font-weight:800;font-size:clamp(20px,calc(3*var(--u)),38px);color:var(--marker);opacity:0;transition:opacity .3s;white-space:nowrap}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .eo-a{font-size:20px}}/*}compat*/
+.eqop .eo-a.on{opacity:1}
+.eqop .op{color:var(--marker);font-weight:800}
+.eqop .v{font-family:"Charter",Georgia,serif;font-style:italic}
+.eqop .eo-rec .eo-g{display:grid;grid-template-columns:max-content max-content;column-gap:.8em}/*compat{*/@supports not ((gap:1px)){.eqop .eo-rec .eo-g{grid-column-gap:.8em}}/*}compat*/
+.eqop .eo-rec{font-family:"JetBrains Mono",monospace;font-size:clamp(15px,calc(2*var(--u)),26px);line-height:1.5}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .eo-rec{font-size:15px}}/*}compat*/
+.eqop .eo-rec .ln{display:contents}
+.eqop .eo-rec .ln>*{opacity:0;transition:opacity .3s}
+.eqop .eo-rec .ln.on .e{opacity:1}
+.eqop .eo-rec .ln.now .e{font-weight:800}
+.eqop .eo-rec .bar{color:var(--marker);font-weight:800;white-space:nowrap}
+.eqop .eo-rec .e{white-space:nowrap}
+.eqop .eo-rec .ln.wb .bar{opacity:1}
+.eqop .eo-rec .ck{color:var(--check);font-weight:700;font-size:.85em;opacity:0;transition:opacity .3s}
+.eqop .eo-rec .ck.on{opacity:1}
+/* data-full: вдвічі більше рядків — запис ширший і щільніший, щоб не дрібнішав слайд */
+.eqop[data-full] .eo{grid-template-columns:1fr 1.7fr}
+.eqop[data-full] .eo-rec{line-height:1.3;font-size:clamp(14px,calc(1.8*var(--u)),24px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop[data-full] .eo-rec{font-size:14px}}/*}compat*/
+.eqop[data-full] .eo-s .t{font-size:clamp(15px,calc(2.2*var(--u)),30px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop[data-full] .eo-s .t{font-size:15px}}/*}compat*/
+.eqop .asay{margin-top:clamp(6px,1vw,12px);min-height:2.8em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .asay{margin-top:6px;font-size:12px}}/*}compat*/
 /* C15 · .vang — вертикальні кути */
 .vang{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,20px);align-items:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.vang{gap:8px}}/*}compat*//*compat{*/.no-fgap .vang>*{margin-right:8px;margin-bottom:8px}/*}compat*/
 .vang .vsvg{flex:1 1 280px;min-width:230px;max-width:min(100%,calc(26*var(--u)))}/*compat{*/@supports not ((width:min(1px,2px))){.vang .vsvg{max-width:100%}}/*}compat*/
@@ -1800,7 +1984,7 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .tr-svg .tk{stroke:var(--marker);stroke-width:3;stroke-linecap:round}
 .tr-svg .ra{fill:none;stroke:var(--check);stroke-width:2.5}
 .tr-svg text.vA,.tr-svg text.vB,.tr-svg text.vv{font:700 17px "JetBrains Mono",monospace;text-anchor:middle}
-.tr-f{font-family:"JetBrains Mono",monospace;font-size:clamp(15px,calc(1.9*var(--u)),24px);margin-top:4px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.tr-f{font-size:15px}}/*}compat*/
+.tr-f{font-family:"DeckSym","JetBrains Mono",monospace;font-size:clamp(15px,calc(1.9*var(--u)),24px);margin-top:4px}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.tr-f{font-size:15px}}/*}compat*/
 .tr-f b{color:var(--check)}
 /* .tr180 */
 .tr180 .aA{fill:none;stroke:var(--pen);stroke-width:3}
@@ -1810,6 +1994,26 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .tr180 .sec{stroke:var(--sun);stroke-width:5;opacity:0;transition:opacity .35s}
 .tr180.fin .sec{opacity:.9}
 .tr180.fin .pl{stroke:var(--pen);stroke-dasharray:none;stroke-width:2}
+/* .zz — ламана між паралельними, допоміжна пряма */
+.zz{display:flex;flex-direction:column;align-items:center}
+.zz .hmk{display:none}
+.zz .ln{stroke:var(--ink);stroke-width:2.4}
+.zz .zz-br{fill:none}
+.zz .aux{stroke:var(--sun);stroke-width:2.6;stroke-dasharray:9 7}
+.zz .zk{opacity:0;transition:opacity .4s}
+.zz.z1 .zk{opacity:1}
+.zz .zc{fill:none;stroke:var(--pen);stroke-width:3}
+.zz .za{fill:none;stroke:var(--marker);stroke-width:3}
+.zz text.zc{fill:var(--pen);stroke:none}
+.zz text.za{fill:var(--marker);stroke:none}
+.zz .zq{fill:none;stroke:var(--check);stroke-width:2.5;transition:opacity .35s}
+.zz text.zq{fill:var(--check);stroke:none}
+.zz.z2 .zq{opacity:0}
+.zz .zp{opacity:0;transition:opacity .35s;stroke-dasharray:5 5}
+.zz.z2 .zp{opacity:1}
+.zz .zmv{opacity:0;transition:opacity .3s}
+.zz.z3 .zmv.zc,.zz.z4 .zmv.za{opacity:1}
+.zz.z5 .zp{stroke-dasharray:none}
 /* .trisos */
 .trisos .rc,.trisos .t1,.trisos .t2,.trisos .tmv{stroke:none;opacity:0;transition:opacity .35s}
 .trisos .rc{fill:var(--note)}
@@ -1890,6 +2094,39 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .thales .sd,.divseg .sd{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
 .thales .pt,.divseg .pt{fill:var(--ink)}
 .thales .nm,.divseg .nm{font:700 17px "JetBrains Mono",monospace;text-anchor:middle;stroke:none}
+/* C51a · .thgen — узагальнена теорема Фалеса */
+.thgen .hmk{display:none}
+.thgen{display:flex;flex-direction:column;align-items:center}
+.thgen .tr-svg{max-width:min(100%,calc(60*var(--u)))}/*compat{*/@supports not ((width:min(1px,2px))){.thgen .tr-svg{max-width:100%}}/*}compat*/
+.thgen .asay{text-align:center;min-height:2.8em;font-size:clamp(15px,calc(1.8*var(--u)),22px);line-height:1.4}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.thgen .asay{font-size:15px}}/*}compat*/
+.thgen .tr-f{text-align:center;opacity:0;transition:opacity .35s;font-size:clamp(18px,calc(2.2*var(--u)),28px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.thgen .tr-f{font-size:18px}}/*}compat*/
+.thgen .tr-svg svg{max-height:var(--fh,40vh)}
+.thgen .sd{stroke:var(--ink);stroke-width:2.6;stroke-linecap:round}
+.thgen .pt{fill:var(--ink)}
+.thgen .pm{stroke:var(--ink);stroke-width:3.2;stroke-linecap:round}
+.thgen .pl2{stroke:var(--pen);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:6 5;opacity:0;transition:opacity .35s}
+.thgen .nm{font:700 17px "JetBrains Mono",monospace;text-anchor:middle;stroke:none;fill:var(--marker)}
+.thgen .g1,.thgen .g2{stroke-width:9;stroke-linecap:round;opacity:0;transition:opacity .35s}
+.thgen .g1{stroke:var(--marker)}
+.thgen .g2{stroke:var(--check)}
+.thgen .du,.thgen .dv{opacity:0;transition:opacity .35s}
+.thgen.s1 .du,.thgen.s2 .pl2,.thgen.s3 .dv,.thgen.s4 .tr-f{opacity:1}
+.thgen.s4 .g1,.thgen.s4 .g2{opacity:.45}
+/* C60 · .polysim — зведення подібних членів многочлена */
+.polysim{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.8vw,10px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.polysim{gap:4px}}/*}compat*//*compat{*/.no-fgap .polysim>*{margin-bottom:4px}.no-fgap .polysim>*:last-child{margin-bottom:0}/*}compat*/
+.polysim .hmk{display:none}
+.polysim .ps-l{font:600 clamp(18px,calc(2.6*var(--u)),36px)/1.35 "Charter",Georgia,serif;text-align:center;max-width:100%}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.polysim .ps-l{font:600 18px/1.35 "Charter",Georgia,serif}}/*}compat*/
+.polysim .ps-l>span{white-space:nowrap}
+.polysim .ps-l i{font-style:italic}
+.polysim .ps-2,.polysim .ps-3{opacity:0;transition:opacity .35s}
+.polysim.s2 .ps-2,.polysim.s3 .ps-3{opacity:1}
+.polysim .ps-t{padding:0 .08em;border-bottom:4px solid transparent;transition:color .3s,border-color .3s}
+.polysim .c0{color:var(--marker);border-bottom-color:var(--marker)}
+.polysim .c1{color:var(--check);border-bottom-color:var(--check)}
+.polysim .c2{color:var(--pen);border-bottom-color:var(--pen)}
+.polysim .c3{color:var(--sun);border-bottom-color:var(--sun)}
+.polysim.s3 .ps-3{font-weight:800}
+.polysim .asay{text-align:center;min-height:2.8em;font-size:clamp(15px,calc(1.8*var(--u)),22px);line-height:1.4}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.polysim .asay{font-size:15px}}/*}compat*/
 /* .thales */
 .thales .pl2{stroke:var(--pen);stroke-width:2.2;stroke-linecap:round}
 .thales .ka,.thales .kb,.thales .pl2{opacity:0;transition:opacity .35s}
@@ -1939,6 +2176,14 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .midline.ml4.s1 .ml-n1,.midline.ml4.s2 .ml-q,.midline.ml4.s3 .ml-c2,.midline.ml4.s3 .ml-n3,.midline.ml4.s4 .tr-f{opacity:1}
 .midline.ml4.s4 .ml-in{fill-opacity:.4}
 .midline.ml4.s4 .ml-n1{opacity:.35}
+.midline .ml-ex{stroke:var(--soft);stroke-width:2.4;stroke-dasharray:8 6}
+.midline .ml-rot{fill:var(--note);fill-opacity:.28;stroke:var(--note);stroke-width:2.4;stroke-linejoin:round}
+.midline .ml-x,.midline .ml-ex,.midline .ml-rot{opacity:0;transition:opacity .35s}
+.midline text.ml-n5,.midline text.ml-n6{fill:var(--pen)}
+.midline.mltr.s1 .ml,.midline.mltr.s2 .ml-x,.midline.mltr.s2 .ml-ex,.midline.mltr.s3 .ml-rot,.midline.mltr.s3 .ml-n5,
+.midline.mltr.s4 .ml-q,.midline.mltr.s5 .ml-n6{opacity:1}
+.midline.mltr.s4 .ml-rot{opacity:.45}
+.midline.mltr.s4 .ml-q{fill-opacity:.14}
 
 /* C39 · .sqcube — клітинки квадрата й кубики куба */
 .sqcube .hmk{display:none}
@@ -2147,6 +2392,103 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .ppt .pp-stt{flex:1 1 auto}
 .ppt .pp-vw,.ppt .pp-zm{padding:0 .6em;letter-spacing:.15em}
 .ppt .asay{margin-top:clamp(6px,.9vw,12px);min-height:2.6em;text-align:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.ppt .asay{margin-top:6px}}/*}compat*/
+/* .ppt · режим «макет»: контейнери штрихом */
+.ppt .pp-sm.now{color:var(--ink);font-weight:800;background:var(--sun-soft);box-shadow:0 0 0 2px var(--sun);border-radius:var(--r-xs);padding:.1em .4em}
+.ppt .pp-lay{display:grid;gap:5%;padding:6% 6%;align-items:stretch;justify-content:stretch;grid-template-columns:1fr;grid-template-rows:auto 1fr}/*compat{*/@supports not ((gap:1px)){.ppt .pp-lay{grid-gap:5%}}/*}compat*/
+.ppt .pp-lay .pp-k{border:1.5px dashed var(--soft);border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--soft);font-size:.95em;text-align:center;padding:.3em;box-sizing:border-box;min-height:1.6em;min-width:0}
+.ppt .pp-lay .pp-k.k-h{font-weight:700;font-size:1.05em}
+.ppt .pp-lay .pp-k.k-c{border-color:var(--pen);color:var(--pen)}
+.ppt .pp-lay .pp-ic{font-size:1.4em;letter-spacing:.3em;margin-top:.2em}
+.ppt .pp-mi.pp-lay{display:grid;padding:8%;gap:8%}/*compat{*/@supports not ((gap:1px)){.ppt .pp-mi.pp-lay{grid-gap:8%}}/*}compat*/
+.ppt .pp-mi.pp-lay .pp-k{border-width:1px;min-height:0;padding:0}
+.ppt .L-title{grid-template-rows:1.4fr 1fr;padding:14% 10%}
+.ppt .L-two{grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr}
+.ppt .L-two .k-h,.ppt .L-cmp .k-h{grid-column:1 / span 2}
+.ppt .L-cmp{grid-template-columns:1fr 1fr;grid-template-rows:auto auto 1fr}
+.ppt .L-cap{grid-template-columns:1fr 1.6fr;grid-template-rows:auto 1fr}
+.ppt .L-cap .k-h{grid-column:1;grid-row:1}
+.ppt .L-cap .k-c{grid-column:2;grid-row:1 / span 2}
+.ppt .L-cap .k-t{grid-column:1;grid-row:2}
+.ppt .L-only{grid-template-rows:auto 1fr}
+/* .ppt · режим «тема»: колекція тем (кольори справжніх слайдів, не теми сайту) */
+.ppt .pp-rib.des>.pp-g:not(.pp-gt){display:none}
+.ppt .pp-rib:not(.des)>.pp-gt{display:none}
+.ppt .pp-gt{transition:box-shadow .3s,background .3s;border-radius:var(--r-xs)}
+.ppt .pp-gt.now{background:var(--sun-soft);box-shadow:inset 0 0 0 2px var(--sun)}
+.ppt .pp-sws{display:flex;align-items:center}
+.ppt .pp-sw{display:inline-flex;align-items:center;justify-content:center;width:3.2em;height:2.1em;margin:0 .2em;border:1px solid #9aa0a6;border-radius:2px;font-weight:800;transition:transform .3s,box-shadow .3s}
+.ppt .pp-sw i{font-style:normal}
+.ppt .pp-vr{width:2.2em}
+.ppt .pp-sw.pick{transform:scale(1.12);box-shadow:0 0 0 3px var(--marker)}
+.ppt .pp-ctx{position:absolute;z-index:4;left:55%;top:85%;padding:.35em .7em;background:#fff;color:#222;border:1px solid #999;box-shadow:var(--sh2);font-size:.85em;line-height:1.5;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s}
+.ppt .pp-ctx b{background:#dbe7f7}
+.ppt .pp-ctx.on{opacity:1}
+.ppt .pp-win .th-0{background:#ffffff;color:#222}
+.ppt .pp-win .th-1{background:#f2ebdd;color:#5b3a1f;font-family:Georgia,serif}
+.ppt .pp-win .th-1.v1{background:#e3ecf3;color:#24496b}
+.ppt .pp-win .th-1.v2{background:#e6efe1;color:#2f5a2a}
+.ppt .pp-win .th-2{background:#0f5e63;color:#ffffff}
+.ppt .pp-win .th-3{background:#3a2a6b;color:#ffd24a}
+.ppt .pp-win .th-4{background:#dfeaf7;color:#14306b}
+.ppt .pp-slin[class*="th-"],.ppt .pp-mi[class*="th-"]{transition:background .5s,color .5s}
+.ppt .pp-slin.th-1 .pp-h{border-bottom:3px solid currentColor}
+.ppt .pp-slin.th-3 .pp-h{border-left:6px solid currentColor}
+/* .ppt · режими «показ» і «гіперпосилання» (05.11.2026) — кольори справжнього PowerPoint, не теми сайту */
+.ppt .pp-big i{font-style:normal;font-size:.8em;color:var(--soft);margin-left:.3em}
+.ppt .pp-rib>.pp-gt .pp-big{margin:0 .2em}
+.ppt .pp-show{position:absolute;top:0;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;justify-content:center;
+  background:#000;border-radius:inherit;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+.ppt .pp-show.on{opacity:1;visibility:visible}
+.ppt .pp-ss{position:relative;width:calc(44*var(--u));height:calc(24.75*var(--u));max-width:94%;background:#fff;color:#222;overflow:hidden;font-size:1.3em}
+.ppt .pp-ss>.pp-slin{transition:transform .6s ease;transform-origin:8% 12%}
+.ppt .pp-ss.zoom>.pp-slin{transform:scale(1.6)}
+.ppt .pp-ss .ph{visibility:hidden}               /* у показі глядач не бачить «Клацніть, щоб додати…» */
+.ppt .pp-ink{position:absolute;left:8%;top:30%;height:4px;width:0;background:#e53935;border-radius:2px;transition:width .7s ease}
+.ppt .pp-ink.on{width:46%}
+.ppt .pp-ss.zoom .pp-ink{opacity:0}
+.ppt .pp-ctl{position:absolute;left:4%;bottom:5%;display:flex;opacity:0;transition:opacity .35s}
+.ppt .pp-ctl.on{opacity:1}
+.ppt .pp-ctl i{display:flex;align-items:center;justify-content:center;width:2em;height:2em;margin-right:.45em;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.75);background:rgba(40,40,40,.85);color:#fff;font-style:normal;font-size:1.05em;transition:background .3s,box-shadow .3s,transform .3s}
+.ppt .pp-ctl i.now{background:var(--marker);border-color:#fff;box-shadow:0 0 0 3px var(--marker);transform:scale(1.15)}
+.ppt .pp-grid{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;padding:6%;
+  background:#1d1d1d;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+.ppt .pp-grid.on{opacity:1;visibility:visible}
+.ppt .pp-gw{margin:.5em;padding:3px;border:2px solid transparent}
+.ppt .pp-gw.sel{border-color:var(--marker)}
+.ppt .pp-gw>div{width:calc(11*var(--u));height:calc(6.2*var(--u));background:#fff;color:#222;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;font-size:.8em}
+.ppt .pp-gw .k-body{justify-content:flex-start;align-items:flex-start;padding:.5em}
+.ppt .pp-gw .pp-h{font-weight:800}
+.ppt .pp-more{position:absolute;left:24%;bottom:17%;padding:.4em .8em;background:#fff;color:#222;border:1px solid #999;box-shadow:var(--sh2);
+  line-height:1.6;font-size:.9em;opacity:0;transition:opacity .3s}
+.ppt .pp-more.on{opacity:1}
+.ppt .pp-more b{background:#dbe7f7;font-weight:600}
+.ppt .pp-lk{padding:.1em .2em;border-radius:2px;transition:background .3s,color .3s}
+.ppt .pp-lk::before{content:"• "}
+.ppt .pp-lk.sel{background:#bcd3f5}
+.ppt .pp-lk.lnk{color:#1a5fd0;text-decoration:underline;text-underline-offset:.15em}
+.ppt .pp-lk.hov{box-shadow:0 0 0 3px var(--marker);cursor:pointer}
+.ppt .pp-lk.hov::after{content:" ☝";color:var(--marker);text-decoration:none;display:inline-block}
+.ppt .pp-abtn{position:absolute;right:5%;bottom:7%;display:flex;align-items:center;justify-content:center;width:1.7em;height:1.4em;
+  background:#4472c4;color:#fff;border:1px solid #2f528f;border-radius:2px;font-size:1.1em;line-height:1}
+.ppt .pp-tw .pp-mi{position:relative}
+.ppt .pp-mi .pp-abtn{font-size:.9em;right:6%;bottom:8%}
+.ppt .pp-abtn.now{box-shadow:0 0 0 3px var(--marker)}
+.ppt .pp-dlg{position:absolute;z-index:6;left:50%;top:52%;width:72%;transform:translate(-50%,-50%) scale(.96);background:#fff;color:#222;
+  border:1px solid #888;box-shadow:var(--sh3);font-size:.95em;opacity:0;visibility:hidden;transition:opacity .3s,transform .3s,visibility .3s}
+.ppt .pp-dlg.on{opacity:1;visibility:visible;transform:translate(-50%,-50%)}
+.ppt .pp-dt{padding:.35em .7em;background:#f0f0f0;border-bottom:1px solid #ccc;font-weight:700}
+.ppt .pp-dc{display:flex;padding:.5em .7em}
+.ppt .pp-dl,.ppt .pp-dr{display:flex;flex-direction:column}
+.ppt .pp-dl{flex:0 0 38%;padding-right:.7em;border-right:1px solid #ddd;margin-right:.7em}
+.ppt .pp-dr{flex:1 1 auto}
+.ppt .pp-dc small{color:#666;margin-bottom:.2em}
+.ppt .pp-dc span{padding:.12em .4em}
+.ppt .pp-dc span.in{padding-left:1.4em}
+.ppt .pp-dc span.pick{background:#cce0fa;box-shadow:inset 0 0 0 2px var(--marker);font-weight:700}
+.ppt .pp-df{display:flex;align-items:center;justify-content:space-between;padding:.35em .7em;border-top:1px solid #ddd}
+.ppt .pp-df b{padding:.15em 1.2em;border:1px solid #2f528f;background:#e6eefb}
+.ppt .pp-slin[class*="th-"] .pp-p{color:inherit;opacity:.8}
 /* .powop — множення й ділення степенів з однаковою основою */
 .powop .hmk{display:none}
 .powop .po-line{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.25em .4em;
@@ -2173,6 +2515,7 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .powop .po-f.cut{opacity:.3;text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:var(--marker)}
 .powop .po-fin{color:var(--check)}
 .powop .g3{color:var(--check)}
+.powop .g4{color:var(--nb)}
 .powop .po-ill{font-size:clamp(18px,calc(2.6*var(--u)),34px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.powop .po-ill{font-size:18px}}/*}compat*/
 .powop .po-ill .po-p.s2{display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:0 .15em}/*compat{*/.no-fgap .powop .po-ill .po-p.s2>*{margin-right:.15em;margin-bottom:0}/*}compat*/
 
@@ -3321,7 +3664,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.thgen,.polysim,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -5028,6 +5371,275 @@ $$('.mv').forEach(function(box){
 });
 
 /* ─────────────────────────────────────────────────────────────────────
+   C14a · .vst — відстань = швидкість · час: одне тіло, кожна година — відрізок
+   <div class="vst" data-v="72" data-t="5" data-unit="км" data-tu="год" data-name="Автомобіль"></div>
+   Крок пробілом — ще одна година: тіло проїжджає однаковий відрізок v,
+   під дорогою росте сума v + v + …; останній крок згортає її в s = v · t.
+   Учень бачить, ЧОМУ відстань — це множення: щогодини той самий шматок.
+   Кроків: t + 1 (t ≤ 8).
+   ───────────────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────
+   C14a′ · .vst з двома тілами — швидкість зближення / віддалення
+   <div class="vst" data-mode="apart" data-v="12,14" data-t="5" data-names="Велосипедист 1,Велосипедист 2"></div>
+   <div class="vst" data-mode="meet"  data-v="39,37" data-s="152" data-names="Скутерист 1,Скутерист 2"></div>
+   Пробіл — ще одна година: кожне тіло проходить свій відрізок (два кольори),
+   під дорогою: «за 1 год відстань змінилась на 12 + 14 = 26»; далі сума
+   однакових (v1 + v2) і останній крок — формула з відповіддю.
+   apart: з однієї точки в протилежні боки, s = (v1 + v2) · t;
+   meet:  назустріч з кінців відстані s, t = s : (v1 + v2) (t — ціле, ≤ 8).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.vst[data-mode="meet"],.vst[data-mode="apart"]').forEach(function(box){
+  var meet = box.dataset.mode === 'meet';
+  var V = String(box.dataset.v || '12,14').split(',').map(parseFloat), v1 = V[0], v2 = V[1], vs = v1 + v2;
+  var U = box.dataset.unit || 'км', TU = box.dataset.tu || 'год';
+  var NM = String(box.dataset.names || 'Перший,Другий').split(',');
+  var S = parseFloat(box.dataset.s) || 0;
+  var T = meet ? Math.round(S / vs) : Math.max(1, Math.min(8, parseInt(box.dataset.t, 10) || 3));
+  if(!meet) S = vs * T;
+  var X0 = 40, W = 640, K = W / S, mid = X0 + v1 * T * K;
+  box.removeAttribute('data-mode'); box.setAttribute('data-two', meet ? 'meet' : 'apart');
+  box.textContent = '';
+  var wrap = el('div','vsts'), segs = '';
+  for(var i = 0; i < T; i++){
+    var a1 = meet ? X0 + i*v1*K : mid - (i+1)*v1*K, a2 = meet ? X0 + W - (i+1)*v2*K : mid + i*v2*K;
+    segs += '<rect class="sg s1" data-i="' + i + '" x="' + (a1 + 1) + '" y="58" width="' + (v1*K - 2) + '" height="16" rx="3"></rect>' +
+            '<rect class="sg s2" data-i="' + i + '" x="' + (a2 + 1) + '" y="58" width="' + (v2*K - 2) + '" height="16" rx="3"></rect>';
+  }
+  function car(c, nm, flip){
+    return '<g class="car ' + c + '"><g transform="scale(' + (flip ? -1 : 1) + ',1)"><rect x="-20" y="-14" width="40" height="13" rx="3"></rect><rect x="2" y="-23" width="14" height="9" rx="2"></rect>' +
+      '<circle cx="-11" cy="1" r="4"></circle><circle cx="11" cy="1" r="4"></circle></g>' +
+      '<text class="nm" x="' + (meet ? 0 : (c === 'c1' ? -6 : 6)) + '" y="-28" text-anchor="' + (meet ? 'middle' : (c === 'c1' ? 'end' : 'start')) + '">' + nm + '</text></g>';
+  }
+  wrap.innerHTML = '<svg viewBox="0 0 720 118" role="img" aria-label="Два тіла: швидкість зближення чи віддалення">' +
+    '<line class="rd" x1="' + X0 + '" y1="66" x2="' + (X0 + W) + '" y2="66"></line>' + segs +
+    (meet ? '<text class="sv on" x="360" y="100" text-anchor="middle">' + anum(S) + ' ' + U + '</text>' : '<line class="tick" x1="' + mid + '" y1="54" x2="' + mid + '" y2="78"></line>') +
+    car('c1', NM[0] || '', !meet) + car('c2', NM[1] || '', meet) + '</svg>';
+  box.appendChild(wrap);
+  var sum = el('p','vsum'), say = asay(box), ol = el('ol','olog');
+  box.appendChild(sum); box.appendChild(say); box.appendChild(ol);
+  for(var k = 0; k <= T; k++) ol.appendChild(el('li','hide'));
+  var c1 = $('.c1', wrap), c2 = $('.c2', wrap), sv = 'v<sub>' + (meet ? 'збл' : 'від') + '</sub>';
+  box.__paint = function(){
+    var n = 0;
+    $$('li', ol).forEach(function(li){ if(li.classList.contains('on')) n++; });
+    var h = Math.min(n, T);
+    $$('.sg', wrap).forEach(function(e){ var i = +e.getAttribute('data-i'); e.classList.toggle('on', i < h); e.classList.toggle('now', i === h - 1 && n <= T); });
+    c1.setAttribute('transform', 'translate(' + (meet ? X0 + h*v1*K : mid - h*v1*K) + ',54)');
+    c2.setAttribute('transform', 'translate(' + (meet ? X0 + W - h*v2*K : mid + h*v2*K) + ',54)');
+    var ch = meet ? 'скоротилась' : 'збільшилась';
+    if(n === 0){
+      sum.innerHTML = anum(v1) + ' ' + U + '/' + TU + ' і ' + anum(v2) + ' ' + U + '/' + TU + (meet ? ' — назустріч' : ' — у протилежні боки');
+      say.textContent = (meet ? 'Між ними ' + anum(S) + ' ' + U + '. ' : 'Стартують з однієї точки. ') + 'Пробіл — минає перша ' + TU + '.';
+    } else if(n <= T){
+      var p = []; for(var j = 0; j < h; j++) p.push(anum(vs));
+      sum.innerHTML = 'за ' + h + ' ' + TU + ': ' + p.join(' + ') + ' = <b>' + anum(vs*h) + ' ' + U + '</b>';
+      say.textContent = n === 1
+        ? 'За 1 ' + TU + ' перший проїхав ' + anum(v1) + ', другий — ' + anum(v2) + '. Відстань між ними ' + ch + ' на ' + anum(v1) + ' + ' + anum(v2) + ' = ' + anum(vs) + ' ' + U + ' — це швидкість ' + (meet ? 'зближення' : 'віддалення') + '.'
+        : 'Ще ' + TU + ' — ще ' + anum(vs) + ' ' + U + (meet && h === T ? '. Зустрілись!' : '.');
+    } else {
+      sum.innerHTML = sv + ' = ' + anum(v1) + ' + ' + anum(v2) + ' = ' + anum(vs) + ' &nbsp;·&nbsp; ' + (meet
+        ? '<b>t = s : ' + sv + '</b> = ' + anum(S) + ' : ' + anum(vs) + ' = <b class="ans">' + T + ' ' + TU + '</b>'
+        : '<b>s = ' + sv + ' · t</b> = ' + anum(vs) + ' · ' + T + ' = <b class="ans">' + anum(S) + ' ' + U + '</b>');
+      say.textContent = (meet ? 'Назустріч' : 'У протилежні боки') + ' швидкості додаємо: щогодини відстань ' + ch + ' на ' + anum(vs) + ' ' + U + '.';
+    }
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C14a″ · .vst — двоє В ОДНОМУ НАПРЯМКУ: швидкості віднімаємо
+   <div class="vst" data-mode="chase" data-v="15,5" data-s="30" data-names="Велосипедист,Пішохід"></div>
+   <div class="vst" data-mode="ahead" data-v="45,60" data-t="4" data-names="Вантажівка,Легковик"></div>
+   Дві смуги (кожне тіло — своя), обидва їдуть праворуч. Пробіл — ще одна година:
+   кожен проходить свій відрізок, між ними — дужка з поточною відстанню.
+   chase: перший (швидший) позаду на s, наздоганяє; t = s : (v1 − v2), t — ціле ≤ 8.
+   ahead: з однієї точки в один бік; s = (v2 − v1) · t.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.vst[data-mode="chase"],.vst[data-mode="ahead"]').forEach(function(box){
+  var chase = box.dataset.mode === 'chase';
+  var V = String(box.dataset.v || (chase ? '15,5' : '45,60')).split(',').map(parseFloat), v1 = V[0], v2 = V[1];
+  var vd = Math.abs(v1 - v2) || 1, vmax = Math.max(v1, v2), vmin = Math.min(v1, v2);
+  var U = box.dataset.unit || 'км', TU = box.dataset.tu || 'год';
+  var NM = String(box.dataset.names || 'Перший,Другий').split(',');
+  var S0 = chase ? (parseFloat(box.dataset.s) || vd * 3) : 0;
+  var T = chase ? Math.max(1, Math.min(8, Math.round(S0 / vd))) : Math.max(1, Math.min(8, parseInt(box.dataset.t, 10) || 3));
+  var L = chase ? v1 * T : vmax * T;
+  var X0 = 80, W = 560, K = W / L, Y1 = 50, Y2 = 128, GY = 76;
+  box.removeAttribute('data-mode'); box.setAttribute('data-two', chase ? 'chase' : 'ahead');
+  box.textContent = '';
+  var wrap = el('div','vsts'), segs = '';
+  for(var i = 0; i < T; i++){
+    var a1 = X0 + i*v1*K, a2 = X0 + (S0 + i*v2)*K;
+    segs += '<rect class="sg s1" data-i="' + i + '" x="' + (a1 + 1) + '" y="' + (Y1 - 8) + '" width="' + Math.max(1, v1*K - 2) + '" height="16" rx="3"></rect>' +
+            '<rect class="sg s2" data-i="' + i + '" x="' + (a2 + 1) + '" y="' + (Y2 - 8) + '" width="' + Math.max(1, v2*K - 2) + '" height="16" rx="3"></rect>';
+  }
+  function car(c, nm){
+    return '<g class="car ' + c + '"><rect x="-20" y="-14" width="40" height="13" rx="3"></rect><rect x="2" y="-23" width="14" height="9" rx="2"></rect>' +
+      '<circle cx="-11" cy="1" r="4"></circle><circle cx="11" cy="1" r="4"></circle>' +
+      '<text class="nm" x="0" y="-28" text-anchor="middle">' + nm + '</text></g>';
+  }
+  wrap.innerHTML = '<svg viewBox="0 0 720 146" role="img" aria-label="Двоє в одному напрямку: швидкість зближення чи віддалення — різниця швидкостей">' +
+    '<line class="rd" x1="' + X0 + '" y1="' + Y1 + '" x2="' + (X0 + W) + '" y2="' + Y1 + '"></line>' +
+    '<line class="rd" x1="' + X0 + '" y1="' + Y2 + '" x2="' + (X0 + W) + '" y2="' + Y2 + '"></line>' +
+    '<line class="tick" x1="' + X0 + '" y1="' + (Y1 - 10) + '" x2="' + X0 + '" y2="' + (Y1 + 10) + '"></line>' +
+    '<line class="tick" x1="' + (X0 + S0*K) + '" y1="' + (Y2 - 10) + '" x2="' + (X0 + S0*K) + '" y2="' + (Y2 + 10) + '"></line>' +
+    segs +
+    '<line class="gapa ga1" x1="0" y1="' + (Y1 + 8) + '" x2="0" y2="' + GY + '"></line>' +
+    '<line class="gapa ga2" x1="0" y1="' + GY + '" x2="0" y2="' + (Y2 - 50) + '"></line>' +
+    '<line class="gapl" x1="0" y1="' + GY + '" x2="0" y2="' + GY + '"></line>' +
+    '<text class="gpt" x="0" y="' + (GY - 5) + '" text-anchor="middle"></text>' +
+    car('c1', NM[0] || '') + car('c2', NM[1] || '') + '</svg>';
+  box.appendChild(wrap);
+  var sum = el('p','vsum'), say = asay(box), ol = el('ol','olog');
+  box.appendChild(sum); box.appendChild(say); box.appendChild(ol);
+  for(var k = 0; k <= T; k++) ol.appendChild(el('li','hide'));
+  var c1 = $('.c1', wrap), c2 = $('.c2', wrap), gl = $('.gapl', wrap), g1 = $('.ga1', wrap), g2 = $('.ga2', wrap), gt = $('.gpt', wrap);
+  var sv = 'v<sub>' + (chase ? 'збл' : 'від') + '</sub>';
+  box.__paint = function(){
+    var n = 0;
+    $$('li', ol).forEach(function(li){ if(li.classList.contains('on')) n++; });
+    var h = Math.min(n, T);
+    $$('.sg', wrap).forEach(function(e){ var i = +e.getAttribute('data-i'); e.classList.toggle('on', i < h); e.classList.toggle('now', i === h - 1 && n <= T); });
+    var x1 = X0 + h*v1*K, x2 = X0 + (S0 + h*v2)*K;
+    c1.setAttribute('transform', 'translate(' + x1 + ',' + (Y1 - 6) + ')');
+    c2.setAttribute('transform', 'translate(' + x2 + ',' + (Y2 - 6) + ')');
+    var gap = chase ? S0 - vd*h : vd*h;
+    [[gl,'x1',x1],[gl,'x2',x2],[g1,'x1',x1],[g1,'x2',x1],[g2,'x1',x2],[g2,'x2',x2]].forEach(function(a){ a[0].setAttribute(a[1], a[2]); });
+    gt.setAttribute('x', Math.max(X0 + 30, Math.min(X0 + W - 30, (x1 + x2) / 2)));
+    gt.textContent = gap > 0 ? anum(gap) + ' ' + U : '';
+    wrap.classList.toggle('nogap', gap <= 0);
+    var p = []; for(var j = 0; j < h; j++) p.push(anum(vd));
+    if(n === 0){
+      sum.innerHTML = anum(v1) + ' ' + U + '/' + TU + ' і ' + anum(v2) + ' ' + U + '/' + TU + ' — в одному напрямку';
+      say.textContent = (chase ? 'Між ними ' + anum(S0) + ' ' + U + ', швидший позаду. ' : 'Стартують з однієї точки в один бік. ') + 'Пробіл — минає перша ' + TU + '.';
+    } else if(n <= T){
+      sum.innerHTML = chase
+        ? 'за ' + h + ' ' + TU + ': ' + anum(S0) + ' − ' + (h > 1 ? '(' + p.join(' + ') + ')' : anum(vd)) + ' = <b>' + anum(gap) + ' ' + U + '</b>'
+        : 'за ' + h + ' ' + TU + ': ' + p.join(' + ') + ' = <b>' + anum(gap) + ' ' + U + '</b>';
+      say.textContent = n === 1
+        ? 'За 1 ' + TU + ' перший проїхав ' + anum(v1) + ', другий — ' + anum(v2) + '. Обидва в один бік, тож відстань ' + (chase ? 'скоротилась' : 'збільшилась') + ' лише на ' + anum(vmax) + ' − ' + anum(vmin) + ' = ' + anum(vd) + ' ' + U + ' — це швидкість ' + (chase ? 'зближення' : 'віддалення') + '.'
+        : 'Ще ' + TU + ' — ще на ' + anum(vd) + ' ' + U + (chase ? ' ближче' : ' далі') + (chase && h === T ? '. Наздогнав!' : '.');
+    } else {
+      sum.innerHTML = sv + ' = ' + anum(vmax) + ' − ' + anum(vmin) + ' = ' + anum(vd) + ' &nbsp;·&nbsp; ' + (chase
+        ? '<b>t = s : ' + sv + '</b> = ' + anum(S0) + ' : ' + anum(vd) + ' = <b class="ans">' + T + ' ' + TU + '</b>'
+        : '<b>s = ' + sv + ' · t</b> = ' + anum(vd) + ' · ' + T + ' = <b class="ans">' + anum(vd*T) + ' ' + U + '</b>');
+      say.textContent = 'В одному напрямку швидкості віднімаємо: щогодини відстань ' + (chase ? 'скорочується' : 'збільшується') + ' на ' + anum(vd) + ' ' + U + '.';
+    }
+  };
+  box.__paint();
+});
+
+$$('.vst:not([data-two])').forEach(function(box){
+  var V = parseFloat(box.dataset.v) || 60, T = Math.max(1, Math.min(8, parseInt(box.dataset.t,10) || 3)),
+      U = box.dataset.unit || 'км', TU = box.dataset.tu || 'год', NM = box.dataset.name || '';
+  var X0 = 40, W = 640, SEG = W / T;
+  box.textContent = '';
+  var wrap = el('div','vsts'), segs = '', ticks = '';
+  for(var i = 0; i < T; i++){
+    segs += '<rect class="sg" data-i="' + i + '" x="' + (X0 + i*SEG + 2) + '" y="58" width="' + (SEG - 4) + '" height="16" rx="3"></rect>' +
+            '<text class="sv" data-i="' + i + '" x="' + (X0 + (i + .5)*SEG) + '" y="94" text-anchor="middle">' + anum(V) + ' ' + U + '</text>' +
+            '<text class="st" data-i="' + i + '" x="' + (X0 + (i + .5)*SEG) + '" y="114" text-anchor="middle">' + (i + 1) + '-а ' + TU + '</text>';
+    ticks += '<line class="tick" x1="' + (X0 + (i + 1)*SEG) + '" y1="56" x2="' + (X0 + (i + 1)*SEG) + '" y2="76"></line>';
+  }
+  wrap.innerHTML = '<svg viewBox="0 0 720 118" role="img" aria-label="Відстань дорівнює швидкість помножити на час">' +
+    '<line class="rd" x1="' + X0 + '" y1="66" x2="' + (X0 + W) + '" y2="66"></line>' +
+    '<line class="tick" x1="' + X0 + '" y1="56" x2="' + X0 + '" y2="76"></line>' + ticks + segs +
+    '<g class="car"><rect x="-20" y="-14" width="40" height="13" rx="3"></rect><rect x="2" y="-23" width="14" height="9" rx="2"></rect>' +
+    '<circle cx="-11" cy="1" r="4"></circle><circle cx="11" cy="1" r="4"></circle>' +
+    (NM ? '<text class="nm" x="0" y="-28" text-anchor="middle">' + NM + '</text>' : '') + '</g></svg>';
+  box.appendChild(wrap);
+  var sum = el('p','vsum'), say = asay(box), ol = el('ol','olog');
+  box.appendChild(sum); box.appendChild(say); box.appendChild(ol);
+  for(var k = 0; k <= T; k++) ol.appendChild(el('li','hide'));
+  var car = $('.car', wrap);
+  box.__paint = function(){
+    var n = 0;
+    $$('li', ol).forEach(function(li){ if(li.classList.contains('on')) n++; });
+    var h = Math.min(n, T);
+    $$('.sg,.sv,.st', wrap).forEach(function(e){ e.classList.toggle('on', +e.getAttribute('data-i') < h); });
+    $$('.sg', wrap).forEach(function(e){ e.classList.toggle('now', +e.getAttribute('data-i') === h - 1 && n <= T); });
+    car.setAttribute('transform', 'translate(' + (X0 + h*SEG) + ',54)');
+    if(n === 0){
+      sum.innerHTML = '<b>' + anum(V) + ' ' + U + '/' + TU + '</b> — це ' + anum(V) + ' ' + U + ' за <b>кожну</b> ' + TU;
+      say.textContent = 'Швидкість — скільки проходить за одну одиницю часу. Пробіл — їдемо першу ' + TU + '.';
+    } else if(n <= T){
+      var parts = []; for(var j = 0; j < h; j++) parts.push(anum(V));
+      sum.innerHTML = 'за ' + h + ' ' + TU + ': ' + parts.join(' + ') + ' = <b>' + anum(V*h) + ' ' + U + '</b>';
+      say.textContent = n === 1 ? 'За першу ' + TU + ' — ' + anum(V) + ' ' + U + '.'
+                                : 'Ще ' + TU + ' — ще ' + anum(V) + ' ' + U + ': щоразу той самий відрізок.';
+    } else {
+      sum.innerHTML = '<span class="mut">однакові доданки — це множення:</span> <b>s = v · t</b> = ' + anum(V) + ' · ' + T + ' = <b class="ans">' + anum(V*T) + ' ' + U + '</b>';
+      say.textContent = 'Відстань = швидкість · час. Звідси: v = s : t, t = s : v.';
+    }
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C14b · .river — рух річкою: власна швидкість і течія — стрілки
+   <div class="river" data-own="15" data-cur="2" data-unit="км/год"></div>
+   Кроки пробілом (5): 1) течія — вода несе навіть без мотора; 2) мотор —
+   стрілка власної швидкості; 3) за течією стрілки в одну лінію: 15 + 2;
+   4) човен розвертається, течія тепер назустріч; 5) течія «відгризає»
+   кінець стрілки: 15 − 2. Учень бачить, ЧОМУ за течією додаємо, а проти —
+   віднімаємо.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.river').forEach(function(box){
+  var O = parseFloat(box.dataset.own) || 15, C = parseFloat(box.dataset.cur) || 2, U = box.dataset.unit || 'км/год';
+  var K = 300 / (O + C);
+  box.textContent = '';
+  var wrap = el('div','rvs');
+  wrap.innerHTML = '<svg viewBox="0 0 720 150" role="img" aria-label="Човен на річці: власна швидкість і течія">' +
+    '<rect class="wt" x="20" y="64" width="680" height="62" rx="10"></rect>' +
+    '<path class="wv" d="M40 84 q15 -6 30 0 t30 0 t30 0 M420 106 q15 -6 30 0 t30 0 t30 0 M560 82 q15 -6 30 0 t30 0"></path>' +
+    '<g class="ac"><line class="ln" x1="0" y1="112" x2="0" y2="112"></line><path class="hd" d=""></path><text class="tx" x="0" y="142" text-anchor="middle"></text></g>' +
+    '<g class="ao"><line class="ln" x1="0" y1="40" x2="0" y2="40"></line><path class="hd" d=""></path><text class="tx" x="0" y="26" text-anchor="middle"></text></g>' +
+    '<g class="bt"><path d="M-34 -2 L34 -2 L24 14 L-24 14 Z"></path><rect x="-6" y="-22" width="4" height="20"></rect><path class="sail" d="M-2 -22 L20 -6 L-2 -6 Z"></path></g>' +
+    '<g class="ar"><line class="ln" x1="0" y1="40" x2="0" y2="40"></line><path class="hd" d=""></path><text class="tx" x="0" y="26" text-anchor="middle"></text></g>' +
+    '</svg>';
+  box.appendChild(wrap);
+  var eq = el('p','rveq'), say = asay(box), ol = el('ol','olog');
+  box.appendChild(eq); box.appendChild(say); box.appendChild(ol);
+  for(var k = 0; k < 5; k++) ol.appendChild(el('li','hide'));
+  var q = function(s){ return $(s, wrap); };
+  function arrow(g, x1, x2, y, label, show){
+    var ln = $('.ln', g), hd = $('.hd', g), tx = $('.tx', g);
+    g.classList.toggle('on', !!show);
+    ln.setAttribute('x1', x1); ln.setAttribute('x2', x2); ln.setAttribute('y1', y); ln.setAttribute('y2', y);
+    var d = x2 >= x1 ? 1 : -1;
+    hd.setAttribute('d', 'M' + (x2 + 4*d) + ' ' + y + ' l' + (-14*d) + ' -8 l0 16 Z');
+    tx.setAttribute('x', (x1 + x2)/2); tx.textContent = label;
+  }
+  box.__paint = function(){
+    var n = 0;
+    $$('li', ol).forEach(function(li){ if(li.classList.contains('on')) n++; });
+    /* за течією човен стоїть ліворуч і пливе вправо; проти течії — праворуч, носом уліво */
+    var back = n >= 4, dir = back ? -1 : 1, bx = back ? 520 : 200 + (n === 1 ? 24 : 0);
+    var bt = q('.bt');
+    bt.setAttribute('transform', 'translate(' + bx + ',62) scale(' + dir + ',1)');
+    var oL = O*K, cL = C*K;
+    /* течія — завжди вправо, під човном */
+    arrow(q('.ac'), bx - cL/2, bx + cL/2, 112, 'течія ' + anum(C), n >= 1);
+    /* власна швидкість — над човном, у бік носа */
+    arrow(q('.ao'), bx, bx + dir*oL, 40, 'власна ' + anum(O), n === 2 || n === 4);
+    var ar = q('.ar');
+    if(n === 3) arrow(ar, bx, bx + oL + cL, 40, anum(O) + ' + ' + anum(C) + ' = ' + anum(O + C), true);
+    else if(n === 5) arrow(ar, bx, bx - (oL - cL), 40, anum(O) + ' − ' + anum(C) + ' = ' + anum(O - C), true);
+    else arrow(ar, bx, bx, 40, '', false);
+    var T = ['Човен без мотора на річці.',
+             'Течія ' + anum(C) + ' ' + U + ': вода сама несе човен — навіть без мотора.',
+             'Мотор дає власну швидкість ' + anum(O) + ' ' + U + ' — так човен ішов би по озеру.',
+             'За течією вода ДОПОМАГАЄ: стрілки в один бік — додаємо.',
+             'Розвернулись: тепер течія ' + anum(C) + ' ' + U + ' тягне назад.',
+             'Проти течії вода ЗАВАЖАЄ: від власної швидкості віднімаємо течію.'];
+    say.textContent = T[n];
+    eq.innerHTML = (n >= 3 ? '<span>за течією: <b>' + anum(O) + ' + ' + anum(C) + ' = ' + anum(O + C) + '</b> ' + U + '</span>' : '') +
+                   (n >= 5 ? '<span>проти течії: <b>' + anum(O) + ' − ' + anum(C) + ' = ' + anum(O - C) + '</b> ' + U + '</span>' : '');
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
    C15 · .vang — вертикальні й суміжні кути; пряму можна крутити
    <div class="vang" data-angle="55" data-ratio="4:5"></div>
    data-lock="1" — лише показати, без перетягування.
@@ -5764,6 +6376,7 @@ $$('.regroup').forEach(function(box){
 /* ─────────────────────────────────────────────────────────────────────
    C22 · .subst — підстановка значення: буква зникає, число стає на її місце
    <div class="subst" data-var="a" data-value="6" data-expr="9a − 7"></div>
+   data-fin="Ліва частина: {}." — підпис останнього кадру ({} — число) замість «Відповідь: …».
    Перший пробіл — буква тане, на її місці спалахує число (і зʼявляється
    знак множення, якщо буква стояла біля числа). Далі — звичайні кроки
    обчислення, ті самі, що в .ordops.
@@ -5823,6 +6436,9 @@ $$('.subst').forEach(function(box){
     return out;
   }
   var T = tok(EX), F = opFrames(opTok(subst(T)));
+  /* data-fin="Ліва частина: {}." — свій підпис останнього кадру замість «Відповідь: …»
+     (перевірка кореня рівняння: 58 — це ліва частина, а не відповідь; 03.11.2026) */
+  if(box.dataset.fin && F.length){ var FL = F[F.length-1]; FL.say = box.dataset.fin.replace('{}', anum(FL.t[0].v)); }
 
   var view = el('div','sv'), say = asay(box), ol = el('ol','olog');
   box.appendChild(view); box.appendChild(say); box.appendChild(ol);
@@ -7306,8 +7922,90 @@ function powopPP(box){
   };
   box.__paint();
 }
+/* .powop з data-op="root" — одночлен як квадрат / куб одночлена (з 05.11.2026, 7-І алг. 29, № 409)
+     <div class="powop" data-op="root" data-n="2" data-parts="121=11; a18=a9; b2=b; c4=c2"></div>
+       Степінь добутку НАВПАКИ: 121a¹⁸b²c⁴ → кожен множник по черзі як квадрат
+       (121 = 11², a¹⁸ = (a⁹)² — показник ділимо на 2) → 11² · (a⁹)² · b² · (c²)² → (11a⁹bc²)².
+       Частини «множник=основа» через «;», до 4; число може бути −125, 0,25, 8/27;
+       буква з показником — «a18». Для n = 2 останній крок — «підходить і (−…)²»;
+       data-alt="no" — без нього. */
+function powopRoot(box){
+  var n = Math.max(2, Math.min(5, parseInt(box.dataset.n, 10) || 2));
+  var G = ['g1', 'g2', 'g3', 'g4'];
+  var PR = String(box.dataset.parts || '121=11; a18=a9').split(';').map(function(s){
+    var q = s.split('='); return [q[0].trim(), (q[1] || '').trim()];
+  }).filter(function(q){ return q[0]; }).slice(0, 4);
+  function isL(t){ return /^[A-Za-zА-Яа-яІіЇїЄєҐґ]/.test(t); }
+  function lexp(t){ var m = t.match(/^(.)(\d*)$/); return m ? [m[1], m[2]] : [t, '']; }
+  function num(t){
+    t = t.replace(/^-/, '−');
+    var neg = t.charAt(0) === '−', a = neg ? t.slice(1) : t, h;
+    if(a.indexOf('/') > 0){ var f = a.split('/'); h = '<span class="fr"><span class="n">' + f[0] + '</span><span class="d">' + f[1] + '</span></span>'; }
+    else h = a;
+    return { h: (neg ? '−' : '') + h, wrap: neg || a.indexOf('/') > 0 || a.indexOf(',') > 0, frac: a.indexOf('/') > 0 };
+  }
+  function mono(t){                       /* «a18» → a¹⁸, «b» → b, число → як є */
+    if(!isL(t)) return num(t).h;
+    var q = lexp(t); return '<i class="m">' + q[0] + '</i>' + (q[1] && q[1] !== '1' ? '<sup>' + q[1] + '</sup>' : '');
+  }
+  function powd(t){                       /* основа в степені n: 11², (a⁹)², b², (−5)³ */
+    if(isL(t)){ var q = lexp(t); return q[1] && q[1] !== '1' ? '(' + mono(t) + ')<sup>' + n + '</sup>' : mono(t) + '<sup>' + n + '</sup>'; }
+    var v = num(t); return (v.wrap ? '(' + v.h + ')' : v.h) + '<sup>' + n + '</sup>';
+  }
+  function P(cls, h){ return '<span class="po-p ' + cls + '">' + h + '</span>'; }
+  var DOT = '<span class="po-dot">·</span>';
+  var src = '', pw = '', base = '', alt = '';
+  PR.forEach(function(q, k){
+    src += '<span class="' + G[k] + '">' + mono(q[0]) + '</span>';
+    pw += (k ? P('po-dot r' + (k + 1), '·') : '') + P('r' + (k + 1) + ' ' + G[k], powd(q[1]));
+    var bh = mono(q[1]);
+    base += '<span class="' + G[k] + '">' + bh + '</span>';
+  });
+  var K = PR.length, neg0 = /^[−-]/.test(PR[0][1]);
+  var wantAlt = n % 2 === 0 && box.dataset.alt !== 'no';
+  box.textContent = '';
+  var line = el('div', 'po-line'); box.appendChild(line);
+  line.innerHTML = P('po-src on', src) + P('po-eq e1', '=') + pw + P('po-eq e' + (K + 1), '=') +
+    P('po-fin s' + (K + 1), '(' + base + ')<sup>' + n + '</sup>') +
+    (wantAlt ? P('s' + (K + 2), '&nbsp;або&nbsp;(−' + base.replace(/^(<span class="g1">)−/, '$1') + ')<sup>' + n + '</sup>') : '');
+  $$('.po-eq.e1', box).forEach(function(e){ e.classList.add('s1'); });
+  var plain = function(t){ return t.replace(/<sup>(\d+)<\/sup>/g, function(_, d){ return supNum(d); }).replace(/<[^>]+>/g, ''); };
+  var W = n === 2 ? 'квадрат' : n === 3 ? 'куб' : POW_ORD[n] + ' степінь';
+  var F = [plain(src) + ' — треба записати як ' + W + ' одночлена: ( … )' + supNum(n) + '. Беремо множники по одному.'];
+  PR.forEach(function(q){
+    var a = plain(mono(q[0])), b = plain(mono(q[1]));
+    if(isL(q[0])){
+      var e0 = lexp(q[0])[1] || '1', e1 = lexp(q[1])[1] || '1';
+      F.push(+e1 === 1 ? a + ' — це вже ' + b + supNum(n) + '.'
+        : a + ' = (' + b + ')' + supNum(n) + ': показник ділимо на ' + n + ' — ' + e0 + ' : ' + n + ' = ' + e1 + '.');
+    } else {
+      var bb = plain(num(q[1]).h);
+      F.push(a + ' = ' + (num(q[1]).wrap ? '(' + bb + ')' : bb) + supNum(n) + ', бо ' + new Array(n + 1).join(bb + ' · ').slice(0, -3) + ' = ' + a + '.');
+    }
+  });
+  F.push('Однаковий показник — множники під одні дужки (степінь добутку навпаки): ' + plain(src) + ' = (' + plain(base) + ')' + supNum(n) + '.');
+  if(wantAlt) F.push('У парному степені мінус зникає, тож підходить і (−' + plain(base).replace(/^−/, '') + ')' + supNum(n) + '.');
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    box.__at = st;
+    for(var k = 1; k < F.length; k++){
+      $$('.r' + k, box).forEach(function(e){ e.classList.toggle('on', st >= k); });
+      $$('.s' + k + ',.e' + k, box).forEach(function(e){ e.classList.toggle('on', st >= k); });
+    }
+    say.textContent = F[st];
+    fit();
+  };
+  box.__paint();
+}
 $$('.powop').forEach(function(box){
   if(box.dataset.op === 'pow' || box.dataset.op === 'prod'){ powopPP(box); return; }
+  if(box.dataset.op === 'root'){ powopRoot(box); return; }
   var B = (box.dataset.base || 'a').trim();
   var dv = box.dataset.op === 'div';
   var m = Math.max(1, Math.min(8, parseInt(box.dataset.m, 10) || 3));
@@ -8086,6 +8784,88 @@ $$('.tr180').forEach(function(box){
 });
 
 /* ─────────────────────────────────────────────────────────────────────
+   C43 · .zz — ламана між паралельними прямими: допоміжна пряма (з 05.11.2026, 7-І геом. 20, № 233)
+     <div class="zz" data-c="80" data-a="50"></div>
+     CD ∥ AB, ламана C–M–A, ∠DCM = data-c, ∠BAM = data-a, шукаємо ∠CMA.
+     Пробіл — через M штрихом проростає пряма MK ∥ AB (тоді й ∥ CD) →
+     ∠CMA ділиться на дві частини двома кольорами → копія ∠C повертається
+     навколо середини CM і лягає на ∠CMK (різносторонні) → те саме з ∠A →
+     ∠CMA = c + a. Креслення в масштабі (c + a < 180). data-labels="C,D,M,A,B,K".
+   ───────────────────────────────────────────────────────────────────── */
+$$('.zz').forEach(function(box){
+  var L = (box.dataset.labels || 'C,D,M,A,B,K').split(',');
+  var c = Math.max(25, Math.min(110, parseFloat(box.dataset.c) || 80));
+  var a = Math.max(25, Math.min(110, parseFloat(box.dataset.a) || 50));
+  if(c + a > 170) a = 170 - c;
+  var Y1 = 50, Y0 = 220, YM = 135, MX = 330, R = Math.PI/180;
+  var M = [MX, YM], C = [MX - (YM - Y1)/Math.tan(c*R), Y1], A = [MX - (Y0 - YM)/Math.tan(a*R), Y0];
+  box.textContent = '';
+  var s = trSvg(box, '0 0 470 260', 'Ламана між паралельними прямими і допоміжна пряма');
+  s.__n('line', {x1:20, y1:Y1, x2:455, y2:Y1, 'class':'ln'});
+  s.__n('line', {x1:20, y1:Y0, x2:455, y2:Y0, 'class':'ln'});
+  var aux = s.__n('line', {'class':'aux', x1:MX, y1:YM, x2:MX, y2:YM});
+  s.__n('polyline', {'class':'sh zz-br', points:trPts([C, M, A])});
+  s.__n('path', {'class':'zc', d:trArc(C, 30, -c, 0)});
+  s.__n('path', {'class':'za', d:trArc(A, 30, 0, a)});
+  var pC = s.__n('path', {'class':'zc zp'}), pA = s.__n('path', {'class':'za zp'});
+  var mC = s.__n('path', {'class':'zc zmv'}), mA = s.__n('path', {'class':'za zmv'});
+  s.__n('path', {'class':'zq', d:trArc(M, 22, 180 - c, 180 + a)});
+  function T(cls){ return s.__n('text', {'class':'vv ' + cls}); }
+  var vC = T('zc'), vA = T('za'), vM = T('zq'), tC = T('zc zmv'), tA = T('za zmv');
+  vC.textContent = tC.textContent = Math.round(c) + '°';
+  vA.textContent = tA.textContent = Math.round(a) + '°';
+  vM.textContent = '?';
+  function lab(p, an, r){ return [p[0] + r*Math.cos(an*R), p[1] - r*Math.sin(an*R) + 6]; }
+  trAt(vC, lab(C, -c/2, 54)); trAt(vA, lab(A, a/2, 56)); trAt(vM, lab(M, 180 + (a - c)/2, 44));
+  [[C, L[0], -12, -10], [[445, Y1], L[1], 0, -10], [M, L[2], 16, 6], [A, L[3], -12, 24], [[445, Y0], L[4], 0, 24]]
+    .forEach(function(q){ var t = s.__n('text', {'class':'lb'}); t.textContent = q[1]; trAt(t, q[0], q[2], q[3]); });
+  var kL = s.__n('text', {'class':'lb zk'}); kL.textContent = L[5]; trAt(kL, [40, YM], 0, -10);
+  var row = el('div', 'tr-f'); box.appendChild(row);
+  var say = asay(box);
+  var cd = L[0] + L[1], ab = L[3] + L[4], mk = L[2] + L[5], cm = L[0] + L[2], am = L[3] + L[2];
+  var ang = '∠' + L[0] + L[2] + L[3], p1 = '∠' + L[0] + L[2] + L[5], p2 = '∠' + L[5] + L[2] + L[3];
+  var cs = Math.round(c) + '°', as = Math.round(a) + '°';
+  var F = [
+    {say: cd + ' ∥ ' + ab + '. Знайти ' + ang + '. Біля точки ' + L[2] + ' немає паралельних прямих — кути ' + cs + ' і ' + as + ' туди не «дістають».',
+     row: ang + ' = ?'},
+    {say: 'Проведемо через ' + L[2] + ' допоміжну пряму ' + mk + ' ∥ ' + ab + '. Тоді й ' + mk + ' ∥ ' + cd + ': дві прямі, паралельні третій.',
+     row: mk + ' ∥ ' + ab + ', ' + mk + ' ∥ ' + cd},
+    {say: 'Пряма ' + mk + ' ділить ' + ang + ' на дві частини.', row: ang + ' = ' + p1 + ' + ' + p2},
+    {say: cd + ' ∥ ' + mk + ', ' + cm + ' — січна. ' + p1 + ' і ∠' + L[1] + L[0] + L[2] + ' — внутрішні різносторонні, тому рівні: ' + cs + '.',
+     row: ang + ' = ' + cs + ' + ' + p2},
+    {say: ab + ' ∥ ' + mk + ', ' + am + ' — січна. ' + p2 + ' = ∠' + L[4] + L[3] + L[2] + ' = ' + as + ' — теж внутрішні різносторонні.',
+     row: ang + ' = ' + cs + ' + ' + as},
+    {say: 'Отже, ' + ang + ' = ' + cs + ' + ' + as + ' = ' + Math.round(c + a) + '°.',
+     row: ang + ' = ' + cs + ' + ' + as + ' = <b>' + Math.round(c + a) + '°</b>'}
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  function rot(P, Q, t){                   /* P повертається на 180°·t навколо середини PQ */
+    var O = [(P[0] + Q[0])/2, (P[1] + Q[1])/2], k = 180*t*R, dx = P[0] - O[0], dy = P[1] - O[1];
+    return [O[0] + dx*Math.cos(k) - dy*Math.sin(k), O[1] + dx*Math.sin(k) + dy*Math.cos(k)];
+  }
+  function moveC(t){ var P = rot(C, M, t); mC.setAttribute('d', trArc(P, 30, -c - 180*t, -180*t)); trAt(tC, lab(P, -c/2 - 180*t, 54)); }
+  function moveA(t){ var P = rot(A, M, t); mA.setAttribute('d', trArc(P, 30, -180*t, a - 180*t)); trAt(tA, lab(P, a/2 - 180*t, 56)); }
+  pC.setAttribute('d', trArc(M, 30, 180 - c, 180)); pA.setAttribute('d', trArc(M, 30, 180, 180 + a));
+  moveC(0); moveA(0);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length), was = box.__at;
+    if(st === was) return;
+    box.__at = st;
+    for(var k = 1; k < F.length; k++) box.classList.toggle('z' + k, st >= k);
+    aux.setAttribute('x1', st >= 1 ? 20 : MX); aux.setAttribute('x2', st >= 1 ? 455 : MX);
+    if(st === 3 && was === 2) atween(box, 0, 1, 900, moveC); else moveC(st >= 3 ? 1 : 0);
+    if(st === 4 && was === 3) atween(box, 0, 1, 900, moveA); else moveA(st >= 4 ? 1 : 0);
+    say.textContent = F[st].say;
+    row.innerHTML = F[st].row;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
    C41 · .trisos — рівнобічна трапеція: дві висоти й рівні трикутники
      <div class="trisos" data-angle="60"></div>
      Пробіл — висота BK, висота CM, прямокутник KBCM, трикутники ABK і
@@ -8542,6 +9322,214 @@ $$('.thales').forEach(function(box){
 });
 
 /* ─────────────────────────────────────────────────────────────────────
+   C51a · .thgen — узагальнена теорема Фалеса: пропорційні відрізки
+     <div class="thgen" data-ratio="2:3" data-angle="22" data-turn="38"></div>
+     Кут O, AB ∥ CD (жирні). Пробіл — OA і AC розбиваються на рівні
+     частинки (p і q); через точки поділу ростуть паралельні; на другій
+     стороні теж p і q рівних частинок; OA, OB і AC, BD фарбуються,
+     OA : AC = OB : BD = p : q; другу сторону повертають — довжини інші,
+     частинок так само; останній крок — теорема.
+     data-labels="O,A,C,B,D" — свої букви; p + q ≤ 8.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.thgen').forEach(function(box){
+  var L = (box.dataset.labels || 'O,A,C,B,D').split(',');
+  var R = String(box.dataset.ratio || '2:3').split(':').map(Number);
+  var p = Math.max(1, R[0] || 2), q = Math.max(1, R[1] || 3);
+  if(p + q > 8){ p = 2; q = 3; }
+  var N = p + q;
+  function cl(v, d){ v = +v; return isNaN(v) || !v ? d : Math.max(10, Math.min(45, v)); }
+  var b0 = cl(box.dataset.angle, 22), b1 = cl(box.dataset.turn, 38);
+  var G = 70, O = [0, 0], d = 380/(N + .5), T = [];
+  for(var k = 1; k <= N; k++) T.push(k*d);
+  var A = T.map(function(t){ return [t, 0]; });
+  function Bs(beta){ return T.map(function(t){ return qcPt(O, t*Math.sin(thRad(G))/Math.sin(thRad(G - beta)), beta); }); }
+  var X0 = -30, X1 = A[N-1][0] + 50, Y0 = 0;
+  for(var j = 0; j <= 8; j++){
+    var bt = b0 + (b1 - b0)*j/8, rr = Bs(bt)[N-1];
+    var top = qcPt(O, Math.sqrt(rr[0]*rr[0] + rr[1]*rr[1]) + 40, bt);
+    X1 = Math.max(X1, top[0] + 30); Y0 = Math.min(Y0, top[1] - 30);
+  }
+  box.textContent = '';
+  var s = trSvg(box, X0.toFixed(0) + ' ' + Y0.toFixed(0) + ' ' + (X1 - X0).toFixed(0) + ' ' + (66 - Y0).toFixed(0), 'Узагальнена теорема Фалеса: паралельні прямі відтинають пропорційні відрізки');
+  /* кольорові відрізки — під сторонами */
+  var cA1 = s.__n('line', {'class':'g1'}), cA2 = s.__n('line', {'class':'g2'});
+  var cB1 = s.__n('line', {'class':'g1'}), cB2 = s.__n('line', {'class':'g2'});
+  qcLine(cA1, O, A[p-1]); qcLine(cA2, A[p-1], A[N-1]);
+  qcLine(s.__n('line', {'class':'sd'}), O, [X1 - 15, 0]);
+  var sideB = s.__n('line', {'class':'sd'});
+  var PL = [];
+  for(k = 0; k < N; k++) PL.push(s.__n('line', {'class': (k === p-1 || k === N-1) ? 'pm' : 'pl2'}));
+  var DB = [];
+  for(k = 0; k < N; k++){
+    var main = (k === p-1 || k === N-1);
+    s.__n('circle', {'class':'pt' + (main ? '' : ' du'), cx:A[k][0].toFixed(1), cy:0, r: main ? 4.5 : 3.2});
+    DB.push(s.__n('circle', {'class':'pt' + (main ? '' : ' dv'), r: main ? 4.5 : 3.2}));
+  }
+  var nA1 = s.__n('text', {'class':'nm du'}), nA2 = s.__n('text', {'class':'nm du'});
+  nA1.textContent = p + ' ч.'; nA2.textContent = q + ' ч.';
+  trAt(nA1, [A[p-1][0]/2, 0], 0, 46); trAt(nA2, [(A[p-1][0] + A[N-1][0])/2, 0], 0, 46);
+  var nB1 = s.__n('text', {'class':'nm dv'}), nB2 = s.__n('text', {'class':'nm dv'});
+  nB1.textContent = p + ' ч.'; nB2.textContent = q + ' ч.';
+  function lab(t, P, dx, dy){ var e = s.__n('text', {'class':'lb'}); e.textContent = t; trAt(e, P, dx, dy); return e; }
+  lab(L[0], O, -16, 8); lab(L[1], A[p-1], 0, 27); lab(L[2], A[N-1], 0, 27);
+  var lB = lab(L[3], [0, 0]), lD = lab(L[4], [0, 0]);
+  function draw(beta, g){
+    var B = Bs(beta), last = B[N-1];
+    var r = Math.sqrt(last[0]*last[0] + last[1]*last[1]);
+    qcLine(sideB, O, qcPt(O, r + 40, beta));
+    qcLine(cB1, O, B[p-1]); qcLine(cB2, B[p-1], B[N-1]);
+    var u = [Math.cos(thRad(beta)), -Math.sin(thRad(beta))], nv = [u[1], -u[0]];
+    var w = [Math.cos(thRad(G)), -Math.sin(thRad(G))];
+    PL.forEach(function(e, i){
+      var gg = (i === p-1 || i === N-1) ? 1 : g;
+      var qq = [B[i][0] + w[0]*16, B[i][1] + w[1]*16];
+      qcLine(e, [A[i][0] - w[0]*14, A[i][1] - w[1]*14],
+                [A[i][0] + (qq[0] - A[i][0])*gg, A[i][1] + (qq[1] - A[i][1])*gg]);
+    });
+    for(var i = 0; i < N; i++){ DB[i].setAttribute('cx', B[i][0].toFixed(1)); DB[i].setAttribute('cy', B[i][1].toFixed(1)); }
+    trAt(lB, [B[p-1][0] + u[0]*14 + nv[0]*18, B[p-1][1] + u[1]*14 + nv[1]*18], 0, 7);
+    trAt(lD, [last[0] + u[0]*14 + nv[0]*18, last[1] + u[1]*14 + nv[1]*18], 0, 7);
+    trAt(nB1, [B[p-1][0]/2 + nv[0]*30, B[p-1][1]/2 + nv[1]*30], 0, 6);
+    trAt(nB2, [(B[p-1][0] + last[0])/2 + nv[0]*30, (B[p-1][1] + last[1])/2 + nv[1]*30], 0, 6);
+  }
+  var f = el('div', 'tr-f'); box.appendChild(f);
+  f.innerHTML = L[0] + L[1] + ' : ' + L[1] + L[2] + ' = <b>' + L[0] + L[3] + ' : ' + L[3] + L[4] + '</b> = ' + p + ' : ' + q;
+  var F = [
+    'Кут ' + L[0] + ', ' + L[1] + L[3] + ' ∥ ' + L[2] + L[4] + '. Порівняємо відношення ' + L[0] + L[1] + ' : ' + L[1] + L[2] + ' і ' + L[0] + L[3] + ' : ' + L[3] + L[4] + '.',
+    'Розібʼємо сторону на рівні частинки: ' + L[0] + L[1] + ' — ' + p + ' ч., ' + L[1] + L[2] + ' — ' + q + ' ч.',
+    'Через кожну точку поділу проводимо пряму, паралельну ' + L[1] + L[3] + '.',
+    'За теоремою Фалеса на другій стороні частинки теж рівні: ' + L[0] + L[3] + ' — ' + p + ' ч., ' + L[3] + L[4] + ' — ' + q + ' ч.',
+    'Отже, обидва відношення дорівнюють ' + p + ' : ' + q + ' — відрізки пропорційні.',
+    'Повертаємо другу сторону: довжини інші, а частинок так само ' + p + ' і ' + q + ' — відношення те саме.',
+    'Узагальнена теорема Фалеса: паралельні прямі, які перетинають сторони кута, відтинають на сторонах кута пропорційні відрізки.'
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    for(var i = 1; i <= 6; i++) box.classList.toggle('s' + i, st >= i);
+    say.textContent = F[st];
+    if(st === 2 && prev === 1) atween(box, 0, 1, 900, function(g){ if(box.__at === 2) draw(b0, g); });
+    else if(st === 5 && prev === 4) atween(box, b0, b1, 1400, function(v){ if(box.__at === 5) draw(v, 1); });
+    else {
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      draw(st >= 5 ? b1 : b0, st >= 2 ? 1 : 0);
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C60 · .polysim — зведення подібних членів многочлена
+     <div class="polysim" data-expr="4x² + 3x − x² + 5x − 7" data-deg="2"></div>
+     Пробіл — члени многочлена; далі кожна група подібних фарбується своїм
+     кольором («однакова буквена частина»); рядок (4 − 1)x² + (3 + 5)x − 7;
+     многочлен стандартного вигляду 3x² + 8x − 7; з data-deg — його степінь.
+     Члени — ціле число (або десятковий дріб з комою) і буквена частина.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.polysim').forEach(function(box){
+  var MIN = '−';
+  var src = String(box.dataset.expr || '').trim();
+  var re = /\s*([+\-−]?)\s*([^+\-−]+)/g, m, T = [], guard = 0;
+  while((m = re.exec(src)) && guard++ < 20){
+    var body = m[2].replace(/\s+/g, '');
+    if(!body) continue;
+    var mm = body.match(/^(\d+(?:,\d+)?)?(.*)$/);
+    T.push({ sg: (m[1] === '-' || m[1] === MIN) ? -1 : 1,
+             k: mm[1] ? parseFloat(mm[1].replace(',', '.')) : 1,
+             v: mm[2], raw: body });
+  }
+  if(!T.length) return;
+  function num(v){ return String(Math.round(v*1000)/1000).replace('.', ','); }
+  function lit(v){ return v.replace(/([a-zа-яіїєґ])/gi, '<i>$1</i>'); }
+  function mono(k, v){ return (v && k === 1 ? '' : num(k)) + lit(v); }
+  /* групи подібних — у порядку першої появи */
+  var G = [], key = {};
+  T.forEach(function(t, i){
+    if(!(t.v in key)){ key[t.v] = G.length; G.push({ v: t.v, idx: [] }); }
+    G[key[t.v]].idx.push(i);
+  });
+  var multi = G.filter(function(g){ return g.idx.length > 1; });
+  box.textContent = '';
+  function row(cls){ var d = el('div', 'ps-l ' + cls); box.appendChild(d); return d; }
+  var r1 = row('ps-1'), r2 = row('ps-2'), r3 = row('ps-3');
+  var spans = [];
+  T.forEach(function(t, i){
+    var g = el('span', 'ps-t');
+    g.innerHTML = (i ? ' ' + (t.sg < 0 ? MIN : '+') + ' ' : (t.sg < 0 ? MIN : '')) + mono(t.k, t.v);
+    r1.appendChild(g); spans.push(g);
+  });
+  /* рядок 2: (4 − 1)x² + (3 + 5)x − 7 */
+  var h2 = [], h3 = [], first3 = true;
+  G.forEach(function(g, gi){
+    var s = 0;
+    g.idx.forEach(function(i){ s += T[i].sg*T[i].k; });
+    var ci = multi.indexOf(g);
+    var cls = ci >= 0 ? ' class="c' + (ci % 4) + '"' : '';
+    var lead = gi ? ' + ' : '';
+    if(g.idx.length > 1){
+      var inner = g.idx.map(function(i, j){
+        var t = T[i]; return (j ? (t.sg < 0 ? ' − ' : ' + ') : (t.sg < 0 ? MIN : '')) + num(t.k);
+      }).join('');
+      h2.push(lead + '<span' + cls + '>(' + inner + ')' + lit(g.v) + '</span>');
+    } else {
+      var t = T[g.idx[0]];
+      h2.push((gi ? (t.sg < 0 ? ' − ' : ' + ') : (t.sg < 0 ? MIN : '')) + mono(t.k, t.v));
+    }
+    g.s = s; g.cls = cls;
+  });
+  /* стандартний вигляд — члени за спаданням степеня */
+  function deg(v){
+    var SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹', d = 0, re2 = /([a-zа-яіїєґ])([⁰¹²³⁴⁵⁶⁷⁸⁹]*)/gi, q;
+    while((q = re2.exec(v))){ d += q[2] ? +q[2].split('').map(function(c){ return SUP.indexOf(c); }).join('') : 1; }
+    return d;
+  }
+  G.slice().sort(function(a, b){ return deg(b.v) - deg(a.v); }).forEach(function(g){
+    if(g.s === 0) return;
+    h3.push((first3 ? (g.s < 0 ? MIN : '') : (g.s < 0 ? ' − ' : ' + ')) + '<span' + g.cls + '>' + mono(Math.abs(g.s), g.v) + '</span>');
+    first3 = false;
+  });
+  r2.innerHTML = '= ' + h2.join('');
+  r3.innerHTML = '= ' + (h3.length ? h3.join('') : '0');
+  var plain = function(h){ var d = D.createElement('div'); d.innerHTML = h; return d.textContent; };
+  var F = ['Многочлен — сума одночленів. Його члени: ' + T.map(function(t){ return (t.sg < 0 ? MIN : '') + plain(mono(t.k, t.v)); }).join(';  ') + '.'];
+  multi.forEach(function(g){
+    F.push('Подібні: ' + g.idx.map(function(i){ return (T[i].sg < 0 ? MIN : '') + plain(mono(T[i].k, T[i].v)); }).join(' і ') +
+           ' — однакова буквена частина ' + plain(lit(g.v)) + '.');
+  });
+  F.push('Зводимо: коефіцієнти подібних додаємо, буквену частину переписуємо.');
+  F.push('Многочлен стандартного вигляду — подібних членів більше немає.');
+  if(box.dataset.deg) F.push('Степінь многочлена — найбільший зі степенів його членів: ' + box.dataset.deg + '.');
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    box.__at = st;
+    spans.forEach(function(s){ s.className = 'ps-t'; });
+    multi.forEach(function(g, ci){
+      if(st >= ci + 1) g.idx.forEach(function(i){ spans[i].classList.add('c' + (ci % 4)); });
+    });
+    var k2 = multi.length + 1;
+    box.classList.toggle('s2', st >= k2);
+    box.classList.toggle('s3', st >= k2 + 1);
+    box.classList.toggle('s4', st >= k2 + 2);
+    say.textContent = F[st];
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
    C52 · .divseg — поділ відрізка на рівні частини (побудова за Фалесом)
      <div class="divseg" data-n="5"></div>
      <div class="divseg" data-ratio="2:5"></div> — поділ у відношенні
@@ -8682,7 +9670,89 @@ function mlOut(p, g, r){
   var d = mlSub(p, g), L = Math.sqrt(d[0]*d[0] + d[1]*d[1]) || 1;
   return [p[0] + d[0]/L*r, p[1] + d[1]/L*r];
 }
+/* data-mode="trap" — середня лінія трапеції (доведення за Істером, § 10):
+     <div class="midline" data-mode="trap" data-ad="10" data-bc="6"></div>
+     Пробіл — середини E і F бічних сторін, EF — середня лінія; промінь BF до
+     перетину з прямою AD у точці M; △BCF повертається навколо F на 180° і
+     лягає на △MDF (BF = FM, DM = BC); EF — середня лінія △ABM, тож EF ∥ AD;
+     AM = AD + BC → EF = (AD + BC) : 2; останній крок — властивість.
+     data-ad, data-bc — основи (AD > BC); data-unit; data-labels="A,B,C,D,E,F,M" (03.11.2026) */
+function mlTrap(box){
+  var L = (box.dataset.labels || 'A,B,C,D,E,F,M').split(',');
+  var unit = box.dataset.unit || 'см';
+  var ad = +String(box.dataset.ad || '10').replace(',', '.') || 10;
+  var bc = +String(box.dataset.bc || '6').replace(',', '.') || 6;
+  if(!(bc > 0 && ad > bc)){ ad = 10; bc = 6; }
+  var k = 440/(ad + bc);
+  var A = [0, 240], Dd = [ad*k, 240], M = [(ad + bc)*k, 240];
+  var B = [ad*k*0.22, 70], C = [ad*k*0.22 + bc*k, 70];
+  var E = mlMid(A, B), F = mlMid(C, Dd);
+  var G = [(A[0] + B[0] + C[0] + Dd[0])/4, (A[1] + B[1] + C[1] + Dd[1])/4];
+  var mid = (ad + bc)/2;
+  box.textContent = '';
+  box.classList.add('mltr');
+  var s = trSvg(box, '-30 20 520 270', 'Середня лінія трапеції');
+  var TQ = s.__n('polygon', {'class':'ml-q'});                 /* △ABM */
+  var SD = s.__n('polygon', {'class':'sd'});
+  var EX1 = s.__n('line', {'class':'ml-ex'}), EX2 = s.__n('line', {'class':'ml-ex'});
+  var ROT = s.__n('polygon', {'class':'ml-rot'});
+  var ML = s.__n('line', {'class':'ml'});
+  var TK = [0,1,2,3].map(function(i){ return s.__n('line', {'class':'tk ml-tk' + (i >> 1)}); });
+  var P = {A:A, B:B, C:C, D:Dd, E:E, F:F, M:M};
+  ['A','B','C','D','E','F','M'].forEach(function(nm, j){
+    var cls = j === 6 ? ' ml-x' : j >= 4 ? ' ml-m' : '';
+    var c = s.__n('circle', {'class':'pt' + cls, r:4});
+    c.setAttribute('cx', P[nm][0].toFixed(1)); c.setAttribute('cy', P[nm][1].toFixed(1));
+    var t = s.__n('text', {'class':'lb' + cls}); t.textContent = L[j];
+    trAt(t, nm === 'M' || nm === 'D' || nm === 'A' ? [P[nm][0], P[nm][1] + 26] : mlOut(P[nm], G, 24), 0, 7);
+  });
+  function num(cls, txt, p){ var t = s.__n('text', {'class':'nm ' + cls}); t.textContent = txt; trAt(t, p, 0, 6); return t; }
+  num('ml-n0', anum(ad), [mlMid(A, Dd)[0], 262]);
+  num('ml-n0', anum(bc), [mlMid(B, C)[0], 50]);
+  num('ml-n5', anum(bc), [mlMid(Dd, M)[0], 262]);
+  num('ml-n6', anum(mid) + ' ' + unit, [mlMid(E, F)[0], E[1] - 14]);
+  SD.setAttribute('points', trPts([A, B, C, Dd]));
+  TQ.setAttribute('points', trPts([A, B, M]));
+  qcLine(ML, E, F); qcLine(EX1, F, M); qcLine(EX2, Dd, M);
+  trTick(TK[0], A, E); trTick(TK[1], E, B); trTick(TK[2], C, F); trTick(TK[3], F, Dd);
+  function rot(th){
+    var c = Math.cos(th), sn = Math.sin(th);
+    ROT.setAttribute('points', trPts([B, C, F].map(function(p){
+      var dx = p[0] - F[0], dy = p[1] - F[1];
+      return [F[0] + dx*c - dy*sn, F[1] + dx*sn + dy*c];
+    })));
+  }
+  var a0 = L[0], b0 = L[1], c0 = L[2], d0 = L[3], e0 = L[4], f0 = L[5], m0 = L[6], u = ' ' + unit;
+  var f = el('div', 'tr-f'); box.appendChild(f);
+  f.innerHTML = '<i>' + e0 + f0 + '</i> || <i>' + a0 + d0 + '</i>, &nbsp;<i>' + e0 + f0 + '</i> = (<i>' + a0 + d0 + '</i> + <i>' + b0 + c0 + '</i>) : 2';
+  var T = [
+    'Трапеція ' + a0 + b0 + c0 + d0 + ': основи ' + a0 + d0 + ' = ' + anum(ad) + u + ' і ' + b0 + c0 + ' = ' + anum(bc) + u + '. Сполучимо середини бічних сторін.',
+    e0 + ' — середина ' + a0 + b0 + ', ' + f0 + ' — середина ' + c0 + d0 + '. Відрізок ' + e0 + f0 + ' — середня лінія трапеції.',
+    'Проведемо промінь ' + b0 + f0 + ' до перетину з прямою ' + a0 + d0 + ' у точці ' + m0 + '.',
+    'Повертаємо △' + b0 + c0 + f0 + ' навколо ' + f0 + ' на 180°: він лягає точно на △' + m0 + d0 + f0 + ' (' + c0 + f0 + ' = ' + f0 + d0 + ', кути при ' + f0 + ' вертикальні). Отже, ' + b0 + f0 + ' = ' + f0 + m0 + ' і ' + d0 + m0 + ' = ' + b0 + c0 + ' = ' + anum(bc) + u + '.',
+    'Тепер ' + e0 + f0 + ' — середня лінія △' + a0 + b0 + m0 + ': ' + e0 + ' — середина ' + a0 + b0 + ', ' + f0 + ' — середина ' + b0 + m0 + '. Тому ' + e0 + f0 + ' ∥ ' + a0 + d0 + ', а отже, і ∥ ' + b0 + c0 + '.',
+    a0 + m0 + ' = ' + a0 + d0 + ' + ' + d0 + m0 + ' = ' + anum(ad) + ' + ' + anum(bc) + ' = ' + anum(ad + bc) + u + ', тож ' + e0 + f0 + ' = ' + anum(ad + bc) + ' : 2 = ' + anum(mid) + u + '.',
+    'Середня лінія трапеції паралельна основам і дорівнює їх півсумі.'
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(T.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, T.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    for(var i = 1; i <= 6; i++) box.classList.toggle('s' + i, st >= i);
+    say.textContent = T[st];
+    if(st === 3 && prev === 2) atween(box, 0, 1, 1400, function(g){ if(box.__at === 3) rot(Math.PI*g); });
+    else { if(box.__tw) cancelAnimationFrame(box.__tw); rot(st >= 3 ? Math.PI : 0); }
+    fit();
+  };
+  box.__paint();
+}
 $$('.midline').forEach(function(box){
+  if(box.dataset.mode === 'trap'){ mlTrap(box); return; }
   var L = (box.dataset.labels || 'A,B,C,K,L,M').split(',');
   var four = box.dataset.mode === 'four';
   var unit = box.dataset.unit || 'см';
@@ -9899,12 +10969,41 @@ $$('.pult').forEach(function(box){
        в області слайда — звичайний макет (заголовок + текст); останній
        пробіл — мініатюра № 3 перетягується на місце № 2, номери
        перераховуються. data-move не задано — без кроку перетягування.
+     <div class="ppt" data-mode="layout" data-layouts="title,obj,two,cmp,cap,only"></div>
+       Режим «макет»: «Макет ▾» на вкладці «Основне» підсвічено, кожен
+       пробіл — слайд отримує наступний макет; на слайді — контейнери
+       штрихом з підписами (для заголовка, для тексту, комбінований — з
+       піктограмами вставлення таблиці, діаграми, малюнка, відео).
+       Можна: title, obj, two, cmp, cap, only, blank.
+     <div class="ppt" data-mode="theme" data-slides="Розваги Мурчика|Раціон Мурчика"></div>
+       Режим «тема»: 1 — вкладка «Конструктор», на стрічці колекція тем;
+       2 — клацнули тему: тло, шрифти й кольори змінились на ВСІХ слайдах;
+       3 — контекстне меню «Застосувати до виділених слайдів»: інша тема
+       лише на виділеному слайді № 2; 4 — «Варіанти»: та сама тема, інша
+       колірна гама.
+     <div class="ppt" data-mode="show" data-slides="Розваги Мурчика|Раціон Мурчика"></div>
+       Режим «показ» (05.11.2026, 5-З інф. 20): 1 — вкладка «Слайд-шоу»,
+       «З початку» (F5) і «З поточного слайда» (Shift + F5); 2 — показ на весь
+       екран; 3 — вказівник у лівому нижньому куті: елементи керування;
+       4 ◁ ▷ — слайд 2; 5 ✎ — перо підкреслює заголовок; 6 ▦ — усі слайди
+       мініатюрами; 7 ⊕ — масштаб частини слайда; 8 ⋯ — режим доповідача;
+       9 — Esc, знову редактор.
+     <div class="ppt" data-mode="link" data-slides="Зміст|Розваги Мурчика|Раціон Мурчика"></div>
+       Режим «гіперпосилання»: слайд 2 — зміст із назвами слайдів 3 і далі.
+       1 — рядок виділено, Вставлення → Гіперпосилання; 2 — вікно: «місцем
+       у документі» → «3. Розваги Мурчика»; 3 — рядок став посиланням;
+       4 — показ: вказівник над посиланням; 5 — клацнули: слайд 3;
+       6 — Вставлення → Фігури → Кнопки дій: «Додому» в правому нижньому куті;
+       7 — «Перейти за гіперпосиланням: Слайд… → Зміст»; 8 — показ слайда 3,
+       кнопка; 9 — клацнули: знову зміст.
    ───────────────────────────────────────────────────────────────────── */
 $$('.ppt').forEach(function(box){
-  var mode = box.dataset.mode === 'slides' ? 'slides' : 'parts';
+  var mode = /^(slides|layout|theme|show|link)$/.test(box.dataset.mode || '') ? box.dataset.mode : 'parts';
   var title = box.dataset.title || 'Мій котик Мурчик';
   var sub = box.dataset.sub || 'презентація учня 5 класу';
-  var extra = box.dataset.slides ? String(box.dataset.slides).split('|') : ['Розваги', 'Раціон', 'Дякуємо за увагу'];
+  var extra = box.dataset.slides ? String(box.dataset.slides).split('|')
+            : mode === 'link' ? ['Зміст', 'Розваги Мурчика', 'Раціон Мурчика']
+            : ['Розваги', 'Раціон', 'Дякуємо за увагу'];
   var mv = String(box.dataset.move || '').match(/^(\d+)\s*>\s*(\d+)$/);
   var PARTS = {
     title:  ['рядок заголовка',              'Угорі — назва файлу й програми: «Презентація1 — PowerPoint».'],
@@ -9951,6 +11050,36 @@ $$('.ppt').forEach(function(box){
     var l = el('small'); l.textContent = g[0]; d.appendChild(l); rb.insertBefore(d, rb.lastChild);
   });
   win.appendChild(rb);
+  /* режим «тема»: колекція тем і варіанти на вкладці «Конструктор» */
+  var TH = [['Office', 0], ['Ретроспектива', 1], ['Іон', 2], ['Сектор', 3], ['Інтеграл', 4]], sws = [], vars = [], ctx = null, gTh = null, gVar = null;
+  if(mode === 'theme'){
+    gTh = el('div', 'pp-g pp-gt'); var row = el('span', 'pp-sws');
+    TH.forEach(function(t){ var w = el('span', 'pp-sw th-' + t[1]); w.innerHTML = '<i>Аа</i>'; w.title = t[0]; row.appendChild(w); sws.push(w); });
+    gTh.appendChild(row); var l1 = el('small'); l1.textContent = 'Теми'; gTh.appendChild(l1);
+    ctx = el('span', 'pp-ctx'); ctx.innerHTML = 'Застосувати до всіх слайдів<br><b>Застосувати до виділених слайдів</b>'; gTh.appendChild(ctx);
+    gVar = el('div', 'pp-g pp-gt'); var row2 = el('span', 'pp-sws');
+    for(var vi = 0; vi < 3; vi++){ var w2 = el('span', 'pp-sw pp-vr th-1' + (vi ? ' v' + vi : '')); row2.appendChild(w2); vars.push(w2); }
+    gVar.appendChild(row2); var l2 = el('small'); l2.textContent = 'Варіанти'; gVar.appendChild(l2);
+    rb.appendChild(gTh); rb.appendChild(gVar);
+  }
+  /* режими «показ» і «гіперпосилання»: свої групи на стрічці */
+  var bStart = null, bCur = null, bLink = null, bFig = null;
+  function grp(label, html){
+    var g = el('div', 'pp-g pp-gt'), out = [];
+    html.forEach(function(h){ var b = el('span', 'pp-big'); b.innerHTML = h; g.appendChild(b); out.push(b); });
+    var l = el('small'); l.textContent = label; g.appendChild(l); rb.appendChild(g); return out;
+  }
+  if(mode === 'show'){
+    var bs = grp('Почати показ слайдів', ['<b>▶</b>З початку <i>F5</i>', '<b>▷</b>З поточного слайда <i>Shift + F5</i>']);
+    bStart = bs[0]; bCur = bs[1];
+  }
+  if(mode === 'link'){
+    bFig = grp('Ілюстрації', ['<b>◇</b>Фігури ▾'])[0];
+    bLink = grp('Посилання', ['<b>⛓</b>Гіперпосилання'])[0];
+  }
+  if(mode === 'show' || mode === 'link'){
+    $$('span', tl).forEach(function(x){ if(x.textContent === 'Показ слайдів') x.textContent = 'Слайд-шоу'; });
+  }
   /* тіло: мініатюри + слайд + нотатки */
   var body = el('div', 'pp-body');
   var th = part('thumbs', el('div', 'pp-th'));
@@ -9966,6 +11095,20 @@ $$('.ppt').forEach(function(box){
   var vw = part('views', el('span', 'pp-vw')); vw.insertBefore(D.createTextNode('▭ ▦ ▶'), vw.firstChild);
   var zm = part('zoom', el('span', 'pp-zm')); zm.insertBefore(D.createTextNode('－ ━━●━━ ＋  60%'), zm.firstChild);
   stb.appendChild(vw); stb.appendChild(zm); win.appendChild(stb);
+  /* показ на весь екран (поверх вікна) і діалогові вікна */
+  var show = null, ss = null, ssIn = null, ink = null, ctl = null, cIc = [], grid = null, more = null, dlg = null;
+  if(mode === 'show' || mode === 'link'){
+    show = el('div', 'pp-show'); ss = el('div', 'pp-ss'); ssIn = el('div', 'pp-slin');
+    ss.appendChild(ssIn); show.appendChild(ss);
+    ink = el('div', 'pp-ink'); ss.appendChild(ink);
+    ctl = el('div', 'pp-ctl');
+    ['◁', '▷', '✎', '▦', '⊕', '⋯'].forEach(function(c){ var i = el('i'); i.textContent = c; ctl.appendChild(i); cIc.push(i); });
+    show.appendChild(ctl);
+    grid = el('div', 'pp-grid'); show.appendChild(grid);
+    more = el('div', 'pp-more'); more.innerHTML = '<b>Режим доповідача</b><br>Параметри екрана<br>Завершити показ'; show.appendChild(more);
+    win.appendChild(show);
+    dlg = el('div', 'pp-dlg'); win.appendChild(dlg);
+  }
   box.appendChild(win);
   var say = asay(box);
 
@@ -9985,11 +11128,40 @@ $$('.ppt').forEach(function(box){
     w.appendChild(num); w.appendChild(mi); th.insertBefore(w, th.lastChild);
     thumbs.push({ w: w, num: num, mi: mi });
   }
-  var maxN = mode === 'slides' ? 1 + extra.length : 1;
+  var maxN = (mode === 'slides' || mode === 'theme' || mode === 'show' || mode === 'link') ? 1 + extra.length : 1;
   for(var i = 0; i < maxN; i++) mkThumb();
   th.style.height = 'calc(' + Math.max(4, maxN) + ' * var(--pp-pitch) + var(--pp-pad))';
 
-  var steps = mode === 'parts' ? order.length + 1 : 1 + extra.length + (mv ? 1 : 0);
+  /* режим «макет»: контейнери кожного макета */
+  var LAY = {
+    title: ['Титульний слайд',      'Контейнер для заголовка й контейнер для підзаголовка.', [['h', 'заголовок'], ['t', 'підзаголовок']]],
+    obj:   ['Заголовок і обʼєкт',   'Контейнер для заголовка і великий комбінований контейнер.', [['h', 'заголовок'], ['c', '']]],
+    two:   ['Два обʼєкти',          'Заголовок і два комбіновані контейнери поруч.', [['h', 'заголовок'], ['c', ''], ['c', '']]],
+    cmp:   ['Порівняння',           'Заголовок, два контейнери для тексту і під ними два комбіновані.', [['h', 'заголовок'], ['t', 'текст'], ['t', 'текст'], ['c', ''], ['c', '']]],
+    cap:   ['Вміст із підписом',    'Зліва заголовок і текст, справа комбінований контейнер — під фото чи малюнок.', [['h', 'заголовок'], ['c', ''], ['t', 'текст']]],
+    only:  ['Лише заголовок',       'Один контейнер — для заголовка; решту слайда заповнюємо самі.', [['h', 'заголовок']]],
+    blank: ['Пустий слайд',         'Жодного контейнера.', []]
+  };
+  var lays = mode === 'layout'
+    ? String(box.dataset.layouts || 'title,obj,two,cmp,cap,only').split(',').map(function(x){ return x.trim(); }).filter(function(k){ return LAY[k]; })
+    : [];
+  function layOut(node, k, big){
+    node.textContent = '';
+    node.className = (big ? 'pp-slin' : 'pp-mi') + ' pp-lay L-' + k;
+    LAY[k][2].forEach(function(c){
+      var d = el('div', 'pp-k k-' + c[0]);
+      if(big){
+        if(c[0] === 'c'){ d.innerHTML = '<span>комбінований контейнер</span><span class="pp-ic">▦ ▥ ▣ ▶</span>'; }
+        else d.textContent = 'контейнер: ' + c[1];
+      }
+      node.appendChild(d);
+    });
+  }
+  var steps = mode === 'parts' ? order.length + 1
+            : mode === 'layout' ? lays.length
+            : mode === 'theme' ? 4
+            : mode === 'show' || mode === 'link' ? 9
+            : 1 + extra.length + (mv ? 1 : 0);
   var marks = el('div', 'hmk');
   marks.innerHTML = new Array(steps + 1).join('<i class="hide"></i>');
   box.appendChild(marks);
@@ -10029,6 +11201,53 @@ $$('.ppt').forEach(function(box){
         : st <= order.length
         ? st + ' — ' + PARTS[k][0] + '. ' + PARTS[k][1]
         : 'Усі ' + order.length + ' частин названо. Найважливіші для роботи: стрічка, панель слайдів зліва й область слайда.';
+    } else if(mode === 'layout'){
+      var k2 = st === 0 ? 'title' : lays[st - 1];
+      layOut(slIn, k2, true);
+      thumbs.forEach(function(t, i){ layOut(t.mi, k2, false); t.num.textContent = i + 1; t.w.style.top = 'calc(var(--pp-pad) + ' + i + ' * var(--pp-pitch))'; t.w.classList.add('in', 'sel'); });
+      lay.classList.toggle('now', st >= 1);
+      lay.textContent = st >= 1 ? 'Макет: ' + LAY[k2][0] + ' ▾' : 'Макет ▾';
+      stt.textContent = 'Слайд 1 з 1';
+      say.textContent = st === 0
+        ? 'Новий слайд — макет «Титульний слайд». Штрихові рамки — контейнери: місця для обʼєктів.'
+        : 'Основне → Макет ▾ → «' + LAY[k2][0] + '». ' + LAY[k2][1];
+    } else if(mode === 'theme'){
+      var list = [{ kind: 'title', t: title, s: sub }];
+      extra.forEach(function(x){ list.push({ kind: 'body', t: x, s: '' }); });
+      var sel = st >= 3 ? Math.min(1, list.length - 1) : 0;
+      function themeOf(i){
+        if(st >= 3 && i === sel) return 'th-3';
+        if(st >= 4) return 'th-1 v2';
+        if(st >= 2) return 'th-1';
+        return 'th-0';
+      }
+      $$('span', tl).forEach(function(x){ if(!x.classList.contains('pp-n')) x.classList.toggle('cur', st >= 1 ? x.textContent === 'Конструктор' : x.textContent === 'Основне'); });
+      rb.classList.toggle('des', st >= 1);
+      gTh.classList.toggle('now', st === 1 || st === 2 || st === 3);
+      gVar.classList.toggle('now', st === 4);
+      sws.forEach(function(w, i){ w.classList.toggle('pick', (st === 2 && i === 1) || (st === 3 && i === 3)); });
+      vars.forEach(function(w, i){ w.classList.toggle('pick', st === 4 && i === 2); });
+      ctx.classList.toggle('on', st === 3);
+      list.forEach(function(s, i){
+        var t = thumbs[i];
+        t.w.classList.add('in'); t.w.classList.toggle('sel', i === sel);
+        t.w.style.top = 'calc(var(--pp-pad) + ' + i + ' * var(--pp-pitch))';
+        t.num.textContent = i + 1;
+        face(t.mi, s, false); t.mi.className += ' ' + themeOf(i);
+      });
+      face(slIn, list[sel], true); slIn.className += ' ' + themeOf(sel);
+      stt.textContent = 'Слайд ' + (sel + 1) + ' з ' + list.length;
+      say.textContent = st === 0
+        ? 'Презентація без оформлення: біле тло, чорний текст на всіх слайдах.'
+        : st === 1
+        ? 'Вкладка «Конструктор» — на стрічці колекція тем. Наводимо вказівник — бачимо, як виглядатиме слайд.'
+        : st === 2
+        ? 'Клацнули тему «Ретроспектива» — змінились УСІ слайди разом: тло, шрифти, кольори.'
+        : st === 3
+        ? 'Виділили слайд 2, правою кнопкою на темі «Сектор» → «Застосувати до виділених слайдів». Змінився лише він.'
+        : '«Варіанти»: та сама тема «Ретроспектива», інша колірна гама — і знову на всіх її слайдах.';
+    } else if(mode === 'show' || mode === 'link'){
+      ppShowLink(st);
     } else {
       var S = slideState(st);
       thumbs.forEach(function(t){ t.w.classList.remove('in', 'sel', 'lift'); });
@@ -10055,6 +11274,707 @@ $$('.ppt').forEach(function(box){
         ? '«Створити слайд» (вкладка «Основне») — зʼявився слайд ' + (made + 1) + ', звичайний: заголовок і текст. Заголовок: «' + extra[made - 1] + '».'
         : 'Слайд ' + mv[1] + ' перетягнули на панелі зліва на місце ' + mv[2] + '. Номери слайдів перерахувались самі.';
     }
+    fit();
+  };
+
+  /* ── режими «показ» і «гіперпосилання» ── */
+  var LST = [{ kind: 'title', t: title, s: sub }].concat(extra.map(function(x){ return { kind: 'body', t: x, s: '' }; }));
+  function tab(name){
+    $$('span', tl).forEach(function(x){ if(!x.classList.contains('pp-n')) x.classList.toggle('cur', x.textContent === name); });
+    rb.classList.toggle('des', name !== 'Основне');
+  }
+  /* слайд «Зміст» (режим link, слайд 2): назви слайдів 3 і далі рядками; lk — класи першого рядка */
+  function faceX(node, i, big, lk, btn){
+    var s = LST[i];
+    if(mode === 'link' && i === 1){
+      face(node, { kind: 'body', t: s.t, s: ' ' }, big);
+      var p = $('.pp-p', node); p.textContent = '';
+      LST.slice(2).forEach(function(x, j){
+        var d = el('div', 'pp-lk'); d.textContent = x.t; p.appendChild(d);
+        if(j === 0 && lk) lk.split(' ').forEach(function(c){ if(c) d.classList.add(c); });
+      });
+    } else face(node, s, big);
+    if(btn){ var b = el('span', 'pp-abtn' + (btn === 'now' ? ' now' : '')); b.textContent = '⌂'; node.appendChild(b); }
+  }
+  function thumbsAt(sel, lk, btn3){
+    LST.forEach(function(s, i){
+      var t = thumbs[i];
+      t.w.classList.add('in'); t.w.classList.toggle('sel', i === sel);
+      t.w.style.top = 'calc(var(--pp-pad) + ' + i + ' * var(--pp-pitch))';
+      t.num.textContent = i + 1;
+      faceX(t.mi, i, false, lk, btn3 && i === 2 ? 'on' : '');
+    });
+    stt.textContent = 'Слайд ' + (sel + 1) + ' з ' + LST.length;
+  }
+  function ppShowLink(st){
+    cIc.forEach(function(i){ i.classList.remove('now'); });
+    grid.classList.remove('on'); more.classList.remove('on'); ss.classList.remove('zoom'); ink.classList.remove('on');
+    dlg.className = 'pp-dlg';
+    if(mode === 'show'){
+      tab(st >= 1 ? 'Слайд-шоу' : 'Основне');
+      bStart.classList.toggle('now', st === 1);
+      bCur.classList.toggle('now', st === 9);
+      var sel = st >= 9 ? 1 : 0, cur = st >= 4 ? 1 : 0;
+      thumbsAt(sel, '', false);
+      faceX(slIn, sel, true, '', '');
+      show.classList.toggle('on', st >= 2 && st <= 8);
+      ctl.classList.toggle('on', st >= 3 && st <= 8);
+      faceX(ssIn, cur, true, '', '');
+      if(st === 4){ cIc[0].classList.add('now'); cIc[1].classList.add('now'); }
+      if(st >= 5 && st <= 8) cIc[st - 3].classList.add('now');
+      ink.classList.toggle('on', st >= 5 && st <= 8);
+      if(st === 6){
+        grid.textContent = '';
+        LST.forEach(function(s, i){ var w = el('div', 'pp-gw' + (i === cur ? ' sel' : '')), m = el('div'); w.appendChild(m); face(m, s, false); grid.appendChild(w); });
+        grid.classList.add('on');
+      }
+      ss.classList.toggle('zoom', st === 7);
+      more.classList.toggle('on', st === 8);
+      say.textContent = [
+        'Презентація готова. Як показати її глядачам на весь екран?',
+        'Вкладка «Слайд-шоу»: «З початку» (клавіша F5) — з першого слайда; «З поточного слайда» (Shift + F5) — з того, що зараз вибраний.',
+        'F5 — показ на весь екран. Глядачі бачать лише слайд: ні стрічки, ні панелей.',
+        'Навели вказівник у лівий нижній кут — зʼявились приховані елементи керування показом.',
+        '◁ ▷ — попередній і наступний слайд. Перейшли на слайд 2.',
+        '✎ — вказівник, маркер або перо: підкреслюємо головне просто під час показу.',
+        '▦ — усі слайди мініатюрами: клацнув потрібний — перейшов на нього.',
+        '⊕ — збільшити окрему частину слайда, щоб глядачі роздивились.',
+        '⋯ — інші елементи: режим доповідача, параметри екрана.',
+        'Esc — показ завершено, ми знову в редакторі. Вибрали слайд 2 — Shift + F5 почне показ саме з нього.'
+      ][st];
+    } else {
+      var ins = (st >= 1 && st <= 3) || st === 6 || st === 7;
+      tab(ins ? 'Вставлення' : 'Основне');
+      bLink.classList.toggle('now', st === 1);
+      bFig.classList.toggle('now', st === 6);
+      var lk = st === 0 ? '' : st <= 2 ? 'sel' : 'lnk', sel2 = st >= 5 ? 2 : 1, hasBtn = st >= 6;
+      thumbsAt(sel2, lk, hasBtn);
+      faceX(slIn, sel2, true, lk, hasBtn && sel2 === 2 ? (st === 6 ? 'now' : 'on') : '');
+      if(st === 2){
+        dlg.innerHTML = '<div class="pp-dt">Додавання гіперпосилання</div><div class="pp-dc"><div class="pp-dl"><small>Звʼязати з:</small>' +
+          '<span>файлом, вебсторінкою</span><span class="pick">місцем у документі</span><span>новим документом</span><span>електронною поштою</span></div>' +
+          '<div class="pp-dr"><small>Виберіть місце в документі:</small><span>Перший слайд</span><span>Останній слайд</span><span>Заголовки слайдів:</span>' +
+          LST.map(function(s, i){ return '<span class="in' + (i === 2 ? ' pick' : '') + '">' + (i + 1) + '. ' + s.t + '</span>'; }).join('') +
+          '</div></div><div class="pp-df"><span>☐ Показати та повернутися</span><b>ОК</b></div>';
+        dlg.classList.add('on');
+      }
+      if(st === 7){
+        dlg.innerHTML = '<div class="pp-dt">Настроювання дії</div><div class="pp-dc"><div class="pp-dr"><small>По клацанню миші</small>' +
+          '<span>○ Немає</span><span class="pick">◉ Перейти за гіперпосиланням:</span><span class="in">Слайд… ▾</span>' +
+          LST.map(function(s, i){ return '<span class="in' + (i === 1 ? ' pick' : '') + '">' + (i + 1) + '. ' + s.t + '</span>'; }).join('') +
+          '</div></div><div class="pp-df"><span></span><b>ОК</b></div>';
+        dlg.classList.add('on');
+      }
+      var sh = st === 4 || st === 5 || st === 8 || st === 9;
+      show.classList.toggle('on', sh);
+      ctl.classList.remove('on');
+      if(sh) faceX(ssIn, st === 5 || st === 8 ? 2 : 1, true, st === 4 ? 'lnk hov' : 'lnk', st === 5 || st === 8 ? (st === 8 ? 'now' : 'on') : '');
+      say.textContent = [
+        'Слайд 2 — «' + LST[1].t + '»: рядки з назвами слайдів 3 і 4. Зробимо їх посиланнями.',
+        'Виділили рядок «' + LST[2].t + '» → вкладка «Вставлення» → «Гіперпосилання».',
+        'У вікні: звʼязати з «місцем у документі» → слайд «3. ' + LST[2].t + '» → ОК. Прапорець «Показати та повернутися» — показ сам повернеться до змісту.',
+        'Рядок став гіперпосиланням: інший колір і підкреслення.',
+        'Під час показу вказівник над посиланням стає рукою…',
+        '…клацнули — і одразу слайд 3. А як повернутися до змісту?',
+        'Вставлення → Фігури → Кнопки дій → «Додому». Малюємо кнопку в правому нижньому куті слайда 3.',
+        '«Додому» веде на перший слайд. Міняємо: «Перейти за гіперпосиланням» → «Слайд…» → «2. ' + LST[1].t + '» → ОК.',
+        'Показ: на слайді 3 — кнопка ⌂…',
+        '…клацнули — знову зміст. Кнопку можна скопіювати на слайд 4.'
+      ][st];
+    }
+  }
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C54 · .arr — список як ряд шафок з номерами; кроки — пробілом
+     <div class="arr" data-name="a" data-vals="4,-3.8,0,3.5,-4,5.1,-2"
+          data-ops="get:3|set:4:+3|append:6|len|bad:7"></div>
+       Шафка — елемент: зверху значення, під нею індекс (з 0) та імʼя a[i].
+       Зліва — код; кожен пробіл виконує наступну дію, рядок підсвічується,
+       праворуч від нього зʼявляється те, що надрукує Python.
+       Дії (через «|»):
+         get:i      print(a[i]) — шафка світиться, виводиться значення
+         set:i:3    a[i] = 3;  set:i:+3 → a[i] = a[i] + 3 (також -, *, **2)
+         append:v   a.append(v) — нова шафка приїжджає в кінець
+         len        print(len(a)) — шафки перелічуються
+         bad:i      print(a[i]) за межами — порожня шафка, IndexError
+         all        print(a)
+         for:+10    for i in range(n): a[i] = a[i] + 10 (також **2, *2 …)
+         for:sum / for:prod / for:sumsq / for:sumpos — накопичення в змінній
+       Цикл: один пробіл — одна шафка (стрілка i переходить, значення
+       змінюється або додається до лічильника), наприкінці — print.
+       data-acc="suma" — імʼя змінної-лічильника (типово suma / dob).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.arr').forEach(function(box){
+  var NM = box.dataset.name || 'a';
+  function P(s){ s = String(s).trim(); return { v: parseFloat(s), f: s.indexOf('.') >= 0 }; }
+  function Q(x){ return x.v < 0 ? '(' + F(x) + ')' : F(x); }   /* відʼємне в дії — у дужках */
+  function F(x){
+    if(x.f){ var r = Number(x.v.toPrecision(12)); return Number.isInteger(r) ? r + '.0' : String(r); }
+    return String(Math.round(x.v));
+  }
+  function calc(a, op, b){
+    var v = op === '+' ? a.v + b.v : op === '-' ? a.v - b.v : op === '*' ? a.v * b.v : Math.pow(a.v, b.v);
+    return { v: v, f: a.f || b.f };
+  }
+  function parseExpr(e){                      /* «+3», «**2», «3» */
+    var m = /^(\*\*|[+\-*])(.+)$/.exec(e);
+    return m ? { op: m[1], b: P(m[2]) } : { op: '=', b: P(e) };
+  }
+  function exprCode(i, e){
+    var x = parseExpr(e);
+    if(x.op === '=') return NM + '[' + i + '] = ' + F(x.b);
+    return NM + '[' + i + '] = ' + NM + '[' + i + ']' + (x.op === '**' ? '**' : ' ' + x.op + ' ') + F(x.b);
+  }
+  function opWord(x){ return x.op === '+' ? 'додаємо ' + F(x.b) : x.op === '-' ? 'віднімаємо ' + F(x.b) :
+    x.op === '*' ? 'множимо на ' + F(x.b) : x.op === '**' ? 'підносимо до степеня ' + F(x.b) : 'кладемо ' + F(x.b); }
+  function apply(v, x){ return x.op === '=' ? { v: x.b.v, f: x.b.f } : calc(v, x.op, x.b); }
+
+  var init = String(box.dataset.vals || '').split(',').filter(function(s){ return s.trim() !== ''; }).map(P);
+  var ops = String(box.dataset.ops || 'get:0').split('|');
+
+  /* Рядки коду й кроки. Крок — функція над станом S + номер рядка + підпис. */
+  var lines = [], steps = [];
+  var n = init.length;                        /* поточна довжина (для range) */
+  ops.forEach(function(o){
+    var p = o.split(':'), k = p[0];
+    if(k === 'get' || k === 'bad'){
+      var i = +p[1], L = lines.push('print(' + NM + '[' + i + '])') - 1;
+      steps.push({ line: L, run: function(S){
+        S.hi = i;
+        if(i < S.a.length){ S.out[L] = F(S.a[i]);
+          S.say = NM + '[' + i + '] — шафка з номером ' + i + '. У ній лежить ' + F(S.a[i]) + '.' +
+            (i === 0 ? ' Номери в Python починаються з нуля.' : ''); }
+        else { S.ghost = i; S.out[L] = 'IndexError'; S.err[L] = 1;
+          S.say = 'Шафки з номером ' + i + ' немає: останній номер ' + (S.a.length - 1) + '. Python зупиняється з помилкою IndexError: list index out of range.'; }
+      }});
+    } else if(k === 'set'){
+      var si = +p[1], sx = parseExpr(p.slice(2).join(':')), SL = lines.push(exprCode(si, p.slice(2).join(':'))) - 1;
+      steps.push({ line: SL, run: function(S){
+        var was = S.a[si]; S.a[si] = apply(was, sx); S.hi = si; S.chg = si;
+        S.say = sx.op === '=' ? 'У шафку № ' + si + ' кладемо ' + F(sx.b) + ' — старе значення ' + F(was) + ' зникає.'
+          : 'Беремо з шафки № ' + si + ' значення ' + F(was) + ', ' + opWord(sx) + ' і кладемо назад: ' + F(S.a[si]) + '.';
+      }});
+    } else if(k === 'append'){
+      var av = P(p[1]), AL = lines.push(NM + '.append(' + F(av) + ')') - 1; n++;
+      steps.push({ line: AL, run: function(S){
+        S.a.push(av); S.hi = S.a.length - 1; S.chg = S.hi; S.add = S.hi;
+        S.say = 'append додає нову шафку в кінець списку. Її номер — ' + S.hi + ', а шафок стало ' + S.a.length + '.';
+      }});
+    } else if(k === 'len'){
+      var LL = lines.push('print(len(' + NM + '))') - 1;
+      steps.push({ line: LL, run: function(S){
+        S.cnt = 1; S.out[LL] = String(S.a.length);
+        S.say = 'len рахує шафки: їх ' + S.a.length + '. Останній номер на одиницю менший — ' + (S.a.length - 1) + '.';
+      }});
+    } else if(k === 'all'){
+      var PL = lines.push('print(' + NM + ')') - 1;
+      steps.push({ line: PL, run: function(S){
+        S.out[PL] = '[' + S.a.map(F).join(', ') + ']';
+        S.say = 'print(' + NM + ') показує весь список у квадратних дужках.';
+      }});
+    } else if(k === 'for'){
+      var mode = p.slice(1).join(':'), m = n;
+      var accum = /^(sum|prod|sumsq|sumpos)$/.test(mode);
+      var acc = box.dataset.acc || (mode === 'prod' ? 'dob' : 'suma');
+      var IL = -1, BL, FL, PRL;
+      if(accum) IL = lines.push(acc + (mode === 'prod' ? ' = 1' : ' = 0')) - 1;
+      FL = lines.push('for i in range(' + m + '):') - 1;
+      var body = mode === 'sum' ? acc + ' = ' + acc + ' + ' + NM + '[i]'
+        : mode === 'prod' ? acc + ' = ' + acc + ' * ' + NM + '[i]'
+        : mode === 'sumsq' ? acc + ' = ' + acc + ' + ' + NM + '[i]*' + NM + '[i]'
+        : mode === 'sumpos' ? 'if ' + NM + '[i] > 0: ' + acc + ' = ' + acc + ' + ' + NM + '[i]'
+        : exprCode('i', mode);
+      BL = lines.push('    ' + body) - 1;
+      PRL = lines.push('print(' + (accum ? acc : NM) + ')') - 1;
+      var fx = accum ? null : parseExpr(mode);
+      if(accum) steps.push({ line: IL, run: function(S){
+        S.acc = { n: acc, x: mode === 'prod' ? { v: 1, f: false } : { v: 0, f: false } }; S.log = []; S.logN = acc;
+        S.say = 'Лічильник ' + acc + (mode === 'prod' ? ' = 1: для добутку починаємо з одиниці (множення на 1 нічого не змінює).' : ' = 0: для суми починаємо з нуля.');
+      }});
+      for(var j = 0; j < m; j++) (function(j){
+        steps.push({ line: BL, run: function(S){
+          S.ptr = j; S.hi = j;
+          var v = S.a[j];
+          if(accum){
+            var was = S.acc.x, now = was, w = '';
+            if(mode === 'sum'){ now = calc(was, '+', v); w = F(was) + ' + ' + Q(v); }
+            else if(mode === 'prod'){ now = calc(was, '*', v); w = F(was) + ' · ' + Q(v); }
+            else if(mode === 'sumsq'){ now = calc(was, '+', calc(v, '*', v)); w = F(was) + ' + ' + Q(v) + ' · ' + Q(v); }
+            else { if(v.v > 0){ now = calc(was, '+', v); w = F(was) + ' + ' + F(v); } }
+            S.acc.x = now; S.acc.flash = 1;
+            S.log.push([j, F(v), w ? w + ' = ' + F(now) : F(now)]);
+            S.say = 'i = ' + j + ': ' + NM + '[' + j + '] = ' + F(v) + '. ' +
+              (mode === 'sumpos' && !(v.v > 0) ? F(v) + ' > 0? Ні — ' + acc + ' не змінюється: ' + F(now) + '.'
+                : (mode === 'sumpos' ? F(v) + ' > 0? Так. ' : '') + acc + ' = ' + w + ' = ' + F(now) + '.');
+          } else {
+            S.a[j] = apply(v, fx); S.chg = j;
+            S.say = 'i = ' + j + ': ' + NM + '[' + j + '] було ' + F(v) + ', ' + opWord(fx) + ' → ' + F(S.a[j]) + '.' +
+              (j === m - 1 ? ' Це остання шафка: range(' + m + ') дає номери від 0 до ' + (m - 1) + '.' : '');
+          }
+        }});
+      })(j);
+      steps.push({ line: PRL, run: function(S){
+        S.ptr = -1; S.hi = -1;
+        var what = { sum: 'сума всіх елементів', prod: 'добуток усіх елементів', sumsq: 'сума квадратів усіх елементів', sumpos: 'сума додатних елементів' }[mode];
+        S.out[PRL] = accum ? F(S.acc.x) : '[' + S.a.map(F).join(', ') + ']';
+        S.say = 'Цикл пройшов усі ' + m + ' шафок. ' + (accum ? 'У ' + acc + ' — ' + F(S.acc.x) + ': це ' + what + '.' : 'Кожне значення змінено на місці.');
+      }});
+    }
+  });
+
+  /* розмітка */
+  box.textContent = '';
+  var wrap = el('div','ar-wrap'), code = el('div','ar-code'), right = el('div','ar-right');
+  var lnEls = lines.map(function(t){
+    var d = el('div','ar-ln'), tx = el('span','ar-tx'), out = el('span','ar-out');
+    tx.textContent = t; d.appendChild(tx); d.appendChild(out); code.appendChild(d); return d;
+  });
+  var row = el('div','ar-row'), accEl = el('div','ar-acc'), logEl = el('table','ar-log'), left = el('div','ar-left');
+  right.appendChild(row); right.appendChild(accEl);
+  left.appendChild(code); left.appendChild(logEl);           /* журнал — під кодом, ліва колонка нижча */
+  wrap.appendChild(left); wrap.appendChild(right); box.appendChild(wrap);
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(steps.length + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  function cell(k, x, S){
+    var c = el('div','ar-c'), v = el('b','ar-v'), ix = el('span','ar-i'), nm = el('small','ar-n'), pt = el('span','ar-p');
+    v.textContent = x ? F(x) : '?'; ix.textContent = k; nm.textContent = NM + '[' + k + ']'; pt.textContent = 'i = ' + k;
+    c.appendChild(pt); c.appendChild(v); c.appendChild(ix); c.appendChild(nm);
+    if(S.hi === k) c.classList.add('hi');
+    if(S.chg === k) c.classList.add('chg');
+    if(S.add === k) c.classList.add('add');
+    if(S.ptr === k) c.classList.add('ptr');
+    if(S.ptr > k) c.classList.add('past');
+    if(!x) c.classList.add('ghost');
+    if(S.cnt){ c.classList.add('cnt'); c.setAttribute('data-c', k + 1); }
+    return c;
+  }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var S = { a: init.map(function(x){ return { v: x.v, f: x.f }; }), out: {}, err: {}, hi: -1, chg: -1, add: -1, ptr: -1, ghost: -1, cnt: 0, acc: null, log: null, say: '' };
+    var cur = -1, done = {};
+    for(var k = 0; k < st; k++){
+      if(S.acc) S.acc.flash = 0;
+      S.hi = S.chg = S.add = S.ghost = -1; S.cnt = 0;
+      steps[k].run(S); cur = steps[k].line; done[cur] = 1;
+    }
+    lnEls.forEach(function(d, i){
+      d.classList.toggle('now', i === cur);
+      d.classList.toggle('done', !!done[i] && i !== cur);
+      var o = d.lastChild; o.textContent = S.out[i] != null ? '→ ' + S.out[i] : '';
+      d.classList.toggle('err', !!S.err[i]);
+    });
+    row.textContent = '';
+    S.a.forEach(function(x, k){ row.appendChild(cell(k, x, S)); });
+    if(S.ghost >= 0) row.appendChild(cell(S.ghost, null, S));
+    accEl.textContent = '';
+    if(S.acc){ accEl.style.display = ''; var an = el('span'), av = el('b');
+      an.textContent = S.acc.n + ' = '; av.textContent = F(S.acc.x);
+      accEl.appendChild(an); accEl.appendChild(av); accEl.classList.toggle('flash', !!S.acc.flash); }
+    else accEl.style.display = 'none';
+    /* журнал циклу: те, що учні пишуть у зошит стовпчиком, лишається на екрані */
+    logEl.textContent = '';
+    if(S.log && S.log.length){
+      logEl.style.display = '';
+      var hr = el('tr'); ['i', NM + '[i]', S.logN].forEach(function(t){ var th = el('th'); th.textContent = t; hr.appendChild(th); });
+      logEl.appendChild(hr);
+      S.log.forEach(function(r, q){ var tr = el('tr'); if(q === S.log.length - 1 && S.ptr >= 0) tr.className = 'now';
+        r.forEach(function(t){ var td = el('td'); td.textContent = t; tr.appendChild(td); }); logEl.appendChild(tr); });
+    } else logEl.style.display = 'none';
+    say.textContent = st === 0
+      ? (init.length ? 'Список ' + NM + ' — ' + init.length + ' шафок у ряд. Під кожною — її номер (індекс).'
+                     : 'Список ' + NM + ' = [] порожній: шафок ще немає.') + ' Що виведе код? Спершу прогноз, потім пробіл.'
+      : S.say;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C55 · .bal — рівняння як терези: що робиш з однією шальою — те саме з другою
+     <div class="bal" data-eq="8x + 22 = 110" data-ops="-22|:8"></div>
+       Ліва шаля — мішечки x (скільки разів x) і гиря з числом (або червона
+       кулька «−9» для x − 9), права — гиря з числом. Записи в зошит
+       стовпчиком ростуть праворуч (.box.nb).
+       Дії (через «|»):
+         -22   два пробіли: знімаємо 22 зліва — терези хиляться; знімаємо
+               22 справа — знову рівно, у зошит «8x = 110 − 22 = 88»
+         +9    так само, але додаємо (для x − 9 = 75)
+         :8    один пробіл: 8 мішечків → 1, гиря ділиться на 8 рівних частин
+       Останній пробіл — перевірка підстановкою в початкове рівняння.
+       data-x="y" — інша буква.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.bal').forEach(function(box){
+  var X = box.dataset.x || 'x';
+  var eq = String(box.dataset.eq || 'x + 15 = 40').replace(/−/g, '-').replace(/\s+/g, '');
+  var m = /^(\d*)([a-zа-яіїєґ])(?::(\d+))?([+-]\d+)?=(\d+)$/i.exec(eq);
+  if(!m){ box.textContent = 'bal: не розібрано рівняння ' + eq; return; }
+  if(m[2]) X = m[2];
+  var A0 = m[1] ? +m[1] : 1, D0 = m[3] ? +m[3] : 1, B0 = m[4] ? +m[4] : 0, C0 = +m[5];
+  var ops = String(box.dataset.ops || (B0 > 0 ? '-' + B0 : B0 < 0 ? '+' + (-B0) : '') + (A0 > 1 ? '|:' + A0 : '') + (D0 > 1 ? '|*' + D0 : ''))
+    .split('|').filter(Boolean);
+  function mx(){ return '<span class="m">' + X + '</span>'; }
+  function lhs(a, b, d){
+    return (a > 1 ? a : '') + mx() + (d > 1 ? ' : ' + d : '') + (b > 0 ? ' + ' + b : b < 0 ? ' − ' + (-b) : '');
+  }
+  /* кроки: функції над станом */
+  var steps = [];
+  ops.forEach(function(o){
+    var k = o.charAt(0), n = +o.slice(1);
+    if(k === '-' || k === '+'){
+      var sg = k === '-' ? -1 : 1, w = k === '-' ? 'знімаємо' : 'додаємо';
+      steps.push(function(S){
+        S.b += sg * n; S.tilt = sg; S.ghostL = k === '-' ? n : 0;
+        S.say = 'З лівої шальки ' + w + ' ' + n + (k === '-' ? '' : ' — кулька «−' + n + '» гаситься') +
+          '. Терези ' + (sg < 0 ? 'піднялись зліва' : 'опустились зліва') + ': рівноваги немає! Що зробити з правою шалькою?';
+      });
+      steps.push(function(S){
+        var was = S.c; S.c += sg * n; S.tilt = 0; S.ghostL = 0; S.oldR = was;
+        S.rec.push(lhs(S.a, S.b, S.d) + ' = ' + was + (k === '-' ? ' − ' : ' + ') + n + ' = <b>' + S.c + '</b>');
+        S.say = 'З правої — те саме: ' + w + ' ' + n + '. ' + was + (k === '-' ? ' − ' : ' + ') + n + ' = ' + S.c + '. Знову рівно.';
+      });
+    } else if(k === '*'){
+      steps.push(function(S){
+        var was = S.c; S.c = was * n; S.d = 1; S.mul = n; S.oldR = was;
+        S.rec.push(lhs(S.a, S.b, S.d) + ' = ' + was + ' · ' + n + ' = <b>' + S.c + '</b>');
+        S.say = 'Зліва лише ' + n + '-а частина мішечка (' + X + ' : ' + n + '). Беремо обидві шальки ' + n + ' рази: ' + n +
+          ' частин складаються в цілий мішечок, а справа ' + was + ' · ' + n + ' = ' + S.c + '. Ділення прибирає множення — і навпаки.';
+      });
+    } else if(k === ':'){
+      steps.push(function(S){
+        var was = S.c; S.c = was / n; S.a = S.a / n; S.split = n; S.oldR = was;
+        S.rec.push(lhs(S.a, S.b, S.d) + ' = ' + was + ' : ' + n + ' = <b>' + S.c + '</b>');
+        S.say = 'Зліва ' + n + ' однакових мішечків — ділимо обидві шальки на ' + n + ' рівних частин і лишаємо одну. ' + was + ' : ' + n + ' = ' + S.c + '.';
+      });
+    }
+  });
+  steps.push(function(S){
+    var v = S.c, l = A0 * v / D0 + B0;
+    S.check = (A0 > 1 ? A0 + ' · ' + v : v) + (D0 > 1 ? ' : ' + D0 : '') + (B0 > 0 ? ' + ' + B0 : B0 < 0 ? ' − ' + (-B0) : '') + ' = ' + l + (l === C0 ? ' ✓' : ' ✗');
+    S.say = 'Перевірка: ставимо ' + v + ' замість ' + X + ' у початкове рівняння — ' + S.check + '. Корінь знайдено.';
+  });
+
+  box.textContent = '';
+  var wrap = el('div','bl-wrap'), scale = el('div','bl-scale'), beam = el('div','bl-beam');
+  var panL = el('div','bl-pan l'), panR = el('div','bl-pan r'), stand = el('div','bl-stand');
+  beam.appendChild(panL); beam.appendChild(panR);
+  scale.appendChild(beam); scale.appendChild(stand);
+  var rec = el('div','box nb bl-rec');
+  wrap.appendChild(scale); wrap.appendChild(rec); box.appendChild(wrap);
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(steps.length + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  function bags(a){
+    var h = '';
+    if(a <= 8) for(var i = 0; i < a; i++) h += '<span class="bl-bag">' + X + '</span>';
+    else h = '<span class="bl-bag wide">' + a + X + '</span>';
+    return h;
+  }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var S = { a: A0, b: B0, c: C0, d: D0, tilt: 0, ghostL: 0, split: 0, mul: 0, oldR: null, rec: [], check: '', say: '' };
+    for(var k = 0; k < st; k++){ S.split = 0; S.mul = 0; S.oldR = null; steps[k](S); }
+    var L = S.d > 1 ? '<span class="bl-bag part">' + X + ' : ' + S.d + '</span>' : bags(S.a);
+    if(S.mul) L = '<span class="bl-bag">' + X + '</span>';
+    if(S.split) L = '<span class="bl-bag">' + X + '</span><span class="bl-cut">' + bags(S.split - 1) + '</span>';
+    if(S.b > 0) L += '<span class="bl-w">' + S.b + '</span>';
+    if(S.b < 0) L += '<span class="bl-ball">−' + (-S.b) + '</span>';
+    if(S.ghostL) L += '<span class="bl-w gone">' + S.ghostL + '</span>';
+    panL.innerHTML = '<div class="bl-in">' + L + '</div>';
+    panR.innerHTML = S.mul ? '<div class="bl-in"><span class="bl-w big"><s>' + S.oldR + ' · ' + S.mul + '</s> ' + S.c + '</span></div>' : '<div class="bl-in"><span class="bl-w big">' +
+      (S.oldR != null ? '<s>' + S.oldR + '</s> ' : '') + S.c + '</span></div>';
+    scale.style.setProperty('--tilt', S.tilt);
+    var h = '<div class="bl-l0">' + lhs(A0, B0, D0) + ' = ' + C0 + '</div>';
+    S.rec.forEach(function(r, i){ h += '<div class="bl-l' + (i === S.rec.length - 1 && !S.check ? ' now' : '') + '">' + r + '</div>'; });
+    if(S.check) h += '<div class="bl-l ck">Перевірка: ' + S.check + '</div>';
+    rec.innerHTML = h;
+    say.textContent = st === 0
+      ? 'Рівняння — це терези в рівновазі: ліва частина важить стільки ж, скільки права. Наша мета — щоб зліва лишився один мішечок ' + X + '.'
+      : S.say;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C56 · .receipt — касовий чек: ціна · кількість = вартість (5-З, 13.11.2026)
+     <div class="receipt" data-price="15" data-n="4" data-item="🍦" data-name="морозиво"></div>
+     Пробіл: у кошик по одному падають товари з ціником, у чеку росте рядок
+     за рядком і «Разом» 15, 30, 45, 60; далі 15 · 4 = 60 з підписами
+     «ціна · кількість = вартість»; останній крок — формула C = a · n.
+     data-mode="price" data-sum="60" data-n="3" — ЦІНА: чек на 60 грн відомий,
+       ціники «? грн»; кроками кожен товар отримує свою рівну частку, далі
+       60 : 3 = 20 «вартість : кількість = ціна», формула a = C : n.
+     data-mode="count" data-sum="300" data-price="75" — КІЛЬКІСТЬ: у гаманці
+       300 грн, купуємо по одному, «лишилось 225, 150 …» до нуля; далі
+       300 : 75 = 4 «вартість : ціна = кількість», формула n = C : a.
+     data-unit="грн" (гроші), data-per="кг" — одиниця товару (типово «шт.»).
+     Кількість — до 8.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.receipt').forEach(function(box){
+  var md = /^(price|count)$/.test(box.dataset.mode || '') ? box.dataset.mode : 'cost';
+  var a = parseInt(box.dataset.price, 10) || 0, n = parseInt(box.dataset.n, 10) || 0, C = parseInt(box.dataset.sum, 10) || 0;
+  if(md === 'cost'){ a = a || 15; n = n || 4; C = a * n; }
+  else if(md === 'price'){ n = n || 3; C = C || 60; a = Math.round(C / n); }
+  else { a = a || 75; C = C || 300; n = Math.round(C / a); }
+  n = Math.max(1, Math.min(8, n));
+  var U = box.dataset.unit || 'грн', P = box.dataset.per || 'шт.', item = box.dataset.item || '🛒', nm = box.dataset.name || 'товар';
+  box.textContent = '';
+  var wrap = el('div','rc-w'), cart = el('div','rc-cart'), bill = el('div','rc-bill'), its = [], lines = [];
+  for(var i = 0; i < n; i++){
+    var it = el('div','rc-it'); it.innerHTML = '<span class="e">' + item + '</span><b>' + (md === 'price' ? '?' : a) + ' ' + U + '</b>';
+    cart.appendChild(it); its.push(it);
+  }
+  var head = el('div','rc-h'); head.textContent = md === 'count' ? 'У гаманці: ' + C + ' ' + U : 'Чек';
+  bill.appendChild(head);
+  for(var j = 0; j < n; j++){
+    var ln = el('div','rc-ln'); ln.innerHTML = '<span>' + (j + 1) + '. ' + nm + ', 1 ' + P + '</span><span>' + a + ' ' + U + '</span>';
+    bill.appendChild(ln); lines.push(ln);
+  }
+  var tot = el('div','rc-tot'); bill.appendChild(tot);
+  wrap.appendChild(cart); wrap.appendChild(bill); box.appendChild(wrap);
+  var L = md === 'cost' ? [[a,'ціна','a'],['·'],[n,'кількість','n'],['='],[C,'вартість','C']]
+        : md === 'price' ? [[C,'вартість','C'],[':'],[n,'кількість','n'],['='],[a,'ціна','a']]
+        : [[C,'вартість','C'],[':'],[a,'ціна','a'],['='],[n,'кількість','n']];
+  var mul = el('div','rc-mul');
+  mul.innerHTML = L.map(function(x){ return x.length === 1 ? '<span class="o">' + x[0] + '</span>'
+      : '<span class="f ' + x[2] + '"><em>' + x[0] + '</em><small>' + x[1] + '</small></span>'; }).join('');
+  var fm = el('div','rc-fm');
+  fm.innerHTML = md === 'cost' ? '<i class="C">C</i> = <i class="a">a</i> · <i class="n">n</i>'
+    : md === 'price' ? '<i class="a">a</i> = <i class="C">C</i> : <i class="n">n</i>'
+    : '<i class="n">n</i> = <i class="C">C</i> : <i class="a">a</i>';
+  box.appendChild(mul); box.appendChild(fm);
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(n + 3).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  function pl(k, f1, f2, f5){ k = Math.abs(k) % 100; var k1 = k % 10;
+    return k > 10 && k < 20 ? f5 : k1 === 1 ? f1 : k1 >= 2 && k1 <= 4 ? f2 : f5; }
+
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var k = Math.min(st, n);
+    its.forEach(function(e, q){
+      e.classList.toggle('on', md === 'price' || q < k);
+      e.classList.toggle('now', q === k - 1 && st <= n);
+      if(md === 'price') $('b', e).textContent = (q < k ? a : '?') + ' ' + U;
+    });
+    lines.forEach(function(e, q){ e.classList.toggle('on', q < k); e.classList.toggle('now', q === k - 1 && st <= n); });
+    tot.textContent = md === 'cost' ? 'Разом: ' + (a * k) + ' ' + U
+      : md === 'price' ? 'Разом: ' + C + ' ' + U + (k && k < n ? ' · розподілили ' + (a * k) : '')
+      : 'Лишилось: ' + (C - a * k) + ' ' + U;
+    mul.classList.toggle('on', st > n);
+    fm.classList.toggle('on', st > n + 1);
+    say.textContent = md === 'cost'
+      ? (st === 0 ? '1 ' + P + ' коштує ' + a + ' ' + U + ' — це ціна. Пробіл — кладемо в кошик по одному.'
+        : st <= n ? 'У кошику ' + k + '. У чеку ще рядок по ' + a + ' ' + U + ': разом ' + (a * k) + '.'
+        : st === n + 1 ? 'Не додаємо ' + a + ' ' + n + ' ' + pl(n,'раз','рази','разів') + ' — множимо: ціна на кількість. Те, що в «Разом», — вартість.'
+        : 'Вартість дорівнює ціні, помноженій на кількість: C = a · n.')
+      : md === 'price'
+      ? (st === 0 ? 'За ' + n + ' ' + P + ' — ' + C + ' ' + U + ' разом. Скільки коштує 1 ' + P + '? Пробіл — ділимо чек порівну.'
+        : st <= n ? 'На кожен по ' + a + ' ' + U + '. Розподілили ' + (a * k) + ' з ' + C + '.'
+        : st === n + 1 ? 'Вартість ділимо на кількість — отримуємо ціну: ' + C + ' : ' + n + ' = ' + a + '.'
+        : 'Ціна дорівнює вартості, поділеній на кількість: a = C : n.')
+      : (st === 0 ? 'Маємо ' + C + ' ' + U + ', 1 ' + P + ' коштує ' + a + '. Скільки купимо? Пробіл — купуємо по одному.'
+        : st <= n ? 'Купили ' + k + '. Лишилось ' + (C - a * k) + ' ' + U + (C - a * k ? '.' : ' — гроші закінчились.')
+        : st === n + 1 ? 'Скільки разів ціна вміщається у вартості — стільки й купимо: ' + C + ' : ' + a + ' = ' + n + '.'
+        : 'Кількість дорівнює вартості, поділеній на ціну: n = C : a.');
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C57 · .eqop — рівняння: що з лівою частиною, те саме з правою (5-З, 13.11.2026)
+     <div class="eqop" data-eq="7x + 9 = 72"></div>
+     Угорі дві рамки: «ліва частина» = «права частина», праворуч — дія за
+     рискою «| − 9», як пишуть у класі. Внизу (.box.nb) росте запис у зошит:
+       7x + 9 = 72 | − 9
+       7x = 63     | : 7
+       x = 9       і перевірка.
+     На кожну дію чотири пробіли: дія за рискою → вона в лівій частині
+     (7x + 9 − 9) → та сама в правій (72 − 9) → нове рівняння рядком.
+     Останній пробіл — перевірка підстановкою.
+     Вигляд рівнянь: kx = c, x + b = c, x − b = c, kx ± b = c, x : a = c,
+     x : a ± b = c. Дії підбираються самі. data-x="y" — інша буква.
+     data-steps — будь-яке лінійне рівняння, кроки пише автор, як у зошиті
+     (рядки через «;», дія за «|»; останній рядок — корінь):
+       data-steps="2(x + 3) + 4 = 20 | − 4; 2(x + 3) = 16 | : 2; x + 3 = 8 | − 3; x = 5"
+       data-steps="5x + 4 = 2x + 25 | − 2x; 3x + 4 = 25 | − 4; 3x = 21 | : 3; x = 7"
+     Перевірку двигун рахує сам (підстановка в обидві частини).
+     data-full — детальний запис у зошит (5-З, 16.11.2026: «більше детально
+     писати у зошит по усім діям»): після кожної дії ще рядок, де вона
+     виконана з обома частинами (7x + 9 − 9 = 72 − 9), а перевірка — по
+     одній дії (7 · 9 + 9 = 63 + 9 = 72).
+   ───────────────────────────────────────────────────────────────────── */
+$$('.eqop').forEach(function(box){
+  var X = box.dataset.x || 'x';
+  var XV = '<i class="v">' + X + '</i>';
+  function IT(t){ return String(t).replace(/-/g, '−').split(X).join(XV); }
+  var S, ops, x0, chk, MAN = !!box.dataset.steps;
+  if(MAN){
+    var rows0 = box.dataset.steps.split(';').map(function(z){ return z.trim(); }).filter(Boolean);
+    S = []; ops = [];
+    rows0.forEach(function(z, i){
+      var pp = z.split('|'), lr = pp[0].split('=');
+      S.push({lt: IT(lr[0].trim()), rt: IT((lr[1] || '').trim()), L0: lr[0].trim(), R0: (lr[1] || '').trim()});
+      if(i < rows0.length - 1){
+        var o2 = (pp[1] || '').trim().replace(/-/g, '−');
+        ops.push({o: o2.charAt(0), v: IT(o2.slice(1).trim())});
+      }
+    });
+    x0 = S[S.length - 1].R0;
+    var sub = function(t){   /* 5x → 5 · 7, 2(x → 2(…, x → 7 */
+      return t.replace(/-/g, '−').replace(new RegExp('(\\d)' + X, 'g'), '$1 · ' + x0).split(X).join(x0); };
+    var val = function(t){
+      var e = sub(t).replace(/−/g, '-').replace(/·/g, '*').replace(/:/g, '/').replace(/(\d)\s*\(/g, '$1*(');
+      if(!/^[\d\s+\-*\/().]+$/.test(e)) return '?';
+      try { var v = Function('return (' + e + ')')(); return Math.round(v * 1000) / 1000; } catch(er){ return '?'; }
+    };
+    var L0 = S[0].L0, R0 = S[0].R0, lv = val(L0), rv = val(R0);
+    chk = sub(L0) + ' = ' + lv + (R0.indexOf(X) >= 0 ? ', ' + sub(R0) + ' = ' + rv : '') + (lv === rv ? '' : ' ≠ ' + rv);
+  } else {
+  var eq = String(box.dataset.eq || '7x + 9 = 72').replace(/−/g, '-').replace(/\s+/g, '');
+  var m = /^(\d*)([a-zа-яіїєґ])(?::(\d+))?([+-]\d+)?=(\d+)$/i.exec(eq);
+  if(!m) return;
+  S = [{k: m[1] ? +m[1] : 1, d: m[3] ? +m[3] : 1, b: m[4] ? +m[4] : 0, r: +m[5]}];
+  ops = []; var p0 = S[0];
+  if(p0.b > 0) ops.push({o:'−', v:p0.b}); else if(p0.b < 0) ops.push({o:'+', v:-p0.b});
+  if(p0.k > 1) ops.push({o:':', v:p0.k});
+  if(p0.d > 1) ops.push({o:'·', v:p0.d});
+  ops.forEach(function(op){
+    var p = S[S.length - 1], q = {k:p.k, d:p.d, b:p.b, r:p.r};
+    if(op.o === '−'){ q.b = 0; q.r = p.r - op.v; }
+    else if(op.o === '+'){ q.b = 0; q.r = p.r + op.v; }
+    else if(op.o === ':'){ q.k = 1; q.r = p.r / op.v; }
+    else { q.d = 1; q.r = p.r * op.v; }
+    S.push(q);
+  });
+  function L(s){ var t = (s.k > 1 ? s.k : '') + XV; if(s.d > 1) t += ' : ' + s.d;
+    if(s.b > 0) t += ' + ' + s.b; else if(s.b < 0) t += ' − ' + (-s.b); return t; }
+  function N(v){ return v < 0 ? '−' + (-v) : String(v); }
+  x0 = S[S.length - 1].r; var o = S[0];
+  chk = (o.k > 1 ? o.k + ' · ' : '') + x0 + (o.d > 1 ? ' : ' + o.d : '') + (o.b > 0 ? ' + ' + o.b : o.b < 0 ? ' − ' + (-o.b) : '') + ' = ' + o.r;
+  S.forEach(function(q){ q.lt = L(q); q.rt = N(q.r); });
+  }
+  function OP(op){ return '<b class="op">' + op.o + ' ' + op.v + '</b>'; }
+  var FULL = box.hasAttribute('data-full');
+  /* «7 · 9 + 9» → «7 · 9 + 9 = 63 + 9 = 72»: по одній дії, спершу найглибші
+     дужки, у них спершу · і :, потім + і − зліва направо */
+  function chain(t){
+    var e = String(t).replace(/-/g, '−').replace(/\s+/g, ' ').trim(), out = [e], n = 0;
+    var R = function(v){ return Math.round(v * 1000) / 1000; };
+    var one = function(g){
+      var m1 = /(−?\d+(?:\.\d+)?) ([·:]) (\d+(?:\.\d+)?)/.exec(g) || /(−?\d+(?:\.\d+)?) ([+−]) (\d+(?:\.\d+)?)/.exec(g);
+      if(!m1) return null;
+      var a = +m1[1].replace('−', '-'), b = +m1[3], v = m1[2] === '·' ? a * b : m1[2] === ':' ? a / b : m1[2] === '+' ? a + b : a - b;
+      return g.slice(0, m1.index) + String(R(v)).replace('-', '−') + g.slice(m1.index + m1[0].length);
+    };
+    while(n++ < 20){
+      var pm = /\(([^()]*)\)/.exec(e), nx;
+      if(pm){
+        var g = one(pm[1]);
+        var pre = e.slice(0, pm.index), post = e.slice(pm.index + pm[0].length);
+        if(g === null){ e = pre.replace(/(\d)\s*$/, '$1 · ') + pm[1] + post; continue; }   /* лишилось число — дужки геть */
+        nx = / [+−·:] /.test(g) ? pre + '(' + g + ')' + post : pre.replace(/(\d)\s*$/, '$1 · ') + g + post;
+      } else { nx = one(e); if(nx === null) break; }
+      e = nx; out.push(e);
+    }
+    return out.join(' = ');
+  }
+  if(FULL){
+    if(MAN){
+      var L0f = S[0].L0, R0f = S[0].R0;
+      var subf = function(t){ return t.replace(/-/g, '−').replace(new RegExp('(\\d)' + X, 'g'), '$1 · ' + x0).replace(new RegExp('(\\d)\\(', 'g'), '$1 · (').split(X).join(x0); };
+      chk = chain(subf(L0f)) + (R0f.indexOf(X) >= 0 ? ';  ' + chain(subf(R0f)) : '');
+    } else {
+      chk = chain(chk.split(' = ')[0]);
+    }
+  }
+
+  box.textContent = '';
+  var top = el('div','eo-w');
+  var ls = el('div','eo-s'), rs = el('div','eo-s'), eqs = el('span','eo-eq'), act = el('span','eo-a');
+  ls.innerHTML = '<small>ліва частина</small><div class="t"></div>';
+  rs.innerHTML = '<small>права частина</small><div class="t"></div>';
+  eqs.textContent = '=';
+  top.appendChild(ls); top.appendChild(eqs); top.appendChild(rs); top.appendChild(act);
+  var rec = el('div','box nb eo-rec'), grd = el('div','eo-g'), rows = [];
+  rec.appendChild(grd);
+  var mids = [];
+  S.forEach(function(s, i){
+    var ln = el('div','ln');
+    ln.innerHTML = '<span class="e">' + s.lt + ' = ' + s.rt + '</span>' + (ops[i] ? '<span class="bar">| ' + ops[i].o + ' ' + ops[i].v + '</span>' : '');
+    grd.appendChild(ln); rows.push(ln);
+    if(FULL && ops[i]){   /* дія, виконана з обома частинами */
+      var mn = el('div','ln mid'), oo = ' ' + ops[i].o + ' ' + ops[i].v;
+      mn.innerHTML = '<span class="e">' + s.lt + oo + ' = ' + s.rt + oo + '</span><span class="bar"></span>';
+      grd.appendChild(mn); mids.push(mn);
+    }
+  });
+  var ck = el('div','ck'); ck.textContent = 'Перевірка: ' + chk + ' ✓'; rec.appendChild(ck);
+  var wrap = el('div','eo'); wrap.appendChild(top); wrap.appendChild(rec); box.appendChild(wrap);
+  var say = asay(box);
+  var marks = el('div','hmk');
+  marks.innerHTML = new Array(ops.length * 4 + 2).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var last = ops.length * 4, i = st >= last ? ops.length : Math.floor(st / 4), ph = st >= last ? 0 : st % 4;
+    if(st > 0 && st <= last && st % 4 === 0){ i = st / 4; ph = 0; }
+    var s = S[i], op = ops[i];
+    var lt = s.lt, rt = s.rt;
+    if(ph >= 2) lt += ' ' + OP(op);
+    if(ph >= 3) rt += ' ' + OP(op);
+    $('.t', ls).innerHTML = lt; $('.t', rs).innerHTML = rt;
+    ls.classList.toggle('hot', ph === 2); rs.classList.toggle('hot', ph === 3);
+    act.innerHTML = ph >= 1 ? '| ' + op.o + ' ' + op.v : '';
+    act.classList.toggle('on', ph >= 1);
+    rows.forEach(function(r, q){
+      r.classList.toggle('on', q <= i);
+      r.classList.toggle('now', q === i && st < last + 1);
+      r.classList.toggle('wb', q < i || (q === i && ph >= 1));
+    });
+    mids.forEach(function(r, q){ r.classList.toggle('on', q < i || (q === i && ph >= 3 && st <= last)); });
+    ck.classList.toggle('on', st > last);
+    var what = !op ? '' : MAN ? 'Що заважає ' + X + '? Прибираємо: ' + op.o + ' ' + op.v.replace(/<[^>]+>/g, '')
+      : op.o === '−' ? 'Число ' + op.v + ' додається — щоб його прибрати, віднімаємо ' + op.v
+      : op.o === '+' ? 'Число ' + op.v + ' віднімається — щоб його прибрати, додаємо ' + op.v
+      : op.o === ':' ? X + ' помножено на ' + op.v + ' — щоб лишився сам ' + X + ', ділимо на ' + op.v
+      : X + ' поділено на ' + op.v + ' — щоб лишився сам ' + X + ', множимо на ' + op.v;
+    var TX = function(h){ return String(h).replace(/<[^>]+>/g, ''); };
+    var calc = op ? TX(s.rt) + ' ' + op.o + ' ' + TX(op.v) + ' = ' + TX(S[i + 1].rt) : '';
+    say.textContent = st > last ? 'Перевірка: ставимо ' + x0 + ' замість ' + X + ' у початкове рівняння: ' + chk + ' ✓. Корінь знайдено.'
+      : FULL && ph === 3 ? 'Те саме — з правою. У зошит: ' + $('.e', mids[i]).textContent + ', а праворуч рахуємо: ' + calc + '.'
+      : st === 0 ? 'Ліва частина — до знака «=», права — після. Що робимо з лівою частиною, те саме робимо з правою — і рівність не порушується.'
+      : i === ops.length ? 'Лишився сам ' + X + ': ' + X + ' = ' + TX(s.rt) + '. Останній пробіл — перевірка.'
+      : ph === 0 ? 'Нове рівняння: ' + $('.e', rows[i]).textContent + '. Що ще заважає ' + X + '?'
+      : ph === 1 ? what + '. Дію пишемо за рискою: | ' + op.o + ' ' + op.v + '.'
+      : ph === 2 ? 'Ліва частина: ' + op.o + ' ' + op.v + '.'
+      : 'Те саме — з правою: ' + calc + '.';
     fit();
   };
   box.__paint();

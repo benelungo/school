@@ -111,7 +111,10 @@ def find_decks(only=None, with_template=True):
         rel = TEMPLATE.relative_to(ROOT).as_posix()
         if not only or only in rel:
             out.append(TEMPLATE)
-    for p in sorted(ROOT.glob("*/*/Уроки/*/*" + SUFFIX)):
+    # додаткові уроки — такі самі класні деки, лише з іншою назвою (16.11.2026:
+    # без них новий режим .eqop не дійшов до «додатковий урок 2»)
+    found = set(ROOT.glob("*/*/Уроки/*/*" + SUFFIX)) | set(ROOT.glob("*/*/Уроки/*/* — додатковий урок*.html"))
+    for p in sorted(found):
         if "_Резервні копії" in p.parts or "_Шаблони" in p.parts:
             continue
         rel = p.relative_to(ROOT).as_posix()
