@@ -2217,6 +2217,22 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .simtri .st-q,.simtri .st-d{text-align:center;opacity:0;transition:opacity .35s;font-size:clamp(16px,calc(2*var(--u)),26px)}
 .simtri .st-q{display:flex;flex-wrap:wrap;justify-content:center;gap:0 clamp(14px,2.4vw,32px)}
 .simtri.s5 .st-q,.simtri.s6 .st-d{opacity:1}
+/* data-mode lem|aa|sas|sss — лема й ознаки подібності: кроки k-* замість s1…s6 */
+.simtri.cr .st-q{opacity:1}
+.simtri.cr .st-q>span{opacity:0;transition:opacity .35s}
+.simtri .qa0{color:var(--marker)}
+.simtri .qa1{color:var(--check)}
+.simtri .qa2{color:var(--sun)}
+.simtri.k-a0 .a0,.simtri.k-a1 .a1,.simtri.k-a2 .a2{opacity:1}
+.simtri.k-a0 .st-q>.qa0,.simtri.k-a1 .st-q>.qa1,.simtri.k-a2 .st-q>.qa2,.simtri.k-t0 .st-q>.q0,.simtri.k-t1 .st-q>.q1,.simtri.k-t2 .st-q>.q2,.simtri.k-r .st-q>.qlr{opacity:1}
+.simtri.k-t0 .sd.p0{stroke:var(--note);stroke-width:4.4}
+.simtri.k-t1 .sd.p1{stroke:var(--or);stroke-width:4.4}
+.simtri.k-t2 .sd.p2{stroke:var(--pen);stroke-width:4.4}
+.simtri.k-t0 .ln.t0,.simtri.k-t1 .ln.t1,.simtri.k-t2 .ln.t2{opacity:1}
+.simtri.k-ov .ln.lsm{opacity:0;transition-delay:0s}
+.simtri.k-ov .sm .sd.p1,.simtri[data-mode=lem] .sm .sd.p1{stroke:var(--or);stroke-width:4.4}
+.simtri.k-dn .st-d{opacity:1}
+.simtri[data-mode=lem] .ln{display:none}
 /* C60 · .polysim — зведення подібних членів многочлена */
 .polysim{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.8vw,10px)}
 .polysim .hmk{display:none}
