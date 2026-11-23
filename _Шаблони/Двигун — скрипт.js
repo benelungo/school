@@ -8638,6 +8638,8 @@ $$('.ppt').forEach(function(box){
          all        print(a)
          for:+10    for i in range(n): a[i] = a[i] + 10 (також **2, *2 …)
          for:sum / for:prod / for:sumsq / for:sumpos — накопичення в змінній
+         for:cnt>7  лічильник за умовою: if a[i] > 7: k = k + 1 (також <, >=, <=, ==;
+                    data-acc — імʼя лічильника, типово k)
          for:max / for:min — пошук найбільшого: m = a[0], далі порівняння
          get:-1     відʼємний індекс — шафка з кінця (data-neg — другий ряд
                     номерів -7 … -1 під шафками)
@@ -8843,8 +8845,11 @@ $$('.arr').forEach(function(box){
       }});
     } else if(k === 'for'){
       var mode = p.slice(1).join(':'), m = n;
-      var accum = /^(sum|prod|sumsq|sumpos)$/.test(mode);
-      var acc = box.dataset.acc || (mode === 'prod' ? 'dob' : 'suma');
+      var cm = /^cnt(>=|<=|==|>|<)(-?[\d.]+)$/.exec(mode);
+      var accum = !!cm || /^(sum|prod|sumsq|sumpos)$/.test(mode);
+      var acc = box.dataset.acc || (cm ? 'k' : mode === 'prod' ? 'dob' : 'suma');
+      var cmT = cm ? cm[1] + ' ' + cm[2] : '', cmV = cm ? parseFloat(cm[2]) : 0;
+      var cmOk = function(x){ return !cm ? false : cm[1] === '>' ? x > cmV : cm[1] === '<' ? x < cmV : cm[1] === '>=' ? x >= cmV : cm[1] === '<=' ? x <= cmV : x === cmV; };
       var IL = -1, BL, FL, PRL;
       if(accum) IL = lines.push(acc + (mode === 'prod' ? ' = 1' : ' = 0')) - 1;
       FL = lines.push('for i in range(' + m + '):') - 1;
@@ -8852,13 +8857,14 @@ $$('.arr').forEach(function(box){
         : mode === 'prod' ? acc + ' = ' + acc + ' * ' + NM + '[i]'
         : mode === 'sumsq' ? acc + ' = ' + acc + ' + ' + NM + '[i]*' + NM + '[i]'
         : mode === 'sumpos' ? 'if ' + NM + '[i] > 0: ' + acc + ' = ' + acc + ' + ' + NM + '[i]'
+        : cm ? 'if ' + NM + '[i] ' + cmT + ': ' + acc + ' = ' + acc + ' + 1'
         : exprCode('i', mode);
       BL = lines.push('    ' + body) - 1;
       PRL = lines.push('print(' + (accum ? acc : NM) + ')') - 1;
       var fx = accum ? null : parseExpr(mode);
       if(accum) steps.push({ line: IL, run: function(S){
         S.acc = { n: acc, x: mode === 'prod' ? { v: 1, f: false } : { v: 0, f: false } }; S.log = []; S.logN = acc;
-        S.say = 'Лічильник ' + acc + (mode === 'prod' ? ' = 1: для добутку починаємо з одиниці (множення на 1 нічого не змінює).' : ' = 0: для суми починаємо з нуля.');
+        S.say = cm ? 'Лічильник ' + acc + ' = 0: ще не знайшли жодного елемента ' + cmT + '.' : 'Лічильник ' + acc + (mode === 'prod' ? ' = 1: для добутку починаємо з одиниці (множення на 1 нічого не змінює).' : ' = 0: для суми починаємо з нуля.');
       }});
       for(var j = 0; j < m; j++) (function(j){
         steps.push({ line: BL, run: function(S){
@@ -8869,8 +8875,16 @@ $$('.arr').forEach(function(box){
             if(mode === 'sum'){ now = calc(was, '+', v); w = F(was) + ' + ' + Q(v); }
             else if(mode === 'prod'){ now = calc(was, '*', v); w = F(was) + ' · ' + Q(v); }
             else if(mode === 'sumsq'){ now = calc(was, '+', calc(v, '*', v)); w = F(was) + ' + ' + Q(v) + ' · ' + Q(v); }
+            else if(cm){ if(cmOk(v.v)){ now = { v: was.v + 1, f: false }; w = F(was) + ' + 1'; } }
             else { if(v.v > 0){ now = calc(was, '+', v); w = F(was) + ' + ' + F(v); } }
             S.acc.x = now; S.acc.flash = 1;
+            if(cm){
+              var yes = cmOk(v.v);
+              S.log.push([j, F(v), F(v) + ' ' + cmT + '? ' + (yes ? 'так → ' + acc + ' = ' + F(now) : 'ні')]);
+              S.say = 'i = ' + j + ': ' + NM + '[' + j + '] = ' + F(v) + '. ' + F(v) + ' ' + cmT + '? ' +
+                (yes ? 'Так — ' + acc + ' = ' + w + ' = ' + F(now) + '.' : 'Ні — ' + acc + ' не змінюється: ' + F(now) + '.');
+              return;
+            }
             S.log.push([j, F(v), w ? w + ' = ' + F(now) : F(now)]);
             S.say = 'i = ' + j + ': ' + NM + '[' + j + '] = ' + F(v) + '. ' +
               (mode === 'sumpos' && !(v.v > 0) ? F(v) + ' > 0? Ні — ' + acc + ' не змінюється: ' + F(now) + '.'
@@ -8884,7 +8898,7 @@ $$('.arr').forEach(function(box){
       })(j);
       steps.push({ line: PRL, run: function(S){
         S.ptr = -1; S.hi = -1;
-        var what = { sum: 'сума всіх елементів', prod: 'добуток усіх елементів', sumsq: 'сума квадратів усіх елементів', sumpos: 'сума додатних елементів' }[mode];
+        var what = cm ? 'стільки елементів ' + cmT : { sum: 'сума всіх елементів', prod: 'добуток усіх елементів', sumsq: 'сума квадратів усіх елементів', sumpos: 'сума додатних елементів' }[mode];
         S.out[PRL] = accum ? F(S.acc.x) : '[' + S.a.map(F).join(', ') + ']';
         S.say = 'Цикл пройшов усі ' + m + ' шафок. ' + (accum ? 'У ' + acc + ' — ' + F(S.acc.x) + ': це ' + what + '.' : 'Кожне значення змінено на місці.');
       }});

@@ -1376,6 +1376,80 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .eqop[data-full] .eo-rec{line-height:1.3;font-size:clamp(14px,calc(1.8*var(--u)),24px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop[data-full] .eo-rec{font-size:14px}}/*}compat*/
 .eqop[data-full] .eo-s .t{font-size:clamp(15px,calc(2.2*var(--u)),30px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop[data-full] .eo-s .t{font-size:15px}}/*}compat*/
 .eqop .asay{margin-top:clamp(6px,1vw,12px);min-height:2.8em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.eqop .asay{margin-top:6px;font-size:12px}}/*}compat*/
+/* C58 · .wrd — вікно Word: створити, параметри, зберегти, відкрити */
+.wrd .hmk{display:none}
+.wrd .wd-win{position:relative;max-width:calc(72*var(--u));margin:0 auto;border:var(--bw) solid var(--edge);border-radius:var(--r-m);overflow:hidden;
+  background:var(--paper);box-shadow:var(--sh2);font-size:clamp(11px,calc(1.5*var(--u)),20px);line-height:1.2;color:var(--ink);user-select:none}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.wrd .wd-win{font-size:11px}}/*}compat*/
+.wrd .wd-title{position:relative;display:flex;align-items:center;justify-content:center;height:1.9em;background:var(--card);border-bottom:1px solid var(--edge)}
+.wrd .wd-fn{font-weight:700}
+.wrd .wd-wb{position:absolute;right:.6em;top:0;bottom:0;display:flex;align-items:center}
+.wrd .wd-wb i{font-style:normal;margin-left:1.1em;color:var(--soft)}
+.wrd .wd-tabs{display:flex;align-items:stretch;height:1.9em;background:var(--card);white-space:nowrap;overflow:hidden}
+.wrd .wd-tabs>span{display:flex;align-items:center;padding:0 .75em;color:var(--soft)}
+.wrd .wd-tabs>span.cur{color:var(--pen);font-weight:800;text-decoration:underline;text-underline-offset:.25em}
+.wrd .wd-tabs>span.wd-file{padding:0 1em;background:var(--pen);color:var(--on-pen);font-weight:800;transition:box-shadow .3s}
+.wrd .wd-tabs>span.wd-file.now{box-shadow:inset 0 0 0 3px var(--marker)}
+.wrd .wd-rib{display:flex;align-items:stretch;height:3.9em;padding:.2em .5em;background:var(--card);border-bottom:1px solid var(--edge);box-sizing:border-box}
+.wrd .wd-g{position:relative;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;padding:0 .9em;border-right:1px solid var(--edge)}
+.wrd .wd-g small{flex:1 0 100%;text-align:center;font-size:.8em;color:var(--soft);align-self:flex-end}
+.wrd .wd-b{position:relative;display:inline-block;white-space:nowrap;padding:.15em .45em;margin:0 .15em;border-radius:var(--r-xs);transition:background .3s,box-shadow .3s}
+.wrd .wd-b>b{color:var(--pen);margin-right:.3em}
+.wrd .wd-b.now{background:var(--sun-soft);box-shadow:0 0 0 2px var(--sun);color:var(--ink);font-weight:800}
+.wrd .wd-in{border:1px solid var(--edge);background:var(--paper);min-width:2.6em}
+.wrd .wd-in.wd-fo{min-width:9.5em}
+.wrd .wd-bi{margin:0 .4em;color:var(--soft)}
+.wrd .wd-menu{position:absolute;z-index:5;left:0;top:calc(100% + 4px);display:flex;flex-direction:column;min-width:100%;padding:.3em 0;
+  background:var(--card);border:1px solid var(--edge);border-radius:var(--r-xs);box-shadow:var(--sh2);font-weight:400}
+.wrd .wd-menu i{font-style:normal;padding:.35em .9em;white-space:nowrap;color:var(--ink)}
+.wrd .wd-menu i.pk{background:var(--marker-soft);box-shadow:inset 4px 0 0 var(--marker);font-weight:800}
+.wrd .wd-body{height:calc(19*var(--u));overflow:hidden;display:flex;justify-content:center;align-items:flex-start;padding-top:calc(.8*var(--u));box-sizing:border-box;background:var(--paper)}
+.wrd .wd-pg{flex:0 0 auto;width:calc(21*var(--u));height:calc(30*var(--u));background:var(--card);border:1px solid var(--edge);box-shadow:var(--sh1);transition:width .5s,height .5s}
+.wrd .wd-pg.a5{width:calc(15*var(--u));height:calc(21*var(--u))}
+.wrd .wd-pg.fit{width:92%;height:calc(90*var(--u))}
+.wrd .wd-tx{height:100%;box-sizing:border-box;padding:9.5%;font-size:.95em;transition:font-size .5s}
+.wrd .a5 .wd-tx{padding:13.5%}
+.wrd .fit .wd-tx{font-size:2em}
+.wrd .wd-ar{height:100%;border:1.5px dashed transparent;box-sizing:border-box;transition:border-color .4s}
+.wrd .wd-ar.mg{border-color:var(--sun)}
+.wrd .wd-ar p{margin:0 0 .25em}
+.wrd .wd-cur{display:inline-block;width:2px;height:1.1em;vertical-align:text-bottom;background:var(--ink)}
+.wrd .wd-st{display:flex;justify-content:space-between;align-items:center;height:1.7em;padding:0 .8em;background:var(--card);border-top:1px solid var(--edge);color:var(--soft);font-size:.9em;white-space:nowrap}
+.wrd .wd-ov{position:absolute;z-index:6;left:0;right:0;bottom:0;top:1.9em;display:flex;background:var(--card)}
+.wrd .wd-nav{flex:0 0 10em;display:flex;flex-direction:column;padding:.5em 0;background:var(--pen);color:var(--on-pen)}
+.wrd .wd-nav i{font-style:normal;padding:.4em 1.1em;font-weight:600}
+.wrd .wd-nav i.now{background:var(--on-pen);color:var(--pen);font-weight:800;box-shadow:inset 4px 0 0 var(--marker)}
+.wrd .wd-main{flex:1 1 auto;min-width:0;padding:.9em 1.4em}
+.wrd .wd-main h4{margin:0 0 .6em;font-size:1.5em;font-weight:600}
+.wrd .wd-h5{margin:.8em 0 .3em;font-weight:800;color:var(--soft)}
+.wrd .wd-tile{display:inline-flex;flex-direction:column;align-items:center;padding:.5em;border-radius:var(--r-xs);transition:background .3s,box-shadow .3s}
+.wrd .wd-tile i{display:block;width:5em;height:6.4em;margin-bottom:.4em;background:var(--paper);border:1px solid var(--edge)}
+.wrd .wd-row{display:flex;align-items:center;padding:.3em .6em;border-radius:var(--r-xs);white-space:nowrap;transition:background .3s,box-shadow .3s}
+.wrd .wd-row small{color:var(--soft)}
+.wrd .wd-tile.now,.wrd .wd-row.now{background:var(--sun-soft);box-shadow:0 0 0 2px var(--sun);font-weight:800}
+.wrd .wd-row.sel{background:var(--pen-soft);font-weight:700}
+.wrd .wd-ic{flex:0 0 auto;display:inline-block;width:1.2em;height:.95em;margin-right:.5em;border-radius:2px;background:var(--sun-soft);border:1.5px solid var(--sun);box-sizing:border-box}
+.wrd .wd-ic.d{width:.95em;height:1.2em;background:var(--pen-soft);border-color:var(--pen)}
+.wrd .wd-empty{display:block;padding:.4em .6em;color:var(--soft);font-style:italic}
+.wrd .wd-dlg{position:absolute;z-index:7;left:9%;right:9%;top:2.3em;background:var(--card);border:1px solid var(--edge);border-radius:var(--r-s);box-shadow:var(--sh2);overflow:hidden}
+.wrd .wd-dh{display:flex;justify-content:space-between;padding:.45em .8em;font-weight:800;border-bottom:1px solid var(--edge)}
+.wrd .wd-dt{padding:.4em .8em;color:var(--soft)}
+.wrd .wd-dt b{color:var(--pen)}
+.wrd .wd-2{display:flex;flex-wrap:wrap}
+.wrd .wd-2>.wd-f{flex:1 0 45%}
+.wrd .wd-path{margin:.4em .8em;padding:.3em .6em;border:1px solid var(--edge);border-radius:var(--r-xs);color:var(--soft)}
+.wrd .wd-path b{color:var(--ink)}
+.wrd .wd-pn{display:flex;margin:0 .8em;border:1px solid var(--edge);height:7.2em}
+.wrd .wd-tree{flex:0 0 10em;border-right:1px solid var(--edge);padding:.2em 0}
+.wrd .wd-list{flex:1 1 auto;min-width:0;padding:.3em}
+.wrd .wd-f{display:flex;align-items:center;margin:.45em .8em 0}
+.wrd .wd-f>span:first-child{flex:0 0 6.8em;margin-right:.6em;color:var(--soft);text-align:right}
+.wrd .wd-fi{flex:1 1 auto;min-height:1.2em;padding:.25em .5em;border:1px solid var(--edge);border-radius:3px;background:var(--paper);transition:background .3s,box-shadow .3s}
+.wrd .wd-fi.now{background:var(--sun-soft);box-shadow:0 0 0 2px var(--sun);font-weight:800}
+.wrd .wd-btns{display:flex;justify-content:flex-end;margin:.6em .8em .7em}
+.wrd .wd-btn{margin-left:.6em;padding:.3em 1.2em;border:1px solid var(--edge);border-radius:3px;transition:background .3s,box-shadow .3s}
+.wrd .wd-btn.pri{border-color:var(--pen);color:var(--pen);font-weight:800}
+.wrd .wd-btn.now{background:var(--sun-soft);box-shadow:0 0 0 2px var(--sun)}
+.wrd .asay{margin-top:clamp(6px,.9vw,12px);min-height:2.6em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.wrd .asay{margin-top:6px;font-size:12px}}/*}compat*/
 /* C15 · .vang — вертикальні кути */
 .vang{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,20px);align-items:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.vang{gap:8px}}/*}compat*//*compat{*/.no-fgap .vang>*{margin-right:8px;margin-bottom:8px}/*}compat*/
 .vang .vsvg{flex:1 1 280px;min-width:230px;max-width:min(100%,calc(26*var(--u)))}/*compat{*/@supports not ((width:min(1px,2px))){.vang .vsvg{max-width:100%}}/*}compat*/
@@ -2174,6 +2248,22 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .simtri .st-q,.simtri .st-d{text-align:center;opacity:0;transition:opacity .35s;font-size:clamp(16px,calc(2*var(--u)),26px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.simtri .st-q,.simtri .st-d{font-size:16px}}/*}compat*/
 .simtri .st-q{display:flex;flex-wrap:wrap;justify-content:center;gap:0 clamp(14px,2.4vw,32px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.simtri .st-q{gap:0 14px}}/*}compat*//*compat{*/.no-fgap .simtri .st-q>*{margin-right:14px;margin-bottom:0}/*}compat*/
 .simtri.s5 .st-q,.simtri.s6 .st-d{opacity:1}
+/* data-mode lem|aa|sas|sss — лема й ознаки подібності: кроки k-* замість s1…s6 */
+.simtri.cr .st-q{opacity:1}
+.simtri.cr .st-q>span{opacity:0;transition:opacity .35s}
+.simtri .qa0{color:var(--marker)}
+.simtri .qa1{color:var(--check)}
+.simtri .qa2{color:var(--sun)}
+.simtri.k-a0 .a0,.simtri.k-a1 .a1,.simtri.k-a2 .a2{opacity:1}
+.simtri.k-a0 .st-q>.qa0,.simtri.k-a1 .st-q>.qa1,.simtri.k-a2 .st-q>.qa2,.simtri.k-t0 .st-q>.q0,.simtri.k-t1 .st-q>.q1,.simtri.k-t2 .st-q>.q2,.simtri.k-r .st-q>.qlr{opacity:1}
+.simtri.k-t0 .sd.p0{stroke:var(--note);stroke-width:4.4}
+.simtri.k-t1 .sd.p1{stroke:var(--or);stroke-width:4.4}
+.simtri.k-t2 .sd.p2{stroke:var(--pen);stroke-width:4.4}
+.simtri.k-t0 .ln.t0,.simtri.k-t1 .ln.t1,.simtri.k-t2 .ln.t2{opacity:1}
+.simtri.k-ov .ln.lsm{opacity:0;transition-delay:0s}
+.simtri.k-ov .sm .sd.p1,.simtri[data-mode=lem] .sm .sd.p1{stroke:var(--or);stroke-width:4.4}
+.simtri.k-dn .st-d{opacity:1}
+.simtri[data-mode=lem] .ln{display:none}
 /* C60 · .polysim — зведення подібних членів многочлена */
 .polysim{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.8vw,10px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.polysim{gap:4px}}/*}compat*//*compat{*/.no-fgap .polysim>*{margin-bottom:4px}.no-fgap .polysim>*:last-child{margin-bottom:0}/*}compat*/
 .polysim .hmk{display:none}
@@ -4315,7 +4405,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.thgen,.simtri,.polysim,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.thgen,.simtri,.polysim,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop,.wrd', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -10234,6 +10324,8 @@ $$('.simtri').forEach(function(box){
   var right = Math.max(A[0], B[0], C[0]);
   var P0 = {t:turn, c:[right + 40 + R0, EQ ? 150 : 130]};
   var W = P0.c[0] + R0 + 30;
+  /* data-mode="lem" — менший одразу лежить у куті A більшого (пряма B₁C₁ ∥ BC), справа місця не треба */
+  if(box.dataset.mode === 'lem'){ P0 = at(0); W = right + 40; }
   function at(i){ var v = V[i]; return {t:0, c:[v[0] + (G[0]-v[0])/k, v[1] + (G[1]-v[1])/k]}; }
   var POSE = [P0, at(0), at(1), at(2), P0, P0, P0];
   var n1 = L[0]+L[1]+L[2], n2 = L[3]+L[4]+L[5];
@@ -10309,6 +10401,71 @@ $$('.simtri').forEach(function(box){
     'У рівних трикутників відповідні сторони й відповідні кути рівні.',
     'Записуємо так, щоб відповідні вершини стояли на однакових місцях: △' + n1 + ' = △' + n2 + '.'
   ];
+  /* data-mode="lem" | "aa" | "sas" | "sss" (з 23.11.2026, 8-К геом. 24) — ЛЕМА й ТРИ ОЗНАКИ
+     подібності. Кроками підсвічується лише те, що дано в ознаці (кути — дугами, сторони —
+     кольором і відношенням = k); далі менший лягає кутом A₁ на кут A — B₁C₁ стає ∥ BC, і
+     лема (пряма, паралельна стороні, відтинає подібний) дає висновок. lem — менший уже
+     в куті A: ∠A спільний, ∠B = ∠B₁ і ∠C = ∠C₁ відповідні, сторони пропорційні.
+     Кроки — класи k-* (накопичуються) замість s1…s6. */
+  var CR = /^(lem|aa|sas|sss)$/.test(box.dataset.mode || '') ? box.dataset.mode : '', KS = null;
+  if(CR){
+    box.classList.add('cr');
+    var A0 = at(0);
+    POSE = CR === 'lem' ? [P0,P0,P0,P0,P0,P0] : [P0,P0,P0,P0,A0,A0];
+    var an = function(i, pre){ return '<span class="qa' + i + '">' + (pre || '') + '∠' + L[i] + ' = ∠' + L[i+3] + '</span>'; };
+    var rt = function(i){ return '<span class="q' + i + '">' + fr(sn[i], sm[i]) + ' = ' + fr(anum(S[i]), anum(S[i]/k)) + ' = ' + anum(k) + '</span>'; };
+    var NM = {aa:'за двома кутами', sas:'за двома сторонами й кутом між ними', sss:'за трьома сторонами'};
+    var ov = 'Кладемо кут ' + L[3] + ' на кут ' + L[0] + ': сторона ' + L[4]+L[5] + ' лягла паралельно ' + L[1]+L[2];
+    var lm = 'За лемою відтятий трикутник подібний △' + n1 + '. Отже, △' + n1 + ' ∼ △' + n2 + ' — ';
+    if(CR === 'lem'){
+      KS = [[], ['a0'], ['a1'], ['a2'], ['r'], ['dn']];
+      q.innerHTML = '<span class="qa0">∠' + L[0] + ' — спільний</span>' + an(1) + an(2) +
+        '<span class="qlr">' + fr(L[3]+L[4], L[0]+L[1]) + ' = ' + fr(L[3]+L[5], L[0]+L[2]) + ' = ' + fr(L[4]+L[5], L[1]+L[2]) + '</span>';
+      dn.innerHTML = '<b>△' + n1 + ' ∼ △' + n2 + '</b>';
+      F = [
+        'Пряма ' + L[4]+L[5] + ' паралельна стороні ' + L[1]+L[2] + ' і перетинає дві інші сторони. Чи подібний відтятий △' + n2 + ' до △' + n1 + '?',
+        'Кут ' + L[0] + ' — спільний для обох трикутників.',
+        '∠' + L[1] + ' = ∠' + L[4] + ' — відповідні кути при паралельних прямих ' + L[1]+L[2] + ' і ' + L[4]+L[5] + ' та січній ' + L[0]+L[1] + '.',
+        '∠' + L[2] + ' = ∠' + L[5] + ' — так само, січна ' + L[0]+L[2] + '. Усі три кути рівні.',
+        'Сторони пропорційні — це дає узагальнена теорема Фалеса.',
+        'Кути рівні, сторони пропорційні: △' + n1 + ' ∼ △' + n2 + '. Пряма, паралельна стороні, відтинає подібний трикутник.'
+      ];
+    } else if(CR === 'aa'){
+      KS = [[], ['a0'], ['a1'], ['a2'], ['ov'], ['dn']];
+      q.innerHTML = an(0) + an(1) + an(2, '⇒ ');
+      F = [
+        'Чи подібні △' + n1 + ' і △' + n2 + '? Перевіряти всі кути й усі сторони не будемо — досить двох кутів.',
+        'Дано: ∠' + L[0] + ' = ∠' + L[3] + '.',
+        'Дано: ∠' + L[1] + ' = ∠' + L[4] + '.',
+        'Тоді й третя пара рівна: ∠' + L[2] + ' = 180° − ∠' + L[0] + ' − ∠' + L[1] + ' = ∠' + L[5] + '.',
+        ov + ' — відповідні кути при ' + L[1] + ' рівні.',
+        lm + NM.aa + '.'
+      ];
+    } else if(CR === 'sas'){
+      KS = [[], ['a0'], ['t0'], ['t2'], ['ov'], ['dn']];
+      q.innerHTML = an(0) + rt(0) + rt(2);
+      F = [
+        'Чи подібні △' + n1 + ' і △' + n2 + '? Перевіримо лише кут і дві сторони, що його утворюють.',
+        'Дано: ∠' + L[0] + ' = ∠' + L[3] + ' — кут між сторонами, які порівнюємо.',
+        sn[0] + ' : ' + sm[0] + ' = ' + anum(k) + '.',
+        sn[2] + ' : ' + sm[2] + ' = ' + anum(k) + ' — те саме число: сторони при рівному куті пропорційні.',
+        ov + ': обидві сторони кута скоротились в однакове число разів.',
+        lm + NM.sas + '.'
+      ];
+    } else {
+      KS = [[], ['t0'], ['t1'], ['t2'], ['ov'], ['dn']];
+      q.innerHTML = rt(0) + rt(1) + rt(2);
+      F = [
+        'Чи подібні △' + n1 + ' і △' + n2 + '? Кутів не знаємо — лише сторони.',
+        sn[0] + ' : ' + sm[0] + ' = ' + anum(k) + '.',
+        sn[1] + ' : ' + sm[1] + ' = ' + anum(k) + '.',
+        sn[2] + ' : ' + sm[2] + ' = ' + anum(k) + ' — усі три відношення однакові.',
+        ov + ' — кут лягає точно, бо всі сторони скоротились в однакове число разів.',
+        lm + NM.sss + '.'
+      ];
+    }
+    if(CR !== 'lem') dn.innerHTML = '<b>△' + n1 + ' ∼ △' + n2 + '</b> — ' + NM[CR];
+  }
   var marks = el('div', 'hmk');
   marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
   box.appendChild(marks);
@@ -10318,7 +10475,11 @@ $$('.simtri').forEach(function(box){
     var st = trStep(marks, F.length);
     if(st === box.__at) return;
     var prev = box.__at; box.__at = st;
-    for(var i = 1; i <= 6; i++) box.classList.toggle('s' + i, st >= i);
+    if(KS){
+      var on = {};
+      KS.forEach(function(ts, j){ ts.forEach(function(t){ on[t] = on[t] || j <= st; }); });
+      Object.keys(on).forEach(function(t){ box.classList.toggle('k-' + t, on[t]); });
+    } else for(var i = 1; i <= 6; i++) box.classList.toggle('s' + i, st >= i);
     say.textContent = F[st];
     var P = POSE[st];
     if(st === prev + 1 && prev >= 0 && POSE[prev] !== P){
@@ -12345,6 +12506,8 @@ $$('.ppt').forEach(function(box){
          all        print(a)
          for:+10    for i in range(n): a[i] = a[i] + 10 (також **2, *2 …)
          for:sum / for:prod / for:sumsq / for:sumpos — накопичення в змінній
+         for:cnt>7  лічильник за умовою: if a[i] > 7: k = k + 1 (також <, >=, <=, ==;
+                    data-acc — імʼя лічильника, типово k)
          for:max / for:min — пошук найбільшого: m = a[0], далі порівняння
          get:-1     відʼємний індекс — шафка з кінця (data-neg — другий ряд
                     номерів -7 … -1 під шафками)
@@ -12550,8 +12713,11 @@ $$('.arr').forEach(function(box){
       }});
     } else if(k === 'for'){
       var mode = p.slice(1).join(':'), m = n;
-      var accum = /^(sum|prod|sumsq|sumpos)$/.test(mode);
-      var acc = box.dataset.acc || (mode === 'prod' ? 'dob' : 'suma');
+      var cm = /^cnt(>=|<=|==|>|<)(-?[\d.]+)$/.exec(mode);
+      var accum = !!cm || /^(sum|prod|sumsq|sumpos)$/.test(mode);
+      var acc = box.dataset.acc || (cm ? 'k' : mode === 'prod' ? 'dob' : 'suma');
+      var cmT = cm ? cm[1] + ' ' + cm[2] : '', cmV = cm ? parseFloat(cm[2]) : 0;
+      var cmOk = function(x){ return !cm ? false : cm[1] === '>' ? x > cmV : cm[1] === '<' ? x < cmV : cm[1] === '>=' ? x >= cmV : cm[1] === '<=' ? x <= cmV : x === cmV; };
       var IL = -1, BL, FL, PRL;
       if(accum) IL = lines.push(acc + (mode === 'prod' ? ' = 1' : ' = 0')) - 1;
       FL = lines.push('for i in range(' + m + '):') - 1;
@@ -12559,13 +12725,14 @@ $$('.arr').forEach(function(box){
         : mode === 'prod' ? acc + ' = ' + acc + ' * ' + NM + '[i]'
         : mode === 'sumsq' ? acc + ' = ' + acc + ' + ' + NM + '[i]*' + NM + '[i]'
         : mode === 'sumpos' ? 'if ' + NM + '[i] > 0: ' + acc + ' = ' + acc + ' + ' + NM + '[i]'
+        : cm ? 'if ' + NM + '[i] ' + cmT + ': ' + acc + ' = ' + acc + ' + 1'
         : exprCode('i', mode);
       BL = lines.push('    ' + body) - 1;
       PRL = lines.push('print(' + (accum ? acc : NM) + ')') - 1;
       var fx = accum ? null : parseExpr(mode);
       if(accum) steps.push({ line: IL, run: function(S){
         S.acc = { n: acc, x: mode === 'prod' ? { v: 1, f: false } : { v: 0, f: false } }; S.log = []; S.logN = acc;
-        S.say = 'Лічильник ' + acc + (mode === 'prod' ? ' = 1: для добутку починаємо з одиниці (множення на 1 нічого не змінює).' : ' = 0: для суми починаємо з нуля.');
+        S.say = cm ? 'Лічильник ' + acc + ' = 0: ще не знайшли жодного елемента ' + cmT + '.' : 'Лічильник ' + acc + (mode === 'prod' ? ' = 1: для добутку починаємо з одиниці (множення на 1 нічого не змінює).' : ' = 0: для суми починаємо з нуля.');
       }});
       for(var j = 0; j < m; j++) (function(j){
         steps.push({ line: BL, run: function(S){
@@ -12576,8 +12743,16 @@ $$('.arr').forEach(function(box){
             if(mode === 'sum'){ now = calc(was, '+', v); w = F(was) + ' + ' + Q(v); }
             else if(mode === 'prod'){ now = calc(was, '*', v); w = F(was) + ' · ' + Q(v); }
             else if(mode === 'sumsq'){ now = calc(was, '+', calc(v, '*', v)); w = F(was) + ' + ' + Q(v) + ' · ' + Q(v); }
+            else if(cm){ if(cmOk(v.v)){ now = { v: was.v + 1, f: false }; w = F(was) + ' + 1'; } }
             else { if(v.v > 0){ now = calc(was, '+', v); w = F(was) + ' + ' + F(v); } }
             S.acc.x = now; S.acc.flash = 1;
+            if(cm){
+              var yes = cmOk(v.v);
+              S.log.push([j, F(v), F(v) + ' ' + cmT + '? ' + (yes ? 'так → ' + acc + ' = ' + F(now) : 'ні')]);
+              S.say = 'i = ' + j + ': ' + NM + '[' + j + '] = ' + F(v) + '. ' + F(v) + ' ' + cmT + '? ' +
+                (yes ? 'Так — ' + acc + ' = ' + w + ' = ' + F(now) + '.' : 'Ні — ' + acc + ' не змінюється: ' + F(now) + '.');
+              return;
+            }
             S.log.push([j, F(v), w ? w + ' = ' + F(now) : F(now)]);
             S.say = 'i = ' + j + ': ' + NM + '[' + j + '] = ' + F(v) + '. ' +
               (mode === 'sumpos' && !(v.v > 0) ? F(v) + ' > 0? Ні — ' + acc + ' не змінюється: ' + F(now) + '.'
@@ -12591,7 +12766,7 @@ $$('.arr').forEach(function(box){
       })(j);
       steps.push({ line: PRL, run: function(S){
         S.ptr = -1; S.hi = -1;
-        var what = { sum: 'сума всіх елементів', prod: 'добуток усіх елементів', sumsq: 'сума квадратів усіх елементів', sumpos: 'сума додатних елементів' }[mode];
+        var what = cm ? 'стільки елементів ' + cmT : { sum: 'сума всіх елементів', prod: 'добуток усіх елементів', sumsq: 'сума квадратів усіх елементів', sumpos: 'сума додатних елементів' }[mode];
         S.out[PRL] = accum ? F(S.acc.x) : '[' + S.a.map(F).join(', ') + ']';
         S.say = 'Цикл пройшов усі ' + m + ' шафок. ' + (accum ? 'У ' + acc + ' — ' + F(S.acc.x) + ': це ' + what + '.' : 'Кожне значення змінено на місці.');
       }});
@@ -13055,6 +13230,158 @@ $$('.eqop').forEach(function(box){
       : ph === 1 ? what + '. Дію пишемо за рискою: | ' + op.o + ' ' + op.v + '.'
       : ph === 2 ? 'Ліва частина: ' + op.o + ' ' + op.v + '.'
       : 'Те саме — з правою: ' + calc + '.';
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C58 · .wrd — вікно Word: створити, налаштувати, зберегти, відкрити
+   (5-З інф. 24, 19.11.2026). Брат .ppt для текстового процесора.
+     <div class="wrd" data-mode="new" data-text="Тарас Шевченко|учень 5-З класу|Ліцей № 1"></div>
+       «новий»: початковий екран Word → «Пустий документ» → порожня
+       сторінка з курсором → кожен пробіл — ще один абзац (Enter).
+     <div class="wrd" data-mode="page"></div>
+       «параметри»: Макет → Розмір → A5; Поля → Настроювані поля → вікно
+       «Параметри сторінки» (по 2 см) → поля штрихом; Орієнтація →
+       Книжкова; Вигляд → «За шириною сторінки»; Основне → шрифт → розмір.
+       data-size="A5" data-mg="2" data-font="Times New Roman" data-fsize="14".
+     <div class="wrd" data-mode="save" data-name="Вправа 14" data-folder="5-З Шевченко"></div>
+       «зберегти»: Файл → Зберегти як → Огляд → «Збереження документа»:
+       своя папка → імʼя файлу, тип «Документ Word (*.docx)» → «Зберегти» →
+       у рядку заголовка нове імʼя.
+     <div class="wrd" data-mode="open" data-name="Вправа 14" data-folder="5-З Шевченко"></div>
+       «відкрити»: Word запущено знову, файл у «Останніх» → «Відкрити» →
+       «Відкриття документа», файл у своїй папці → «Відкрити» → текст на місці.
+     data-text — абзаци документа через «|» (у режимах new, save, open).
+     Кроки — пробілом (мітки .hmk); під вікном підпис: що зробили й навіщо.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.wrd').forEach(function(box){
+  var md = /^(new|page|save|open)$/.test(box.dataset.mode || '') ? box.dataset.mode : 'new';
+  /* data-text="" — без абзаців: у режимі new лише створити документ */
+  var TXT = String(box.hasAttribute('data-text') ? box.dataset.text : 'Тарас Шевченко|учень 5-З класу|Ліцей № 1').split('|').filter(function(t){ return t.trim(); });
+  var NAME = box.dataset.name || 'Вправа 14', FOLD = box.dataset.folder || '5-З Шевченко';
+  var SIZE = box.dataset.size || 'A5', MG = box.dataset.mg || '2';
+  var FONT = box.dataset.font || 'Times New Roman', FS = box.dataset.fsize || '14';
+  function E(t){ return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+  var SZ = ['A4 · 21 × 29,7 см', 'A5 · 14,8 × 21 см', 'Letter · 21,6 × 27,9 см'];
+  var szi = SIZE === 'A4' ? 0 : SIZE === 'Letter' ? 2 : 1;
+  /* стан вікна; кожен крок — латка до попереднього стану */
+  var base = {title: 'Документ1', tab: 'home', hot: '', menu: null, start: 0, lines: 0, a5: 0, mg: 0, fit: 0,
+              font: 'Calibri', fs: '11', bs: null, dlg: null, say: ''};
+  var P = [];
+  if(md === 'new'){
+    P.push({start: 1, say: 'Запускаємо Word: «Пуск» → Word або ярлик на робочому столі. Відкрився початковий екран.'});
+    P.push({start: 2, say: 'Клацаємо «Пустий документ» — створюємо новий документ.'});
+    P.push({start: 0, say: 'Новий документ «Документ1». Курсор блимає там, де зʼявиться текст.'});
+    TXT.forEach(function(t, i){
+      P.push({lines: i + 1, say: 'Набираємо «' + t + '»' + (i < TXT.length - 1 ? ' і натискаємо Enter — новий абзац.' : '. Текст уведено.')});
+    });
+  } else if(md === 'page'){
+    P.push({say: 'Документ створено. Спершу — параметри сторінки, потім текст.'});
+    P.push({tab: 'layout', hot: 'size', menu: {k: 'size', it: SZ, pick: -1}, say: 'Вкладка «Макет» → «Розмір»: список розмірів паперу.'});
+    P.push({menu: {k: 'size', it: SZ, pick: szi}, a5: szi === 1 ? 1 : 0, say: 'Обираємо ' + SZ[szi].split(' · ')[0] + (szi === 1 ? ' — сторінка стала меншою: удвічі менша за A4.' : '.')});
+    P.push({hot: 'mg', menu: {k: 'mg', it: ['Звичайні', 'Вузькі', 'Широкі', 'Настроювані поля…'], pick: 3}, say: '«Поля» → «Настроювані поля…».'});
+    P.push({menu: null, dlg: {k: 'mg'}, say: 'Вікно «Параметри сторінки»: верхнє, нижнє, ліве й праве — по ' + MG + ' см → «ОК».'});
+    P.push({dlg: null, hot: '', mg: 1, say: 'Поля — штрихом: на них основного тексту не буде.'});
+    P.push({hot: 'or', menu: {k: 'or', it: ['Книжкова', 'Альбомна'], pick: 0}, say: '«Орієнтація» → «Книжкова»: сторінка стоїть вертикально.'});
+    P.push({tab: 'view', hot: 'fitw', menu: null, fit: 1, say: 'Вкладка «Вигляд» → «За шириною сторінки». Сторінка та сама — змінилось лише те, як її видно.'});
+    P.push({tab: 'home', hot: 'font', font: FONT, say: 'Вкладка «Основне», група «Шрифт» → ' + FONT + '.'});
+    P.push({hot: 'fs', fs: FS, say: 'Розмір — ' + FS + '. Накреслення звичайне: Ж, К, П не натиснуті.'});
+  } else if(md === 'save'){
+    base.lines = TXT.length;
+    P.push({say: 'Текст набрано, але він лише в памʼяті компʼютера: закрили Word без збереження — і тексту немає.'});
+    P.push({bs: {pick: 'saveas'}, say: '«Файл» → «Зберегти як».'});
+    P.push({bs: {pick: 'saveas', hot: 'browse'}, say: '«Огляд» — папку обираємо самі.'});
+    P.push({bs: null, dlg: {k: 'save', at: 'docs', hot: 'fold'}, say: 'Вікно «Збереження документа». Відкриваємо свою папку «' + FOLD + '».'});
+    P.push({dlg: {k: 'save', at: 'fold', hot: 'name', typed: 1}, say: 'Імʼя файлу — «' + NAME + '». Тип — «Документ Word (*.docx)»: розширення .docx Word допише сам.'});
+    P.push({dlg: {k: 'save', at: 'fold', hot: 'ok', typed: 1}, say: 'Кнопка «Зберегти».'});
+    P.push({dlg: null, title: NAME, say: 'У рядку заголовка — «' + NAME + '»: файл збережено. Далі зберігаємо в той самий файл: Ctrl + S.'});
+  } else {
+    P.push({start: 3, say: 'Word запустили знову. Наш документ — у списку «Останні»; а якщо його там немає — «Відкрити».'});
+    P.push({start: 4, say: '«Відкрити» → «Огляд».'});
+    P.push({start: 0, dlg: {k: 'open', at: 'fold', hot: 'file'}, say: 'Вікно «Відкриття документа»: своя папка «' + FOLD + '», клацаємо файл «' + NAME + '.docx».'});
+    P.push({dlg: {k: 'open', at: 'fold', hot: 'ok', sel: 1}, say: 'Кнопка «Відкрити».'});
+    P.push({dlg: null, title: NAME, lines: TXT.length, say: 'Документ відкрився з тим самим текстом — працюємо далі. Те саме дає подвійне клацання по файлу в папці.'});
+  }
+  var S = [], cur = base;
+  P.forEach(function(p){ cur = Object.assign({}, cur, p); S.push(cur); });
+
+  function B(s, k, html, cls){
+    return '<span class="wd-b' + (cls ? ' ' + cls : '') + (s.hot === k ? ' now' : '') + '">' + html + menu(s, k) + '</span>';
+  }
+  function menu(s, k){
+    if(!s.menu || s.menu.k !== k) return '';
+    return '<span class="wd-menu">' + s.menu.it.map(function(t, i){ return '<i' + (i === s.menu.pick ? ' class="pk"' : '') + '>' + E(t) + '</i>'; }).join('') + '</span>';
+  }
+  function rib(s){
+    if(s.tab === 'layout') return '<div class="wd-g">' + B(s, 'mg', '<b>▣</b>Поля ▾') + B(s, 'or', '<b>▯</b>Орієнтація ▾') + B(s, 'size', '<b>▭</b>Розмір ▾') + '<small>Параметри сторінки</small></div>';
+    if(s.tab === 'view') return '<div class="wd-g">' + B(s, 'zoom', '<b>⌕</b>Масштаб') + B(s, 'z100', '100 %') + B(s, 'one', '<b>▯</b>Одна сторінка') + B(s, 'fitw', '<b>↔</b>За шириною сторінки') + '<small>Масштаб</small></div>';
+    return '<div class="wd-g">' + B(s, 'font', E(s.font) + ' ▾', 'wd-in wd-fo') + B(s, 'fs', E(s.fs) + ' ▾', 'wd-in') + '<span class="wd-bi"><b>Ж</b> <i>К</i> <u>П</u></span><small>Шрифт</small></div>'
+      + '<div class="wd-g"><span class="wd-bi">≡ ☰ ⋮</span><small>Абзац</small></div>';
+  }
+  function page(s){
+    var t = '';
+    for(var i = 0; i < s.lines; i++) t += '<p>' + E(TXT[i]) + '</p>';
+    var st = (s.font !== 'Calibri' ? 'font-family:&quot;' + E(s.font) + '&quot;,Times,serif;' : '') + (s.fs !== '11' ? 'font-size:' + (Math.round(+s.fs / 11 * 100) / 100) + 'em' : '');
+    return '<div class="wd-pg' + (s.a5 ? ' a5' : '') + (s.fit ? ' fit' : '') + '"><div class="wd-tx"><div class="wd-ar' + (s.mg ? ' mg' : '') + '"' + (st ? ' style="' + st + '"' : '') + '>'
+      + t + '<span class="wd-cur"></span></div></div></div>';
+  }
+  function row(cls, ic, txt, small){ return '<span class="wd-row' + (cls ? ' ' + cls : '') + '"><i class="wd-ic ' + ic + '"></i><span>' + txt + (small ? ' <small>' + small + '</small>' : '') + '</span></span>'; }
+  function start(s){
+    var rec = s.start >= 3 ? row('', 'd', E(NAME) + '.docx', 'Документи › ' + E(FOLD)) : '<span class="wd-empty">Тут зʼявляться документи, які ви відкривали.</span>';
+    return '<div class="wd-ov"><div class="wd-nav"><i>Головна</i><i' + (s.start === 2 ? ' class="now"' : '') + '>Створити</i><i' + (s.start === 4 ? ' class="now"' : '') + '>Відкрити</i></div>'
+      + '<div class="wd-main"><h4>Доброго дня</h4><span class="wd-tile' + (s.start === 2 ? ' now' : '') + '"><i></i>Пустий документ</span>'
+      + '<p class="wd-h5">Останні</p>' + rec + '</div></div>';
+  }
+  function bs(s){
+    var it = ['Головна', 'Створити', 'Відкрити', 'Відомості', 'Зберегти', 'Зберегти як', 'Друк', 'Закрити'];
+    return '<div class="wd-ov"><div class="wd-nav"><i>←</i>' + it.map(function(t){ return '<i' + (t === 'Зберегти як' ? ' class="now"' : '') + '>' + t + '</i>'; }).join('') + '</div>'
+      + '<div class="wd-main"><h4>Зберегти як</h4>' + row('', 'f', 'Останні') + row('', 'f', 'Цей ПК') + row(s.bs.hot === 'browse' ? 'now' : '', 'f', 'Огляд') + '</div></div>';
+  }
+  function dlg(s){
+    var d = s.dlg, h = '';
+    if(d.k === 'mg'){
+      h = '<div class="wd-dh"><span>Параметри сторінки</span><span>✕</span></div><div class="wd-dt"><b>Поля</b> · Папір · Макет</div><div class="wd-2">';
+      ['Верхнє', 'Нижнє', 'Ліве', 'Праве'].forEach(function(f){ h += '<span class="wd-f"><span>' + f + ':</span><span class="wd-fi now">' + E(MG) + ' см</span></span>'; });
+      return '<div class="wd-dlg">' + h + '</div><span class="wd-f"><span>Орієнтація:</span><span class="wd-fi">Книжкова</span></span><div class="wd-btns"><span class="wd-btn pri now">ОК</span><span class="wd-btn">Скасувати</span></div></div>';
+    }
+    var sv = d.k === 'save', inF = d.at === 'fold';
+    h = '<div class="wd-dh"><span>' + (sv ? 'Збереження документа' : 'Відкриття документа') + '</span><span>✕</span></div>'
+      + '<div class="wd-path">Цей ПК › Документи' + (inF ? ' › <b>' + E(FOLD) + '</b>' : '') + '</div>'
+      + '<div class="wd-pn"><div class="wd-tree">' + row('', 'f', 'Робочий стіл') + row('sel', 'f', 'Документи') + row('', 'f', 'Завантаження') + row('', 'f', 'Цей ПК') + '</div><div class="wd-list">';
+    if(!inF) h += row(d.hot === 'fold' ? 'now' : '', 'f', E(FOLD)) + row('', 'f', 'Фото з екскурсії');
+    else if(sv) h += '<span class="wd-empty">Папка порожня — тут зʼявиться наш файл.</span>';
+    else h += row(d.hot === 'file' ? 'now' : d.sel ? 'sel' : '', 'd', E(NAME) + '.docx');
+    h += '</div></div>'
+      + '<span class="wd-f"><span>Імʼя файлу:</span><span class="wd-fi' + (d.hot === 'name' ? ' now' : '') + '">' + (sv ? (d.typed ? E(NAME) : 'Документ1') : (d.hot === 'file' || d.sel ? E(NAME) + '.docx' : '')) + '</span></span>'
+      + '<span class="wd-f"><span>Тип файлу:</span><span class="wd-fi">' + (sv ? 'Документ Word (*.docx)' : 'Усі документи Word') + '</span></span>'
+      + '<div class="wd-btns"><span class="wd-btn pri' + (d.hot === 'ok' ? ' now' : '') + '">' + (sv ? 'Зберегти' : 'Відкрити') + '</span><span class="wd-btn">Скасувати</span></div>';
+    return '<div class="wd-dlg">' + h + '</div>';
+  }
+  var TABS = [['', 'Файл'], ['home', 'Основне'], ['', 'Вставлення'], ['', 'Конструктор'], ['layout', 'Макет'], ['', 'Посилання'], ['view', 'Вигляд']];
+  box.textContent = '';
+  var win = el('div', 'wd-win'); box.appendChild(win);
+  var say = asay(box);
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(S.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var s = S[Math.min(st, S.length - 1)], words = 0;
+    for(var i = 0; i < s.lines; i++) words += TXT[i].split(/\s+/).filter(Boolean).length;
+    win.innerHTML = '<div class="wd-title"><span class="wd-fn">' + E(s.title) + ' — Word</span><span class="wd-wb"><i>─</i><i>▢</i><i>✕</i></span></div>'
+      + '<div class="wd-tabs">' + TABS.map(function(t, i){
+          return '<span class="' + (i ? (t[0] && t[0] === s.tab ? 'cur' : '') : 'wd-file' + (s.bs ? ' now' : '')) + '">' + t[1] + '</span>'; }).join('') + '</div>'
+      + '<div class="wd-rib">' + rib(s) + '</div>'
+      + '<div class="wd-body">' + page(s) + '</div>'
+      + '<div class="wd-st"><span>Сторінка 1 з 1 · Слів: ' + words + '</span><span>' + (s.fit ? '－ ━━━●━ ＋  ширина' : '－ ━━●━━ ＋  100 %') + '</span></div>'
+      + (s.start ? start(s) : '') + (s.bs ? bs(s) : '') + (s.dlg ? dlg(s) : '');
+    say.textContent = s.say;
     fit();
   };
   box.__paint();
