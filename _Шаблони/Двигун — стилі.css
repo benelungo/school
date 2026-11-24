@@ -2711,6 +2711,8 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .powop .po-frac small{display:none}
 .powop .po-f.cut{opacity:.3;text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:var(--marker)}
 .powop .po-fin{color:var(--check)}
+.powop .po-cr,.powop .po-def{color:var(--check)}
+.powop .po-def{border:3px solid var(--check);border-radius:var(--r-s);padding:.15em .6em}
 .powop .g3{color:var(--check)}
 .powop .g4{color:var(--nb)}
 .powop .po-ill{font-size:clamp(18px,calc(2.6*var(--u)),34px)}

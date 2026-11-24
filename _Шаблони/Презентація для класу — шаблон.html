@@ -2742,6 +2742,8 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .powop .po-frac small{display:none}
 .powop .po-f.cut{opacity:.3;text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:var(--marker)}
 .powop .po-fin{color:var(--check)}
+.powop .po-cr,.powop .po-def{color:var(--check)}
+.powop .po-def{border:3px solid var(--check);border-radius:var(--r-s);padding:.15em .6em}
 .powop .g3{color:var(--check)}
 .powop .g4{color:var(--nb)}
 .powop .po-ill{font-size:clamp(18px,calc(2.6*var(--u)),34px)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.powop .po-ill{font-size:18px}}/*}compat*/
@@ -3652,6 +3654,12 @@ h1{font-weight:700} h2{font-weight:650}
   <h2>121a¹⁸b²c⁴ = ( … )² <span class="mut">(.powop data-op="root" — анімація)</span></h2>
   <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
   <div class="powop" data-op="root" data-n="2" data-parts="121=11; a18=a9; b2=b; c4=c2"></div>
+</section>
+
+<section class="slide" data-t="Відʼємний показник" data-chapter="Нова тема">
+  <h2>a³ : a⁵ = ? <span class="mut">(.powop data-op="div", m ≤ n — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="powop" data-op="div" data-base="a" data-m="3" data-n="5"></div>
 </section>
 
 <section class="slide" data-t="Допоміжна пряма" data-chapter="Нова тема">
@@ -8839,6 +8847,81 @@ function powopRoot(box){
   };
   box.__paint();
 }
+/* .powop data-op="div" з m ≤ n — нульовий і відʼємний показник (з 25.11.2026, 8-К алг. 37)
+     <div class="powop" data-op="div" data-base="a" data-m="3" data-n="5"></div>  → a⁻² = 1/a²
+     <div class="powop" data-op="div" data-base="a" data-m="3" data-n="3"></div>  → a⁰ = 1
+   Два шляхи до одного числа. Рядок 1 — дробом: зверху m множників, знизу n,
+   пари скорочуються, лишається 1 (m = n) або 1/aᵏ. Рядок 2 — за правилом
+   ділення степенів: показники віднімаємо, m − n = 0 чи −k. Рядок 3 — висновок,
+   тобто означення: a⁰ = 1, a⁻ᵏ = 1/aᵏ. Раніше m ≤ n мовчки ставало n = m − 1. */
+function powopNeg(box, B, m, n){
+  var K = n - m;
+  var lt = /^[A-Za-zА-Яа-яІіЇїЄєҐґ]$/.test(B);
+  var bb = lt ? '<i class="m">' + B + '</i>' : B;
+  function pw(e, c){ return '<span class="' + (c || '') + '">' + bb + '<sup>' + e + '</sup></span>'; }
+  function fac(k, g){
+    var h = '';
+    for(var i = 0; i < k; i++){
+      if(i) h += '<span class="po-dot">·</span>';
+      h += '<span class="po-f ' + g + '"><b>' + bb + '</b><small></small></span>';
+    }
+    return h;
+  }
+  var E = K ? '−' + K : '0';
+  var Es = K ? '⁻' + supNum(K) : '⁰';
+  var one = K ? '<span class="po-frac"><span class="po-num">1</span><span class="po-den">' + pw(K) + '</span></span>' : '1';
+  var src = pw(m, 'g1') + ' <span class="po-o">:</span> ' + pw(n, 'g2');
+  box.textContent = '';
+  var l1 = el('div', 'po-line'), l2 = el('div', 'po-line'), l3 = el('div', 'po-line');
+  l1.innerHTML = '<span class="po-p po-src on">' + src + '</span>' +
+    '<span class="po-p po-eq e1">=</span>' +
+    '<span class="po-p po-exp po-frac"><span class="po-num">' + fac(m, 'g1') + '</span><span class="po-den">' + fac(n, 'g2') + '</span></span>' +
+    '<span class="po-p po-eq e2">=</span>' +
+    '<span class="po-p po-cr">' + one + '</span>';
+  l2.innerHTML = '<span class="po-p po-src2">' + src + '</span>' +
+    '<span class="po-p po-eq e3">=</span>' +
+    '<span class="po-p po-res">' + bb + '<sup><span class="g1">' + m + '</span>−<span class="g2">' + n + '</span></sup></span>' +
+    '<span class="po-p po-eq e4">=</span>' +
+    '<span class="po-p po-fin">' + pw(E) + '</span>';
+  l3.innerHTML = '<span class="po-p po-def">' + pw(E) + ' = ' + one + '</span>';
+  box.appendChild(l1); box.appendChild(l2); box.appendChild(l3);
+  var say = asay(box);
+  var top = $$('.po-num .po-f', l1), bot = $$('.po-den .po-f', l1);
+  var F = [
+    {say:'Ділимо ' + B + supNum(m) + ' на ' + B + supNum(n) + (K ? ' — менший степінь на більший.' : ' — степінь на такий самий.') + ' Що вийде? Порахуємо двома способами.'},
+    {exp:1, say:'Спосіб 1 — дробом: зверху ' + powWord(m) + ' ' + B + ', знизу — ' + powWord(n) + '.'},
+    {exp:1, cut:1, say:'Кожне ' + B + ' зверху скорочується з одним ' + B + ' знизу. Пар — ' + m + '.'},
+    {exp:1, cut:1, cr:1, say: K ? 'Зверху лишилась 1, знизу — ' + powWord(K) + ' ' + B + ': вийшло 1/' + B + supNum(K) + '.'
+                                : 'Скоротилось усе — дріб дорівнює 1.'},
+    {exp:1, cut:1, cr:1, res:1, say:'Спосіб 2 — за правилом ділення степенів: показники віднімаємо.'},
+    {exp:1, cut:1, cr:1, res:1, fin:1, say: m + ' − ' + n + ' = ' + E + (K ? ': показник відʼємний!' : ': показник нуль!')},
+    {exp:1, cut:1, cr:1, res:1, fin:1, def:1, say:'Число те саме, тож ' + B + Es + ' = ' + (K ? '1/' + B + supNum(K) : '1') + '. Так і домовились (' + B + ' ≠ 0).'}
+  ];
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st >= F.length) st = F.length - 1;
+    if(st === box.__at) return;
+    box.__at = st;
+    var f = F[st];
+    function on(sel, v, root){ $(sel, root).classList.toggle('on', !!v); }
+    on('.e1', f.exp, l1); on('.po-exp', f.exp, l1);
+    bot.forEach(function(t, i){ var c = !!f.cut && i < m; t.classList.toggle('cut', c); t.style.transitionDelay = c ? (i * .25) + 's' : '0s'; });
+    top.forEach(function(t, i){ t.classList.toggle('cut', !!f.cut); t.style.transitionDelay = f.cut ? (i * .25) + 's' : '0s'; });
+    on('.e2', f.cr, l1); on('.po-cr', f.cr, l1);
+    on('.po-src2', f.res, l2); on('.e3', f.res, l2); on('.po-res', f.res, l2);
+    on('.e4', f.fin, l2); on('.po-fin', f.fin, l2);
+    on('.po-def', f.def, l3);
+    say.textContent = f.say;
+    fit();
+  };
+  box.__paint();
+}
+
 $$('.powop').forEach(function(box){
   if(box.dataset.op === 'pow' || box.dataset.op === 'prod'){ powopPP(box); return; }
   if(box.dataset.op === 'root'){ powopRoot(box); return; }
@@ -8846,7 +8929,7 @@ $$('.powop').forEach(function(box){
   var dv = box.dataset.op === 'div';
   var m = Math.max(1, Math.min(8, parseInt(box.dataset.m, 10) || 3));
   var n = Math.max(1, Math.min(8, parseInt(box.dataset.n, 10) || 2));
-  if(dv && n >= m) n = m - 1;
+  if(dv && n >= m){ powopNeg(box, B, m, n); return; }
   if(n < 1){ n = 1; m = 2; }
   var R = dv ? m - n : m + n;
   var lt = /^[A-Za-zА-Яа-яІіЇїЄєҐґ]$/.test(B);
