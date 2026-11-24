@@ -1449,6 +1449,21 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .wrd .wd-btn{margin-left:.6em;padding:.3em 1.2em;border:1px solid var(--edge);border-radius:3px;transition:background .3s,box-shadow .3s}
 .wrd .wd-btn.pri{border-color:var(--pen);color:var(--pen);font-weight:800}
 .wrd .wd-btn.now{background:var(--sun-soft);box-shadow:0 0 0 2px var(--sun)}
+/* .wrd sel / clip / edit / fmt (5-З інф. 25): виділення, буфер обміну, помилки, формат */
+.wrd .wd-body{position:relative}
+.wrd .wd-pg.rich .wd-tx{padding:4% 6%;font-size:1.55em}
+.wrd .wd-sel{background:var(--pen-soft);box-shadow:0 0 0 1px var(--pen)}
+.wrd .wd-err{text-decoration:underline wavy #e5484d;text-decoration-skip-ink:none;text-underline-offset:.18em}
+.wrd .wd-fix{color:var(--check);font-weight:800}
+.wrd .wd-kb{position:absolute;z-index:2;right:.8em;top:.6em;padding:.3em .7em;border-radius:var(--r-s);background:var(--card);border:2px solid var(--sun);box-shadow:var(--sh1);font-weight:800;white-space:nowrap}
+.wrd .wd-kb.wd-ms{border-color:var(--pen);color:var(--pen)}
+.wrd .wd-clip{position:absolute;z-index:2;right:.8em;bottom:.6em;display:flex;flex-direction:column;min-width:8em;padding:.3em .8em;border:2px dashed var(--pen);border-radius:var(--r-s);background:var(--card)}
+.wrd .wd-clip small{color:var(--soft);font-size:.8em}
+.wrd .wd-clip i{color:var(--soft)}
+.wrd .wd-col{display:inline-flex;flex-direction:column;font-size:.85em}
+.wrd .wd-b>b.wd-x{margin:0;color:inherit}
+.wrd .wd-x{display:inline-block;min-width:1em;text-align:center}
+.wrd .wd-a{border-bottom:3px solid #d0312d;line-height:1.1}
 .wrd .asay{margin-top:clamp(6px,.9vw,12px);min-height:2.6em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.wrd .asay{margin-top:6px;font-size:12px}}/*}compat*/
 /* C15 · .vang — вертикальні кути */
 .vang{display:flex;flex-wrap:wrap;gap:clamp(8px,2vw,20px);align-items:center}/*compat{*/@supports not ((width:clamp(1px,2px,3px))){.vang{gap:8px}}/*}compat*//*compat{*/.no-fgap .vang>*{margin-right:8px;margin-bottom:8px}/*}compat*/
@@ -3545,6 +3560,12 @@ h1{font-weight:700} h2{font-weight:650}
   <div class="wrd" data-mode="save" data-name="Вправа 14" data-folder="5-З Коваленко" data-text="Олеся Коваленко|учениця 5-З класу|Моя школа"></div>
 </section>
 
+<section class="slide" data-t="Буфер обміну" data-chapter="Нова тема">
+  <h2>Вирізати, вставити, копіювати <span class="mut">(.wrd — режими sel, clip, edit, fmt)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="wrd" data-mode="clip"></div>
+</section>
+
 <section class="slide" data-t="Касовий чек" data-chapter="Нова тема">
   <h2>Ціна · кількість = вартість <span class="mut">(.receipt — анімація)</span></h2>
   <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
@@ -3762,6 +3783,12 @@ h1{font-weight:700} h2{font-weight:650}
   <h2>Рівні трикутники — накладанням <span class="mut">(.simtri data-mode="eq" — анімація)</span></h2>
   <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
   <div class="simtri" data-mode="eq" data-sides="5,6,7" data-turn="-50" data-labels="A,B,C,K,L,M"></div>
+</section>
+
+<section class="slide" data-t="Ознаки рівності" data-chapter="Нова тема">
+  <h2>Ознаки рівності трикутників <span class="mut">(.simtri data-mode="esas" | "easa" — анімація)</span></h2>
+  <div class="modes"><span class="mode listen"><span class="dot"></span>слухаємо пояснення</span></div>
+  <div class="simtri" data-mode="esas" data-sides="5,6,7" data-turn="-50" data-labels="A,B,C,A₁,B₁,C₁"></div>
 </section>
 
 <section class="slide" data-t="Лема про паралельну" data-chapter="Нова тема">
@@ -10471,7 +10498,9 @@ $$('.simtri').forEach(function(box){
   if(!(k >= 1.2 && k <= 4)) k = 2;
   /* data-mode="eq" (з 19.11.2026, 7-І геом. 24) — РІВНІ трикутники: k = 1, другий лягає
      на перший повністю; далі відповідні кути, відповідні сторони рівні, запис △ABC = △KLM */
-  var EQ = box.dataset.mode === 'eq';
+  /* data-mode="esas" | "easa" (з 25.11.2026, 7-І геом. 25) — ПЕРША й ДРУГА ОЗНАКИ РІВНОСТІ:
+     геометрія як у eq (k = 1), кроки — як в ознаках подібності: лише дане в ознаці, далі накладання */
+  var EQ = /^(eq|esas|easa)$/.test(box.dataset.mode || '');
   if(EQ) k = 1;
   var turn = parseFloat(box.dataset.turn); if(isNaN(turn)) turn = 40;
   turn = Math.max(-90, Math.min(90, turn));
@@ -10571,7 +10600,7 @@ $$('.simtri').forEach(function(box){
      лема (пряма, паралельна стороні, відтинає подібний) дає висновок. lem — менший уже
      в куті A: ∠A спільний, ∠B = ∠B₁ і ∠C = ∠C₁ відповідні, сторони пропорційні.
      Кроки — класи k-* (накопичуються) замість s1…s6. */
-  var CR = /^(lem|aa|sas|sss)$/.test(box.dataset.mode || '') ? box.dataset.mode : '', KS = null;
+  var CR = /^(lem|aa|sas|sss|esas|easa)$/.test(box.dataset.mode || '') ? box.dataset.mode : '', KS = null;
   if(CR){
     box.classList.add('cr');
     var A0 = at(0);
@@ -10581,7 +10610,35 @@ $$('.simtri').forEach(function(box){
     var NM = {aa:'за двома кутами', sas:'за двома сторонами й кутом між ними', sss:'за трьома сторонами'};
     var ov = 'Кладемо кут ' + L[3] + ' на кут ' + L[0] + ': сторона ' + L[4]+L[5] + ' лягла паралельно ' + L[1]+L[2];
     var lm = 'За лемою відтятий трикутник подібний △' + n1 + '. Отже, △' + n1 + ' ∼ △' + n2 + ' — ';
-    if(CR === 'lem'){
+    var eqs = function(i){ return '<span class="q' + i + '">' + sn[i] + ' = ' + sm[i] + '</span>'; };
+    if(CR === 'esas' || CR === 'easa'){
+      var EN = CR === 'esas' ? 'за двома сторонами і кутом між ними' : 'за стороною і двома прилеглими кутами';
+      var fin = 'Усі три вершини збіглися — трикутники рівні: △' + n1 + ' = △' + n2 + ' — ' + EN + '.';
+      if(CR === 'esas'){
+        KS = [[], ['a0'], ['t0'], ['t2'], ['ov'], ['dn']];
+        q.innerHTML = an(0) + eqs(0) + eqs(2);
+        F = [
+          'Чи рівні △' + n1 + ' і △' + n2 + '? Порівняємо лише дві сторони й кут між ними.',
+          'Дано: ∠' + L[0] + ' = ∠' + L[3] + '.',
+          'Дано: ' + sn[0] + ' = ' + sm[0] + ' — одна сторона цього кута.',
+          'Дано: ' + sn[2] + ' = ' + sm[2] + ' — друга сторона того самого кута.',
+          'Накладаємо: ' + L[3] + ' — на ' + L[0] + '; кути рівні, тож промінь ' + L[3]+L[4] + ' ліг на ' + L[0]+L[1] + ', а ' + L[3]+L[5] + ' — на ' + L[0]+L[2] + '. Відрізки рівні, тож ' + L[4] + ' лягла на ' + L[1] + ', а ' + L[5] + ' — на ' + L[2] + '.',
+          fin
+        ];
+      } else {
+        KS = [[], ['t0'], ['a0'], ['a1'], ['ov'], ['dn']];
+        q.innerHTML = eqs(0) + an(0) + an(1);
+        F = [
+          'Чи рівні △' + n1 + ' і △' + n2 + '? Порівняємо лише одну сторону й два кути при ній.',
+          'Дано: ' + sn[0] + ' = ' + sm[0] + '.',
+          'Дано: ∠' + L[0] + ' = ∠' + L[3] + ' — кут при цій стороні.',
+          'Дано: ∠' + L[1] + ' = ∠' + L[4] + ' — другий кут при тій самій стороні.',
+          'Накладаємо: ' + L[3] + ' — на ' + L[0] + ', ' + L[4] + ' — на ' + L[1] + ' (сторони рівні). Кути рівні, тож промінь ' + L[3]+L[5] + ' ліг на ' + L[0]+L[2] + ', а ' + L[4]+L[5] + ' — на ' + L[1]+L[2] + ': точка ' + L[5] + ', де вони перетинаються, лягла на ' + L[2] + '.',
+          fin
+        ];
+      }
+      dn.innerHTML = '<b>△' + n1 + ' = △' + n2 + '</b> — ' + EN;
+    } else if(CR === 'lem'){
       KS = [[], ['a0'], ['a1'], ['a2'], ['r'], ['dn']];
       q.innerHTML = '<span class="qa0">∠' + L[0] + ' — спільний</span>' + an(1) + an(2) +
         '<span class="qlr">' + fr(L[3]+L[4], L[0]+L[1]) + ' = ' + fr(L[3]+L[5], L[0]+L[2]) + ' = ' + fr(L[4]+L[5], L[1]+L[2]) + '</span>';
@@ -10628,7 +10685,7 @@ $$('.simtri').forEach(function(box){
         lm + NM.sss + '.'
       ];
     }
-    if(CR !== 'lem') dn.innerHTML = '<b>△' + n1 + ' ∼ △' + n2 + '</b> — ' + NM[CR];
+    if(NM[CR]) dn.innerHTML = '<b>△' + n1 + ' ∼ △' + n2 + '</b> — ' + NM[CR];
   }
   var marks = el('div', 'hmk');
   marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
@@ -13419,9 +13476,20 @@ $$('.eqop').forEach(function(box){
        «Відкриття документа», файл у своїй папці → «Відкрити» → текст на місці.
      data-text — абзаци документа через «|» (у режимах new, save, open).
      Кроки — пробілом (мітки .hmk); під вікном підпис: що зробили й навіщо.
+   З 25.11.2026 (5-З інф. 25, § 15) — режими з вбудованим текстом (data-text не читають),
+   масштаб «за шириною», праворуч угорі — клавіші чи дія мишею, внизу — буфер обміну:
+     <div class="wrd" data-mode="sel"></div>   виділення: Shift + стрілки, двічі клацнути —
+       слово, тричі — абзац, ліве поле — рядок, Ctrl + A — усе, клацання — зняти.
+     <div class="wrd" data-mode="clip"></div>  вирізати / вставити (перемістити «Вівторок»),
+       Delete не кладе в буфер, Ctrl + C — копія в буфері, текст на місці.
+     <div class="wrd" data-mode="edit"></div>  три помилки: зайвий символ (Delete),
+       пропущений (вставити), неправильний (Delete + правильний).
+     <div class="wrd" data-mode="fmt"></div>   властивості символів: шрифт, розмір, К, колір
+       для абзацу; П і Ж — для окремих слів.
    ───────────────────────────────────────────────────────────────────── */
 $$('.wrd').forEach(function(box){
-  var md = /^(new|page|save|open)$/.test(box.dataset.mode || '') ? box.dataset.mode : 'new';
+  var md = /^(new|page|save|open|sel|clip|edit|fmt)$/.test(box.dataset.mode || '') ? box.dataset.mode : 'new';
+  var RICH = /^(sel|clip|edit|fmt)$/.test(md);
   /* data-text="" — без абзаців: у режимі new лише створити документ */
   var TXT = String(box.hasAttribute('data-text') ? box.dataset.text : 'Тарас Шевченко|учень 5-З класу|Ліцей № 1').split('|').filter(function(t){ return t.trim(); });
   var NAME = box.dataset.name || 'Вправа 14', FOLD = box.dataset.folder || '5-З Шевченко';
@@ -13461,6 +13529,61 @@ $$('.wrd').forEach(function(box){
     P.push({dlg: {k: 'save', at: 'fold', hot: 'name', typed: 1}, say: 'Імʼя файлу — «' + NAME + '». Тип — «Документ Word (*.docx)»: розширення .docx Word допише сам.'});
     P.push({dlg: {k: 'save', at: 'fold', hot: 'ok', typed: 1}, say: 'Кнопка «Зберегти».'});
     P.push({dlg: null, title: NAME, say: 'У рядку заголовка — «' + NAME + '»: файл збережено. Далі зберігаємо в той самий файл: Ctrl + S.'});
+  } else if(RICH){
+    base.fit = 1; base.kb = ''; base.ms = ''; base.clip = null;
+    var CUR = '<span class="wd-cur"></span>';
+    var hl = function(t, sub, cls, css){
+      var i = t.indexOf(sub); if(i < 0) return E(t);
+      return E(t.slice(0, i)) + '<span class="' + cls + '"' + (css ? ' style="' + css + '"' : '') + '>' + E(sub) + '</span>' + E(t.slice(i + sub.length));
+    };
+    var cu = function(t, sub){ var i = t.indexOf(sub); return E(t.slice(0, i)) + CUR + E(t.slice(i)); };
+    var all = function(t, cls, css){ return '<span class="' + cls + '"' + (css ? ' style="' + css + '"' : '') + '>' + E(t) + '</span>'; };
+    var A3 = ['Україна — найбільша за площею країна Європи.', 'Територію України омивають Чорне та Азовське моря.', 'Державними символами України є Гімн, Прапор і малий Герб.'];
+    var pl = A3.map(E);
+    var w = function(i, h){ var r = pl.slice(); r[i] = h; return r; };
+    if(md === 'sel'){
+      P.push({html: w(0, cu(A3[0], 'найбільша')), ms: 'клацнути', say: 'Щоб змінити частину тексту, її спершу виділяють. Ставимо курсор на початок фрагмента.'});
+      P.push({html: w(0, hl(A3[0], 'найбільша', 'wd-sel')), ms: '', kb: 'Shift + →', say: 'Утримуємо Shift і натискаємо → : кожне натискання додає до виділення ще один символ. Виділене підсвічується.'});
+      P.push({html: w(0, hl(A3[0], 'Європи', 'wd-sel')), kb: '', ms: 'двічі клацнути на слові', say: 'Мишею: двічі клацнути на слові — виділиться слово.'});
+      P.push({html: w(1, all(A3[1], 'wd-sel')), ms: 'тричі клацнути на слові', say: 'Тричі клацнути на слові — виділиться весь абзац.'});
+      P.push({html: w(2, all(A3[2], 'wd-sel')), ms: 'клацнути на лівому полі', say: 'Клацнути на лівому полі навпроти рядка — виділиться рядок. Двічі на лівому полі — абзац.'});
+      P.push({html: A3.map(function(t){ return all(t, 'wd-sel'); }), ms: '', kb: 'Ctrl + A', say: 'Ctrl + A — виділиться весь текст документа.'});
+      P.push({html: w(1, cu(A3[1], 'Чорне')), kb: '', ms: 'клацнути на сторінці', say: 'Щоб зняти виділення, клацаємо будь-де на сторінці. Курсор стає туди, де клацнули.'});
+    } else if(md === 'clip'){
+      var D = ['Понеділок', 'Середа', 'Вівторок', 'ааааа'], d = D.map(E);
+      P.push({html: d, clip: '', say: 'Дні тижня переплутані: вівторок має стояти перед середою. А «ааааа» — зайвий рядок.'});
+      P.push({html: [d[0], d[1], all(D[2], 'wd-sel'), d[3]], ms: 'двічі клацнути', say: 'Виділяємо «Вівторок».'});
+      P.push({html: [d[0], d[1], d[3]], ms: '', kb: 'Ctrl + X', hot: 'cut', clip: D[2], say: 'Вирізати — Ctrl + X: фрагмент зник з документа, але не пропав — він у буфері обміну.'});
+      P.push({html: [d[0], CUR + d[1], d[3]], kb: '', hot: '', ms: 'клацнути', say: 'Ставимо курсор на початок рядка «Середа» — туди, куди переносимо.'});
+      P.push({html: [d[0], all(D[2], 'wd-fix'), d[1], d[3]], ms: '', kb: 'Ctrl + V', hot: 'paste', say: 'Вставити — Ctrl + V: фрагмент із буфера став на місце курсора. Вирізали й вставили — отже, перемістили.'});
+      P.push({html: [d[0], d[2], d[1], all(D[3], 'wd-sel')], kb: '', hot: '', ms: 'двічі клацнути', say: 'Виділяємо зайве «ааааа».'});
+      P.push({html: [d[0], d[2], d[1]], ms: '', kb: 'Delete', say: 'Delete — видалити: рядок зник, а в буфер не потрапив — там досі «Вівторок». Вирізане можна вставити, видалене — ні.'});
+      P.push({html: [all(D[0], 'wd-sel'), d[2], d[1]], kb: 'Ctrl + C', hot: 'copy', clip: D[0], say: 'Копіювати — Ctrl + C: текст лишився на місці, а копія — у буфері. Вставляти її можна скільки завгодно разів.'});
+    } else if(md === 'edit'){
+      var ER = function(x){ return '<span class="wd-err">' + x + '</span>'; }, FX = function(x){ return '<span class="wd-fix">' + x + '</span>'; };
+      var w1 = ['Украйїна', 'Укра' + CUR + 'йїна', 'Укра' + CUR + 'їна', 'Україна'], w2 = ['найбльша', 'найб' + CUR + 'льша', 'найб' + FX('і') + CUR + 'льша', 'найбільша'], w3 = ['площою', 'площ' + CUR + 'ою', 'площ' + CUR + 'ю', 'площ' + FX('е') + CUR + 'ю', 'площею'];
+      var line = function(a, ea, b, eb, c, ec){ return [(ea ? ER(a) : a) + ' — ' + (eb ? ER(b) : b) + ' за ' + (ec ? ER(c) : c) + ' країна Європи.']; };
+      P.push({html: line(w1[0], 1, w2[0], 1, w3[0], 1), say: 'Червона хвиля — слова з помилками. Помилки бувають трьох видів: зайвий символ, пропущений і неправильний.'});
+      P.push({html: line(w1[1], 1, w2[0], 1, w3[0], 1), ms: 'клацнути', say: 'Зайвий символ «й». Ставимо курсор перед ним…'});
+      P.push({html: line(w1[2], 0, w2[0], 1, w3[0], 1), ms: '', kb: 'Delete', say: '…і натискаємо Delete — він видаляє символ праворуч від курсора. Backspace видалив би символ ліворуч.'});
+      P.push({html: line(w1[3], 0, w2[1], 1, w3[0], 1), kb: '', ms: 'клацнути', say: 'Пропущений символ: ставимо курсор між «б» і «л»…'});
+      P.push({html: line(w1[3], 0, w2[2], 0, w3[0], 1), ms: '', kb: 'і', say: '…і набираємо «і». Решта слова посунулась праворуч.'});
+      P.push({html: line(w1[3], 0, w2[3], 0, w3[1], 1), kb: '', ms: 'клацнути', say: 'Неправильний символ: «о» замість «е». Ставимо курсор перед ним…'});
+      P.push({html: line(w1[3], 0, w2[3], 0, w3[2], 1), ms: '', kb: 'Delete', say: '…Delete — видаляємо неправильний символ…'});
+      P.push({html: line(w1[3], 0, w2[3], 0, w3[3], 0), kb: 'е', say: '…і набираємо правильний «е». Помилок немає — червона хвиля зникла.'});
+    } else {
+      var F1 = 'font-family:Arial,Helvetica,sans-serif;font-size:1.27em', F2 = F1 + ';font-style:italic', F3 = F2 + ';color:#d0312d';
+      P.push({html: pl, say: 'Шрифт, розмір, накреслення, колір — властивості символів. Змінюють їх для виділеного фрагмента — одразу для всіх його символів.'});
+      P.push({html: w(0, all(A3[0], 'wd-sel')), ms: 'тричі клацнути', say: 'Виділяємо перший абзац.'});
+      P.push({html: w(0, all(A3[0], 'wd-sel', 'font-family:Arial,Helvetica,sans-serif')), ms: '', hot: 'font', font: 'Arial', say: 'Вкладка «Основне», група «Шрифт»: шрифт → Arial. Змінився вигляд літер.'});
+      P.push({html: w(0, all(A3[0], 'wd-sel', F1)), hot: 'fs', fs: '14', say: 'Розмір → 14 пт. Літери більшають.'});
+      P.push({html: w(0, all(A3[0], 'wd-sel', F2)), hot: 'i', say: 'К — курсив: літери нахилились.'});
+      P.push({html: w(0, all(A3[0], 'wd-sel', F3)), hot: 'col', say: 'Колір шрифту — червоний.'});
+      var p0 = all(A3[0], '', F3);
+      P.push({html: [p0, hl(A3[1], 'Чорне та Азовське моря', 'wd-sel', 'text-decoration:underline'), pl[2]], hot: 'u', font: 'Calibri', fs: '11', ms: 'протягнути мишею', say: 'Інший фрагмент: протягуємо мишею по «Чорне та Азовське моря» і натискаємо П — підкреслений.'});
+      P.push({html: [p0, hl(A3[1], 'Чорне та Азовське моря', '', 'text-decoration:underline'), hl(A3[2], 'Гімн, Прапор і малий Герб', 'wd-sel', 'font-weight:800')], hot: 'b', say: 'І ще один: «Гімн, Прапор і малий Герб» → Ж — жирний.'});
+      P.push({html: [p0, hl(A3[1], 'Чорне та Азовське моря', '', 'text-decoration:underline'), hl(A3[2], 'Гімн, Прапор і малий Герб', '', 'font-weight:800') + CUR], hot: '', ms: 'клацнути на сторінці', say: 'Знімаємо виділення: формат змінився лише там, де текст був виділений.'});
+    }
   } else {
     P.push({start: 3, say: 'Word запустили знову. Наш документ — у списку «Останні»; а якщо його там немає — «Відкрити».'});
     P.push({start: 4, say: '«Відкрити» → «Огляд».'});
@@ -13479,6 +13602,9 @@ $$('.wrd').forEach(function(box){
     return '<span class="wd-menu">' + s.menu.it.map(function(t, i){ return '<i' + (i === s.menu.pick ? ' class="pk"' : '') + '>' + E(t) + '</i>'; }).join('') + '</span>';
   }
   function rib(s){
+    if(RICH) return '<div class="wd-g">' + B(s, 'paste', '<b>▤</b>Вставити') + '<span class="wd-col">' + B(s, 'cut', '✂ Вирізати') + B(s, 'copy', '❐ Копіювати') + '</span><small>Буфер обміну</small></div>'
+      + '<div class="wd-g">' + B(s, 'font', E(s.font) + ' ▾', 'wd-in wd-fo') + B(s, 'fs', E(s.fs) + ' ▾', 'wd-in')
+      + B(s, 'b', '<b class="wd-x">Ж</b>') + B(s, 'i', '<i class="wd-x">К</i>') + B(s, 'u', '<u class="wd-x">П</u>') + B(s, 'col', '<span class="wd-x wd-a">А</span>') + '<small>Шрифт</small></div>';
     if(s.tab === 'layout') return '<div class="wd-g">' + B(s, 'mg', '<b>▣</b>Поля ▾') + B(s, 'or', '<b>▯</b>Орієнтація ▾') + B(s, 'size', '<b>▭</b>Розмір ▾') + '<small>Параметри сторінки</small></div>';
     if(s.tab === 'view') return '<div class="wd-g">' + B(s, 'zoom', '<b>⌕</b>Масштаб') + B(s, 'z100', '100 %') + B(s, 'one', '<b>▯</b>Одна сторінка') + B(s, 'fitw', '<b>↔</b>За шириною сторінки') + '<small>Масштаб</small></div>';
     return '<div class="wd-g">' + B(s, 'font', E(s.font) + ' ▾', 'wd-in wd-fo') + B(s, 'fs', E(s.fs) + ' ▾', 'wd-in') + '<span class="wd-bi"><b>Ж</b> <i>К</i> <u>П</u></span><small>Шрифт</small></div>'
@@ -13486,6 +13612,7 @@ $$('.wrd').forEach(function(box){
   }
   function page(s){
     var t = '';
+    if(s.html) return '<div class="wd-pg fit rich"><div class="wd-tx"><div class="wd-ar">' + s.html.map(function(h){ return '<p>' + h + '</p>'; }).join('') + '</div></div></div>';
     for(var i = 0; i < s.lines; i++) t += '<p>' + E(TXT[i]) + '</p>';
     var st = (s.font !== 'Calibri' ? 'font-family:&quot;' + E(s.font) + '&quot;,Times,serif;' : '') + (s.fs !== '11' ? 'font-size:' + (Math.round(+s.fs / 11 * 100) / 100) + 'em' : '');
     return '<div class="wd-pg' + (s.a5 ? ' a5' : '') + (s.fit ? ' fit' : '') + '"><div class="wd-tx"><div class="wd-ar' + (s.mg ? ' mg' : '') + '"' + (st ? ' style="' + st + '"' : '') + '>'
@@ -13538,11 +13665,15 @@ $$('.wrd').forEach(function(box){
     box.__at = st;
     var s = S[Math.min(st, S.length - 1)], words = 0;
     for(var i = 0; i < s.lines; i++) words += TXT[i].split(/\s+/).filter(Boolean).length;
+    if(s.html) words = s.html.map(function(h){ return h.replace(/<[^>]*>/g, ''); }).join(' ').split(/\s+/).filter(function(x){ return /[A-Za-zА-Яа-яІіЇїЄєҐґ]/.test(x); }).length;
+    var kb = s.kb ? '<span class="wd-kb">' + s.kb.split(' + ').map(function(k){ return '<kbd>' + E(k) + '</kbd>'; }).join(' + ') + '</span>'
+      : s.ms ? '<span class="wd-kb wd-ms">' + E(s.ms) + '</span>' : '';
+    var clip = s.clip == null ? '' : '<span class="wd-clip"><small>Буфер обміну</small>' + (s.clip ? '<b>' + E(s.clip) + '</b>' : '<i>порожньо</i>') + '</span>';
     win.innerHTML = '<div class="wd-title"><span class="wd-fn">' + E(s.title) + ' — Word</span><span class="wd-wb"><i>─</i><i>▢</i><i>✕</i></span></div>'
       + '<div class="wd-tabs">' + TABS.map(function(t, i){
           return '<span class="' + (i ? (t[0] && t[0] === s.tab ? 'cur' : '') : 'wd-file' + (s.bs ? ' now' : '')) + '">' + t[1] + '</span>'; }).join('') + '</div>'
       + '<div class="wd-rib">' + rib(s) + '</div>'
-      + '<div class="wd-body">' + page(s) + '</div>'
+      + '<div class="wd-body">' + page(s) + kb + clip + '</div>'
       + '<div class="wd-st"><span>Сторінка 1 з 1 · Слів: ' + words + '</span><span>' + (s.fit ? '－ ━━━●━ ＋  ширина' : '－ ━━●━━ ＋  100 %') + '</span></div>'
       + (s.start ? start(s) : '') + (s.bs ? bs(s) : '') + (s.dlg ? dlg(s) : '');
     say.textContent = s.say;
