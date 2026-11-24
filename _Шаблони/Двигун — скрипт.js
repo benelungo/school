@@ -537,7 +537,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.thgen,.simtri,.polysim,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop,.wrd', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.thgen,.simtri,.polysim,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop,.wrd,.typ,.ifx', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -9514,6 +9514,459 @@ $$('.wrd').forEach(function(box){
       + '<div class="wd-st"><span>Сторінка 1 з 1 · Слів: ' + words + '</span><span>' + (s.fit ? '－ ━━━●━ ＋  ширина' : '－ ━━●━━ ＋  100 %') + '</span></div>'
       + (s.start ? start(s) : '') + (s.bs ? bs(s) : '') + (s.dlg ? dlg(s) : '');
     say.textContent = s.say;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C61 · PYX — маленький Python для .typ і .ifx (9-А інф. 13, 24.11.2026)
+     Вирази з типами int / float / str / bool, як у справжньому Python:
+     '5' + '3' = '53', 7 / 2 = 3.5, 7 // 2 = 3, 5 > 3 = True, and/or/not,
+     ланцюжок 1 < x < 9; функції int float str bool type len abs round
+     min max input print. Помилки — з тим самим текстом, що й у Python
+     (TypeError, ValueError, ZeroDivisionError, NameError).
+       PYX.run(рядок, env, ctx) — «a = вираз» або вираз (print(...));
+         ctx.input() дає наступне введене значення, ctx.out — надруковане.
+       PYX.subst(вираз, env) — той самий текст, імена замінено значеннями.
+   ───────────────────────────────────────────────────────────────────── */
+var PYX = (function(){
+  var KW = { and: 1, or: 1, not: 1, True: 1, False: 1, None: 1 };
+  function V(t, v){ return { t: t, v: v }; }
+  function err(kind, msg){ var e = new Error(msg); e.py = kind + ': ' + msg; return e; }
+  function fstr(x){
+    if(x !== x) return 'nan'; if(x === Infinity) return 'inf'; if(x === -Infinity) return '-inf';
+    var s = String(x); if(/e/.test(s)) return s.replace(/e\+?/, 'e+').replace('e+-', 'e-');
+    return s.indexOf('.') < 0 ? s + '.0' : s;
+  }
+  function str(a){
+    if(a.t === 'int') return String(a.v);
+    if(a.t === 'float') return fstr(a.v);
+    if(a.t === 'bool') return a.v ? 'True' : 'False';
+    if(a.t === 'type') return "<class '" + a.v + "'>";
+    if(a.t === 'none') return 'None';
+    return a.v;
+  }
+  function repr(a){
+    if(a.t !== 'str') return str(a);
+    return a.v.indexOf("'") >= 0 && a.v.indexOf('"') < 0 ? '"' + a.v + '"' : "'" + a.v.replace(/'/g, "\\'") + "'";
+  }
+  function truthy(a){ return a.t === 'str' ? a.v.length > 0 : a.t === 'none' ? false : a.t === 'type' ? true : !!a.v; }
+  function isN(a){ return a.t === 'int' || a.t === 'float' || a.t === 'bool'; }
+  function n(a){ return a.t === 'bool' ? (a.v ? 1 : 0) : a.v; }
+  function nt(a, b){ return a.t === 'float' || b.t === 'float' ? 'float' : 'int'; }
+  function tn(a){ return a.t === 'none' ? 'NoneType' : a.t; }
+  function unsup(op, a, b){ return err('TypeError', "unsupported operand type(s) for " + op + ": '" + tn(a) + "' and '" + tn(b) + "'"); }
+
+  function lex(s){
+    var T = [], re = /\s*(?:(\d+\.\d*|\.\d+|\d+)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|([A-Za-z_Ѐ-ӿ][A-Za-z0-9_Ѐ-ӿ]*)|(\*\*|\/\/|==|!=|<=|>=|[-+*\/%<>(),=]))/g, m, i = 0;
+    while(i < s.length){
+      re.lastIndex = i; m = re.exec(s);
+      if(!m || m.index !== i){ if(/^\s*$/.test(s.slice(i))) break; throw err('SyntaxError', 'invalid syntax'); }
+      var st = m.index + m[0].length - (m[1] || m[2] || m[3] || m[4]).length;
+      if(m[1] != null) T.push({ k: 'num', s: m[1], a: st, b: re.lastIndex });
+      else if(m[2] != null) T.push({ k: 'str', s: m[2], a: st, b: re.lastIndex });
+      else if(m[3] != null) T.push({ k: KW[m[3]] ? 'kw' : 'name', s: m[3], a: st, b: re.lastIndex });
+      else T.push({ k: 'op', s: m[4], a: st, b: re.lastIndex });
+      i = re.lastIndex;
+    }
+    return T;
+  }
+  function unq(s){ return s.slice(1, -1).replace(/\\(.)/g, function(_, c){ return c === 'n' ? '\n' : c === 't' ? '\t' : c; }); }
+
+  function arith(op, a, b){
+    if(op === '+'){
+      if(a.t === 'str' && b.t === 'str') return V('str', a.v + b.v);
+      if(a.t === 'str') throw err('TypeError', 'can only concatenate str (not "' + tn(b) + '") to str');
+      if(isN(a) && isN(b)) return V(nt(a, b), n(a) + n(b));
+      throw unsup('+', a, b);
+    }
+    if(op === '*'){
+      if(a.t === 'str' && (b.t === 'int' || b.t === 'bool')) return V('str', new Array(Math.max(0, n(b)) + 1).join(a.v));
+      if(b.t === 'str' && (a.t === 'int' || a.t === 'bool')) return V('str', new Array(Math.max(0, n(a)) + 1).join(b.v));
+      if(isN(a) && isN(b)) return V(nt(a, b), n(a) * n(b));
+      if(a.t === 'str' || b.t === 'str') throw err('TypeError', "can't multiply sequence by non-int of type '" + tn(a.t === 'str' ? b : a) + "'");
+      throw unsup('*', a, b);
+    }
+    if(!isN(a) || !isN(b)) throw unsup(op, a, b);
+    var x = n(a), y = n(b);
+    if(op === '-') return V(nt(a, b), x - y);
+    if(op === '/'){ if(y === 0) throw err('ZeroDivisionError', 'division by zero'); return V('float', x / y); }
+    if(op === '//'){ if(y === 0) throw err('ZeroDivisionError', nt(a, b) === 'int' ? 'integer division or modulo by zero' : 'float floor division by zero'); return V(nt(a, b), Math.floor(x / y)); }
+    if(op === '%'){ if(y === 0) throw err('ZeroDivisionError', nt(a, b) === 'int' ? 'integer modulo by zero' : 'float modulo'); return V(nt(a, b), ((x % y) + y) % y); }
+    if(op === '**') return V(nt(a, b) === 'int' && y >= 0 ? 'int' : 'float', Math.pow(x, y));
+    throw err('SyntaxError', 'invalid syntax');
+  }
+  function cmp(op, a, b){
+    if(op === '==' || op === '!='){
+      var eq = isN(a) && isN(b) ? n(a) === n(b) : a.t === b.t && a.v === b.v;
+      return op === '==' ? eq : !eq;
+    }
+    var x, y;
+    if(isN(a) && isN(b)){ x = n(a); y = n(b); }
+    else if(a.t === 'str' && b.t === 'str'){ x = a.v; y = b.v; }
+    else throw err('TypeError', "'" + op + "' not supported between instances of '" + tn(a) + "' and '" + tn(b) + "'");
+    return op === '<' ? x < y : op === '>' ? x > y : op === '<=' ? x <= y : x >= y;
+  }
+  function rnd(x, d){
+    var p = Math.pow(10, d || 0), v = x * p, f = Math.floor(v), r = v - f;
+    var o = Math.abs(r - 0.5) < 1e-9 ? (f % 2 === 0 ? f : f + 1) : Math.round(v);
+    return o / p;
+  }
+  var FN = {
+    int: function(A){ var a = A[0]; if(!a) return V('int', 0);
+      if(a.t === 'str'){ var s = a.v.trim(); if(/^[+-]?\d+$/.test(s)) return V('int', parseInt(s, 10));
+        throw err('ValueError', "invalid literal for int() with base 10: " + repr(a)); }
+      if(isN(a)) return V('int', a.v < 0 ? Math.ceil(n(a)) : Math.floor(n(a)));
+      throw err('TypeError', "int() argument must be a string, a bytes-like object or a real number, not '" + tn(a) + "'"); },
+    float: function(A){ var a = A[0]; if(!a) return V('float', 0);
+      if(a.t === 'str'){ var s = a.v.trim(); if(/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(s)) return V('float', parseFloat(s));
+        throw err('ValueError', "could not convert string to float: " + repr(a)); }
+      if(isN(a)) return V('float', n(a));
+      throw err('TypeError', "float() argument must be a string or a real number, not '" + tn(a) + "'"); },
+    str: function(A){ return V('str', A[0] ? str(A[0]) : ''); },
+    bool: function(A){ return V('bool', A[0] ? truthy(A[0]) : false); },
+    type: function(A){ return V('type', tn(A[0])); },
+    len: function(A){ if(A[0].t !== 'str') throw err('TypeError', "object of type '" + tn(A[0]) + "' has no len()"); return V('int', Array.from(A[0].v).length); },
+    abs: function(A){ return V(A[0].t === 'float' ? 'float' : 'int', Math.abs(n(A[0]))); },
+    round: function(A){ var x = n(A[0]); return A.length > 1 ? V('float', rnd(x, n(A[1]))) : V('int', rnd(x, 0)); },
+    max: function(A){ return A.reduce(function(m, a){ return cmp('>', a, m) ? a : m; }); },
+    min: function(A){ return A.reduce(function(m, a){ return cmp('<', a, m) ? a : m; }); }
+  };
+
+  function evalT(T, env, ctx){
+    var p = 0;
+    function pk(s){ return T[p] && (T[p].k === 'op' || T[p].k === 'kw') && T[p].s === s; }
+    function eat(s){ if(!pk(s)) throw err('SyntaxError', 'invalid syntax'); p++; }
+    function orE(){ var a = andE(); while(pk('or')){ p++; var b = andE(); a = truthy(a) ? a : b; } return a; }
+    function andE(){ var a = notE(); while(pk('and')){ p++; var b = notE(); a = truthy(a) ? b : a; } return a; }
+    function notE(){ if(pk('not')){ p++; return V('bool', !truthy(notE())); } return cmpE(); }
+    function cmpE(){
+      var a = addE(), res = null;
+      while(T[p] && T[p].k === 'op' && /^(==|!=|<=|>=|<|>)$/.test(T[p].s)){
+        var op = T[p++].s, b = addE(), r = cmp(op, a, b);
+        res = res === null ? r : res && r; a = b;
+      }
+      return res === null ? a : V('bool', res);
+    }
+    function addE(){ var a = mulE(); while(pk('+') || pk('-')){ var op = T[p++].s; a = arith(op, a, mulE()); } return a; }
+    function mulE(){ var a = unE(); while(pk('*') || pk('/') || pk('//') || pk('%')){ var op = T[p++].s; a = arith(op, a, unE()); } return a; }
+    function unE(){
+      if(pk('-')){ p++; var a = unE(); if(!isN(a)) throw err('TypeError', "bad operand type for unary -: '" + tn(a) + "'"); return V(a.t === 'float' ? 'float' : 'int', -n(a)); }
+      if(pk('+')){ p++; return unE(); }
+      return powE();
+    }
+    function powE(){ var a = atom(); if(pk('**')){ p++; a = arith('**', a, unE()); } return a; }
+    function atom(){
+      var t = T[p++];
+      if(!t) throw err('SyntaxError', 'invalid syntax');
+      if(t.k === 'num') return t.s.indexOf('.') >= 0 ? V('float', parseFloat(t.s)) : V('int', parseInt(t.s, 10));
+      if(t.k === 'str') return V('str', unq(t.s));
+      if(t.k === 'kw'){ if(t.s === 'True') return V('bool', true); if(t.s === 'False') return V('bool', false); if(t.s === 'None') return V('none', null); }
+      if(t.k === 'op' && t.s === '('){ var e = orE(); eat(')'); return e; }
+      if(t.k === 'name'){
+        if(pk('(')){
+          p++; var A = [];
+          if(!pk(')')){ A.push(orE()); while(pk(',')){ p++; A.push(orE()); } }
+          eat(')');
+          if(t.s === 'print'){ ctx.out.push(A.map(str).join(' ')); return V('none', null); }
+          if(t.s === 'input'){ var s = ctx.input ? ctx.input() : ''; ctx.typed.push(s); return V('str', s); }
+          if(FN[t.s]) return FN[t.s](A);
+          throw err('NameError', "name '" + t.s + "' is not defined");
+        }
+        if(!(t.s in env)) throw err('NameError', "name '" + t.s + "' is not defined");
+        return env[t.s];
+      }
+      throw err('SyntaxError', 'invalid syntax');
+    }
+    var v = orE();
+    if(p < T.length) throw err('SyntaxError', 'invalid syntax');
+    return v;
+  }
+  function evalS(s, env, ctx){ return evalT(lex(s), env, ctx || { out: [], typed: [] }); }
+  function run(line, env, ctx){
+    ctx = ctx || {}; ctx.out = []; ctx.typed = [];
+    var m = /^\s*([A-Za-z_Ѐ-ӿ][A-Za-z0-9_Ѐ-ӿ]*)\s*=(?!=)\s*(.+)$/.exec(line), r = { out: ctx.out, typed: ctx.typed };
+    try{
+      if(m){ r.name = m[1]; r.old = env[m[1]]; r.val = evalS(m[2], env, ctx); r.expr = m[2]; env[m[1]] = r.val; }
+      else { r.expr = line.trim(); r.val = evalS(line, env, ctx); }
+    } catch(e){ if(!e.py) throw e; r.err = e.py; }
+    return r;
+  }
+  function subst(s, env){                     /* імена → значення; функції й ключові слова лишаються */
+    var T = lex(s), o = '', at = 0;
+    T.forEach(function(t, i){
+      if(t.k === 'name' && (t.s in env) && !(T[i + 1] && T[i + 1].s === '(')){ o += s.slice(at, t.a) + repr(env[t.s]); at = t.b; }
+    });
+    return o + s.slice(at);
+  }
+  /* атоми умови: «a >= 10 and h >= 130» → ['a >= 10', 'h >= 130'] — для кроку «True and False» */
+  function parts(s){
+    var T = lex(s), out = [], st = 0, d = 0;
+    T.forEach(function(t){
+      if(t.s === '(') d++; else if(t.s === ')') d--;
+      else if(d === 0 && t.k === 'kw' && (t.s === 'and' || t.s === 'or')){ out.push([st, t.a]); st = t.b; }
+    });
+    out.push([st, s.length]);
+    return out.map(function(r){ return s.slice(r[0], r[1]).trim(); });
+  }
+  var WORD = { int: 'ціле число', float: 'дробове число', str: 'текст (рядок)', bool: 'логічне значення', type: 'тип', none: 'нічого' };
+  return { V: V, run: run, evalS: evalS, subst: subst, parts: parts, str: str, repr: repr, truthy: truthy, word: WORD, lex: lex };
+})();
+
+/* ─────────────────────────────────────────────────────────────────────
+   C62 · .typ — змінні як коробки з наклейкою типу (9-А інф. 13)
+     <div class="typ" data-code="a = 14|h = 1.62|name = 'Оля'|ok = a > 10|print(type(h))"></div>
+       Зліва код; пробіл виконує рядок, праворуч від нього — вивід Python.
+       Праворуч «памʼять»: кожна змінна — коробка з імʼям, значенням і
+       наклейкою int / float / str / bool; тип змінився — наклейка
+       перевертається (n = int(n)). Рядок з input() — «рядок::що ввели»:
+         data-code="n = input()::5|m = input()::3|print(n + m)|n = int(n)|m = int(m)|print(n + m)"
+       — '5' + '3' склеюються в '53', після int() — 8.
+       data-say="…|…" — свій підпис до кроку (порожній — автоматичний).
+       Помилка (TypeError …) — червоним праворуч від рядка.
+   ───────────────────────────────────────────────────────────────────── */
+$$('.typ').forEach(function(box){
+  var lines = String(box.dataset.code || '').split('|').map(function(l){ var q = l.split('::'); return { code: q[0], inp: q.slice(1) }; });
+  var says = box.dataset.say ? box.dataset.say.split('|') : [];
+  box.textContent = '';
+  var wrap = el('div', 'ty-wrap'), code = el('div', 'ty-code'), mem = el('div', 'ty-mem');
+  var lnEls = lines.map(function(l){
+    var d = el('div', 'ty-ln'), tx = el('span', 'ty-tx'), out = el('span', 'ty-out');
+    tx.textContent = l.code; d.appendChild(tx); d.appendChild(out); code.appendChild(d); return d;
+  });
+  var right = el('div', 'ty-right'), cap = el('div', 'ty-cap', 'памʼять');
+  right.appendChild(cap); right.appendChild(mem);
+  wrap.appendChild(code); wrap.appendChild(right); box.appendChild(wrap);
+  var say = asay(box);
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(lines.length + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  function auto(r, l){
+    var P = PYX;
+    if(r.err) return 'Python зупиняється з помилкою: ' + r.err.split(':')[0] + '. ' +
+      (/concatenate|unsupported operand/.test(r.err) ? 'Текст і число не додаються — спершу перетворити: int(…) або str(…).' :
+       /invalid literal|could not convert/.test(r.err) ? 'Цей текст не схожий на число такого типу.' : '');
+    if(r.name){
+      var v = r.val, s = r.name + ' = ' + P.repr(v) + ' — ' + P.word[v.t] + ', наклейка ' + v.t + '.';
+      if(r.typed.length) s = 'input() завжди повертає ТЕКСТ: ввели ' + r.typed.join(', ') + (v.t === 'str' ? ' — у коробці ' + P.repr(v) + ' з наклейкою str, а не число.' : ' → ' + r.expr.replace(/input\(\)/, "'" + r.typed[0] + "'") + ' = ' + P.repr(v) + ', наклейка ' + v.t + '.');
+      else if(r.old && r.old.t !== v.t) s = r.expr + ': ' + P.repr(r.old) + ' → ' + P.repr(v) + '. Наклейка змінилась: ' + r.old.t + ' → ' + v.t + '.';
+      else if(/[<>=!]=|[<>]|\band\b|\bor\b|\bnot\b/.test(r.expr)) s = r.name + ' = ' + r.sub + ' → ' + P.repr(v) + ': порівняння дає True або False — тип bool.';
+      else if(r.sub !== r.expr) s = r.name + ' = ' + r.sub + ' = ' + P.repr(v) + ' — ' + P.word[v.t] + ' (' + v.t + ').';
+      return s;
+    }
+    var m = /^print\((.*)\)$/.exec(r.expr), inner = m ? m[1] : r.expr;
+    if(/^type\(/.test(inner)) return 'type() називає тип значення: ' + r.out.join(' ') + '.';
+    var sub = PYX.subst(inner, r.env0);
+    var t = sub !== inner ? 'Підставляємо: ' + sub + ' → ' + r.out.join(' ') + '.' : 'Python друкує: ' + r.out.join(' ') + '.';
+    if(/'[^']*'\s*\+\s*'/.test(sub)) t += ' Текст + текст — склеювання, а не додавання.';
+    return t;
+  }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var env = {}, order = [], last = null, outs = {}, errs = {}, chg = null, flip = null, txt = '';
+    for(var k = 0; k < st; k++){
+      var l = lines[k], q = l.inp.slice(), env0 = {};
+      for(var nm in env) env0[nm] = env[nm];
+      var sub = '';
+      var mm = /^\s*[A-Za-z_Ѐ-ӿ][A-Za-z0-9_Ѐ-ӿ]*\s*=(?!=)\s*(.+)$/.exec(l.code);
+      try{ sub = mm ? PYX.subst(mm[1], env) : ''; }catch(e){}
+      var r = PYX.run(l.code, env, { input: function(){ return q.length ? q.shift() : ''; } });
+      r.env0 = env0; r.sub = sub;
+      if(r.name && order.indexOf(r.name) < 0) order.push(r.name);
+      chg = r.name || null; flip = r.name && r.old && r.old.t !== r.val.t ? r.name : null;
+      if(r.err) errs[k] = '✗ ' + r.err;
+      else if(r.out.length) outs[k] = '→ ' + r.out.join('\n→ ');
+      else if(r.typed.length) outs[k] = '# ввели ' + r.typed.join(', ');
+      last = k; txt = (says[k] && says[k].trim()) || auto(r, l);
+    }
+    lnEls.forEach(function(d, i){
+      d.classList.toggle('now', i === last);
+      d.classList.toggle('done', i < st && i !== last);
+      d.classList.toggle('err', !!errs[i]);
+      d.classList.toggle('nt', !errs[i] && !!outs[i] && outs[i].charAt(0) === '#');
+      d.lastChild.textContent = errs[i] || outs[i] || '';
+    });
+    mem.textContent = '';
+    order.forEach(function(nm){
+      var v = env[nm], b = el('div', 'ty-box ty-' + v.t + (nm === chg ? ' chg' : '') + (nm === flip ? ' flip' : ''));
+      var n1 = el('span', 'ty-nm'), vv = el('b', 'ty-v'), lb = el('span', 'ty-lb');
+      n1.textContent = nm; vv.textContent = PYX.repr(v); lb.textContent = v.t;
+      b.appendChild(n1); b.appendChild(vv); b.appendChild(lb); mem.appendChild(b);
+    });
+    if(!order.length){ var e0 = el('div', 'ty-empty'); e0.textContent = 'ще порожньо'; mem.appendChild(e0); }
+    say.textContent = st === 0 ? 'Що зʼявиться в памʼяті й що надрукує Python? Спершу прогноз, потім пробіл.' : txt;
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C63 · .ifx — розвилка if / elif / else (9-А інф. 13, вибір учителя)
+     <div class="ifx" data-set="x = int(input())" data-runs="12|5"
+          data-br="x > 7::print('більше за 7')|::print('не більше за 7')"></div>
+       Зліва код (будується з data-set і data-br), праворуч блок-схема:
+       ромб з умовою, «так →» до своєї дії, «ні ↓» до наступної умови;
+       гілка з порожньою умовою — else, середні — elif, без неї — лише if.
+       data-set — рядки до розвилки через «;» (input() бере значення
+       прогону); data-runs — прогони через «|», кілька введень — через «,».
+       Кроки пробілом: уведення → у ромбі підставлено числа (12 > 7) →
+       [для and/or — True and False] → True / False, світиться гілка →
+       виконується лише одна дія, решта блякне. Під кодом — журнал
+       прогонів «введено · що спрацювало · вивід».
+   ───────────────────────────────────────────────────────────────────── */
+$$('.ifx').forEach(function(box){
+  var SET = String(box.dataset.set || '').split(';').map(function(s){ return s.trim(); }).filter(Boolean);
+  var RUNS = String(box.dataset.runs || '').split('|').map(function(r){ return r.split(',').map(function(s){ return s.trim(); }); });
+  var BR = String(box.dataset.br || '').split('|').map(function(b){ var q = b.split('::'); return { c: q[0].trim(), body: (q[1] || '').trim() }; });
+  if(!RUNS.length) RUNS = [[]];
+  /* рядки коду */
+  var lines = [], setL = [], hdrL = [], bodyL = [];
+  SET.forEach(function(s){ setL.push(lines.length); lines.push(s); });
+  BR.forEach(function(b, i){
+    hdrL.push(lines.length);
+    lines.push(b.c ? (i === 0 ? 'if ' : 'elif ') + b.c + ':' : 'else:');
+    bodyL.push(lines.length); lines.push('    ' + b.body);
+  });
+  var hasElse = BR.length && !BR[BR.length - 1].c;
+  /* кроки */
+  var steps = [];
+  RUNS.forEach(function(run, ri){
+    SET.forEach(function(s, si){ steps.push({ r: ri, k: 'set', i: si }); });
+    var env = {}, q = run.slice();
+    SET.forEach(function(s){ PYX.run(s, env, { input: function(){ return q.length ? q.shift() : ''; } }); });
+    for(var bi = 0; bi < BR.length; bi++){
+      var b = BR[bi];
+      if(!b.c){ steps.push({ r: ri, k: 'body', i: bi }); break; }
+      steps.push({ r: ri, k: 'sub', i: bi });
+      if(PYX.parts(b.c).length > 1) steps.push({ r: ri, k: 'parts', i: bi });
+      steps.push({ r: ri, k: 'res', i: bi });
+      var ok = false; try{ ok = PYX.truthy(PYX.evalS(b.c, env)); }catch(e){}
+      if(ok){ steps.push({ r: ri, k: 'body', i: bi }); break; }
+      if(bi === BR.length - 1) steps.push({ r: ri, k: 'none', i: bi });
+    }
+  });
+
+  box.textContent = '';
+  var wrap = el('div', 'if-wrap'), left = el('div', 'if-left'), code = el('div', 'if-code'), logEl = el('table', 'if-log');
+  var lnEls = lines.map(function(t){
+    var d = el('div', 'if-ln'), tx = el('span', 'if-tx'), out = el('span', 'if-out');
+    tx.textContent = t; d.appendChild(tx); d.appendChild(out); code.appendChild(d); return d;
+  });
+  left.appendChild(code); left.appendChild(logEl);
+  var fl = el('div', 'if-fl'), vars = el('div', 'if-vars');
+  fl.appendChild(vars);
+  var dms = [], ys = [], ns = [], bods = [];
+  BR.forEach(function(b, i){
+    var row = el('div', 'if-r' + (b.c ? '' : ' else'));
+    if(b.c){
+      var dm = el('div', 'if-dm');
+      dm.innerHTML = '<svg viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,1 99,25 50,49 1,25" vector-effect="non-scaling-stroke"/></svg>';
+      var c1 = el('span', 'if-c'), c2 = el('span', 'if-e');
+      c1.textContent = b.c; dm.appendChild(c1); dm.appendChild(c2);
+      var y = el('div', 'if-y', '<span>так</span>');
+      row.appendChild(dm); row.appendChild(y); dms[i] = dm; ys[i] = y;
+    }
+    var bd = el('div', 'if-b'); bd.textContent = b.body; if(!b.c){ var lb = el('small', 'if-bl'); lb.textContent = 'else'; bd.insertBefore(lb, bd.firstChild); }
+    row.appendChild(bd); bods[i] = bd;
+    fl.appendChild(row);
+    if(b.c && (i < BR.length - 1 || !hasElse)){
+      var nn = el('div', 'if-n', '<span>ні</span>'); fl.appendChild(nn); ns[i] = nn;
+      if(i === BR.length - 1){ var end = el('div', 'if-end'); end.textContent = 'далі програма'; fl.appendChild(end); ns[i].__end = end; }
+    }
+  });
+  wrap.appendChild(left); wrap.appendChild(fl); box.appendChild(wrap);
+  var say = asay(box);
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(steps.length + 1).join('<i class="hide"></i>');
+  box.appendChild(marks);
+
+  function vtxt(env){ return Object.keys(env).map(function(k){ return k + ' = ' + PYX.repr(env[k]); }).join(', '); }
+  box.__at = -1;
+  box.__paint = function(){
+    var st = 0;
+    $$('i.hide', marks).forEach(function(x){ if(x.classList.contains('on')) st++; });
+    if(st === box.__at) return;
+    box.__at = st;
+    var log = [], env = {}, q = [], cur = -1, outs = {}, notes = {}, D = {}, txt = '', run = -1, fired = -1, typed = [];
+    function reset(ri){ env = {}; q = RUNS[ri].slice(); outs = {}; notes = {}; D = { dm: {}, y: {}, n: {}, b: {}, e: {} }; fired = -1; typed = []; run = ri; }
+    for(var k = 0; k < st; k++){
+      var S = steps[k];
+      if(S.r !== run) reset(S.r);
+      var b = BR[S.i];
+      if(S.k === 'set'){
+        var r = PYX.run(SET[S.i], env, { input: function(){ return q.length ? q.shift() : ''; } });
+        cur = setL[S.i]; typed = typed.concat(r.typed);
+        if(r.typed.length) notes[cur] = '# ввели ' + r.typed.join(', ');
+        txt = r.typed.length ? 'Прогін ' + (S.r + 1) + ': уводимо ' + r.typed.join(', ') + ' → ' + vtxt(env) + '.' : vtxt(env) + '.';
+      } else if(S.k === 'sub'){
+        cur = hdrL[S.i]; D.dm[S.i] = 'now'; D.e[S.i] = PYX.subst(b.c, env);
+        txt = 'Підставляємо: ' + D.e[S.i] + ' — правда чи ні?';
+      } else if(S.k === 'parts'){
+        cur = hdrL[S.i]; D.dm[S.i] = 'now';
+        var pp = PYX.parts(b.c), ops = PYX.lex(b.c).filter(function(t){ return t.k === 'kw' && (t.s === 'and' || t.s === 'or'); });
+        var e = '';
+        pp.forEach(function(p, j){ var v = '?'; try{ v = PYX.str(PYX.evalS(p, env)); }catch(x){} e += (j ? ' ' + ops[j - 1].s + ' ' : '') + v; });
+        D.e[S.i] = e;
+        txt = 'Кожне порівняння окремо: ' + e + '. ' + (ops[0] && ops[0].s === 'and' ? 'and — правда, лише коли ОБИДВІ частини True.' : 'or — правда, коли ХОЧ ОДНА частина True.');
+      } else if(S.k === 'res'){
+        cur = hdrL[S.i];
+        var ok = false; try{ ok = PYX.truthy(PYX.evalS(b.c, env)); }catch(x){}
+        D.e[S.i] = (D.e[S.i] ? D.e[S.i] + ' → ' : '') + (ok ? 'True' : 'False');
+        D.dm[S.i] = ok ? 't' : 'f';
+        if(ok){ D.y[S.i] = 1; txt = 'True — ідемо стрілкою «так».'; }
+        else { if(ns[S.i]) D.n[S.i] = 1;
+          var nx = BR[S.i + 1];
+          txt = 'False — стрілкою «ні»: ' + (nx ? (nx.c ? 'перевіряємо наступну умову (elif).' : 'до else.') : 'дію під if пропускаємо.'); }
+      } else if(S.k === 'body'){
+        cur = bodyL[S.i]; fired = S.i; D.b[S.i] = 'now';
+        var rr = PYX.run(b.body, env, {});
+        if(rr.out.length) outs[cur] = '→ ' + rr.out.join(' ');
+        if(rr.err) outs[cur] = '✗ ' + rr.err;
+        txt = (b.c ? 'Виконується дія гілки «так». ' : 'Жодна умова не справдилась — виконується else. ') +
+              (BR.length > 1 ? 'Інші дії Python пропускає: спрацьовує лише одна гілка.' : '');
+        log.push([typed.join(', '), b.c ? b.c : 'else', rr.out.join(' ') || '—']);
+      } else if(S.k === 'none'){
+        cur = -1; D.end = 1;
+        txt = 'Умова False, а else немає — програма нічого не друкує й іде далі.';
+        log.push([typed.join(', '), '—', '—']);
+      }
+    }
+    lnEls.forEach(function(d, i){
+      d.classList.toggle('now', i === cur);
+      var skip = fired >= 0 && bodyL.indexOf(i) >= 0 && bodyL.indexOf(i) !== fired;
+      d.classList.toggle('skip', skip);
+      d.classList.toggle('nt', !!notes[i] && !outs[i]);
+      d.classList.toggle('err', !!outs[i] && outs[i].charAt(0) === '✗');
+      d.lastChild.textContent = outs[i] || notes[i] || '';
+    });
+    vars.textContent = vtxt(env);
+    vars.style.visibility = run >= 0 && Object.keys(env).length ? '' : 'hidden';
+    BR.forEach(function(b, i){
+      if(dms[i]){
+        dms[i].className = 'if-dm' + (run >= 0 && D.dm[i] ? ' ' + D.dm[i] : '');
+        dms[i].lastChild.textContent = run >= 0 && D.e[i] ? D.e[i] : '';
+        ys[i].classList.toggle('on', run >= 0 && !!D.y[i]);
+      }
+      if(ns[i]){ ns[i].classList.toggle('on', run >= 0 && !!D.n[i]); if(ns[i].__end) ns[i].__end.classList.toggle('on', run >= 0 && !!D.end); }
+      bods[i].classList.toggle('now', run >= 0 && fired === i);
+      bods[i].classList.toggle('skip', run >= 0 && fired >= 0 && fired !== i);
+    });
+    logEl.textContent = '';
+    if(log.length){
+      logEl.style.display = '';
+      var hr = el('tr'); ['введено', 'спрацювало', 'вивід'].forEach(function(t){ var th = el('th'); th.textContent = t; hr.appendChild(th); });
+      logEl.appendChild(hr);
+      log.forEach(function(r){ var tr = el('tr'); r.forEach(function(t){ var td = el('td'); td.textContent = t; tr.appendChild(td); }); logEl.appendChild(tr); });
+    } else logEl.style.display = 'none';
+    say.textContent = st === 0
+      ? 'Що надрукує програма' + (RUNS[0].length ? ', якщо ввести ' + RUNS[0].join(', ') : '') + '? Спершу прогноз, потім пробіл.'
+      : txt;
     fit();
   };
   box.__paint();

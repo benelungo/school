@@ -2233,6 +2233,75 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .simtri.k-ov .sm .sd.p1,.simtri[data-mode=lem] .sm .sd.p1{stroke:var(--or);stroke-width:4.4}
 .simtri.k-dn .st-d{opacity:1}
 .simtri[data-mode=lem] .ln{display:none}
+/* C62 · .typ — змінні як коробки з наклейкою типу; C63 · .ifx — розвилка if/elif/else */
+.typ,.ifx{font-variant-ligatures:none;--ty-int:var(--pen);--ty-float:#9333ea;--ty-str:var(--or);--ty-bool:var(--check)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .typ, :root:not([data-theme="light"]) .ifx{--ty-float:#d8b4fe} }
+:root[data-theme="dark"] .typ,:root[data-theme="dark"] .ifx{--ty-float:#d8b4fe}
+.typ .hmk,.ifx .hmk{display:none}
+.typ .ty-wrap,.ifx .if-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(12px,2vw,28px);align-items:start}
+@media(max-width:820px){.typ .ty-wrap,.ifx .if-wrap{grid-template-columns:1fr}}
+.typ .ty-code,.ifx .if-code{font-family:"JetBrains Mono",monospace;font-size:clamp(12px,calc(1.6*var(--u)),20px);line-height:1.5;
+  border:2px solid var(--edge);border-radius:var(--r-m);background:var(--card);padding:clamp(8px,1.2vw,14px) clamp(10px,1.4vw,16px)}
+.typ .ty-ln,.ifx .if-ln{white-space:pre;padding:.05em .35em;border-radius:5px;transition:background .3s,opacity .3s;display:flex;flex-wrap:wrap;column-gap:1em}
+.typ .ty-ln.done{color:var(--soft)}
+.typ .ty-ln.now,.ifx .if-ln.now{background:var(--sun-soft);color:var(--ink);box-shadow:inset 4px 0 0 var(--sun)}
+.ifx .if-ln.skip{opacity:.35;text-decoration:line-through;text-decoration-color:var(--soft)}
+.typ .ty-out,.ifx .if-out{color:var(--check);font-weight:700;white-space:pre}
+.typ .ty-ln.nt .ty-out,.ifx .if-ln.nt .if-out{color:var(--soft);font-weight:400}
+.typ .ty-ln.err .ty-out,.ifx .if-ln.err .if-out{color:var(--marker);white-space:normal}
+.typ .ty-cap{font-size:clamp(11px,calc(1.2*var(--u)),15px);color:var(--soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.typ .ty-mem{display:flex;flex-wrap:wrap;gap:clamp(8px,1.2vw,16px);align-items:flex-end;min-height:clamp(70px,calc(9*var(--u)),120px)}
+.typ .ty-empty{color:var(--soft);font-style:italic;align-self:center}
+.typ .ty-box{--c:var(--ty-int);position:relative;display:flex;flex-direction:column;align-items:center;min-width:clamp(70px,calc(9*var(--u)),120px)}
+.typ .ty-float{--c:var(--ty-float)} .typ .ty-str{--c:var(--ty-str)} .typ .ty-bool{--c:var(--ty-bool)}
+.typ .ty-nm{font-family:"JetBrains Mono",monospace;font-weight:800;font-size:clamp(13px,calc(1.7*var(--u)),22px);color:var(--ink)}
+.typ .ty-v{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;min-height:clamp(42px,calc(5.6*var(--u)),72px);padding:0 .5em;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(15px,calc(2.2*var(--u)),28px);border:2.5px solid var(--c);border-radius:6px 6px 10px 10px;
+  background:var(--card);color:var(--c);transition:border-color .35s,color .35s,transform .35s;white-space:nowrap}
+.typ .ty-lb{margin-top:-.7em;padding:.05em .6em;border-radius:var(--r-pill);background:var(--c);color:var(--paper);font-family:"JetBrains Mono",monospace;
+  font-weight:800;font-size:clamp(11px,calc(1.35*var(--u)),17px);transform:rotate(-4deg);box-shadow:var(--sh2)}
+.typ .ty-box.chg .ty-v{transform:translateY(-4px);box-shadow:0 0 0 4px var(--sun-soft)}
+.typ .ty-box.flip .ty-lb{animation:tyFlip .6s ease}
+@keyframes tyFlip{0%{transform:rotate(-4deg) rotateX(0)}50%{transform:rotate(-4deg) rotateX(90deg)}100%{transform:rotate(-4deg) rotateX(0)}}
+.typ .asay,.ifx .asay{margin-top:clamp(8px,1.2vw,14px);min-height:2.8em;text-align:center;font-size:clamp(12px,calc(1.5*var(--u)),18px);color:var(--ink)}
+
+.ifx .if-code{line-height:1.35}
+.ifx .if-log{margin-top:6px;border-collapse:collapse;font-family:"JetBrains Mono",monospace;font-size:clamp(11px,calc(1.35*var(--u)),17px)}
+.ifx .if-log th{color:var(--soft);font-weight:600;text-align:left;padding:.1em .7em;border-bottom:1.5px solid var(--edge)}
+.ifx .if-log td{padding:.1em .7em}
+.ifx .if-fl{display:flex;flex-direction:column;align-items:flex-start;font-family:"JetBrains Mono",monospace;font-size:clamp(12px,calc(1.5*var(--u)),19px)}
+.ifx .if-vars{align-self:stretch;text-align:center;font-weight:700;color:var(--pen);margin-bottom:4px}
+.ifx .if-r{display:flex;align-items:center;gap:0}
+.ifx .if-dm{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:clamp(150px,calc(19*var(--u)),250px);
+  min-height:clamp(42px,calc(5.2*var(--u)),72px);padding:0 3em;box-sizing:border-box;text-align:center;line-height:1.25}
+.ifx .if-dm svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ifx .if-dm polygon{fill:var(--card);stroke:var(--edge);stroke-width:2.5px;transition:fill .35s,stroke .35s}
+.ifx .if-dm span{position:relative;white-space:nowrap}
+.ifx .if-c{font-weight:700}
+.ifx .if-e{font-size:.9em;color:var(--soft);min-height:1.25em}
+.ifx .if-dm.now polygon{fill:var(--sun-soft);stroke:var(--sun)}
+.ifx .if-dm.t polygon{fill:var(--check-soft);stroke:var(--check)}
+.ifx .if-dm.t .if-e{color:var(--check);font-weight:700}
+.ifx .if-dm.f polygon{fill:var(--marker-soft);stroke:var(--marker)}
+.ifx .if-dm.f .if-e{color:var(--marker);font-weight:700}
+.ifx .if-y{position:relative;width:clamp(44px,calc(6*var(--u)),80px);height:2.5px;background:var(--edge);transition:background .3s}
+.ifx .if-y::after{content:"";position:absolute;right:-2px;top:50%;border:6px solid transparent;border-left:9px solid var(--edge);border-right:0;transform:translateY(-50%)}
+.ifx .if-y span{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);font-size:.8em;color:var(--soft)}
+.ifx .if-y.on{background:var(--check)} .ifx .if-y.on::after{border-left-color:var(--check)} .ifx .if-y.on span{color:var(--check);font-weight:700}
+.ifx .if-b{border:2px solid var(--edge);border-radius:8px;background:var(--card);padding:.25em .7em;margin-left:6px;white-space:nowrap;transition:background .3s,opacity .3s,border-color .3s}
+.ifx .if-r.else .if-b{margin-left:0}
+.ifx .if-bl{display:block;font-size:.75em;color:var(--soft)}
+.ifx .if-b.now{background:var(--check-soft);border-color:var(--check);font-weight:700}
+.ifx .if-b.skip{opacity:.35}
+.ifx .if-n,.ifx .if-end{position:relative;margin-left:calc(clamp(150px,calc(19*var(--u)),250px)/2 - 1px)}
+.ifx .if-n{width:2.5px;height:clamp(12px,calc(1.8*var(--u)),24px);background:var(--edge);margin-bottom:5px;transition:background .3s}
+.ifx .if-n::after{content:"";position:absolute;left:50%;bottom:-6px;border:5px solid transparent;border-top:8px solid var(--edge);border-bottom:0;transform:translateX(-50%)}
+.ifx .if-n span{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:.8em;color:var(--soft)}
+.ifx .if-n.on{background:var(--marker)} .ifx .if-n.on::after{border-top-color:var(--marker)} .ifx .if-n.on span{color:var(--marker);font-weight:700}
+.ifx .if-r.else{margin-left:calc(clamp(150px,calc(19*var(--u)),250px)/2 - 3em)}
+.ifx .if-end{margin-left:calc(clamp(150px,calc(19*var(--u)),250px)/2 - 3em);color:var(--soft);font-size:.85em;border:1.5px dashed var(--edge);border-radius:8px;padding:.2em .6em}
+.ifx .if-end.on{color:var(--ink);border-color:var(--marker)}
+
 /* C60 · .polysim — зведення подібних членів многочлена */
 .polysim{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.8vw,10px)}
 .polysim .hmk{display:none}
