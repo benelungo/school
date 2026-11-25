@@ -537,7 +537,7 @@ function syncSteps(s){
     });
     sts.forEach(function(st,i){ st.classList.toggle('now', i === lastOn); });
   });
-  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.thgen,.simtri,.polysim,.divseg,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop,.wrd,.typ,.ifx', s).forEach(function(b){ if(b.__paint) b.__paint(); });
+  $$('.conv,.colsub,.colmul,.cnv,.coldiv,.packs,.powop,.parax,.setsq,.transv,.shl,.fan,.vang,.dom,.req,.ordops,.frm,.sqdiag,.subst,.sgn,.hist,.ocr,.rainbow,.regroup,.pow,.sqcube,.tr180,.trisos,.trkind,.qinsc,.qcirc,.thales,.thgen,.simtri,.polysim,.divseg,.ruler,.midline,.sepia,.poster,.srch,.ppt,.flip,.zz,.vst,.river,.arr,.bal,.receipt,.eqop,.wrd,.typ,.ifx', s).forEach(function(b){ if(b.__paint) b.__paint(); });
 }
 
 /* ─────────────────────────────────────────────────────────────────────
@@ -6978,6 +6978,159 @@ $$('.divseg').forEach(function(box){
     say.textContent = F[st];
     var ms = [0, 700, 300*n, 700, 450*(n - 1)][st];
     if(st >= 1 && st <= 4 && prev === st - 1) atween(box, 0, 1, ms, function(g){ if(box.__at === st) draw(st, g); });
+    else {
+      if(box.__tw) cancelAnimationFrame(box.__tw);
+      draw(st, 1);
+    }
+    fit();
+  };
+  box.__paint();
+});
+
+/* ─────────────────────────────────────────────────────────────────────
+   C54 · .ruler — лінійка з поділками: вимір, побудова, сума частин (5 кл.)
+     <div class="ruler" data-len="4,3"></div>
+     Вимір (типово): лінійку спершу прикладають неправильно — краєм, а не
+     нулем (✗, хибне число), далі нуль їде під кінець K; цілі сантиметри
+     фарбуються, потім міліметри; KL = 4 см 3 мм = 43 мм.
+     <div class="ruler" data-mode="build" data-len="5,2"></div>
+     Побудова: точка A навпроти нуля, олівець веде до цілих сантиметрів,
+     ще мм — точка B; лінійка зникає, лишається AB = 5 см 2 мм.
+     <div class="ruler" data-mode="sum" data-len="7" data-at="4,5"></div>
+     Сума: точка M на AB; міряємо AM (нуль під A), MB (нуль їде під M),
+     AB (нуль під A); AM + MB = AB у міліметрах.
+     data-len, data-at — сантиметри (кома чи крапка, до 0,1);
+     data-labels — «K,L» / «A,B» / «A,B,M».
+   ───────────────────────────────────────────────────────────────────── */
+function ruMm(v){ return Math.round(parseFloat(String(v || 0).replace(',', '.'))*10); }
+function ruTxt(mm){
+  var c = Math.floor(mm/10), m = mm % 10;
+  return (c ? c + ' см' : '') + (c && m ? ' ' : '') + (m || !c ? m + ' мм' : '');
+}
+$$('.ruler').forEach(function(box){
+  var mode = box.dataset.mode === 'build' || box.dataset.mode === 'sum' ? box.dataset.mode : 'measure';
+  var L = (box.dataset.labels || (mode === 'sum' ? 'A,B,M' : mode === 'build' ? 'A,B' : 'K,L')).split(',');
+  var len = Math.max(5, Math.min(110, ruMm(box.dataset.len) || 43));
+  var at = mode === 'sum' ? Math.max(3, Math.min(len - 3, ruMm(box.dataset.at) || Math.round(len/2))) : 0;
+  var R = Math.max(6, Math.ceil(len/10) + 1);                 /* сантиметрів на лінійці */
+  var S = Math.min(48, 500/R), X0 = 34, SY = 40, RY = 48, RH = 50;
+  var W = X0 + (R + .6)*S + 24;
+  function px(mm){ return X0 + mm*S/10; }
+  box.textContent = '';
+  var s = trSvg(box, '0 0 ' + W.toFixed(0) + ' ' + (mode === 'measure' ? 128 : 104), 'Лінійка з поділками');
+  /* відрізок і точки */
+  var seg = s.__n('line', {'class':'ru-sd'});
+  var gA = s.__n('line', {'class':'ru-g g1'}), gB = s.__n('line', {'class':'ru-g g2'});
+  /* лінійка — група, що їздить */
+  var rg = s.__n('g', {'class':'ru-rl'});
+  function rn(t, a){ var e = D.createElementNS('http://www.w3.org/2000/svg', t); for(var k in a) e.setAttribute(k, a[k]); rg.appendChild(e); return e; }
+  rn('rect', {'class':'ru-body', x:(-.5*S).toFixed(1), y:0, width:((R + 1)*S).toFixed(1), height:RH, rx:4});
+  var h1 = rn('rect', {'class':'ru-h1', x:0, y:0, height:24, width:0});
+  var h2 = rn('rect', {'class':'ru-h2', x:0, y:0, height:24, width:0});
+  for(var i = 0; i <= R*10; i++){
+    var x = (i*S/10).toFixed(1), hh = i % 10 === 0 ? 17 : i % 5 === 0 ? 12 : 7;
+    rn('line', {'class':'ru-tk' + (i % 10 ? '' : ' cm'), x1:x, y1:0, x2:x, y2:hh});
+    if(i % 10 === 0){ var tn = rn('text', {'class':'ru-n', x:x, y:36}); tn.textContent = i/10; }
+  }
+  var unit = rn('text', {'class':'ru-u', x:((R + .25)*S).toFixed(1), y:46}); unit.textContent = 'см';
+  /* хибне показання, олівець */
+  var bad = s.__n('text', {'class':'ru-bad'});
+  var pen = s.__n('path', {'class':'ru-pen', d:'M0 0 L7 -14 L-7 -14 Z M-7 -14 L-7 -48 L7 -48 L7 -14'});
+  function pt(mm, name, dy){
+    var g = s.__n('g', {'class':'ru-p'});
+    var c = D.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', px(mm).toFixed(1)); c.setAttribute('cy', SY); c.setAttribute('r', 4.5); g.appendChild(c);
+    var t = D.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('class', 'lb'); trAt(t, [px(mm), SY], 0, dy || -14); t.textContent = name; g.appendChild(t);
+    return g;
+  }
+  var P0 = pt(0, L[0]), P1 = pt(len, L[1]), PM = mode === 'sum' ? pt(at, L[2]) : null;
+  var f = el('div', 'ru-f'); if(mode !== 'build') box.appendChild(f);   /* у побудові підсумок — у підписі */
+
+  function setR(zero, show){                                   /* zero — мм, де стоїть нуль лінійки */
+    rg.setAttribute('transform', 'translate(' + px(zero).toFixed(1) + ' ' + RY + ')');
+    rg.style.opacity = show ? 1 : 0;
+  }
+  function hl(mm){                                             /* цілі см — h1, мм — h2 */
+    var c = Math.floor(mm/10)*10;
+    h1.setAttribute('width', (c*S/10).toFixed(1));
+    h2.setAttribute('x', (c*S/10).toFixed(1)); h2.setAttribute('width', ((mm - c)*S/10).toFixed(1));
+  }
+  function grow(e, a, b, g){ qcLine(e, [px(a), SY], [px(a + (b - a)*g), SY]); e.style.visibility = g > .001 ? '' : 'hidden'; }
+  function vis(e, on){ if(e) e.style.opacity = on ? 1 : 0; }
+
+  var c0 = Math.floor(len/10), m0 = len % 10, ab = L[0] + L[1], F, draw;
+  if(mode === 'measure'){
+    var wrong = len - 5;
+    F = [
+      'Відрізок ' + ab + '. Яка його довжина? Беремо лінійку.',
+      'Так НЕ можна: до ' + L[0] + ' приставили край лінійки, а не нуль. ' + L[1] + ' навпроти «' + ruTxt(wrong) + '» — це неправда.',
+      'Нуль лінійки — точно під кінцем ' + L[0] + '. Лінійка лежить уздовж відрізка.',
+      c0 ? 'Рахуємо цілі сантиметри від нуля до ' + L[1] + ': ' + (c0 > 5 ? '1, 2, …, ' + c0 : Array.apply(null, Array(c0)).map(function(_, k){ return k + 1; }).join(', ')) + ' — це ' + c0 + ' см.'
+         : 'Цілого сантиметра немає: ' + L[1] + ' стоїть раніше за 1.',
+      m0 ? 'Від ' + c0 + ' до ' + L[1] + ' ще ' + m0 + ' маленьк' + (m0 === 1 ? 'а поділка' : m0 < 5 ? 'і поділки' : 'их поділок') + ' — це ' + m0 + ' мм.'
+         : L[1] + ' точно навпроти ' + c0 + ' — міліметрів немає.',
+      ab + ' = ' + ruTxt(len) + (c0 && m0 ? '. 1 см = 10 мм, тому ' + ruTxt(len) + ' = ' + c0*10 + ' мм + ' + m0 + ' мм = ' + len + ' мм.' : c0 ? ' = ' + len + ' мм.' : '.')
+    ];
+    draw = function(st, g){
+      grow(seg, 0, len, 1); vis(P0, 1); vis(P1, 1); vis(pen, 0); vis(gA, 0); vis(gB, 0);
+      var z = st < 1 ? 0 : st === 1 ? 5 : st === 2 ? 5 - 5*g : 0;
+      setR(z, st >= 1);
+      if(st === 1){ bad.textContent = '✗ ' + ruTxt(wrong); trAt(bad, [px(len), RY], 0, RH + 22); }
+      vis(bad, st === 1);
+      hl(st >= 4 ? len : st === 3 ? Math.floor(len/10)*10*g : 0);
+      if(st < 4) h2.setAttribute('width', 0);
+      f.textContent = st >= 5 ? ab + ' = ' + ruTxt(len) + (c0 && m0 ? ' = ' + len + ' мм' : '') : '';
+    };
+  } else if(mode === 'build'){
+    F = [
+      'Побудуємо відрізок ' + ab + ' = ' + ruTxt(len) + '. Кладемо лінійку.',
+      'Ставимо точку ' + L[0] + ' точно навпроти нуля.',
+      c0 ? 'Ведемо олівцем уздовж лінійки до ' + c0 + ' см.' : 'Ведемо олівцем уздовж лінійки.',
+      m0 ? 'І ще ' + m0 + ' маленьк' + (m0 === 1 ? 'а поділка' : m0 < 5 ? 'і поділки' : 'их поділок') + ' — ' + m0 + ' мм. Ставимо точку ' + L[1] + '.'
+         : 'Ставимо точку ' + L[1] + ' навпроти ' + c0 + '.',
+      'Прибираємо лінійку: ' + ab + ' = ' + ruTxt(len) + (c0 && m0 ? ' (' + len + ' мм)' : '') + '.'
+    ];
+    draw = function(st, g){
+      setR(0, st < 4); vis(bad, 0); vis(gA, 0); vis(gB, 0); hl(0);
+      vis(P0, st >= 1); vis(P1, st >= 3);
+      var cm = c0*10, e = st < 2 ? 0 : st === 2 ? cm*g : st === 3 ? cm + (len - cm)*g : len;
+      grow(seg, 0, len, e/len);
+      pen.setAttribute('transform', 'translate(' + px(e).toFixed(1) + ' ' + SY + ') rotate(30)');
+      vis(pen, st === 2 || st === 3);
+      f.textContent = st >= 4 ? ab + ' = ' + ruTxt(len) : '';
+    };
+  } else {
+    var am = at, mb = len - at, M = L[2];
+    F = [
+      'Точка ' + M + ' лежить на відрізку ' + ab + '. Виміряємо ' + L[0] + M + ', ' + M + L[1] + ' і ' + ab + '.',
+      L[0] + M + ': нуль під ' + L[0] + ', ' + M + ' навпроти ' + ruTxt(am) + '. ' + L[0] + M + ' = ' + ruTxt(am) + '.',
+      M + L[1] + ': пересуваємо лінійку — нуль під ' + M + '. ' + M + L[1] + ' = ' + ruTxt(mb) + '.',
+      ab + ': знову нуль під ' + L[0] + '. ' + ab + ' = ' + ruTxt(len) + '.',
+      'Частини разом дають увесь відрізок: ' + L[0] + M + ' + ' + M + L[1] + ' = ' + ab + ', ' + am + ' мм + ' + mb + ' мм = ' + len + ' мм.'
+    ];
+    draw = function(st, g){
+      grow(seg, 0, len, 1); vis(P0, 1); vis(P1, 1); vis(PM, 1); vis(bad, 0); vis(pen, 0);
+      var z = st === 2 ? at*g : st === 3 ? at*(1 - g) : 0;
+      setR(z, st >= 1 && st <= 3);
+      hl(st === 1 ? am : st === 2 ? (g > .95 ? mb : 0) : st === 3 ? (g > .95 ? len : 0) : 0);
+      grow(gA, 0, at, st === 1 || st >= 3 ? 1 : 0); grow(gB, at, len, st >= 2 ? 1 : 0);
+      vis(gA, st === 1 || st >= 3); vis(gB, st >= 2);
+      f.textContent = st >= 4 ? L[0] + M + ' + ' + M + L[1] + ' = ' + ab + ':  ' + am + ' мм + ' + mb + ' мм = ' + len + ' мм' : '';
+    };
+  }
+  var marks = el('div', 'hmk');
+  marks.innerHTML = new Array(F.length).join('<i class="hide"></i>');
+  box.appendChild(marks);
+  var say = asay(box);
+  var TW = mode === 'measure' ? {2:700, 3:600} : mode === 'build' ? {2:900, 3:500} : {2:700, 3:700};
+  box.__at = -1;
+  box.__paint = function(){
+    var st = trStep(marks, F.length);
+    if(st === box.__at) return;
+    var prev = box.__at; box.__at = st;
+    say.textContent = F[st];
+    if(TW[st] && prev === st - 1) atween(box, 0, 1, TW[st], function(g){ if(box.__at === st) draw(st, g); });
     else {
       if(box.__tw) cancelAnimationFrame(box.__tw);
       draw(st, 1);

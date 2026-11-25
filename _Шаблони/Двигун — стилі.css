@@ -2363,6 +2363,29 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .divseg text.t1{fill:var(--pen)}
 .divseg text.t2{fill:var(--marker)}
 
+/* C54 · .ruler — лінійка з поділками */
+.ruler{display:flex;flex-direction:column;align-items:center}
+.ruler .hmk{display:none}
+.ruler .tr-svg{max-width:min(100%,calc(64*var(--u)))}
+.ruler .tr-svg svg{max-height:var(--fh,34vh)}
+.ruler .asay{text-align:center;min-height:2.8em;font-size:clamp(15px,calc(1.8*var(--u)),22px);line-height:1.4}
+.ruler .ru-f{text-align:center;min-height:1.3em;font:700 clamp(18px,calc(2.2*var(--u)),28px) "JetBrains Mono",monospace;color:var(--pen)}
+.ruler .ru-sd{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+.ruler .ru-g{stroke-width:9;stroke-linecap:butt;opacity:0;transition:opacity .3s}
+.ruler .ru-g.g1{stroke:var(--pen)}
+.ruler .ru-g.g2{stroke:var(--sun)}
+.ruler .ru-p{transition:opacity .3s}
+.ruler .ru-p circle{fill:var(--ink)}
+.ruler .ru-rl{transition:opacity .35s}
+.ruler .ru-body{fill:var(--sun-soft);stroke:var(--sun);stroke-width:1.4}
+.ruler .ru-tk{stroke:var(--ink);stroke-width:1}
+.ruler .ru-tk.cm{stroke-width:1.8}
+.ruler .ru-n{font:700 13px "JetBrains Mono",monospace;fill:var(--ink);text-anchor:middle}
+.ruler .ru-u{font:600 11px "JetBrains Mono",monospace;fill:var(--soft);text-anchor:middle}
+.ruler .ru-h1{fill:var(--pen);opacity:.28}
+.ruler .ru-h2{fill:var(--check);opacity:.4}
+.ruler .ru-bad{font:700 18px "JetBrains Mono",monospace;fill:var(--marker);text-anchor:middle;transition:opacity .3s}
+.ruler .ru-pen{fill:var(--sun);stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round;transition:opacity .3s}
 /* C53 · .midline — середня лінія трикутника */
 .midline .hmk{display:none}
 .midline{display:flex;flex-direction:column;align-items:center}
