@@ -7615,9 +7615,37 @@ $$('.rainbow').forEach(function(box){
   function tTxt(t){ return (t.k == null ? '' : fmt(t.k)) + t.v; }
   function mono(k, v){ return v ? (k === 1 ? v : fmt(k) + v) : fmt(k); }   /* 7a, a, 14 */
 
+  /* mono — одночлен на многочлен: −3ab(5a² − 2ab + b²); степені — надрядковими цифрами */
+  var SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+  function monoP(s){
+    s = String(s || '').replace(/\s+/g,'').replace(/^\((.*)\)$/,'$1').replace(/-/g, MIN);
+    var m = /^([+−])?(\d+(?:[.,]\d+)?)?((?:[a-zа-яіїєґ][⁰¹²³⁴⁵⁶⁷⁸⁹]*)*)$/i.exec(s);
+    if(!m || (!m[2] && !m[3])) return null;
+    var L = {}, re = /([a-zа-яіїєґ])([⁰¹²³⁴⁵⁶⁷⁸⁹]*)/gi, q;
+    while((q = re.exec(m[3]))){
+      var e = q[2] ? +q[2].split('').map(function(c){ return SUP.indexOf(c); }).join('') : 1;
+      L[q[1]] = (L[q[1]] || 0) + e;
+    }
+    return { sg: m[1] === MIN ? -1 : 1, k: m[2] ? parseFloat(m[2].replace(',','.')) : 1, kx: !!m[2], L: L,
+             ab: s.replace(/^[+−]/,'') };
+  }
+  function polyT(s){
+    s = String(s || '').replace(/\s+/g,'').replace(/-/g, MIN);
+    var parts = s.match(/[+−]?[^+−]+/g); if(!parts) return null;
+    var out = parts.map(monoP);
+    return out.some(function(x){ return !x; }) ? null : out;
+  }
+  function supN(n){ return n > 1 ? String(n).split('').map(function(c){ return SUP[+c]; }).join('') : ''; }
+  function dec(v){ return String(Math.round(v * 1e9) / 1e9).replace('.', ','); }
+  function mTxt(k, L){
+    var lt = Object.keys(L).sort().map(function(c){ return c + supN(L[c]); }).join('');
+    return (k === 1 && lt ? '' : dec(k)) + lt;
+  }
+  var monoM = box.dataset.mode === 'mono';
   var collect = box.dataset.mode === 'collect';
-  var T = terms(collect ? box.dataset.expr : box.dataset.in);
-  var M = +(String(box.dataset.mul || '').replace(/\D/g,''));
+  var T = monoM ? polyT(box.dataset.in) : terms(collect ? box.dataset.expr : box.dataset.in);
+  var MM = monoM ? monoP(box.dataset.mul) : null;
+  var M = monoM ? (MM ? 1 : 0) : +(String(box.dataset.mul || '').replace(/\D/g,''));
   if(!T || (!collect && !M)) return;
   var right = box.dataset.side === 'right';
   box.textContent = '';
@@ -7627,7 +7655,70 @@ $$('.rainbow').forEach(function(box){
   function sp(cls, txt){ var s = el('span', cls); s.textContent = txt; return s; }
 
   var anchors = [], target = null, steps = [], fin;
-  if(!collect){
+  if(monoM){
+    box.classList.add('rb-mono');
+    var mAb = (MM.sg < 0 ? MIN : '') + MM.ab;
+    var mEl = sp('rb-m', right && MM.sg < 0 ? '(' + mAb + ')' : mAb);
+    if(!right) top.appendChild(mEl);                 /* 5x(3x − 7): крапки перед дужкою не пишемо */
+    top.appendChild(sp('br','('));
+    T.forEach(function(t,i){
+      if(i) top.appendChild(sp('op', t.sg < 0 ? MIN : '+'));
+      anchors.push(top.appendChild(sp('rb-t', (!i && t.sg < 0 ? MIN : '') + t.ab)));   /* перший мінус — при члені */
+    });
+    top.appendChild(sp('br',')'));
+    if(right){ top.appendChild(sp('op', MUL)); top.appendChild(mEl); }
+    /* добутки: 5x · 3x − 5x · 7;  −3ab · 5a² − 3ab · (−2ab);  3x² · 2x − 5x · 2x */
+    var prod = el('div','rb-l rb-p'), simp = el('div','rb-l rb-s'), R = [];
+    T.forEach(function(t,i){
+      var g = el('span','rb-g'), tS = t.sg < 0 ? '(' + MIN + t.ab + ')' : t.ab;
+      if(right){
+        if(i) g.appendChild(sp('op', t.sg < 0 ? MIN : '+'));
+        g.appendChild(sp('rb-t', (!i && t.sg < 0 ? MIN : '') + t.ab)); g.appendChild(sp('op', MUL));
+        g.appendChild(sp('rb-m', MM.sg < 0 ? '(' + mAb + ')' : mAb));
+      } else if(MM.sg > 0){
+        if(i) g.appendChild(sp('op', t.sg < 0 ? MIN : '+'));
+        g.appendChild(sp('rb-m', mAb)); g.appendChild(sp('op', MUL)); g.appendChild(sp('rb-t', i ? t.ab : tS));
+      } else {
+        if(i) g.appendChild(sp('op', MIN));
+        g.appendChild(sp('rb-m', i ? MM.ab : mAb)); g.appendChild(sp('op', MUL)); g.appendChild(sp('rb-t', tS));
+      }
+      prod.appendChild(g);
+      var L = {}, k;
+      for(k in MM.L) L[k] = MM.L[k];
+      for(k in t.L) L[k] = (L[k] || 0) + t.L[k];
+      var r = { sg: MM.sg * t.sg, k: MM.k * t.k, L: L };
+      R.push(r);
+      var h = el('span','rb-g');
+      if(i) h.appendChild(sp('op', r.sg < 0 ? MIN : '+'));
+      h.appendChild(sp('rb-r', (!i && r.sg < 0 ? MIN : '') + mTxt(r.k, r.L)));
+      simp.appendChild(h);
+    });
+    lines = [prod, simp];
+    /* надрядкові ² ³ у моноширинному шрифті стоять окремою клітинкою — показуємо їх як <sup> */
+    [top, prod, simp].forEach(function(l){ $$('span', l).forEach(function(e){
+      if(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/.test(e.textContent) && !e.children.length)
+        e.innerHTML = e.textContent.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, function(z){
+          return '<sup>' + z.split('').map(function(ch){ return SUP.indexOf(ch); }).join('') + '</sup>'; });
+    }); });
+    fin = R.map(function(r,i){ return (i ? (r.sg < 0 ? ' − ' : ' + ') : (r.sg < 0 ? MIN : '')) + mTxt(r.k, r.L); }).join('');
+    T.forEach(function(t,i){
+      steps.push({ arc: i, say: 'Дуга ' + (i + 1) + ': ' + mAb + ' множимо на ' + (t.sg < 0 ? MIN : '') + t.ab +
+        (i ? '' : ' — на перший член многочлена') + (i === T.length - 1 ? '. Кожен член отримав свій множник.' : '.') });
+    });
+    function sgW(s){ return s < 0 ? '«−»' : '«+»'; }
+    T.forEach(function(t,i){
+      var r = R[i], parts = [];
+      parts.push('знаки ' + sgW(MM.sg) + ' і ' + sgW(t.sg) + ' → ' + sgW(r.sg));
+      if(MM.kx || t.kx) parts.push('числа ' + dec(MM.k) + ' · ' + dec(t.k) + ' = ' + dec(r.k));
+      var lets = Object.keys(r.L).sort().map(function(c){
+        var a = MM.L[c] || 0, b = t.L[c] || 0;
+        return a && b ? c + supN(a) + ' · ' + c + supN(b) + ' = ' + c + supN(a + b) : c + supN(a || b);
+      });
+      if(lets.length) parts.push('букви ' + lets.join(', '));
+      steps.push({ say: (i + 1) + '-й добуток: ' + parts.join('; ') + '. Пишемо ' + (r.sg < 0 ? MIN : '+') + mTxt(r.k, r.L) + '.' +
+        (i === T.length - 1 ? ' Відповідь: ' + fin + '.' : '') });
+    });
+  } else if(!collect){
     /* верхній рядок: 7 · (a + 2)  або  (a + 7) · 3 */
     var mEl = sp('rb-m', fmt(M));
     if(!right){ top.appendChild(mEl); top.appendChild(sp('op', MUL)); }
@@ -7767,7 +7858,15 @@ $$('.rainbow').forEach(function(box){
     var fwd = st > box.__at;
     box.__at = st;
     var nArc = 0;
-    if(!collect){
+    if(monoM){
+      nArc = Math.min(st, T.length);
+      $$('.rb-g', lines[0]).forEach(function(g,i){ g.classList.toggle('on', i < nArc); });
+      lines[0].classList.toggle('on', st > 0);
+      $$('.rb-g', lines[1]).forEach(function(g,i){ g.classList.toggle('on', i < st - T.length); });
+      lines[1].classList.toggle('on', st > T.length);
+      anchors.forEach(function(e,i){ e.classList.toggle('hit', i < nArc); });
+      mEl.classList.toggle('hit', nArc > 0);
+    } else if(!collect){
       nArc = Math.min(st, T.length);
       $$('.rb-g', lines[0]).forEach(function(g,i){ g.classList.toggle('on', i < nArc); });
       lines[0].classList.toggle('on', st > 0);
@@ -7784,7 +7883,8 @@ $$('.rainbow').forEach(function(box){
     lines.forEach(function(l){ l.classList.remove('now'); if(l.classList.contains('on')) last = l; });
     if(last) last.classList.add('now');
     say.textContent = st === 0
-      ? (collect ? 'Що спільного в доданках? Дивимось на букви.' :
+      ? (monoM ? 'Одночлен ' + (MM.sg < 0 ? MIN : '') + MM.ab + ' має помножитися на КОЖНИЙ член многочлена в дужках.' :
+         collect ? 'Що спільного в доданках? Дивимось на букви.' :
          'Множник ' + fmt(M) + ' стоїть ' + (right ? 'після дужок' : 'перед дужками') + '. Він має дістатися до КОЖНОГО доданка в дужках.')
       : steps[st - 1].say;
     fit();

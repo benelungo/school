@@ -2007,6 +2007,9 @@ dialog textarea{width:100%;min-height:150px;border:var(--bw) solid var(--edge);b
 .rainbow .asay{margin-top:clamp(6px,1vw,12px);min-height:2.8em;text-align:center}
 .rainbow[data-say="no"] .asay{display:none}
 .row .rainbow .rb-l{font-size:clamp(15px,calc(2.3*var(--u)),30px)}
+.rainbow.rb-mono{max-width:calc(96*var(--u))}
+.rainbow.rb-mono .rb-l{font-size:clamp(16px,calc(2.6*var(--u)),34px)}
+.rainbow.rb-mono sup{font-size:.6em;line-height:0;vertical-align:.75em;margin-left:.04em}
 @supports not (aspect-ratio:1){
   .slide.hero .glow{height:0;padding-top:58%}
   .cnv .cl::before,.cnv .kg div::before,.hist .hg .cl::before,.ocr .og .cl::before{
