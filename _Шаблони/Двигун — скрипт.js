@@ -9755,10 +9755,13 @@ $$('.eqop').forEach(function(box){
        пропущений (вставити), неправильний (Delete + правильний).
      <div class="wrd" data-mode="fmt"></div>   властивості символів: шрифт, розмір, К, колір
        для абзацу; П і Ж — для окремих слів.
+     <div class="wrd" data-mode="ex15"></div>  вправа 15 (§ 15) точно за підручником: текст
+       Arial 10; 1-й абзац Arial 12 К червоний; 2-й Times New Roman 14 П; 3-й 14 Ж,
+       інтервал «Ущільнений» 0,8 пт (Ctrl + D → «Додатково»).
    ───────────────────────────────────────────────────────────────────── */
 $$('.wrd').forEach(function(box){
-  var md = /^(new|page|save|open|sel|clip|edit|fmt)$/.test(box.dataset.mode || '') ? box.dataset.mode : 'new';
-  var RICH = /^(sel|clip|edit|fmt)$/.test(md);
+  var md = /^(new|page|save|open|sel|clip|edit|fmt|ex15)$/.test(box.dataset.mode || '') ? box.dataset.mode : 'new';
+  var RICH = /^(sel|clip|edit|fmt|ex15)$/.test(md);
   /* data-text="" — без абзаців: у режимі new лише створити документ */
   var TXT = String(box.hasAttribute('data-text') ? box.dataset.text : 'Тарас Шевченко|учень 5-З класу|Ліцей № 1').split('|').filter(function(t){ return t.trim(); });
   var NAME = box.dataset.name || 'Вправа 14', FOLD = box.dataset.folder || '5-З Шевченко';
@@ -9840,6 +9843,27 @@ $$('.wrd').forEach(function(box){
       P.push({html: line(w1[3], 0, w2[3], 0, w3[1], 1), kb: '', ms: 'клацнути', say: 'Неправильний символ: «о» замість «е». Ставимо курсор перед ним…'});
       P.push({html: line(w1[3], 0, w2[3], 0, w3[2], 1), ms: '', kb: 'Delete', say: '…Delete — видаляємо неправильний символ…'});
       P.push({html: line(w1[3], 0, w2[3], 0, w3[3], 0), kb: 'е', say: '…і набираємо правильний «е». Помилок немає — червона хвиля зникла.'});
+    } else if(md === 'ex15'){
+      var AR = 'font-family:Arial,Helvetica,sans-serif', TN = 'font-family:\'Times New Roman\',Times,serif';
+      var B0 = AR + ';font-size:.91em', Q1 = AR + ';font-size:1.09em', Q2 = Q1 + ';font-style:italic', Q3 = Q2 + ';color:#d0312d';
+      var R1 = AR + ';font-size:.91em', R2 = TN + ';font-size:.91em', R3 = TN + ';font-size:1.27em', R4 = R3 + ';text-decoration:underline';
+      var T1 = AR + ';font-size:1.27em', T2 = T1 + ';font-weight:800', T3 = T2 + ';letter-spacing:-.07em';
+      var x = function(a, b, c){ return [a, b, c]; };
+      var a0 = all(A3[0], '', B0), b0 = all(A3[1], '', B0), c0 = all(A3[2], '', B0), a4 = all(A3[0], '', Q3), b4 = all(A3[1], '', R4);
+      P.push({html: x(a0, b0, c0), font: 'Arial', fs: '10', say: 'Вправа 15: текст уже набрано — Arial, 10, звичайний. Тепер кожен абзац оформлюємо по-своєму.'});
+      P.push({html: x(all(A3[0], 'wd-sel', B0), b0, c0), ms: 'тричі клацнути', say: 'Перший абзац: тричі клацаємо на ньому — виділено весь абзац.'});
+      P.push({html: x(all(A3[0], 'wd-sel', Q1), b0, c0), ms: '', hot: 'fs', fs: '12', say: 'Шрифт уже Arial — лишаємо. Розмір → 12.'});
+      P.push({html: x(all(A3[0], 'wd-sel', Q2), b0, c0), hot: 'i', say: 'К — курсив.'});
+      P.push({html: x(all(A3[0], 'wd-sel', Q3), b0, c0), hot: 'col', say: 'Колір шрифту → червоний. Перший абзац готовий.'});
+      P.push({html: x(a4, all(A3[1], 'wd-sel', R1), c0), hot: '', font: 'Arial', fs: '10', ms: 'тричі клацнути', say: 'Другий абзац: виділяємо. На панелі знову Arial 10 — це параметри саме цього абзацу.'});
+      P.push({html: x(a4, all(A3[1], 'wd-sel', R2), c0), ms: '', hot: 'font', font: 'Times New Roman', say: 'Шрифт → Times New Roman: у літер зʼявились засічки.'});
+      P.push({html: x(a4, all(A3[1], 'wd-sel', R3), c0), hot: 'fs', fs: '14', say: 'Розмір → 14.'});
+      P.push({html: x(a4, all(A3[1], 'wd-sel', R4), c0), hot: 'u', say: 'П — підкреслений.'});
+      P.push({html: x(a4, b4, all(A3[2], 'wd-sel', B0)), hot: '', font: 'Arial', fs: '10', ms: 'тричі клацнути', say: 'Третій абзац: виділяємо.'});
+      P.push({html: x(a4, b4, all(A3[2], 'wd-sel', T1)), ms: '', hot: 'fs', fs: '14', say: 'Розмір → 14.'});
+      P.push({html: x(a4, b4, all(A3[2], 'wd-sel', T2)), hot: 'b', say: 'Ж — жирний.'});
+      P.push({html: x(a4, b4, all(A3[2], 'wd-sel', T3)), hot: '', kb: 'Ctrl + D', say: 'Інтервал між символами — на панелі такої кнопки немає. Ctrl + D → вікно «Шрифт» → вкладка «Додатково» → «Інтервал: Ущільнений», на 0,8 пт → «ОК». Літери зсунулись тісніше.'});
+      P.push({html: x(a4, b4, all(A3[2], '', T3) + CUR), kb: '', ms: 'клацнути на сторінці', say: 'Знімаємо виділення: три абзаци — три різні оформлення, бо кожного разу змінювали лише виділене.'});
     } else {
       var F1 = 'font-family:Arial,Helvetica,sans-serif;font-size:1.27em', F2 = F1 + ';font-style:italic', F3 = F2 + ';color:#d0312d';
       P.push({html: pl, say: 'Шрифт, розмір, накреслення, колір — властивості символів. Змінюють їх для виділеного фрагмента — одразу для всіх його символів.'});
